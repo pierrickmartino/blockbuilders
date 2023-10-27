@@ -27,4 +27,9 @@ urlpatterns = [
     path("home/", views.home, name="home"),
     path("register/", views.register, name="register"),
     path("admin/", admin.site.urls),
+    path(
+        "delete_wallet/<int:wallet_id>/",
+        views.delete_Wallet_by_id,
+        name="delete_wallet",
+    ),
 ]

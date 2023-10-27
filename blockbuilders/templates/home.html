@@ -3,9 +3,51 @@
 {% block content %}
     <section class="section">
         <div class="container">
-            <h1 class="title">
-                Hello from home.html
-            </h1>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="field has-addons mb-2">
+                    <div class="control">
+                    <input class="input" name="address" type="text" placeholder="Search a wallet">
+                    </div>
+                    <div class="control">
+                        <button type="submit" class="button is-dark">Search</button>
+                    </div>
+                </div>
+            </form>
+            
         </div>
+        <br>
+        <div class="container">
+
+            <table class="table is-hoverable is-fullwidth">
+                <thead>
+                <tr>
+                    <th>Wallet</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+                {% for wallet in wallets %}
+                    <tr>
+                        <td>
+                            {{ wallet.address }}
+                        </td>
+                        <td>
+                            <button class="button is-success">Success</span>
+                        </td>
+                        <td>
+                            <button class="button is-danger is-outlined">
+                                <span><a href="{% url 'delete_wallet' wallet.id %}" style="color:inherit">Delete</a></span>
+                                <span class="icon is-small">
+                                  <i class="fas fa-times"></i>
+                                </span>
+                              </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+        </div>
+        
     </section>
 {% endblock %}
