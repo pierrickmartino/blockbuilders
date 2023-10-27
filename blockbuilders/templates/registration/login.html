@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<div>
+    <section class="hero is-link is-small">
+        <div class="hero-body">
+            <p class="title">
+                Login
+            </p>
+            <p class="subtitle"></p>
+        </div>
+    </section>
+    <br>
+
+</div>
+
+<div class="container">
+    <div class="notification is-grey-light">
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="field">
+                <label class="label">{{ form.username.label_tag }}</label>
+                <div class="control">
+                    <input type="text" name="username" class="input" maxlength="150" id="id_username" required />
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">{{ form.password.label_tag }}</label>
+                <div class="control">
+                    <input type="password" name="password" class="input" id="id_password" required />
+                </div>
+            </div>
+            {% if form.non_field_errors %} {% for error in form.non_field_errors %}
+            <p style="font-size: 13px;">
+                {{ error|escape }}
+            </p>
+            {% endfor %} {% endif %}
+            <br>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button class="button is-primary">Login</button>
+                </div>
+                <!-- <div class="control">
+                    <button class="button is-link is-light">Cancel</button>
+                </div> -->
+            </div>
+
+        </form>
+    </div>
+
+
+</div>
+
+{% endblock %}
