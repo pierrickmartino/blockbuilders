@@ -17,16 +17,32 @@ def home(request):
         if form.is_valid():
             form.save()
             wallets = Wallet.objects.all()
-            return render(request, 'home.html', {'wallets': wallets})
+            context = {
+                "wallets": wallets,
+            }
+            return render(request, 'home.html', context)
     else:
         wallets = Wallet.objects.all()
-        return render(request, 'home.html', {'wallets': wallets})
+        context = {
+                "wallets": wallets,
+            }
+        return render(request, 'home.html', context)
 
 @login_required
 def delete_Wallet_by_id(request, wallet_id):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     wallet.delete()
     return redirect("home")
+
+@login_required
+def view_wallet(request, wallet_id):
+    wallet = Wallet.objects.get(id=wallet_id)
+    template = loader.get_template("view_wallet.html")
+    context = {
+        "wallet": wallet,
+    }
+    return HttpResponse(template.render(context, request))
+
 
 def register(request):
     if request.method == "POST":

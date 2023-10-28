@@ -24,7 +24,7 @@
                 <tr>
                     <th>Wallet</th>
                     <th>Status</th>
-                    <th></th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 {% for wallet in wallets %}
@@ -36,6 +36,12 @@
                             <button class="button is-success">Success</span>
                         </td>
                         <td>
+                            <button class="button is-dark is-outlined">
+                                <span><a href="{% url 'view_wallet' wallet.id %}" style="color:inherit">Details</a></span>
+                                <span class="icon is-small">
+                                  <i class="fas fa-eye"></i>
+                                </span>
+                              </button>
                             <button class="button is-danger is-outlined">
                                 <span><a href="{% url 'delete_wallet' wallet.id %}" style="color:inherit">Delete</a></span>
                                 <span class="icon is-small">

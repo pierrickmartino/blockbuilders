@@ -32,4 +32,5 @@ urlpatterns = [
         views.delete_Wallet_by_id,
         name="delete_wallet",
     ),
+    path("wallet/<int:wallet_id>/", views.view_wallet, name="view_wallet"),
 ]
