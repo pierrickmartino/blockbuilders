@@ -15,7 +15,15 @@ def home(request):
         form = WalletForm(request.POST or None)
 
         if form.is_valid():
-            form.save()
+            
+            address = form.cleaned_data["address"]
+            user = request.user
+            wallet = Wallet.objects.create(
+                address=address,
+                user=user,
+            )
+            wallet.save()
+            
             wallets = Wallet.objects.all()
             blockchains = Blockchain.objects.all()
             context = {
