@@ -8,6 +8,7 @@ class Wallet(models.Model):
     
 class Blockchain(models.Model):
     name = models.CharField(max_length=255)
+    icon = models.CharField(max_length=255)
 
     def __str__(self):
         return "%s" % (self.name)

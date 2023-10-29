@@ -12,6 +12,7 @@ class Blockchain_Admin(admin.ModelAdmin):
     list_display = (
         "id",
         "name",
+        "icon",
     )
 
 admin.site.register(Wallet, Wallet_Admin)

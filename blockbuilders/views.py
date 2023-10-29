@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from blockbuilders.forms import WalletForm
 
-from blockbuilders.models import Wallet
+from blockbuilders.models import Blockchain, Wallet
 
 # Views
 @login_required
@@ -17,14 +17,18 @@ def home(request):
         if form.is_valid():
             form.save()
             wallets = Wallet.objects.all()
+            blockchains = Blockchain.objects.all()
             context = {
                 "wallets": wallets,
+                "blockchains": blockchains,
             }
             return render(request, 'home.html', context)
     else:
         wallets = Wallet.objects.all()
+        blockchains = Blockchain.objects.all()
         context = {
                 "wallets": wallets,
+                "blockchains": blockchains,
             }
         return render(request, 'home.html', context)
 
