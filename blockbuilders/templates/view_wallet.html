@@ -27,16 +27,16 @@
                     <!-- {{ wallet.address }} -->
                 </td>
                 <td class="is-vcentered">
-                    <button class="button is-success">Success</span>
+                    <button class="button is-success is-small">Success</span>
                 </td>
-                <td class="is-vcentered">
-                    <button class="button is-dark is-outlined">
+                <td class="is-vcentered is-narrow">
+                    <button class="button is-dark is-outlined is-small">
                         <span><a href="{% url 'view_wallet' wallet.id %}" style="color:inherit">Details</a></span>
                         <span class="icon is-small">
                             <i class="fas fa-eye"></i>
                         </span>
                     </button>
-                    <button class="button is-danger is-outlined">
+                    <button class="button is-danger is-outlined is-small">
                         <span><a href="{% url 'delete_wallet' wallet.id %}" style="color:inherit">Delete</a></span>
                         <span class="icon is-small">
                             <i class="fas fa-times"></i>
