@@ -1,75 +1,77 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-    <section class="section">
-        <div class="container">
-            <form method="POST">
-                {% csrf_token %}
-                <div class="field has-addons mb-2">
-                    <div class="control">
+<section class="section">
+    <div class="container">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="field has-addons mb-2">
+                <div class="control">
                     <input class="input" name="address" type="text" placeholder="Search a wallet">
-                    </div>
-                    <div class="control">
-                        <button type="submit" class="button is-dark">Search</button>
-                    </div>
                 </div>
-            </form>
-        </div>
-        <br>
-        <div class="container">
-            <div class="columns is-mobile is-vcentered">
-                <div class="column is-narrow">
-                    <h1 class="title is-4">Blockchain</h1>
+                <div class="control">
+                    <button type="submit" class="button is-dark">Search</button>
                 </div>
-                <div class="column">
-                    <div class="is-flex is-align-items-flex-start is-flex-wrap-wrap">
-            {% for blockchain in blockchains %}
+            </div>
+        </form>
+    </div>
+    <br>
+    <div class="container">
+        <div class="columns is-mobile is-vcentered">
+            <div class="column is-narrow">
+                <h1 class="title is-4">Blockchain</h1>
+            </div>
+            <div class="column">
+                <div class="is-flex is-align-items-flex-start is-flex-wrap-wrap">
+                    {% for blockchain in blockchains %}
+                    {% if blockchain.is_active %}
                     <figure class="image is-32x32">
                         <img src="{% static blockchain.icon %}">
                     </figure>
-            {% endfor %}
-                    </div>
-                </div>    
-            </div> 
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        <br>
-        <div class="container">
+    </div>
+    <br>
+    <div class="container">
 
-            <table class="table is-hoverable is-fullwidth">
-                <thead>
+        <table class="table is-hoverable is-fullwidth">
+            <thead>
                 <tr>
                     <th>Wallet</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
-                </thead>
-                {% for wallet in wallets %}
-                    <tr>
-                        <td>
-                            {{ wallet.address }}
-                        </td>
-                        <td>
-                            <button class="button is-success">Success</span>
-                        </td>
-                        <td>
-                            <button class="button is-dark is-outlined">
-                                <span><a href="{% url 'view_wallet' wallet.id %}" style="color:inherit">Details</a></span>
-                                <span class="icon is-small">
-                                  <i class="fas fa-eye"></i>
-                                </span>
-                              </button>
-                            <button class="button is-danger is-outlined">
-                                <span><a href="{% url 'delete_wallet' wallet.id %}" style="color:inherit">Delete</a></span>
-                                <span class="icon is-small">
-                                  <i class="fas fa-times"></i>
-                                </span>
-                              </button>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
+            </thead>
+            {% for wallet in wallets %}
+            <tr>
+                <td class="is-vcentered">
+                    {{ wallet.address }}
+                </td>
+                <td class="is-vcentered">
+                    <button class="button is-success is-small">Success</span>
+                </td>
+                <td class="is-vcentered">
+                    <button class="button is-dark is-outlined is-small">
+                        <span><a href="{% url 'view_wallet' wallet.id %}" style="color:inherit">Details</a></span>
+                        <span class="icon is-small">
+                            <i class="fas fa-expand"></i>
+                        </span>
+                    </button>
+                    <button class="button is-danger is-outlined is-small">
+                        <span><a href="{% url 'delete_wallet' wallet.id %}" style="color:inherit">Delete</a></span>
+                        <span class="icon is-small">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
 
-        </div>
-        
-    </section>
+    </div>
+
+</section>
 {% endblock %}

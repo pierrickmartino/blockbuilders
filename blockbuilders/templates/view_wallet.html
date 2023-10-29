@@ -9,45 +9,45 @@
 <section class="section">
     <div class="container">
         <h1 class="title">{{ wallet.address }}</h1>
-    
+
         <!-- <p>Solde: {{ monportefeuille.solde_actuel }}</p>
         <p>Ouvert depuis le: {{ monportefeuille.date_creation }}</p> -->
-    
+
         <table class="table is-hoverable is-fullwidth">
             <thead>
-            <tr>
-                <th>Token</th>
-                <th>Blockchain</th>
-                <th>Actions</th>
-            </tr>
+                <tr>
+                    <th>Token</th>
+                    <th>Blockchain</th>
+                    <th>Actions</th>
+                </tr>
             </thead>
             <!-- {% for wallet in wallets %} -->
-                <tr>
-                    <td>
-                        <!-- {{ wallet.address }} -->
-                    </td>
-                    <td>
-                        <button class="button is-success">Success</span>
-                    </td>
-                    <td>
-                        <button class="button is-dark is-outlined">
-                            <span><a href="{% url 'view_wallet' wallet.id %}" style="color:inherit">Details</a></span>
-                            <span class="icon is-small">
-                              <i class="fas fa-eye"></i>
-                            </span>
-                          </button>
-                        <button class="button is-danger is-outlined">
-                            <span><a href="{% url 'delete_wallet' wallet.id %}" style="color:inherit">Delete</a></span>
-                            <span class="icon is-small">
-                              <i class="fas fa-times"></i>
-                            </span>
-                          </button>
-                    </td>
-                </tr>
+            <tr>
+                <td class="is-vcentered">
+                    <!-- {{ wallet.address }} -->
+                </td>
+                <td class="is-vcentered">
+                    <button class="button is-success">Success</span>
+                </td>
+                <td class="is-vcentered">
+                    <button class="button is-dark is-outlined">
+                        <span><a href="{% url 'view_wallet' wallet.id %}" style="color:inherit">Details</a></span>
+                        <span class="icon is-small">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </button>
+                    <button class="button is-danger is-outlined">
+                        <span><a href="{% url 'delete_wallet' wallet.id %}" style="color:inherit">Delete</a></span>
+                        <span class="icon is-small">
+                            <i class="fas fa-times"></i>
+                        </span>
+                    </button>
+                </td>
+            </tr>
             {% endfor %}
         </table>
-    
-    
+
+
     </div>
 </section>
 
