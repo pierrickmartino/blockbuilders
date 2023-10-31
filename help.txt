@@ -6,3 +6,8 @@ py manage.py migrate
 py manage.py migrate --run-syncdb
 py manage.py collectstatic
 
+img/polygon_POS-Icon.svg
+https://polygonscan.com/
+tokentxns?a=
+token/
+tx/

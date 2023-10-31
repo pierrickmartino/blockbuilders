@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 from blockbuilders.forms import WalletForm
 
 from blockbuilders.models import Blockchain, Wallet
+from blockbuilders.utils.polygon.main_polygon import process_pages
+from blockbuilders.utils.polygon.parser_polygon import parse_transaction_pagination
+from blockbuilders.utils.scraper import fetch_page
 
 # Views
 @login_required
@@ -26,6 +29,16 @@ def home(request):
             
             wallets = Wallet.objects.all()
             blockchains = Blockchain.objects.all()
+
+            for bc in blockchains:
+                # scrap
+                yc_web_page = fetch_page(bc.explorer_url)
+                # parse
+                page = parse_transaction_pagination(yc_web_page)
+                
+                for i in range(int(page)):
+                    process_pages(i)
+
             context = {
                 "wallets": wallets,
                 "blockchains": blockchains,
