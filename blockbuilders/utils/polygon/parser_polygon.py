@@ -12,9 +12,9 @@ def parse_transaction_pagination(html_content):
     page = 1
 
     for span in soup.find_all(name="span", class_='page-link text-nowrap'):
-        for strong in span.find_all(name="strong", class_='font-weight-medium'):
-            page = strong.get_text()
-
+        # for strong in span.find_all(name="strong", class_='font-weight-medium'):
+        #     page = strong.get_text()
+        page = find_between_strings(span.get_text(), "Page 1 of ", "", 0)
     return page
 
 
@@ -120,6 +120,7 @@ def parse_transaction_detail(html_content, tx_hash, tx_header, wallet):
 def parse_transaction_list(html_content, logger, tokentxns_list, tokentxns_list_unfiltered, index_page):
     soup_loop = BeautifulSoup(html_content, 'lxml')
     logger.info("Start Loop on page : " + str(index_page + 1))
+    print("Start Loop on page : " + str(index_page + 1))
 
     for link in soup_loop.find_all(name="a", class_='myFnExpandBox_searchVal'):
         tx_id = link.get_text()
@@ -127,7 +128,18 @@ def parse_transaction_list(html_content, logger, tokentxns_list, tokentxns_list_
 
         if tx_id not in tokentxns_list:
             tokentxns_list.append(tx_id)
-    
+
         logger.info('#' + str(len(tokentxns_list_unfiltered)) + ' : ' + str(tx_id))
 
     return tokentxns_list, tokentxns_list_unfiltered
+
+def parse_contract_list(html_content, contract_list, index_page):
+    soup_loop = BeautifulSoup(html_content, 'lxml')
+    print("Start Loop on page : " + str(index_page + 1))
+
+    for link in soup_loop.find_all(name="a", class_='d-flex align-items-center gap-1 link-dark'):
+        contract_url = find_between_strings(link.get("href"), "/token/", "?a=", 0)
+        if contract_url not in contract_list:
+            contract_list.append(contract_url)
+
+    return contract_list

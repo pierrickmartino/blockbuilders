@@ -8,6 +8,6 @@ py manage.py collectstatic
 
 img/polygon_POS-Icon.svg
 https://polygonscan.com/
-tokentxns?a=
+https://polygonscan.com/tokentxns?a=
 token/
 tx/

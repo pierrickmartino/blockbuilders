@@ -6,7 +6,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from blockbuilders.forms import WalletForm
 
-from blockbuilders.models import Blockchain, Wallet
+from blockbuilders.models import Blockchain, Contract, Wallet
 from blockbuilders.utils.polygon.main_polygon import process_pages
 from blockbuilders.utils.polygon.parser_polygon import parse_transaction_pagination
 from blockbuilders.utils.scraper import fetch_page
@@ -31,13 +31,25 @@ def home(request):
             blockchains = Blockchain.objects.all()
 
             for bc in blockchains:
+                tokentxns_list, tokentxns_list_unfiltered, contract_list  = [], [], []
+                explorer_url = bc.explorer_url + address
                 # scrap
-                yc_web_page = fetch_page(bc.explorer_url)
+                yc_web_page = fetch_page(explorer_url)
+                explorer_page_url = explorer_url + "&p="
                 # parse
                 page = parse_transaction_pagination(yc_web_page)
-                
+                page = 1
+               
                 for i in range(int(page)):
-                    process_pages(i)
+                    process_pages(i, explorer_page_url, tokentxns_list, tokentxns_list_unfiltered, contract_list)
+
+                print(contract_list)
+                for contract_address in contract_list:
+                    contract = Contract.objects.create(
+                        address = contract_address,
+                        blockchain = bc
+                    )
+                    contract.save()
 
             context = {
                 "wallets": wallets,
