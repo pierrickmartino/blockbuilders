@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}
 {{ wallet.address }}
 {% endblock %}
@@ -21,27 +21,46 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <!-- {% for wallet in wallets %} -->
+            {% for contract_link in contract_links %}
             <tr>
                 <td class="is-vcentered">
-                    <!-- {{ wallet.address }} -->
+                    {{ contract_link.contract.name }}
                 </td>
                 <td class="is-vcentered">
-                    <button class="button is-success is-small">Success</span>
+                    <figure class="image is-32x32">
+                        <img src="{% static contract_link.contract.blockchain.icon %}">
+                    </figure>
+                    <!-- <button class="button is-success is-small">Success</span> -->
                 </td>
                 <td class="is-vcentered is-narrow">
+                    {% if contract_link.is_active %}
+                    <button class="button is-danger is-outlined is-small">
+                        <span><a href="{% url 'disable_contract_link' contract_link.id %}" style="color:inherit">Disable</a></span>
+                        <span class="icon is-small">
+                            <i class="fas fa-toggle-off"></i>
+                        </span>
+                    </button>
+                    {% else %}
+                    <button class="button is-success is-outlined is-small">
+                        <span><a href="{% url 'enable_contract_link' contract_link.id %}" style="color:inherit">Enable</a></span>
+                        <span class="icon is-small">
+                            <i class="fas fa-toggle-on"></i>
+                        </span>
+                    </button>
+                    {% endif %}
+                    
                     <button class="button is-dark is-outlined is-small">
                         <span><a href="{% url 'view_wallet' wallet.id %}" style="color:inherit">Details</a></span>
                         <span class="icon is-small">
-                            <i class="fas fa-eye"></i>
+                            <i class="fas fa-expand"></i>
                         </span>
                     </button>
-                    <button class="button is-danger is-outlined is-small">
+                    <!-- <button class="button is-danger is-outlined is-small">
                         <span><a href="{% url 'delete_wallet' wallet.id %}" style="color:inherit">Delete</a></span>
                         <span class="icon is-small">
                             <i class="fas fa-times"></i>
                         </span>
-                    </button>
+                    </button> -->
                 </td>
             </tr>
             {% endfor %}

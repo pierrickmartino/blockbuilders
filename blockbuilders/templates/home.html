@@ -41,17 +41,27 @@
             <thead>
                 <tr>
                     <th>Wallet</th>
+                    <th>#</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             {% for wallet in wallets %}
+            {% with total_contract=wallet.wallet_contractlinks.count %}
             <tr>
                 <td class="is-vcentered">
                     {{ wallet.address }}
                 </td>
+                <td>
+                    {{ total_contract }}                
+                </td>
                 <td class="is-vcentered">
-                    <button class="button is-success is-small">Success</span>
+                    {% if total_contract > 0 %}
+                    <button class="button is-warning is-small">Partial</span>
+                    {% else %}
+                    <button class="button is-light is-small">Empty</span>
+                    {% endif %}
+                    
                 </td>
                 <td class="is-vcentered is-narrow">
                     <button class="button is-dark is-outlined is-small">
@@ -68,6 +78,7 @@
                     </button>
                 </td>
             </tr>
+            {% endwith %}
             {% endfor %}
         </table>
 

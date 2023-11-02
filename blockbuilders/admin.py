@@ -28,6 +28,7 @@ class ContractLink_Admin(admin.ModelAdmin):
         "id",
         "wallet",
         "contract",
+        "is_active",
     )
 
 admin.site.register(Wallet, Wallet_Admin)

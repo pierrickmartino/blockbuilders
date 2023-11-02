@@ -1,19 +1,13 @@
 from datetime import datetime
 import re
 import lxml
+import logging
 # import cchardet
 from bs4 import BeautifulSoup
 from collections import ChainMap
-from blockbuilders.utils.scraper import fetch_page
 from blockbuilders.utils.utils import find_between_strings
 
-# def process_pages(i, explorer_page_url, tokentxns_list, tokentxns_list_unfiltered, contract_list):
-    # explorer_url_loop = explorer_page_url + str(i+1)
-    # scrap
-    # yc_web_page_loop_wallet = fetch_page(explorer_url_loop)
-    # parse
-    # parse_transaction_list(yc_web_page_loop_wallet, logger, tokentxns_list, tokentxns_list_unfiltered, i)
-    # parse_contract_list(yc_web_page_loop_wallet, contract_list, i)
+logger = logging.getLogger(__name__)
 
 def parse_transaction_pagination(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -141,11 +135,16 @@ def parse_transaction_list(html_content, logger, tokentxns_list, tokentxns_list_
 
 def parse_contract_list(html_content, contract_list, index_page):
     soup_loop = BeautifulSoup(html_content, 'lxml')
-    print("Start Loop on page : " + str(index_page + 1))
+    logger.info("Start Loop on page : " + str(index_page + 1))
+
+    contract_address_list = []
 
     for link in soup_loop.find_all(name="a", class_='d-flex align-items-center gap-1 link-dark'):
-        contract_url = find_between_strings(link.get("href"), "/token/", "?a=", 0)
-        if contract_url not in contract_list:
-            contract_list.append(contract_url)
+        contract_address = find_between_strings(link.get("href"), "/token/", "?a=", 0)
+        contract_name = link.get_text()
+        
+        if contract_address not in contract_address_list:
+            contract_address_list.append(contract_address)
+            contract_list.append([contract_address, contract_name])
 
     return contract_list

@@ -55,16 +55,18 @@ def home(request):
                     parse_contract_list(yc_web_page_loop_wallet, contract_list, i)
                     logger.info("Ready to process " + str(len(contract_list)) + " contracts")
     
-                for contract_address in contract_list:
+                for contract_info in contract_list:
                     contract = Contract.objects.create(
-                        address = contract_address,
-                        blockchain = bc
+                        address = contract_info[0],
+                        blockchain = bc,
+                        name = contract_info[1]
                     )
                     contract.save()
 
                     contract_link = ContractLink.objects.create(
                         contract = contract,
-                        wallet = wallet
+                        wallet = wallet,
+                        is_active = False
                     )
                     contract_link.save()
 
@@ -89,11 +91,27 @@ def delete_Wallet_by_id(request, wallet_id):
     return redirect("home")
 
 @login_required
+def enable_ContractLink_by_id(request, contract_link_id):
+    contract_link = get_object_or_404(ContractLink, id=contract_link_id)
+    contract_link.is_active = True
+    contract_link.save()
+    return redirect(request.META['HTTP_REFERER'])
+
+@login_required
+def disable_ContractLink_by_id(request, contract_link_id):
+    contract_link = get_object_or_404(ContractLink, id=contract_link_id)
+    contract_link.is_active = False
+    contract_link.save()
+    return redirect(request.META['HTTP_REFERER'])
+
+@login_required
 def view_wallet(request, wallet_id):
     wallet = Wallet.objects.get(id=wallet_id)
+    contract_links = ContractLink.objects.filter(wallet=wallet)
     template = loader.get_template("view_wallet.html")
     context = {
         "wallet": wallet,
+        "contract_links": contract_links,
     }
     return HttpResponse(template.render(context, request))
 

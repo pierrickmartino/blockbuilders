@@ -56,8 +56,9 @@ class Contract(models.Model):
         return f"{self.name}"
     
 class ContractLink(models.Model):
-    contract = models.ForeignKey(Contract, on_delete=models.DO_NOTHING, related_name="contract_contractlinka")
-    wallet = models.ForeignKey(Wallet, on_delete=models.DO_NOTHING, related_name="wallet_contractlinka")
+    contract = models.ForeignKey(Contract, on_delete=models.DO_NOTHING, related_name="contract_contractlinks")
+    wallet = models.ForeignKey(Wallet, on_delete=models.DO_NOTHING, related_name="wallet_contractlinks")
+    is_active = models.BooleanField()
     sys_creation_date = models.DateTimeField(auto_now_add=True)
     sys_update_date = models.DateTimeField(auto_now=True)
 
