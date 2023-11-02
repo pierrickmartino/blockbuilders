@@ -53,10 +53,17 @@
                     {{ wallet.address }}
                 </td>
                 <td>
-                    {{ total_contract }}                
+                    {% if wallet.active_countract_counter %}
+                    {{ wallet.active_countract_counter }}
+                    {% else %}
+                    0
+                    {% endif %}
+                     / {{ total_contract }}                    
                 </td>
                 <td class="is-vcentered">
-                    {% if total_contract > 0 %}
+                    {% if total_contract == wallet.active_countract_counter %}
+                    <button class="button is-success is-small">Completed</span>
+                    {% elif total_contract > 1 %}    
                     <button class="button is-warning is-small">Partial</span>
                     {% else %}
                     <button class="button is-light is-small">Empty</span>

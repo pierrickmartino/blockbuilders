@@ -1,14 +1,15 @@
 import logging, os
 logger = logging.getLogger(__name__)
 
+from django.db.models import Count
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from blockbuilders.forms import WalletForm
 
+from blockbuilders.forms import WalletForm
 from blockbuilders.models import Blockchain, Contract, ContractLink, Wallet
 from blockbuilders.utils.polygon.parser_polygon import parse_contract_list, parse_transaction_pagination
 from blockbuilders.utils.scraper import fetch_page
@@ -33,7 +34,7 @@ def home(request):
             
             wallets = Wallet.objects.all()
             blockchains = Blockchain.objects.all()
-            
+
             logger.info("New wallet is added")
 
             for bc in blockchains:
@@ -69,6 +70,13 @@ def home(request):
                         is_active = False
                     )
                     contract_link.save()
+            
+            contract_link_ref = ContractLink.objects.filter(is_active=True).values("wallet").annotate(wallet_count=Count("wallet"))
+            for obj in wallets :
+                for cl in contract_link_ref:
+                    if cl['wallet'] == obj.id:
+                        obj.active_countract_counter = cl['wallet_count']
+
 
             context = {
                 "wallets": wallets,
@@ -78,6 +86,13 @@ def home(request):
     else:
         wallets = Wallet.objects.all()
         blockchains = Blockchain.objects.all()
+
+        contract_link_ref = ContractLink.objects.filter(is_active=True).values("wallet").annotate(wallet_count=Count("wallet"))
+        for obj in wallets :
+            for cl in contract_link_ref:
+                if cl['wallet'] == obj.id:
+                    obj.active_countract_counter = cl['wallet_count']
+
         context = {
                 "wallets": wallets,
                 "blockchains": blockchains,
