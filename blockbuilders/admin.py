@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from blockbuilders.models import Blockchain, Wallet, Contract
+from blockbuilders.models import Blockchain, Wallet, Contract, ContractLink
 
 class Wallet_Admin(admin.ModelAdmin):
     list_display = (
@@ -23,6 +23,14 @@ class Contract_Admin(admin.ModelAdmin):
         "symbol",
     )
 
+class ContractLink_Admin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "wallet",
+        "contract",
+    )
+
 admin.site.register(Wallet, Wallet_Admin)
 admin.site.register(Blockchain, Blockchain_Admin)
 admin.site.register(Contract, Contract_Admin)
+admin.site.register(ContractLink, ContractLink_Admin)

@@ -34,7 +34,7 @@ class Blockchain(models.Model):
     sys_update_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "%s" % (self.name)
+        return f"{self.name}"
     
 class Contract(models.Model):
     address = models.CharField(max_length=255) 
@@ -53,4 +53,17 @@ class Contract(models.Model):
         ordering = ("symbol", "name",)
 		
     def __str__(self):
-        return self.name
+        return f"{self.name}"
+    
+class ContractLink(models.Model):
+    contract = models.ForeignKey(Contract, on_delete=models.DO_NOTHING, related_name="contract_contractlinka")
+    wallet = models.ForeignKey(Wallet, on_delete=models.DO_NOTHING, related_name="wallet_contractlinka")
+    sys_creation_date = models.DateTimeField(auto_now_add=True)
+    sys_update_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "ContractLink"
+        verbose_name_plural = "ContractLinks"
+		
+    def __str__(self):
+        return f"{self.wallet} - {self.contract}"

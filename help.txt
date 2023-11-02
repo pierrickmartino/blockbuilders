@@ -9,5 +9,5 @@ py manage.py collectstatic
 img/polygon_POS-Icon.svg
 https://polygonscan.com/
 https://polygonscan.com/tokentxns?a=
-token/
-tx/
+https://polygonscan.com/token/
+https://polygonscan.com/tx/
