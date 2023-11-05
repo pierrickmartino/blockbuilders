@@ -43,34 +43,37 @@ def home(request):
                 # scrap
                 yc_web_page = fetch_page(explorer_url)
                 explorer_page_url = explorer_url + "&p="
-                # parse
-                page = parse_transaction_pagination(yc_web_page)
-                logger.info("Pages : " + page)
-                page = 1
-               
-                for i in range(int(page)):
-                    explorer_url_loop = explorer_page_url + str(i+1)
-                    # scrap
-                    yc_web_page_loop_wallet = fetch_page(explorer_url_loop)
+                try:    
                     # parse
-                    parse_contract_list(yc_web_page_loop_wallet, contract_list, i)
-                    logger.info("Ready to process " + str(len(contract_list)) + " contracts")
-    
-                for contract_info in contract_list:
-                    contract = Contract.objects.create(
-                        address = contract_info[0],
-                        blockchain = bc,
-                        name = contract_info[1]
-                    )
-                    contract.save()
+                    page = parse_transaction_pagination(yc_web_page)
+                    logger.info("Pages : " + page)
+                    page = 1
+                
+                    for i in range(int(page)):
+                        explorer_url_loop = explorer_page_url + str(i+1)
+                        # scrap
+                        yc_web_page_loop_wallet = fetch_page(explorer_url_loop)
+                        # parse
+                        parse_contract_list(yc_web_page_loop_wallet, contract_list, i)
+                        logger.info("Ready to process " + str(len(contract_list)) + " contracts")
+        
+                    for contract_info in contract_list:
+                        contract = Contract.objects.create(
+                            address = contract_info[0],
+                            blockchain = bc,
+                            name = contract_info[1]
+                        )
+                        contract.save()
 
-                    contract_link = ContractLink.objects.create(
-                        contract = contract,
-                        wallet = wallet,
-                        is_active = False
-                    )
-                    contract_link.save()
-            
+                        contract_link = ContractLink.objects.create(
+                            contract = contract,
+                            wallet = wallet,
+                            is_active = False
+                        )
+                        contract_link.save()
+                except Exception as e:
+                    print(e)
+
             contract_link_ref = ContractLink.objects.filter(is_active=True).values("wallet").annotate(wallet_count=Count("wallet"))
             for obj in wallets :
                 for cl in contract_link_ref:
@@ -109,6 +112,9 @@ def delete_Wallet_by_id(request, wallet_id):
 def enable_ContractLink_by_id(request, contract_link_id):
     contract_link = get_object_or_404(ContractLink, id=contract_link_id)
     contract_link.mark_as_active()
+
+    # Launch the process to download all the transactions
+
     return redirect(request.META['HTTP_REFERER'])
 
 @login_required
