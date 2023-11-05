@@ -131,16 +131,25 @@ LOGGING = {
     "disable_existing_loggers": False,
     "handlers": {
         "file": {
-            "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": "logs.log",
+            "filename": "general.log",
+            "level": "INFO",
         },
     },
     "loggers": {
-        "django": {
+        "": {
             "handlers": ["file"],
-            "level": "DEBUG",
-            "propagate": True,
+            "level": "INFO",
+        },
+    },
+    "formatters": {
+        "verbose": {
+            "format": "{name} {levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
         },
     },
 }

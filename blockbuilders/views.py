@@ -112,8 +112,16 @@ def delete_Wallet_by_id(request, wallet_id):
 def enable_ContractLink_by_id(request, contract_link_id):
     contract_link = get_object_or_404(ContractLink, id=contract_link_id)
     contract_link.mark_as_active()
+    contract = Contract.objects.get(address=contract_link.contract.address)
+    wallet = Wallet.objects.get(address=contract_link.wallet.address)
 
     # Launch the process to download all the transactions
+    blockchains = Blockchain.objects.all()
+    for bc in blockchains:
+        transaction_list  = []
+        explorer_url = bc.contract_url + contract.address + '?a=' + wallet.address       
+        logger.info("Url Contract/Wallet : " + explorer_url)
+        # scrap
 
     return redirect(request.META['HTTP_REFERER'])
 
