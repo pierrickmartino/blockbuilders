@@ -72,7 +72,7 @@ def home(request):
                         )
                         contract_link.save()
                 except Exception as e:
-                    print(e)
+                    logger.warning("Url Contract/Wallet : " + explorer_url)
 
             contract_link_ref = ContractLink.objects.filter(is_active=True).values("wallet").annotate(wallet_count=Count("wallet"))
             for obj in wallets :
