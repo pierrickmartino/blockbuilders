@@ -60,7 +60,11 @@ class Contract(models.Model):
 		
     def __str__(self):
         return f"{self.name}"
-    
+
+class ContractCalculator():
+    def __init__(self, contract):
+        self.contract = contract
+
 class ContractLink(models.Model):
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="contract_contractlinks")
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name="wallet_contractlinks")
@@ -74,6 +78,16 @@ class ContractLink(models.Model):
 		
     def __str__(self):
         return f"{self.wallet} - {self.contract}"
+    def mark_as_active(self):
+        self.is_active = True
+        self.save()
+    def mark_as_inactive(self):
+        self.is_active = False
+        self.save()
+
+class ContractLinkCalculator():
+    def __init__(self, contract_link):
+        self.contract_link = contract_link
 
 class ContractCalculator():
     def __init__(self, contract):
