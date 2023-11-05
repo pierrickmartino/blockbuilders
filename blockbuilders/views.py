@@ -1,5 +1,5 @@
 import logging, os
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("blockbuilders")
 
 from django.db.models import Count
 from django.http import HttpResponse
@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 from blockbuilders.forms import WalletForm
 from blockbuilders.models import Blockchain, Contract, ContractLink, Wallet
-from blockbuilders.utils.polygon.parser_polygon import parse_contract_list, parse_transaction_pagination
+from blockbuilders.utils.polygon.parser_polygon import parse_contract_list, parse_transaction_list, parse_transaction_pagination
 from blockbuilders.utils.scraper import fetch_page
 
 logger.info("Number of CPU : "  + str(os.cpu_count()))
@@ -47,6 +47,7 @@ def home(request):
                     # parse
                     page = parse_transaction_pagination(yc_web_page)
                     logger.info("Pages : " + page)
+                    # force page to 1
                     page = 1
                 
                     for i in range(int(page)):
@@ -72,14 +73,13 @@ def home(request):
                         )
                         contract_link.save()
                 except Exception as e:
-                    logger.warning("Url Contract/Wallet : " + explorer_url)
+                    logger.warning("Exception : " + e)
 
             contract_link_ref = ContractLink.objects.filter(is_active=True).values("wallet").annotate(wallet_count=Count("wallet"))
             for obj in wallets :
                 for cl in contract_link_ref:
                     if cl['wallet'] == obj.id:
                         obj.active_countract_counter = cl['wallet_count']
-
 
             context = {
                 "wallets": wallets,
@@ -118,12 +118,45 @@ def enable_ContractLink_by_id(request, contract_link_id):
     # Launch the process to download all the transactions
     blockchains = Blockchain.objects.all()
     for bc in blockchains:
-        transaction_list  = []
+        tokentxns_list, tokentxns_list_unfiltered  = [], []
         url_contract_wallet = bc.contract_url + contract.address + '?a=' + wallet.address       
         logger.info("Url Contract/Wallet : " + url_contract_wallet)
         # scrap
         yc_web_page_contract_wallet = fetch_page(url_contract_wallet)
         
+        try:    
+            # parse
+            page = parse_transaction_pagination(yc_web_page_contract_wallet)
+            logger.info("Pages : " + page)
+            # force page to 1
+            page = 1
+
+            for i in range(int(page)):
+                explorer_url_loop = url_contract_wallet + str(i+1)
+                # scrap
+                yc_web_page_loop_wallet = fetch_page(explorer_url_loop)
+                # parse
+                parse_transaction_list(yc_web_page_loop_wallet, tokentxns_list, tokentxns_list_unfiltered, i)
+                logger.info("Ready to process " + str(len(tokentxns_list)) + " transactions on " + str(len(tokentxns_list_unfiltered)))
+
+            # for contract_info in contract_list:
+            #     contract = Contract.objects.create(
+            #         address = contract_info[0],
+            #         blockchain = bc,
+            #         name = contract_info[1]
+            #     )
+            #     contract.save()
+
+            #     contract_link = ContractLink.objects.create(
+            #         contract = contract,
+            #         wallet = wallet,
+            #         is_active = False
+            #     )
+            #     contract_link.save()
+
+        except Exception as e:
+            logger.warning("Exception : " + e)
+
         # todo
         # manage pagination
         # then loop on page to get transaction hash

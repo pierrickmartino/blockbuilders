@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from collections import ChainMap
 from blockbuilders.utils.utils import find_between_strings
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("blockbuilders")
 
 def parse_transaction_pagination(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
@@ -15,7 +15,7 @@ def parse_transaction_pagination(html_content):
 
     for span in soup.find_all(name="span", class_='page-link text-nowrap'):
         page = find_between_strings(span.get_text(), "Page 1 of ", "", 0)
-    return page
+    return str(page)
 
 
 def parse_transaction_counter(html_content):
@@ -117,11 +117,10 @@ def parse_transaction_detail(html_content, tx_hash, tx_header, wallet):
             
     return tx_list
 
-def parse_transaction_list(html_content, logger, tokentxns_list, tokentxns_list_unfiltered, index_page):
+def parse_transaction_list(html_content, tokentxns_list, tokentxns_list_unfiltered, index_page):
     soup_loop = BeautifulSoup(html_content, 'lxml')
     logger.info("Start Loop on page : " + str(index_page + 1))
-    print("Start Loop on page : " + str(index_page + 1))
-
+    
     for link in soup_loop.find_all(name="a", class_='myFnExpandBox_searchVal'):
         tx_id = link.get_text()
         tokentxns_list_unfiltered.append(tx_id)

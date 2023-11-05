@@ -137,7 +137,7 @@ LOGGING = {
         },
     },
     "loggers": {
-        "": {
+        "blockbuilders": {
             "handlers": ["file"],
             "level": "INFO",
         },
