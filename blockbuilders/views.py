@@ -119,9 +119,16 @@ def enable_ContractLink_by_id(request, contract_link_id):
     blockchains = Blockchain.objects.all()
     for bc in blockchains:
         transaction_list  = []
-        explorer_url = bc.contract_url + contract.address + '?a=' + wallet.address       
-        logger.info("Url Contract/Wallet : " + explorer_url)
+        url_contract_wallet = bc.contract_url + contract.address + '?a=' + wallet.address       
+        logger.info("Url Contract/Wallet : " + url_contract_wallet)
         # scrap
+        yc_web_page_contract_wallet = fetch_page(url_contract_wallet)
+        
+        # todo
+        # manage pagination
+        # then loop on page to get transaction hash
+        # then iterate on transaction hash to download transactions information
+
 
     return redirect(request.META['HTTP_REFERER'])
 
