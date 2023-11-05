@@ -35,7 +35,7 @@ class Position_Admin(admin.ModelAdmin):
     list_display = (
         "id",
         "contract_link",
-        "quantity"
+        "quantity",
         "amount",
     )
 
@@ -44,7 +44,7 @@ class Transaction_Admin(admin.ModelAdmin):
         "id",
         "position",
         "type",
-        "quantity"
+        "quantity",
         "price",
         "cost",
         "date",
