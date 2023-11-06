@@ -23,7 +23,6 @@ class Wallet(models.Model):
     class Meta:
         verbose_name = "Wallet"
         verbose_name_plural = "Wallets"
-        ordering = ("balance", "name")
 
     def __str__(self):
         return f"{self.address}"
@@ -43,7 +42,7 @@ class Blockchain(models.Model):
         return f"{self.name}"
     
 class Contract(models.Model):
-    address = models.CharField(max_length=255, default="") 
+    address = models.CharField(max_length=255, default="", db_index=True) 
     blockchain = models.ForeignKey(Blockchain, on_delete=models.DO_NOTHING, related_name="blockchain_contracts")
     name = models.CharField(max_length=255, default="")
     symbol = models.CharField(max_length=10, default="")
@@ -56,7 +55,6 @@ class Contract(models.Model):
     class Meta:
         verbose_name = "Contract"
         verbose_name_plural = "Contracts"
-        ordering = ("symbol", "name",)
 		
     def __str__(self):
         return f"{self.name}"
@@ -121,7 +119,7 @@ class Transaction(models.Model):
     cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     date = models.DateTimeField(db_index=True)
     comment = models.TextField(default="")
-    hash = models.CharField(max_length=255, default="")
+    hash = models.CharField(max_length=255, default="", db_index=True)
     sys_creation_date = models.DateTimeField(auto_now_add=True)
     sys_update_date = models.DateTimeField(auto_now=True)
 
@@ -129,7 +127,6 @@ class Transaction(models.Model):
     class Meta:
         verbose_name = "Transaction"
         verbose_name_plural = "Transactions"
-        ordering = ("date",)
 
     def __str__(self):
         return f"{self.hash} - {self.type} {self.quantity} ({self.cost}) - {self.date}"
