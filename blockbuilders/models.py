@@ -31,10 +31,10 @@ class Blockchain(models.Model):
     name = models.CharField(max_length=255, choices=[(tag.name, tag.value) for tag in Blockchain])
     icon = models.CharField(max_length=255, default="")
     is_active = models.BooleanField()
-    main_url = models.CharField(max_length=255, default="")
-    explorer_url = models.CharField(max_length=255, default="")
-    contract_url = models.CharField(max_length=255, default="")
-    transaction_url = models.CharField(max_length=255, default="")
+    # main_url = models.CharField(max_length=255, default="")
+    # explorer_url = models.CharField(max_length=255, default="")
+    # contract_url = models.CharField(max_length=255, default="")
+    # transaction_url = models.CharField(max_length=255, default="")
     sys_creation_date = models.DateTimeField(auto_now_add=True)
     sys_update_date = models.DateTimeField(auto_now=True)
 
@@ -47,6 +47,8 @@ class Contract(models.Model):
     name = models.CharField(max_length=255, default="")
     symbol = models.CharField(max_length=10, default="")
     price = models.DecimalField(max_digits=15, decimal_places=8, default=0)
+    logo_uri = models.CharField(max_length=255, default="")
+    decimals = models.IntegerField(default=0)
     # market_cap = models.DecimalField(max_digits=20, decimal_places=2, default=0) # type: ignore
     # volume = models.DecimalField(max_digits=20, decimal_places=10, default=0) # type: ignore
     sys_creation_date = models.DateTimeField(auto_now_add=True)
@@ -76,9 +78,11 @@ class ContractLink(models.Model):
 		
     def __str__(self):
         return f"{self.wallet} - {self.contract}"
+    
     def mark_as_active(self):
         self.is_active = True
         self.save()
+    
     def mark_as_inactive(self):
         self.is_active = False
         self.save()
