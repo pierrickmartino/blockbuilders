@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from poc.models import Blockchain, Wallet, Contract, ContractLink, Position, Transaction
+from app.models import Blockchain, Wallet, Contract, ContractLink, Position, Transaction
 
 class Wallet_Admin(admin.ModelAdmin):
     list_display = (

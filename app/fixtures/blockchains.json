@@ -1,9 +1,9 @@
 [
     {
-      "model": "poc.blockchain",
+      "model": "app.blockchain",
       "pk": 1,
       "fields": {
-        "name": "Polygon",
+        "name": "POLYGON",
         "icon": "img/polygon_POS-Icon.svg",
         "is_active": true
       }

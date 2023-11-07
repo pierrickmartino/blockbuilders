@@ -45,8 +45,8 @@ class Contract(models.Model):
     decimals = models.IntegerField(default=0)
     # market_cap = models.DecimalField(max_digits=20, decimal_places=2, default=0) # type: ignore
     # volume = models.DecimalField(max_digits=20, decimal_places=10, default=0) # type: ignore
-    sys_creation_date = models.DateTimeField(auto_now_add=True)
-    sys_update_date = models.DateTimeField(auto_now=True)
+    # sys_creation_date = models.DateTimeField(auto_now_add=True)
+    # sys_update_date = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Contract"

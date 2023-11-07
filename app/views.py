@@ -9,10 +9,10 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
-from poc.forms import WalletForm
-from poc.models import Blockchain, Contract, ContractLink, Wallet
-from poc.utils.polygon.parser_polygon import parse_contract_list, parse_transaction_list, parse_transaction_pagination
-from poc.utils.scraper import fetch_page
+from app.forms import WalletForm
+from app.models import Blockchain, Contract, ContractLink, Wallet
+from app.utils.polygon.parser_polygon import parse_contract_list, parse_transaction_list, parse_transaction_pagination
+from app.utils.scraper import fetch_page
 
 logger.info("Number of CPU : "  + str(os.cpu_count()))
 
