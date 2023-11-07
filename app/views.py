@@ -175,10 +175,12 @@ def disable_ContractLink_by_id(request, contract_link_id):
 def view_wallet(request, wallet_id):
     wallet = Wallet.objects.get(id=wallet_id)
     contract_links = ContractLink.objects.filter(wallet=wallet)
+    contracts = Contract.objects.all()
     template = loader.get_template("view_wallet.html")
     context = {
         "wallet": wallet,
         "contract_links": contract_links,
+        "contracts" : contracts
     }
     return HttpResponse(template.render(context, request))
 

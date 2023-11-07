@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_autocomplete.html' %}
 {% load static %}
 {% block title %}
 {{ wallet.address }}
@@ -8,7 +8,44 @@
 {% block content %}
 <section class="section">
     <div class="container">
-        <h1 class="title">{{ wallet.address }}</h1>
+        <div class="columns is-mobile is-vcentered">
+            <div class="column is-half">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="field has-addons mb-2">
+                        <div class="control">
+                            <input class="input" id="contracts" name="address" type="text" placeholder="Search a contract">
+<script> 
+$( function() { 
+    var availableContracts = [ 
+        {% for contract in contracts %} 
+            "{{contract.name}}", 
+        {% endfor %} 
+    ]; 
+    $( "#contracts" ).autocomplete({ 
+    source: availableContracts 
+    }); 
+} ); 
+</script>
+                        </div>
+                        <div class="control">
+                            <button type="submit" class="button is-dark">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="column is-half has-text-right">
+                <h4 class="title is-4">{{ wallet.address }}</h4>
+            </div>
+
+        </div>
+
+
+    </div>
+    <br>
+
+    <div class="container">
 
         <!-- <p>Solde: {{ monportefeuille.solde_actuel }}</p>
         <p>Ouvert depuis le: {{ monportefeuille.date_creation }}</p> -->
@@ -48,7 +85,7 @@
                         </span>
                     </button>
                     {% endif %}
-                    
+
                     <button class="button is-dark is-outlined is-small">
                         <span><a href="{% url 'view_wallet' wallet.id %}" style="color:inherit">Details</a></span>
                         <span class="icon is-small">
