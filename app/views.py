@@ -1,4 +1,6 @@
 import logging, os
+
+from app.utils.utils import find_between_strings
 logger = logging.getLogger("blockbuilders")
 
 from django.db.models import Count
@@ -9,7 +11,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
-from app.forms import WalletForm
+from app.forms import ContractForm, WalletForm
 from app.models import Blockchain, Contract, ContractLink, Wallet
 from app.utils.polygon.parser_polygon import parse_contract_list, parse_transaction_list, parse_transaction_pagination
 from app.utils.scraper import fetch_page
@@ -37,50 +39,6 @@ def home(request):
 
             logger.info("New wallet is added")
 
-            # for bc in blockchains:
-            #     contract_list  = []
-            #     explorer_url = bc.explorer_url + address
-            #     # scrap
-            #     yc_web_page = fetch_page(explorer_url)
-            #     explorer_page_url = explorer_url + "&p="
-            #     try:    
-            #         # parse
-            #         page = parse_transaction_pagination(yc_web_page)
-            #         logger.info("Pages : " + page)
-            #         # force page to 1
-            #         page = 1
-                
-            #         for i in range(int(page)):
-            #             explorer_url_loop = explorer_page_url + str(i+1)
-            #             # scrap
-            #             yc_web_page_loop_wallet = fetch_page(explorer_url_loop)
-            #             # parse
-            #             parse_contract_list(yc_web_page_loop_wallet, contract_list, i)
-            #             logger.info("Ready to process " + str(len(contract_list)) + " contracts")
-        
-            #         for contract_info in contract_list:
-            #             contract = Contract.objects.create(
-            #                 address = contract_info[0],
-            #                 blockchain = bc,
-            #                 name = contract_info[1]
-            #             )
-            #             contract.save()
-
-            #             contract_link = ContractLink.objects.create(
-            #                 contract = contract,
-            #                 wallet = wallet,
-            #                 is_active = False
-            #             )
-            #             contract_link.save()
-            #     except Exception as e:
-            #         logger.warning("Exception : " + e)
-
-            # contract_link_ref = ContractLink.objects.filter(is_active=True).values("wallet").annotate(wallet_count=Count("wallet"))
-            # for obj in wallets :
-            #     for cl in contract_link_ref:
-            #         if cl['wallet'] == obj.id:
-            #             obj.active_countract_counter = cl['wallet_count']
-
             context = {
                 "wallets": wallets,
                 "blockchains": blockchains,
@@ -89,12 +47,6 @@ def home(request):
     else:
         wallets = Wallet.objects.all()
         blockchains = Blockchain.objects.all()
-
-        # contract_link_ref = ContractLink.objects.filter(is_active=True).values("wallet").annotate(wallet_count=Count("wallet"))
-        # for obj in wallets :
-        #     for cl in contract_link_ref:
-        #         if cl['wallet'] == obj.id:
-        #             obj.active_countract_counter = cl['wallet_count']
 
         context = {
                 "wallets": wallets,
@@ -112,57 +64,6 @@ def delete_Wallet_by_id(request, wallet_id):
 def enable_ContractLink_by_id(request, contract_link_id):
     contract_link = get_object_or_404(ContractLink, id=contract_link_id)
     contract_link.mark_as_active()
-    contract = Contract.objects.get(address=contract_link.contract.address)
-    wallet = Wallet.objects.get(address=contract_link.wallet.address)
-
-    # Launch the process to download all the transactions
-    blockchains = Blockchain.objects.all()
-    for bc in blockchains:
-        tokentxns_list, tokentxns_list_unfiltered  = [], []
-        url_contract_wallet = bc.contract_url + contract.address + '?a=' + wallet.address       
-        logger.info("Url Contract/Wallet : " + url_contract_wallet)
-        # scrap
-        yc_web_page_contract_wallet = fetch_page(url_contract_wallet)
-        
-        try:    
-            # parse
-            page = parse_transaction_pagination(yc_web_page_contract_wallet)
-            logger.info("Pages : " + page)
-            # force page to 1
-            page = 1
-
-            for i in range(int(page)):
-                explorer_url_loop = url_contract_wallet + str(i+1)
-                # scrap
-                yc_web_page_loop_wallet = fetch_page(explorer_url_loop)
-                # parse
-                parse_transaction_list(yc_web_page_loop_wallet, tokentxns_list, tokentxns_list_unfiltered, i)
-                logger.info("Ready to process " + str(len(tokentxns_list)) + " transactions on " + str(len(tokentxns_list_unfiltered)))
-
-            # for contract_info in contract_list:
-            #     contract = Contract.objects.create(
-            #         address = contract_info[0],
-            #         blockchain = bc,
-            #         name = contract_info[1]
-            #     )
-            #     contract.save()
-
-            #     contract_link = ContractLink.objects.create(
-            #         contract = contract,
-            #         wallet = wallet,
-            #         is_active = False
-            #     )
-            #     contract_link.save()
-
-        except Exception as e:
-            logger.warning("Exception : " + e)
-
-        # todo
-        # manage pagination
-        # then loop on page to get transaction hash
-        # then iterate on transaction hash to download transactions information
-
-
     return redirect(request.META['HTTP_REFERER'])
 
 @login_required
@@ -174,15 +75,48 @@ def disable_ContractLink_by_id(request, contract_link_id):
 @login_required
 def view_wallet(request, wallet_id):
     wallet = Wallet.objects.get(id=wallet_id)
-    contract_links = ContractLink.objects.filter(wallet=wallet)
-    contracts = Contract.objects.all()
-    template = loader.get_template("view_wallet.html")
-    context = {
-        "wallet": wallet,
-        "contract_links": contract_links,
-        "contracts" : contracts
-    }
-    return HttpResponse(template.render(context, request))
+
+    if request.method == 'POST':
+        form = ContractForm(request.POST or None)
+
+        if form.is_valid():
+            
+            address = find_between_strings(form.cleaned_data["address"], '[', ']', 0)
+            contract = Contract.objects.get(address=address)
+            contract_link = ContractLink.objects.create(
+                contract=contract,
+                wallet=wallet,
+                is_active=True
+            )
+            contract_link.save()
+            
+            contract_links = ContractLink.objects.filter(wallet=wallet)
+            contracts = Contract.objects.all()
+            template = loader.get_template("view_wallet.html")
+
+            logger.info("New contract_link is added")
+
+            context = {
+                "wallet": wallet,
+                "contract_links": contract_links,
+                "contracts" : contracts
+            }
+            return HttpResponse(template.render(context, request))
+    else:
+        wallet = Wallet.objects.get(id=wallet_id)
+        contract_links = ContractLink.objects.filter(wallet=wallet)
+        contracts = Contract.objects.all()
+        template = loader.get_template("view_wallet.html")
+
+        context = {
+            "wallet": wallet,
+            "contract_links": contract_links,
+            "contracts" : contracts
+        }
+        return HttpResponse(template.render(context, request))
+
+
+    
 
 
 def register(request):

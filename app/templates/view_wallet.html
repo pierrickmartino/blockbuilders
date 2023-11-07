@@ -19,7 +19,7 @@
 $( function() { 
     var availableContracts = [ 
         {% for contract in contracts %} 
-            "{{contract.name}}", 
+            "{{contract.name}} [{{contract.address}}]", 
         {% endfor %} 
     ]; 
     $( "#contracts" ).autocomplete({ 
@@ -54,6 +54,7 @@ $( function() {
             <thead>
                 <tr>
                     <th>Token</th>
+                    <th>Address</th>
                     <th>Blockchain</th>
                     <th>Actions</th>
                 </tr>
@@ -62,6 +63,9 @@ $( function() {
             <tr>
                 <td class="is-vcentered">
                     {{ contract_link.contract.name }}
+                </td>
+                <td class="is-vcentered">
+                    {{ contract_link.contract.address }}
                 </td>
                 <td class="is-vcentered">
                     <figure class="image is-32x32">
