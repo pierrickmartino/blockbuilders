@@ -5,6 +5,7 @@ py manage.py makemigrations
 py manage.py migrate
 py manage.py migrate --run-syncdb
 py manage.py collectstatic
+py manage.py loaddata blockchains.json
 
 img/polygon_POS-Icon.svg
 https://polygonscan.com/

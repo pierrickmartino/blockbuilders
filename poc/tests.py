@@ -1,7 +1,7 @@
 from django.test import TestCase
 import datetime
 
-from blockbuilders.models import Wallet 
+from models import Wallet 
 
 class WalletTestCase(TestCase):
     def setUp(self):

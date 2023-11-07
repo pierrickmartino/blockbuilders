@@ -5,7 +5,7 @@ import logging
 # import cchardet
 from bs4 import BeautifulSoup
 from collections import ChainMap
-from blockbuilders.utils.utils import find_between_strings
+from poc.utils.utils import find_between_strings
 
 logger = logging.getLogger("blockbuilders")
 

@@ -1,0 +1,11 @@
+[
+    {
+      "model": "poc.blockchain",
+      "pk": 1,
+      "fields": {
+        "name": "Polygon",
+        "icon": "img/polygon_POS-Icon.svg",
+        "is_active": true
+      }
+    }
+  ]

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,12 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-5t^^#z$xxyir=v0^iqqz%lx#2h+*vvu_93r6!ox6w@@f6r*ug&"
+SECRET_KEY = config('SECRET_KEY')
+POLYGONSCAN_API_KEY = config('POLYGONSCAN_API_KEY')
+POLYGONSCAN_SECRET_KEY = config('POLYGONSCAN_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -112,7 +114,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "productionfiles"
-STATICFILES_DIRS = [BASE_DIR / "blockbuilders/static"]
+STATICFILES_DIRS = ["poc/static"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -153,3 +155,5 @@ LOGGING = {
         },
     },
 }
+
+FIXTURE_DIRS = "fixtures/" 
