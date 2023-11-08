@@ -74,7 +74,7 @@ $( function() {
                     <!-- <button class="button is-success is-small">Success</span> -->
                 </td>
                 <td class="is-vcentered is-narrow">
-                    {% if contract_link.is_active %}
+                    <!-- {% if contract_link.is_active %}
                     <button class="button is-danger is-outlined is-small">
                         <span><a href="{% url 'disable_contract_link' contract_link.id %}" style="color:inherit">Disable</a></span>
                         <span class="icon is-small">
@@ -88,7 +88,7 @@ $( function() {
                             <i class="fas fa-toggle-on"></i>
                         </span>
                     </button>
-                    {% endif %}
+                    {% endif %} -->
 
                     <button class="button is-dark is-outlined is-small">
                         <span><a href="{% url 'view_wallet' wallet.id %}" style="color:inherit">Details</a></span>
@@ -96,12 +96,12 @@ $( function() {
                             <i class="fas fa-expand"></i>
                         </span>
                     </button>
-                    <!-- <button class="button is-danger is-outlined is-small">
-                        <span><a href="{% url 'delete_wallet' wallet.id %}" style="color:inherit">Delete</a></span>
+                    <button class="button is-danger is-outlined is-small">
+                        <span><a href="{% url 'delete_contract_link' contract_link.id %}" style="color:inherit">Delete</a></span>
                         <span class="icon is-small">
                             <i class="fas fa-times"></i>
                         </span>
-                    </button> -->
+                    </button>
                 </td>
             </tr>
             {% endfor %}

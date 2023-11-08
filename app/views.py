@@ -61,6 +61,13 @@ def delete_Wallet_by_id(request, wallet_id):
     return redirect("home")
 
 @login_required
+def delete_ContractLink_by_id(request, contract_link_id):
+    contract_link = get_object_or_404(ContractLink, id=contract_link_id)
+    contract_link.delete()
+    return redirect(request.META['HTTP_REFERER'])
+
+
+@login_required
 def enable_ContractLink_by_id(request, contract_link_id):
     contract_link = get_object_or_404(ContractLink, id=contract_link_id)
     contract_link.mark_as_active()

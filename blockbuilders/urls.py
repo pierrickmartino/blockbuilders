@@ -36,6 +36,11 @@ urlpatterns = [
     ),
     path("wallet/<int:wallet_id>/", views.view_wallet, name="view_wallet"),
     path(
+        "delete_contract_link/<int:contract_link_id>/",
+        views.delete_ContractLink_by_id,
+        name="delete_contract_link",
+    ),
+    path(
         "enable _contract_link/<int:contract_link_id>/",
         views.enable_ContractLink_by_id,
         name="enable_contract_link",
