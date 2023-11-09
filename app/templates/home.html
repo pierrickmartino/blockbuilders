@@ -41,7 +41,8 @@
             <thead>
                 <tr>
                     <th>Wallet</th>
-                    <th>#</th>
+                    <th># Ctr</th>
+                    <th># Trx</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -51,6 +52,9 @@
             <tr>
                 <td class="is-vcentered">
                     {{ wallet.address }}
+                </td>
+                <td>
+                    0
                 </td>
                 <td>
                     {% if wallet.active_countract_counter %}
@@ -72,7 +76,19 @@
                 </td>
                 <td class="is-vcentered is-narrow">
                     <button class="button is-dark is-outlined is-small">
-                        <span><a href="{% url 'view_wallet' wallet.id %}" style="color:inherit">Details</a></span>
+                        <span><a href="{% url 'wallet_download_info' wallet.id %}" style="color:inherit">Download</a></span>
+                        <span class="icon is-small">
+                            <i class="fas fa-download"></i>
+                        </span>
+                    </button>
+                    <button class="button is-dark is-outlined is-small">
+                        <span><a href="{% url 'wallet_resync_info' wallet.id %}" style="color:inherit">Resync</a></span>
+                        <span class="icon is-small">
+                            <i class="fas fa-redo"></i>
+                        </span>
+                    </button>
+                    <button class="button is-dark is-outlined is-small">
+                        <span><a href="{% url 'wallet' wallet.id %}" style="color:inherit">Details</a></span>
                         <span class="icon is-small">
                             <i class="fas fa-expand"></i>
                         </span>

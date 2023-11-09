@@ -34,7 +34,9 @@ urlpatterns = [
         views.delete_Wallet_by_id,
         name="delete_wallet",
     ),
-    path("wallet/<int:wallet_id>/", views.view_wallet, name="view_wallet"),
+    path("wallet/<int:wallet_id>/", views.view_wallet, name="wallet"),
+    path("wallet_download_info/<int:wallet_id>/", views.get_information_Wallet_by_id, name="wallet_download_info"),
+    path("wallet_resync_info/<int:wallet_id>/", views.resync_information_Wallet_by_id, name="wallet_resync_info"),
     path(
         "delete_contract_link/<int:contract_link_id>/",
         views.delete_ContractLink_by_id,

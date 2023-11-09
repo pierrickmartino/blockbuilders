@@ -1,6 +1,28 @@
 from django.contrib import admin
 
 from app.models import Blockchain, Wallet, Contract, ContractLink, Position, Transaction
+from app.utils.polygon.models_polygon import Polygon_ERC20_Raw
+
+class Polygon_ERC20_Raw_Admin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "blockNumber",
+        "timeStamp",
+        "hash",
+        "nonce",
+        "blockHash",
+        "fromAddress",
+        "toAddress",
+        "contractAddress",
+        "value",
+        "tokenName",
+        "tokenDecimal",
+        "transactionIndex",
+        "gas",
+        "gasPrice",
+        "gasUsed",
+        "cumulativeGasUsed",
+    )
 
 class Wallet_Admin(admin.ModelAdmin):
     list_display = (
@@ -57,3 +79,4 @@ admin.site.register(Contract, Contract_Admin)
 admin.site.register(ContractLink, ContractLink_Admin)
 admin.site.register(Position, Position_Admin)
 admin.site.register(Transaction, Transaction_Admin)
+admin.site.register(Polygon_ERC20_Raw, Polygon_ERC20_Raw_Admin)
