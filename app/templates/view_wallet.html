@@ -56,6 +56,7 @@ $( function() {
                     <th>Token</th>
                     <th>Address</th>
                     <th>Blockchain</th>
+                    <th>#</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -72,6 +73,9 @@ $( function() {
                         <img src="{% static contract_link.contract.blockchain.icon %}">
                     </figure>
                     <!-- <button class="button is-success is-small">Success</span> -->
+                </td>
+                <td>
+                    0
                 </td>
                 <td class="is-vcentered is-narrow">
                     <!-- {% if contract_link.is_active %}

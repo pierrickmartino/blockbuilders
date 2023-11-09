@@ -91,8 +91,8 @@ class ContractCalculator():
         self.contract = contract
 
 class Position(TimeStampModel):
-    contract_link = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="contractlink_positions")
-    quantity = models.DecimalField(max_digits=32, decimal_places=18)
+    contract_link = models.ForeignKey(ContractLink, on_delete=models.CASCADE, related_name="contractlink_positions")
+    quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
     amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     
     class Meta:
@@ -111,8 +111,8 @@ class PositionCalculator():
 class Transaction(TimeStampModel):
     position = models.ForeignKey(Position, on_delete=models.CASCADE, related_name="position_transactions")
     type = models.CharField(max_length=3, choices=[(tag.name, tag.value) for tag in TypeTransaction])
-    quantity = models.DecimalField(max_digits=18, decimal_places=8)
-    price = models.DecimalField(max_digits=15, decimal_places=8)
+    quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
+    price = models.DecimalField(max_digits=15, decimal_places=8, default=0)
     cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     date = models.DateTimeField(db_index=True)
     comment = models.TextField(default="")
