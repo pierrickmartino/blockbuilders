@@ -109,12 +109,18 @@ def resync_information_Wallet_by_id(request, wallet_id):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     erc20_list = get_Polygon_ERC20_Raw_by_Wallet_address(wallet.address)
     contract_links = ContractLink.objects.filter(wallet=wallet)
+
+    # 0. Clean contracts addresses
+    contracts = Contract.objects.all()
+    for contract in contracts:
+        contract.address = contract.address.lower()
+        contract.save()
     
     # 1. Clean existing information
     for contract_link in contract_links:
-        delete_ContractLink_by_id(contract_link.id)
+        delete_ContractLink_by_id(request, contract_link.id)
 
-    # 2. Map existing contract list with erc20 transaction data
+    # 2. Map existing contract list with erc20 transaction data and create ContractLink
     for erc20 in erc20_list:
         logger.info("Process " + erc20.hash)
         transactionType = "BUY"
@@ -125,12 +131,12 @@ def resync_information_Wallet_by_id(request, wallet_id):
 
         try:
             contract = get_Contract_by_address(erc20.contractAddress)
-            contract_link = ContractLink.objects.create(
-            contract=contract, wallet=wallet, is_active=True
+            contract_link, created = ContractLink.objects.get_or_create(
+            contract=contract, wallet=wallet, is_active=True,
             )
             contract_link.save()
 
-        except Contract.ObjectDoesNotExist:
+        except Contract.DoesNotExist:
             logger.info("Object does not exist : " + erc20.contractAddress)
 
     return redirect("home")
@@ -140,7 +146,6 @@ def delete_Wallet_by_id(request, wallet_id):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     wallet.delete()
     return redirect("home")
-
 
 def delete_ContractLink_by_id(request, contract_link_id):
     contract_link = get_object_or_404(ContractLink, id=contract_link_id)
