@@ -45,5 +45,4 @@ def get_matic_price():
 def get_matic_balance_by_wallet(wallet_address):
     with PolygonScan(POLYGONSCAN_API_KEY, False) as matic:  # type: ignore
         result = matic.get_matic_balance(address=wallet_address)
-
-    return result
+        return result
