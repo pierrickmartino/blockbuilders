@@ -131,10 +131,23 @@ def resync_information_Wallet_by_id(request, wallet_id):
 
         try:
             contract = get_Contract_by_address(erc20.contractAddress)
-            contract_link, created = ContractLink.objects.get_or_create(
+            contract_link, contract_link_created = ContractLink.objects.get_or_create(
             contract=contract, wallet=wallet, is_active=True,
             )
             contract_link.save()
+
+            position, position_created = Position.objects.get_or_create(
+                contract_link = contract_link
+            )
+            position.save()
+
+            transaction, transaction_created = Transaction.objects.get_or_create(
+                position = position,
+                type = transactionType,
+                date = datetime.fromtimestamp(int(erc20.timeStamp)),
+                hash = erc20.hash,
+            )
+            transaction.save()
 
         except Contract.DoesNotExist:
             logger.info("Object does not exist : " + erc20.contractAddress)
