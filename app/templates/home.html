@@ -48,7 +48,7 @@
                 </tr>
             </thead>
             {% for wallet in wallets %}
-            {% with total_contract=wallet.wallet_contractlinks.count %}
+            {% with total_contract=wallet.wallet_positions.count %}
             <tr>
                 <td class="is-vcentered">
                     {{ wallet.address }}

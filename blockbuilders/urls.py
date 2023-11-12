@@ -39,18 +39,18 @@ urlpatterns = [
     path("wallet_download_info/<int:wallet_id>/", views.get_information_Wallet_by_id, name="wallet_download_info"),
     path("wallet_resync_info/<int:wallet_id>/", views.resync_information_Wallet_by_id, name="wallet_resync_info"),
     path(
-        "delete_contract_link/<int:contract_link_id>/",
-        views.delete_ContractLink_by_id,
-        name="delete_contract_link",
+        "delete_position/<int:position_id>/",
+        views.delete_Position_by_id,
+        name="delete_position",
     ),
     path(
-        "enable _contract_link/<int:contract_link_id>/",
-        views.enable_ContractLink_by_id,
-        name="enable_contract_link",
+        "enable _position/<int:position_id>/",
+        views.enable_Position_by_id,
+        name="enable_position",
     ),
     path(
-        "disable_contract_link/<int:contract_link_id>/",
-        views.disable_ContractLink_by_id,
-        name="disable_contract_link",
+        "disable_position/<int:position_id>/",
+        views.disable_Position_by_id,
+        name="disable_position",
     ),
 ]

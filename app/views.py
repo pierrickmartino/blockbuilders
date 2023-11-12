@@ -17,7 +17,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 from app.forms import ContractForm, WalletForm
-from app.models import Blockchain, Contract, ContractLink, Position, Transaction, Wallet
+from app.models import Blockchain, Contract, Fiat, Position, Transaction, Wallet
 
 from datetime import datetime
 
@@ -63,6 +63,13 @@ def get_Contract_by_address(contract_address):
     contract = Contract.objects.filter(address=contract_address).get()
     return contract
 
+def get_Transactions_by_Wallet(wallet):
+    positions = Position.objects.filter(wallet=wallet)
+    transactions = []
+    for position in positions:
+        transactions.append(Transaction.objects.filter(position=position))
+    return transactions
+
 def get_Polygon_ERC20_Raw_by_Wallet_address(wallet_address):
     result = Polygon_ERC20_Raw.objects.filter(
         Q(fromAddress=wallet_address) | Q(toAddress=wallet_address)
@@ -73,6 +80,11 @@ def get_Polygon_ERC20_Raw_by_Wallet_address(wallet_address):
 def get_information_Wallet_by_id(request, wallet_id):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     result = get_erc20_transactions_by_wallet(wallet.address)
+
+    # Clean existing ERC20 transactions for this Wallet
+    # todo : replace by get or update to optimize data queries
+    erc20_existing = get_Polygon_ERC20_Raw_by_Wallet_address(wallet.address)
+    erc20_existing.delete()
 
     for erc20 in result:
         divider = 10
@@ -106,9 +118,14 @@ def get_information_Wallet_by_id(request, wallet_id):
 @login_required
 def resync_information_Wallet_by_id(request, wallet_id):
     logger.info("Resync wallet " + str(wallet_id))
+    
     wallet = get_object_or_404(Wallet, id=wallet_id)
     erc20_list = get_Polygon_ERC20_Raw_by_Wallet_address(wallet.address)
-    contract_links = ContractLink.objects.filter(wallet=wallet)
+    fiat_USD = get_object_or_404(Fiat, code="USD")
+
+    logger.info("Ready to sync " + str(len(erc20_list)) + " transactions ERC20")
+
+    positions = Position.objects.filter(wallet=wallet)
 
     # 0. Clean contracts addresses
     contracts = Contract.objects.all()
@@ -117,10 +134,10 @@ def resync_information_Wallet_by_id(request, wallet_id):
         contract.save()
     
     # 1. Clean existing information
-    for contract_link in contract_links:
-        delete_ContractLink_by_id(request, contract_link.id)
+    for position in positions:
+        delete_Position_by_id(request, position.id)
 
-    # 2. Map existing contract list with erc20 transaction data and create ContractLink
+    # 2. Map existing contract list with erc20 transaction data and create Position
     for erc20 in erc20_list:
         logger.info("Process " + erc20.hash)
         transactionType = "BUY"
@@ -135,27 +152,40 @@ def resync_information_Wallet_by_id(request, wallet_id):
 
         try:
             contract = get_Contract_by_address(erc20.contractAddress)
-            contract_link, contract_link_created = ContractLink.objects.get_or_create(
+    
+    # 3. Create the position  
+            position, position_created = Position.objects.get_or_create(
             contract=contract, wallet=wallet, is_active=True,
             )
-            contract_link.save()
-
-            position, position_created = Position.objects.get_or_create(
-                contract_link = contract_link
-            )
             position.save()
+    
+        except Contract.DoesNotExist:
+            logger.info("Object does not exist : " + erc20.contractAddress)
 
+    # 4. Create the transaction   
             transaction, transaction_created = Transaction.objects.get_or_create(
                 position = position,
                 type = transactionType,
                 date = datetime.fromtimestamp(int(erc20.timeStamp)),
                 hash = erc20.hash,
-                quantity = (int(erc20.value) / divider)
+                quantity = (int(erc20.value) / divider),
+                against_fiat = fiat_USD
             )
             transaction.save()
 
-        except Contract.DoesNotExist:
-            logger.info("Object does not exist : " + erc20.contractAddress)
+    transactions = get_Transactions_by_Wallet(wallet)
+    for transaction in transactions:
+        condition = Transaction.objects.filter(hash=transaction.hash)
+        if condition.count() == 2:
+            transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)  # type: ignore
+            transaction.against_contract = transaction_ref[0].contract
+            # transaction.cost = transaction_ref[0].quantity
+            # if transaction.quantity == 0:
+            #     transaction.price = 0  # type: ignore
+            # else:
+            #     transaction.price = transaction_ref[0].quantity / transaction.quantity
+            transaction.save()
+        
 
     return redirect("home")
 
@@ -165,26 +195,26 @@ def delete_Wallet_by_id(request, wallet_id):
     wallet.delete()
     return redirect("home")
 
-def delete_ContractLink_by_id(request, contract_link_id):
-    contract_link = get_object_or_404(ContractLink, id=contract_link_id)
-    wallet = contract_link.wallet
-    contract_link.delete()
+def delete_Position_by_id(request, position_id):
+    position = get_object_or_404(Position, id=position_id)
+    wallet = position.wallet
+    position.delete()
     return redirect("wallet", wallet_id=wallet.id)
 
 
 @login_required
-def enable_ContractLink_by_id(request, contract_link_id):
-    contract_link = get_object_or_404(ContractLink, id=contract_link_id)
-    contract_link.mark_as_active()
-    wallet = contract_link.wallet
+def enable_Position_by_id(request, position_id):
+    position = get_object_or_404(Position, id=position_id)
+    position.mark_as_active()
+    wallet = position.wallet
     return redirect("wallet", wallet_id=wallet.id)
 
 
 @login_required
-def disable_ContractLink_by_id(request, contract_link_id):
-    contract_link = get_object_or_404(ContractLink, id=contract_link_id)
-    contract_link.mark_as_inactive()
-    wallet = contract_link.wallet
+def disable_Position_by_id(request, position_id):
+    position = get_object_or_404(Position, id=position_id)
+    position.mark_as_inactive()
+    wallet = position.wallet
     return redirect("wallet", wallet_id=wallet.id)
 
 
@@ -198,19 +228,16 @@ def view_wallet(request, wallet_id):
         if form.is_valid():
             address = find_between_strings(form.cleaned_data["address"], "[", "]", 0)
             contract = Contract.objects.get(address=address)
-            contract_link = ContractLink.objects.create(
+            position = Position.objects.create(
                 contract=contract, wallet=wallet, is_active=True
             )
-            contract_link.save()
-            position, created = Position.objects.get_or_create(
-                contract_link=contract_link
-            )
-
-            contract_links = ContractLink.objects.filter(wallet=wallet)
+            position.save()
+            
+            positions = Position.objects.filter(wallet=wallet)
             contracts = Contract.objects.all()
             template = loader.get_template("view_wallet.html")
 
-            logger.info("New contract_link is added")
+            logger.info("New position is added")
 
             transactions = get_erc20_transactions_by_wallet_and_contract(
                 wallet.address, contract.address
@@ -246,19 +273,19 @@ def view_wallet(request, wallet_id):
 
             context = {
                 "wallet": wallet,
-                "contract_links": contract_links,
+                "positions": positions,
                 "contracts": contracts,
             }
             return HttpResponse(template.render(context, request))
     else:
         wallet = Wallet.objects.get(id=wallet_id)
-        contract_links = ContractLink.objects.filter(wallet=wallet)
+        positions = Position.objects.filter(wallet=wallet)
         contracts = Contract.objects.all()
         template = loader.get_template("view_wallet.html")
 
         context = {
             "wallet": wallet,
-            "contract_links": contract_links,
+            "positions": positions,
             "contracts": contracts,
         }
         return HttpResponse(template.render(context, request))

@@ -50,6 +50,18 @@ class Blockchain(models.Model):
         return f"{self.name}"
 
 
+class Fiat(models.Model):
+    code = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, default="")
+
+    class Meta:
+        verbose_name = "Fiat"
+        verbose_name_plural = "Fiats"
+
+    def __str__(self):
+        return f"{self.code}"
+
+
 class Contract(models.Model):
     address = models.CharField(max_length=255, default="", db_index=True)
     blockchain = models.ForeignKey(
@@ -76,21 +88,28 @@ class ContractCalculator:
         self.contract = contract
 
 
-class ContractLink(TimeStampModel):
+class ContractCalculator:
+    def __init__(self, contract):
+        self.contract = contract
+
+
+class Position(TimeStampModel):
     contract = models.ForeignKey(
-        Contract, on_delete=models.CASCADE, related_name="contract_contractlinks"
+        Contract, on_delete=models.CASCADE, related_name="contract_positions"
     )
     wallet = models.ForeignKey(
-        Wallet, on_delete=models.CASCADE, related_name="wallet_contractlinks"
+        Wallet, on_delete=models.CASCADE, related_name="wallet_positions"
     )
+    quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
+    amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     is_active = models.BooleanField()
 
     class Meta:
-        verbose_name = "ContractLink"
-        verbose_name_plural = "ContractLinks"
+        verbose_name = "Position"
+        verbose_name_plural = "Positions"
 
     def __str__(self):
-        return f"{self.wallet} - {self.contract}"
+        return f"{self.wallet} - {self.contract} - {self.quantity}"
 
     def mark_as_active(self):
         self.is_active = True
@@ -99,31 +118,6 @@ class ContractLink(TimeStampModel):
     def mark_as_inactive(self):
         self.is_active = False
         self.save()
-
-
-class ContractLinkCalculator:
-    def __init__(self, contract_link):
-        self.contract_link = contract_link
-
-
-class ContractCalculator:
-    def __init__(self, contract):
-        self.contract = contract
-
-
-class Position(TimeStampModel):
-    contract_link = models.ForeignKey(
-        ContractLink, on_delete=models.CASCADE, related_name="contractlink_positions"
-    )
-    quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
-    amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-
-    class Meta:
-        verbose_name = "Position"
-        verbose_name_plural = "Positions"
-
-    def __str__(self):
-        return f"{self.contract_link} - {self.quantity}"
 
 
 class PositionCalculator:
@@ -147,6 +141,20 @@ class Transaction(TimeStampModel):
     date = models.DateTimeField(db_index=True)
     comment = models.TextField(default="")
     hash = models.CharField(max_length=255, default="", db_index=True)
+    against_contract = models.ForeignKey(
+        Contract,
+        on_delete=models.CASCADE,
+        related_name="counterpart_transactions",
+        blank=True,
+        null=True,
+    )
+    against_fiat = models.ForeignKey(
+        Fiat,
+        on_delete=models.CASCADE,
+        related_name="counterpart_fiats",
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         verbose_name = "Transaction"

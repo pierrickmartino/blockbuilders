@@ -60,17 +60,17 @@ $( function() {
                     <th>Actions</th>
                 </tr>
             </thead>
-            {% for contract_link in contract_links %}
+            {% for position in positions %}
             <tr>
                 <td class="is-vcentered">
-                    {{ contract_link.contract.name }}
+                    {{ position.contract.name }}
                 </td>
                 <td class="is-vcentered">
-                    {{ contract_link.contract.address }}
+                    {{ position.contract.address }}
                 </td>
                 <td class="is-vcentered">
                     <figure class="image is-32x32">
-                        <img src="{% static contract_link.contract.blockchain.icon %}">
+                        <img src="{% static position.contract.blockchain.icon %}">
                     </figure>
                     <!-- <button class="button is-success is-small">Success</span> -->
                 </td>
@@ -78,16 +78,16 @@ $( function() {
                     0
                 </td>
                 <td class="is-vcentered is-narrow">
-                    <!-- {% if contract_link.is_active %}
+                    <!-- {% if position.is_active %}
                     <button class="button is-danger is-outlined is-small">
-                        <span><a href="{% url 'disable_contract_link' contract_link.id %}" style="color:inherit">Disable</a></span>
+                        <span><a href="{% url 'disable_position' position.id %}" style="color:inherit">Disable</a></span>
                         <span class="icon is-small">
                             <i class="fas fa-toggle-off"></i>
                         </span>
                     </button>
                     {% else %}
                     <button class="button is-success is-outlined is-small">
-                        <span><a href="{% url 'enable_contract_link' contract_link.id %}" style="color:inherit">Enable</a></span>
+                        <span><a href="{% url 'enable_position' position.id %}" style="color:inherit">Enable</a></span>
                         <span class="icon is-small">
                             <i class="fas fa-toggle-on"></i>
                         </span>
@@ -101,7 +101,7 @@ $( function() {
                         </span>
                     </button>
                     <button class="button is-danger is-outlined is-small">
-                        <span><a href="{% url 'delete_contract_link' contract_link.id %}" style="color:inherit">Delete</a></span>
+                        <span><a href="{% url 'delete_position' position.id %}" style="color:inherit">Delete</a></span>
                         <span class="icon is-small">
                             <i class="fas fa-times"></i>
                         </span>
