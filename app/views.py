@@ -129,6 +129,10 @@ def resync_information_Wallet_by_id(request, wallet_id):
         if erc20.toAddress == wallet.address:
             transactionType = "BUY"
 
+        divider = 10
+        for x in range(1, int(erc20.tokenDecimal)):
+            divider = divider * 10
+
         try:
             contract = get_Contract_by_address(erc20.contractAddress)
             contract_link, contract_link_created = ContractLink.objects.get_or_create(
@@ -146,6 +150,7 @@ def resync_information_Wallet_by_id(request, wallet_id):
                 type = transactionType,
                 date = datetime.fromtimestamp(int(erc20.timeStamp)),
                 hash = erc20.hash,
+                quantity = (int(erc20.value) / divider)
             )
             transaction.save()
 
