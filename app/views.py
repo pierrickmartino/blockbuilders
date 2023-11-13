@@ -65,10 +65,12 @@ def get_Contract_by_address(contract_address):
 
 def get_Transactions_by_Wallet(wallet):
     positions = Position.objects.filter(wallet=wallet)
-    transactions = []
+    transaction_result = []
     for position in positions:
-        transactions.append(Transaction.objects.filter(position=position))
-    return transactions
+        transactions = Transaction.objects.filter(position=position)
+        for transaction in transactions :
+            transaction_result.append(transaction)
+    return transaction_result
 
 def get_Polygon_ERC20_Raw_by_Wallet_address(wallet_address):
     result = Polygon_ERC20_Raw.objects.filter(
@@ -163,22 +165,25 @@ def resync_information_Wallet_by_id(request, wallet_id):
             logger.info("Object does not exist : " + erc20.contractAddress)
 
     # 4. Create the transaction   
-            transaction, transaction_created = Transaction.objects.get_or_create(
-                position = position,
-                type = transactionType,
-                date = datetime.fromtimestamp(int(erc20.timeStamp)),
-                hash = erc20.hash,
-                quantity = (int(erc20.value) / divider),
-                against_fiat = fiat_USD
-            )
-            transaction.save()
+        transaction = Transaction.objects.create(
+            position = position,
+            type = transactionType,
+            date = datetime.fromtimestamp(int(erc20.timeStamp)),
+            hash = erc20.hash,
+            quantity = (int(erc20.value) / divider),
+            against_fiat = fiat_USD
+        )
+        transaction.save()
 
     transactions = get_Transactions_by_Wallet(wallet)
     for transaction in transactions:
         condition = Transaction.objects.filter(hash=transaction.hash)
+        # transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)
         if condition.count() == 2:
+        # if transaction_ref:
             transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)  # type: ignore
-            transaction.against_contract = transaction_ref[0].contract
+            position = Position.objects.get(id=transaction_ref[0].position.id)
+            transaction.against_contract = position.contract
             # transaction.cost = transaction_ref[0].quantity
             # if transaction.quantity == 0:
             #     transaction.price = 0  # type: ignore
