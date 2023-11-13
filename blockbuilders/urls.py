@@ -36,6 +36,7 @@ urlpatterns = [
         name="delete_wallet",
     ),
     path("wallet/<int:wallet_id>/", views.view_wallet, name="wallet"),
+    path("position/<int:position_id>/", views.view_position, name="position"),
     path("wallet_download_info/<int:wallet_id>/", views.get_information_Wallet_by_id, name="wallet_download_info"),
     path("wallet_resync_info/<int:wallet_id>/", views.resync_information_Wallet_by_id, name="wallet_resync_info"),
     path(

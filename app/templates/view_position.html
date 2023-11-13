@@ -1,0 +1,72 @@
+{% extends 'base_autocomplete.html' %}
+{% load static %}
+{% block title %}
+{{ wallet.address }}
+{% endblock %}
+
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-mobile is-vcentered">
+            <div class="column is-half">
+            </div>
+
+            <div class="column is-half has-text-right">
+                <h4 class="title is-4">{{ position }}</h4>
+            </div>
+
+        </div>
+
+
+    </div>
+    <br>
+
+    <div class="container">
+
+        <!-- <p>Solde: {{ monportefeuille.solde_actuel }}</p>
+        <p>Ouvert depuis le: {{ monportefeuille.date_creation }}</p> -->
+
+        <table class="table is-hoverable is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Address</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            {% for transaction in transactions %}
+            <tr>
+                <td class="is-vcentered">
+                    {{ transaction.date }}
+                </td>
+                <td>
+                    {% if transaction.type == 'BUY' %}
+                    <span class="tag is-success">{{ transaction.type }}</span>
+                    {% elif t.type == 'DEP' %}
+                    <span class="tag is-link">{{ transaction.type }}</span>
+                    {% else %}
+                    <span class="tag is-danger">{{ transaction.type }}</span>
+                    {% endif %}
+                </td>
+                <td class="is-vcentered">
+                    {{ transaction.hash }}
+                </td>
+                <td class="is-vcentered">
+                    {{ transaction.quantity|floatformat:"-6g" }}
+                </td>
+                <td class="is-vcentered">
+                    {{ transaction.price|floatformat:"-6g" }}
+                </td>
+
+            </tr>
+            {% endfor %}
+        </table>
+
+
+    </div>
+</section>
+
+{% endblock %}

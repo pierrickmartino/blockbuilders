@@ -305,6 +305,18 @@ def view_wallet(request, wallet_id):
         }
         return HttpResponse(template.render(context, request))
 
+@login_required
+def view_position(request, position_id):
+    position = Position.objects.get(id=position_id)
+    transactions = Transaction.objects.filter(position=position).order_by('-date')
+
+    template = loader.get_template("view_position.html")
+
+    context = {
+        "position": position,
+        "transactions": transactions,
+    }
+    return HttpResponse(template.render(context, request))
 
 def register(request):
     if request.method == "POST":
