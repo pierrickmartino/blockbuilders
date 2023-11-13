@@ -59,24 +59,28 @@ def home(request):
         }
         return render(request, "home.html", context)
 
+
 def get_Contract_by_address(contract_address):
     contract = Contract.objects.filter(address=contract_address).get()
     return contract
+
 
 def get_Transactions_by_Wallet(wallet):
     positions = Position.objects.filter(wallet=wallet)
     transaction_result = []
     for position in positions:
         transactions = Transaction.objects.filter(position=position)
-        for transaction in transactions :
+        for transaction in transactions:
             transaction_result.append(transaction)
     return transaction_result
+
 
 def get_Polygon_ERC20_Raw_by_Wallet_address(wallet_address):
     result = Polygon_ERC20_Raw.objects.filter(
         Q(fromAddress=wallet_address) | Q(toAddress=wallet_address)
     )
     return result
+
 
 @login_required
 def get_information_Wallet_by_id(request, wallet_id):
@@ -117,10 +121,11 @@ def get_information_Wallet_by_id(request, wallet_id):
 
     return redirect("home")
 
+
 @login_required
 def resync_information_Wallet_by_id(request, wallet_id):
     logger.info("Resync wallet " + str(wallet_id))
-    
+
     wallet = get_object_or_404(Wallet, id=wallet_id)
     erc20_list = get_Polygon_ERC20_Raw_by_Wallet_address(wallet.address)
     fiat_USD = get_object_or_404(Fiat, code="USD")
@@ -134,7 +139,7 @@ def resync_information_Wallet_by_id(request, wallet_id):
     for contract in contracts:
         contract.address = contract.address.lower()
         contract.save()
-    
+
     # 1. Clean existing information
     for position in positions:
         delete_Position_by_id(request, position.id)
@@ -154,53 +159,56 @@ def resync_information_Wallet_by_id(request, wallet_id):
 
         try:
             contract = get_Contract_by_address(erc20.contractAddress)
-    
-    # 3. Create the position  
+
+            # 3. Create the position
             position, position_created = Position.objects.get_or_create(
-            contract=contract, wallet=wallet, is_active=True,
+                contract=contract,
+                wallet=wallet,
+                is_active=True,
             )
             position.save()
 
-    # 4. Create the transaction   
+            # 4. Create the transaction
             transaction = Transaction.objects.create(
-                position = position,
-                type = transactionType,
-                date = datetime.fromtimestamp(int(erc20.timeStamp)),
-                hash = erc20.hash,
-                quantity = (int(erc20.value) / divider),
-                against_fiat = fiat_USD
+                position=position,
+                type=transactionType,
+                date=datetime.fromtimestamp(int(erc20.timeStamp)),
+                hash=erc20.hash,
+                quantity=(int(erc20.value) / divider),
+                against_fiat=fiat_USD,
             )
             transaction.save()
 
         except Contract.DoesNotExist:
             logger.info("Object does not exist : " + erc20.contractAddress)
 
-    
-
     transactions = get_Transactions_by_Wallet(wallet)
     for transaction in transactions:
         condition = Transaction.objects.filter(hash=transaction.hash)
         # transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)
         if condition.count() == 2:
-        # if transaction_ref:
+            # if transaction_ref:
             transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)  # type: ignore
             position = Position.objects.get(id=transaction_ref[0].position.id)
             transaction.against_contract = position.contract
-            # transaction.cost = transaction_ref[0].quantity
-            # if transaction.quantity == 0:
-            #     transaction.price = 0  # type: ignore
-            # else:
-            #     transaction.price = transaction_ref[0].quantity / transaction.quantity
+            transaction.cost_contract_based = transaction_ref[0].quantity
+            if transaction.quantity == 0:
+                transaction.price_contract_based = 0  # type: ignore
+            else:
+                transaction.price_contract_based = (
+                    transaction_ref[0].quantity / transaction.quantity
+                )
             transaction.save()
-        
 
     return redirect("home")
+
 
 @login_required
 def delete_Wallet_by_id(request, wallet_id):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     wallet.delete()
     return redirect("home")
+
 
 def delete_Position_by_id(request, position_id):
     position = get_object_or_404(Position, id=position_id)
@@ -239,7 +247,7 @@ def view_wallet(request, wallet_id):
                 contract=contract, wallet=wallet, is_active=True
             )
             position.save()
-            
+
             positions = Position.objects.filter(wallet=wallet)
             contracts = Contract.objects.all()
             template = loader.get_template("view_wallet.html")
