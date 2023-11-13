@@ -160,20 +160,22 @@ def resync_information_Wallet_by_id(request, wallet_id):
             contract=contract, wallet=wallet, is_active=True,
             )
             position.save()
-    
+
+    # 4. Create the transaction   
+            transaction = Transaction.objects.create(
+                position = position,
+                type = transactionType,
+                date = datetime.fromtimestamp(int(erc20.timeStamp)),
+                hash = erc20.hash,
+                quantity = (int(erc20.value) / divider),
+                against_fiat = fiat_USD
+            )
+            transaction.save()
+
         except Contract.DoesNotExist:
             logger.info("Object does not exist : " + erc20.contractAddress)
 
-    # 4. Create the transaction   
-        transaction = Transaction.objects.create(
-            position = position,
-            type = transactionType,
-            date = datetime.fromtimestamp(int(erc20.timeStamp)),
-            hash = erc20.hash,
-            quantity = (int(erc20.value) / divider),
-            against_fiat = fiat_USD
-        )
-        transaction.save()
+    
 
     transactions = get_Transactions_by_Wallet(wallet)
     for transaction in transactions:
