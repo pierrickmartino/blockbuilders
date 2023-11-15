@@ -6,7 +6,6 @@ todo
 - reprendre les best-practice pour mieux optimiser le code
 - utiliser des appels asynchrones
 - mieux nommer les urls et appels de page
-- calculer les informations relatives à une transaction
 - pouvoir extraire de la synchro les process relatifs à l'ajout d'une transaction
 - basculer du mode contract_based au mode usd_based
 - gérer les transactions qui ne sont pas 1 entrante vs 1 sortante
