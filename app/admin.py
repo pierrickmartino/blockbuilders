@@ -69,7 +69,7 @@ class Transaction_Admin(admin.ModelAdmin):
         "type",
         "quantity",
         "running_quantity",
-        "purchase_quantity",
+        "buy_quantity",
         "sell_quantity",
         "price",
         "price_contract_based",

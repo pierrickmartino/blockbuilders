@@ -35,7 +35,7 @@
                     <th>Type</th>
                     <th>Qty</th>
                     <th>Run.Qty</th>
-                    <th>Purc.Qty</th>
+                    <th>Buy.Qty</th>
                     <th>Sell.Qty</th>
                     <th>Price</th>
                     <th>Cost</th>
@@ -70,7 +70,7 @@
                     {{ transaction.running_quantity|floatformat:"-6g" }}
                 </td>
                 <td class="is-vcentered">
-                    {{ transaction.purchase_quantity|floatformat:"-6g" }}
+                    {{ transaction.buy_quantity|floatformat:"-6g" }}
                 </td>
                 <td class="is-vcentered">
                     {{ transaction.sell_quantity|floatformat:"-6g" }}

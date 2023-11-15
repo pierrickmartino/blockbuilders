@@ -199,14 +199,14 @@ def resync_information_Wallet_by_id(request, wallet_id):
     positions_by_Wallet = get_Positions_by_Wallet(wallet)
     for position in positions_by_Wallet:
         transactions_by_Position = get_Transactions_by_Position(position)
-        running_quantity, purchase_quantity, sell_quantity = 0, 0, 0
+        running_quantity, buy_quantity, sell_quantity = 0, 0, 0
 
         for transaction in transactions_by_Position:
             running_quantity += transaction.quantity if transaction.type == "BUY" else transaction.quantity * -1
-            purchase_quantity += transaction.quantity if transaction.type == "BUY" else 0
+            buy_quantity += transaction.quantity if transaction.type == "BUY" else 0
             sell_quantity += transaction.quantity if transaction.type == "SEL" else 0
             transaction.running_quantity = running_quantity
-            transaction.purchase_quantity = purchase_quantity
+            transaction.buy_quantity = buy_quantity
             transaction.sell_quantity = sell_quantity
             transaction.save()
         position.quantity = running_quantity
