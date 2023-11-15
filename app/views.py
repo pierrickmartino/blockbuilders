@@ -209,7 +209,7 @@ def delete_Wallet_by_id(request, wallet_id):
     wallet.delete()
     return redirect("home")
 
-
+@login_required
 def delete_Position_by_id(request, position_id):
     position = get_object_or_404(Position, id=position_id)
     wallet = position.wallet

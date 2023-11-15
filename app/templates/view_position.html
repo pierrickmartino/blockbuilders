@@ -30,15 +30,21 @@
         <table class="table is-hoverable is-fullwidth">
             <thead>
                 <tr>
+                    <th></th>
                     <th>Date</th>
                     <th>Type</th>
-                    <th>Address</th>
+                    <th>Info</th>
                     <th>Qty</th>
                     <th>Price</th>
                 </tr>
             </thead>
             {% for transaction in transactions %}
             <tr>
+                <td class="is-vcentered is-narrow">
+                    <span class="icon has-text-info" data-tooltip={{ transaction.hash }}>
+                        <i class="fas fa-info-circle" ></i>
+                      </span>
+                </td>
                 <td class="is-vcentered">
                     {{ transaction.date }}
                 </td>
@@ -52,7 +58,7 @@
                     {% endif %}
                 </td>
                 <td class="is-vcentered">
-                    {{ transaction.hash }}
+                    
                 </td>
                 <td class="is-vcentered">
                     {{ transaction.quantity|floatformat:"-6g" }}
