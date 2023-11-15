@@ -137,6 +137,8 @@ class Transaction(TimeStampModel):
     )
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
     running_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
+    purchase_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
+    sell_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
     price = models.DecimalField(max_digits=15, decimal_places=8, default=0)
     price_contract_based = models.DecimalField(max_digits=15, decimal_places=8, default=0)
     cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)

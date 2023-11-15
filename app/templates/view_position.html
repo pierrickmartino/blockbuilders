@@ -35,7 +35,11 @@
                     <th>Type</th>
                     <th>Qty</th>
                     <th>Run.Qty</th>
+                    <th>Purc.Qty</th>
+                    <th>Sell.Qty</th>
                     <th>Price</th>
+                    <th>Cost</th>
+                    <th></th>
                 </tr>
             </thead>
             {% for transaction in transactions %}
@@ -51,7 +55,9 @@
                 <td>
                     {% if transaction.type == 'BUY' %}
                     <span class="tag is-success">{{ transaction.type }}</span>
-                    {% elif t.type == 'DEP' %}
+                    {% elif transaction.type == 'DEP' %}
+                    <span class="tag is-link">{{ transaction.type }}</span>
+                    {% elif transaction.type == 'WTH' %}
                     <span class="tag is-link">{{ transaction.type }}</span>
                     {% else %}
                     <span class="tag is-danger">{{ transaction.type }}</span>
@@ -64,7 +70,19 @@
                     {{ transaction.running_quantity|floatformat:"-6g" }}
                 </td>
                 <td class="is-vcentered">
+                    {{ transaction.purchase_quantity|floatformat:"-6g" }}
+                </td>
+                <td class="is-vcentered">
+                    {{ transaction.sell_quantity|floatformat:"-6g" }}
+                </td>
+                <td class="is-vcentered">
                     {{ transaction.price_contract_based|floatformat:"-6g" }}
+                </td>
+                <td class="is-vcentered">
+                    {{ transaction.cost_contract_based|floatformat:"-2g" }}
+                </td>
+                <td class="is-vcentered is-narrow">
+                    {{ transaction.against_contract }}
                 </td>
 
             </tr>
