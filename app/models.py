@@ -145,6 +145,8 @@ class Transaction(TimeStampModel):
     cost_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     total_cost_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     avg_cost_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    capital_gain_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    capital_gain_percentage_contract_based = models.DecimalField(max_digits=15, decimal_places=8, default=0)
     date = models.DateTimeField(db_index=True)
     comment = models.TextField(default="")
     hash = models.CharField(max_length=255, default="", db_index=True)

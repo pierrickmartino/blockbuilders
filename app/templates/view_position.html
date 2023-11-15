@@ -95,7 +95,14 @@
                     {{ transaction.avg_cost_contract_based|floatformat:"-2g" }}
                 </td>
                 <td class="is-vcentered">
-                    0
+
+                    {% if transaction.capital_gain_percentage_contract_based == 0 %}
+                    <span></span>
+                    {% elif transaction.capital_gain_percentage_contract_based < 0 %}
+                    <span class="tag is-danger">{{ transaction.capital_gain_percentage_contract_based|floatformat:"-2g" }}%</span>
+                    {% else %}
+                    <span class="tag is-success">{{ transaction.capital_gain_percentage_contract_based|floatformat:"-2g" }}%</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

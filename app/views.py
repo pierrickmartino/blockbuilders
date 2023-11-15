@@ -1,3 +1,4 @@
+import decimal
 import logging, os
 from app.utils.polygon.models_polygon import Polygon_ERC20_Raw
 from app.utils.polygon.view_polygon import (
@@ -223,6 +224,8 @@ def resync_information_Wallet_by_id(request, wallet_id):
         running_quantity, buy_quantity, sell_quantity, total_cost, avg_cost = 0, 0, 0, 0, 0
 
         for transaction in transactions_by_Position:
+            capital_gain, capital_gain_perc = 0, 0
+
             logger.info(transaction)
             logger.info("running_quantity prev.:" + str(running_quantity))
             logger.info("transaction.cost_contract_based:" + str(transaction.cost_contract_based))
@@ -238,17 +241,25 @@ def resync_information_Wallet_by_id(request, wallet_id):
             sell_quantity += transaction.quantity if transaction.type == "SEL" else 0
             avg_cost = total_cost / buy_quantity
 
+            if transaction.type == "SEL" and avg_cost != 0:
+                capital_gain = transaction.cost_contract_based - transaction.quantity * avg_cost
+                capital_gain_perc = (transaction.price_contract_based - avg_cost) / avg_cost * decimal.Decimal(100)
+
             logger.info("running_quantity:" + str(running_quantity))
             logger.info("buy_quantity:" + str(buy_quantity))
             logger.info("sell_quantity:" + str(sell_quantity))
             logger.info("total_cost:" +  str(total_cost))
             logger.info("avg_cost:" + str(avg_cost))
+            logger.info("capital_gain:" + str(capital_gain))
+            logger.info("capital_gain_perc:" + str(capital_gain_perc))
 
             transaction.running_quantity = running_quantity
             transaction.buy_quantity = buy_quantity
             transaction.sell_quantity = sell_quantity
             transaction.total_cost_contract_based = total_cost
             transaction.avg_cost_contract_based = avg_cost
+            transaction.capital_gain_contract_based = capital_gain
+            transaction.capital_gain_percentage_contract_based = capital_gain_perc
 
             transaction.save()
             
