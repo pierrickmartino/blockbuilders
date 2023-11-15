@@ -13,7 +13,7 @@
                 <form method="POST">
                     {% csrf_token %}
                     <div class="field has-addons mb-2">
-                        <div class="control">
+                        <!-- <div class="control">
                             <input class="input" id="contracts" name="address" type="text" placeholder="Search a contract">
 <script> 
 $( function() { 
@@ -30,15 +30,16 @@ $( function() {
                         </div>
                         <div class="control">
                             <button type="submit" class="button is-dark">Search</button>
-                        </div>
+                        </div> -->
                     </div>
                 </form>
             </div>
-
+            {% with total_contract=wallet.wallet_positions.count %}
             <div class="column is-half has-text-right">
                 <h4 class="title is-4">{{ wallet.address }}</h4>
+                <h5 class="subtitle is-5"># Ctr : {{ total_contract }}</h5>
             </div>
-
+            {% endwith %}
         </div>
 
 
@@ -62,6 +63,7 @@ $( function() {
                 </tr>
             </thead>
             {% for position in positions %}
+            {% with total_transaction=position.position_transactions.count %}
             <tr>
                 <td class="is-vcentered">
                     {{ position.contract.name }}
@@ -76,7 +78,7 @@ $( function() {
                     <!-- <button class="button is-success is-small">Success</span> -->
                 </td>
                 <td class="is-vcentered">
-                    0
+                    {{ total_transaction }}
                 </td>
                 <td class="is-vcentered">
                     {{ position.quantity|floatformat:"-6g" }}
@@ -112,6 +114,7 @@ $( function() {
                     </button>
                 </td>
             </tr>
+            {% endwith %}
             {% endfor %}
         </table>
 

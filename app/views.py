@@ -195,23 +195,6 @@ def resync_information_Wallet_by_id(request, wallet_id):
         except Contract.DoesNotExist:
             logger.info("Object does not exist : " + erc20.contractAddress)
 
-    # 5. Calculate the running quantity for each position
-    positions_by_Wallet = get_Positions_by_Wallet(wallet)
-    for position in positions_by_Wallet:
-        transactions_by_Position = get_Transactions_by_Position(position)
-        running_quantity, buy_quantity, sell_quantity = 0, 0, 0
-
-        for transaction in transactions_by_Position:
-            running_quantity += transaction.quantity if transaction.type == "BUY" else transaction.quantity * -1
-            buy_quantity += transaction.quantity if transaction.type == "BUY" else 0
-            sell_quantity += transaction.quantity if transaction.type == "SEL" else 0
-            transaction.running_quantity = running_quantity
-            transaction.buy_quantity = buy_quantity
-            transaction.sell_quantity = sell_quantity
-            transaction.save()
-        position.quantity = running_quantity
-        position.save()
-
     transactions_by_wallet = get_Transactions_by_Wallet(wallet)
     for transaction in transactions_by_wallet:
         condition = Transaction.objects.filter(hash=transaction.hash)
@@ -229,6 +212,48 @@ def resync_information_Wallet_by_id(request, wallet_id):
                     transaction_ref[0].quantity / transaction.quantity
                 )
             transaction.save()
+
+    # 5. Calculate the running quantity for each position
+    positions_by_Wallet = get_Positions_by_Wallet(wallet)
+    logger.info("Running Quantity and Perf information calculation")
+    
+    for position in positions_by_Wallet:
+        logger.info(position)
+        transactions_by_Position = get_Transactions_by_Position(position)
+        running_quantity, buy_quantity, sell_quantity, total_cost, avg_cost = 0, 0, 0, 0, 0
+
+        for transaction in transactions_by_Position:
+            logger.info(transaction)
+            logger.info("running_quantity prev.:" + str(running_quantity))
+            logger.info("transaction.cost_contract_based:" + str(transaction.cost_contract_based))
+
+            if transaction.type == "BUY":
+                if running_quantity == 0:
+                    total_cost = transaction.cost_contract_based
+                else: 
+                    total_cost += transaction.cost_contract_based
+
+            running_quantity += transaction.quantity if transaction.type == "BUY" else transaction.quantity * -1
+            buy_quantity += transaction.quantity if transaction.type == "BUY" else 0
+            sell_quantity += transaction.quantity if transaction.type == "SEL" else 0
+            avg_cost = total_cost / buy_quantity
+
+            logger.info("running_quantity:" + str(running_quantity))
+            logger.info("buy_quantity:" + str(buy_quantity))
+            logger.info("sell_quantity:" + str(sell_quantity))
+            logger.info("total_cost:" +  str(total_cost))
+            logger.info("avg_cost:" + str(avg_cost))
+
+            transaction.running_quantity = running_quantity
+            transaction.buy_quantity = buy_quantity
+            transaction.sell_quantity = sell_quantity
+            transaction.total_cost_contract_based = total_cost
+            transaction.avg_cost_contract_based = avg_cost
+
+            transaction.save()
+            
+        position.quantity = running_quantity
+        position.save()
 
     return redirect("home")
 

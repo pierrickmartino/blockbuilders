@@ -41,8 +41,8 @@
             <thead>
                 <tr>
                     <th>Wallet</th>
-                    <th># Ctr</th>
                     <th># Trx</th>
+                    <th># Ctr</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -57,12 +57,7 @@
                     0
                 </td>
                 <td>
-                    {% if wallet.active_countract_counter %}
-                    {{ wallet.active_countract_counter }}
-                    {% else %}
-                    0
-                    {% endif %}
-                    / {{ total_contract }}
+                    {{ total_contract }}
                 </td>
                 <td class="is-vcentered">
                     {% if total_contract == wallet.active_countract_counter %}

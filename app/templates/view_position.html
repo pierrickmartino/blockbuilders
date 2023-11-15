@@ -13,7 +13,8 @@
             </div>
 
             <div class="column is-half has-text-right">
-                <h4 class="title is-4">{{ position }}</h4>
+                <h4 class="title is-4">{{ position.contract }} ({{ position.contract.symbol }})</h4>
+                <h5 class="subtitle is-5">{{ position.contract.address }}</h5>
             </div>
 
         </div>
@@ -35,11 +36,14 @@
                     <th>Type</th>
                     <th>Qty</th>
                     <th>Run.Qty</th>
-                    <th>Buy.Qty</th>
-                    <th>Sell.Qty</th>
+                    <!-- <th>Buy.Qty</th>
+                    <th>Sell.Qty</th> -->
                     <th>Price</th>
                     <th>Cost</th>
                     <th></th>
+                    <th>Tot.Cost</th>
+                    <th>Avg.Cost</th>
+                    <th>Cap.Gain</th>
                 </tr>
             </thead>
             {% for transaction in transactions %}
@@ -69,12 +73,12 @@
                 <td class="is-vcentered">
                     {{ transaction.running_quantity|floatformat:"-6g" }}
                 </td>
-                <td class="is-vcentered">
+                <!-- <td class="is-vcentered">
                     {{ transaction.buy_quantity|floatformat:"-6g" }}
                 </td>
                 <td class="is-vcentered">
                     {{ transaction.sell_quantity|floatformat:"-6g" }}
-                </td>
+                </td> -->
                 <td class="is-vcentered">
                     {{ transaction.price_contract_based|floatformat:"-6g" }}
                 </td>
@@ -84,7 +88,15 @@
                 <td class="is-vcentered is-narrow">
                     {{ transaction.against_contract.symbol }}
                 </td>
-
+                <td class="is-vcentered">
+                    {{ transaction.total_cost_contract_based|floatformat:"-2g" }}
+                </td>
+                <td class="is-vcentered">
+                    {{ transaction.avg_cost_contract_based|floatformat:"-2g" }}
+                </td>
+                <td class="is-vcentered">
+                    0
+                </td>
             </tr>
             {% endfor %}
         </table>
