@@ -69,9 +69,22 @@ def get_Transactions_by_Wallet(wallet):
     positions = Position.objects.filter(wallet=wallet)
     transaction_result = []
     for position in positions:
-        transactions = Transaction.objects.filter(position=position)
+        transactions = Transaction.objects.filter(position=position).order_by("-date")
         for transaction in transactions:
             transaction_result.append(transaction)
+    return transaction_result
+
+
+def get_Positions_by_Wallet(wallet):
+    positions = Position.objects.filter(wallet=wallet)
+    return positions
+
+
+def get_Transactions_by_Position(position):
+    transaction_result = []
+    transactions = Transaction.objects.filter(position=position).order_by("date")
+    for transaction in transactions:
+        transaction_result.append(transaction)
     return transaction_result
 
 
@@ -182,8 +195,24 @@ def resync_information_Wallet_by_id(request, wallet_id):
         except Contract.DoesNotExist:
             logger.info("Object does not exist : " + erc20.contractAddress)
 
-    transactions = get_Transactions_by_Wallet(wallet)
-    for transaction in transactions:
+    # 5. Calculate the running quantity for each position
+    positions_by_Wallet = get_Positions_by_Wallet(wallet)
+    for position in positions_by_Wallet:
+        transactions_by_Position = get_Transactions_by_Position(position)
+        running_quantity = 0
+        for transaction in transactions_by_Position:
+            running_quantity += (
+                transaction.quantity
+                if transaction.type == "BUY"
+                else transaction.quantity * -1
+            )
+            transaction.running_quantity = running_quantity
+            transaction.save()
+        position.quantity = running_quantity
+        position.save()
+
+    transactions_by_wallet = get_Transactions_by_Wallet(wallet)
+    for transaction in transactions_by_wallet:
         condition = Transaction.objects.filter(hash=transaction.hash)
         # transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)
         if condition.count() == 2:
@@ -208,6 +237,7 @@ def delete_Wallet_by_id(request, wallet_id):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     wallet.delete()
     return redirect("home")
+
 
 @login_required
 def delete_Position_by_id(request, position_id):
@@ -305,10 +335,11 @@ def view_wallet(request, wallet_id):
         }
         return HttpResponse(template.render(context, request))
 
+
 @login_required
 def view_position(request, position_id):
     position = Position.objects.get(id=position_id)
-    transactions = Transaction.objects.filter(position=position).order_by('-date')
+    transactions = Transaction.objects.filter(position=position).order_by("-date")
 
     template = loader.get_template("view_position.html")
 
@@ -317,6 +348,7 @@ def view_position(request, position_id):
         "transactions": transactions,
     }
     return HttpResponse(template.render(context, request))
+
 
 def register(request):
     if request.method == "POST":

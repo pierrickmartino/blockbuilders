@@ -136,6 +136,7 @@ class Transaction(TimeStampModel):
         max_length=3, choices=[(tag.name, tag.value) for tag in TypeTransaction]
     )
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
+    running_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
     price = models.DecimalField(max_digits=15, decimal_places=8, default=0)
     price_contract_based = models.DecimalField(max_digits=15, decimal_places=8, default=0)
     cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)

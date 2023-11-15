@@ -57,6 +57,7 @@ $( function() {
                     <th>Address</th>
                     <th>Blockchain</th>
                     <th>#</th>
+                    <th>Qty</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -74,8 +75,11 @@ $( function() {
                     </figure>
                     <!-- <button class="button is-success is-small">Success</span> -->
                 </td>
-                <td>
+                <td class="is-vcentered">
                     0
+                </td>
+                <td class="is-vcentered">
+                    {{ position.quantity|floatformat:"-6g" }}
                 </td>
                 <td class="is-vcentered is-narrow">
                     <!-- {% if position.is_active %}
