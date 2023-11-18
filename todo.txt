@@ -12,4 +12,6 @@ todo
 - améliorer l'entete des pages wallet / position / transaction
 - aligner blockchain sur la droite sur l'ecran wallet
 - restreindre la vision à un seul utilisateur
+
+done
 - implementer le retour à la page precedente
