@@ -231,13 +231,15 @@ def resync_information_Wallet_by_id(request, wallet_id):
             logger.info("transaction.cost_contract_based:" + str(transaction.cost_contract_based))
 
             if transaction.type == "BUY":
-                if running_quantity == 0:
+                if (running_quantity * transaction.cost_contract_based) < 1:
                     total_cost = transaction.cost_contract_based
+                    buy_quantity = transaction.quantity
                 else: 
                     total_cost += transaction.cost_contract_based
+                    buy_quantity += transaction.quantity
+            
 
             running_quantity += transaction.quantity if transaction.type == "BUY" else transaction.quantity * -1
-            buy_quantity += transaction.quantity if transaction.type == "BUY" else 0
             sell_quantity += transaction.quantity if transaction.type == "SEL" else 0
             avg_cost = total_cost / buy_quantity
 
