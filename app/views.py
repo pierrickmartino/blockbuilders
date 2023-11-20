@@ -196,12 +196,38 @@ def resync_information_Wallet_by_id(request, wallet_id):
         except Contract.DoesNotExist:
             logger.info("Object does not exist : " + erc20.contractAddress)
 
+    # 5. Aggregate transactions when not 1 vs 1
+    transactions_by_wallet_to_aggregate = get_Transactions_by_Wallet(wallet)
+    for transaction in transactions_by_wallet_to_aggregate:
+        condition = Transaction.objects.filter(hash=transaction.hash)
+        if condition.count() > 2:
+            logger.info("Transaction > 2")
+            
+            transaction_agg = Transaction.objects.create(
+                position=transaction.position,
+                date=transaction.date,
+                hash=transaction.hash,
+                against_fiat=transaction.against_fiat,
+            )
+            
+            transactions_to_aggregate = Transaction.objects.filter(hash=transaction.hash).filter(position=transaction.position)
+            quantity_agg = 0
+            for t_agg in transactions_to_aggregate:
+                logger.info(t_agg)
+                quantity_agg += t_agg.quantity if t_agg.type == "BUY" else t_agg.quantity * -1
+                t_agg.delete()
+
+            transaction_agg.type = "BUY" if quantity_agg > 0 else "SEL"
+            transaction_agg.quantity = abs(quantity_agg)
+            logger.info(transaction_agg)
+            transaction_agg.save()
+
+    # 6. Retrieve the contract against the transaction to calculate cost
     transactions_by_wallet = get_Transactions_by_Wallet(wallet)
     for transaction in transactions_by_wallet:
         condition = Transaction.objects.filter(hash=transaction.hash)
-        # transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)
         if condition.count() == 2:
-            # if transaction_ref:
+            logger.info("Transaction = 2")
             transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)  # type: ignore
             position = Position.objects.get(id=transaction_ref[0].position.id)
             transaction.against_contract = position.contract
@@ -214,7 +240,7 @@ def resync_information_Wallet_by_id(request, wallet_id):
                 )
             transaction.save()
 
-    # 5. Calculate the running quantity for each position
+    # 7. Calculate the running quantity for each position
     positions_by_Wallet = get_Positions_by_Wallet(wallet)
     logger.info("Running Quantity and Perf information calculation")
     
