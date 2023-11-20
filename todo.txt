@@ -3,6 +3,7 @@ todo
     top
         - gérer les transactions qui ne sont pas 1 entrante vs 1 sortante
         - basculer du mode contract_based au mode usd_based
+        - implement CoinGecko API V3 to retrieve historical price
     medium
         - utiliser docker pour le déploiement final
         - optimiser les appels en base de données
@@ -16,6 +17,7 @@ todo
         - récupérer les prix historiques
         - ajouter des contrats liés à des protocoles spécifiques (ex AAVE)
         - ajouter du cache sur les requêtes (ex Contract)
+        - récupérer toutes les plateformes dispo à partir de CoinGecko
     low
         - reprendre les best-practice pour mieux optimiser le code
         - aligner blockchain sur la droite sur l'ecran wallet

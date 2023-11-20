@@ -5,7 +5,12 @@
       "fields": {
         "name": "POLYGON",
         "icon": "img/polygon_POS-Icon.svg",
-        "is_active": true
+        "is_active": true,
+        "gecko_id": "polygon-pos",
+        "gecko_chain_identifier": 137,
+        "gecko_name": "Polygon POS",
+        "gecko_shortname": "MATIC",
+        "gecko_native_coin_id": "matic-network"
       }
     }
   ]

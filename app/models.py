@@ -45,6 +45,11 @@ class Blockchain(models.Model):
     )
     icon = models.CharField(max_length=255, default="")
     is_active = models.BooleanField()
+    gecko_id = models.CharField(max_length=255, default="")
+    gecko_chain_identifier = models.CharField(max_length=255, default="")
+    gecko_name = models.CharField(max_length=255, default="")
+    gecko_shortname = models.CharField(max_length=255, default="")
+    gecko_native_coin_id = models.CharField(max_length=255, default="")
 
     def __str__(self):
         return f"{self.name}"
