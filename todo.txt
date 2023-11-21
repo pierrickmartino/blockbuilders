@@ -7,7 +7,6 @@ todo
     medium
         - utiliser docker pour le déploiement final
         - optimiser les appels en base de données
-        - migrer la base de données sur postgreSQL
         - utiliser des appels asynchrones
         - mieux nommer les urls et appels de page
         - pouvoir extraire de la synchro les process relatifs à l'ajout d'une transaction

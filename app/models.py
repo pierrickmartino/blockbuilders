@@ -73,7 +73,7 @@ class Contract(models.Model):
         Blockchain, on_delete=models.DO_NOTHING, related_name="blockchain_contracts"
     )
     name = models.CharField(max_length=255, default="")
-    symbol = models.CharField(max_length=10, default="")
+    symbol = models.CharField(max_length=20, default="")
     price = models.DecimalField(max_digits=15, decimal_places=8, default=0)
     logo_uri = models.CharField(max_length=255, default="")
     decimals = models.IntegerField(default=0)
