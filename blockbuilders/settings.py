@@ -28,7 +28,9 @@ POLYGONSCAN_SECRET_KEY = config('POLYGONSCAN_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ["*"]
+# 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
+# For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
+ALLOWED_HOSTS = ['*']
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -90,12 +92,12 @@ WSGI_APPLICATION = "blockbuilders.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": config('SQL_ENGINE'),
-        "NAME": config('SQL_DATABASE'),
-        "USER": config('SQL_USER'),
-        "PASSWORD": config('SQL_PASSWORD'),
-        "HOST": config('SQL_HOST'),
-        "PORT": config('SQL_PORT'),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USERNAME"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOSTNAME"),
+        "PORT": config("DB_PORT", cast=int),
     }
 }
 
