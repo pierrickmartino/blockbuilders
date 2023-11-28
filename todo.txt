@@ -20,3 +20,4 @@ todo
     low
         - reprendre les best-practice pour mieux optimiser le code
         - aligner blockchain sur la droite sur l'ecran wallet
+        - créer une sorte de journal de bord (daily, weekly, monthly)
