@@ -14,3 +14,14 @@ https://polygonscan.com/
 https://polygonscan.com/tokentxns?a=
 https://polygonscan.com/token/
 https://polygonscan.com/tx/
+
+docker-compose build
+docker-compose run --rm web python manage.py migrate
+docker-compose up --build
+docker-compose -f docker-compose.prod.yml up --build
+
+docker ps
+docker exec -it XXXXXXXX bash
+
+thx !!!
+https://dev.to/documatic/start-a-production-ready-dockerized-django-project-5eop

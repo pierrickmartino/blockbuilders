@@ -1,4 +1,4 @@
-from blockbuilders.settings import POLYGONSCAN_API_KEY
+from blockbuilders.settings.base import POLYGONSCAN_API_KEY
 from polygonscan import PolygonScan
 
 

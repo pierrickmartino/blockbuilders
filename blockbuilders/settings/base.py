@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 from decouple import config
 
@@ -130,14 +131,23 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
+# MEDIA_URL = "media/"
+# MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
+
 STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "productionfiles"
-STATICFILES_DIRS = ["app/static"]
+# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "app/static"),
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Celery
+CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = config("REDIS_BACKEND")
 
 # Login & Logout URLs
 LOGIN_URL = "/login/"
