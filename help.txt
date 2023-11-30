@@ -23,6 +23,11 @@ docker-compose -f docker-compose.prod.yml up --build
 docker ps
 docker exec -it XXXXXXXX bash
 
+for mac only
+chmod +x entrypoint.sh
+
 thx !!!
 https://dev.to/documatic/start-a-production-ready-dockerized-django-project-5eop
 https://github.com/vikdiesel/admin-one-bulma-dashboard/blob/master/src/html/index.html
+
+Icon : https://cdn.jsdelivr.net/npm/@mdi/font@4.9.95/css/materialdesignicons.min.css
