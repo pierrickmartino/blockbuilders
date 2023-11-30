@@ -25,3 +25,4 @@ docker exec -it XXXXXXXX bash
 
 thx !!!
 https://dev.to/documatic/start-a-production-ready-dockerized-django-project-5eop
+https://github.com/vikdiesel/admin-one-bulma-dashboard/blob/master/src/html/index.html
