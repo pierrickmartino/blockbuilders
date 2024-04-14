@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
@@ -21,37 +22,73 @@ from app import views
 
 
 urlpatterns = [
-    # path('admin/', admin.site.urls),
-    # path('', include('poc.urls'))
-    path("", views.home, name="home"),
+    # GLOBAL
+    path("", views.dashboard, name="dashboard"),
     path("__debug__/", include("debug_toolbar.urls")),
+    path("admin/", admin.site.urls),
+    # AUTHENTICATION / USER
     path("login/", auth_views.LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
-    path("home/", views.home, name="home"),
     path("register/", views.register, name="register"),
-    path("admin/", admin.site.urls),
+    path("profile/", views.profile, name="profile"),
+    # DASHBOARD
+    path("dashboard/", views.dashboard, name="dashboard"),
+    # BLOCKCHAIN
+    path("blockchains/", views.blockchains, name="blockchains"),
+    # CONTRACT
+    path("contracts/", views.contracts, name="contracts"),
+    path("contracts/<int:page>", views.contracts_paginated, name="contracts-by-page"),
+    # WALLET
+    path("wallets/", views.wallets, name="wallets"),
     path(
         "delete_wallet/<int:wallet_id>/",
         views.delete_Wallet_by_id,
         name="delete_wallet",
     ),
-    path("wallet/<int:wallet_id>/", views.view_wallet, name="wallet"),
-    path("position/<int:position_id>/", views.view_position, name="position"),
-    path("wallet_download_info/<int:wallet_id>/", views.get_information_Wallet_by_id, name="wallet_download_info"),
-    path("wallet_resync_info/<int:wallet_id>/", views.resync_information_Wallet_by_id, name="wallet_resync_info"),
+    path(
+        "wallet/<int:wallet_id>/positions/<int:page>",
+        views.wallet_positions_paginated,
+        name="wallet-positions-by-page",
+    ),
+    path(
+        "wallet/<int:wallet_id>/refresh_price/",
+        views.refresh_wallet_position_price,
+        name="refresh_wallet_position_price",
+    ),
+    path(
+        "wallet_download_info/<int:wallet_id>/",
+        views.get_information_Wallet_by_id,
+        name="wallet_download_info",
+    ),
+    path(
+        "wallet_resync_info/<int:wallet_id>/",
+        views.resync_information_Wallet_by_id,
+        name="wallet_resync_info",
+    ),
+    # POSITION
+    path("positions/", views.positions, name="positions"),
+    path("positions/<int:page>", views.positions_paginated, name="positions-by-page"),
+    path(
+        "position/<int:position_id>/transactions/<int:page>",
+        views.position_transactions_paginated,
+        name="position-transactions-by-page",
+    ),
     path(
         "delete_position/<int:position_id>/",
         views.delete_Position_by_id,
         name="delete_position",
     ),
+
+    # TRANSACTION
+    path("transactions/", views.transactions, name="transactions"),
     path(
-        "enable _position/<int:position_id>/",
-        views.enable_Position_by_id,
-        name="enable_position",
+        "transactions/<int:page>",
+        views.transactions_paginated,
+        name="transactions-by-page",
     ),
     path(
-        "disable_position/<int:position_id>/",
-        views.disable_Position_by_id,
-        name="disable_position",
+        "delete_wallet/<int:wallet_id>/",
+        views.delete_Wallet_by_id,
+        name="delete_wallet",
     ),
 ]

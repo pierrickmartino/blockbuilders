@@ -27,38 +27,165 @@ logger.info("Number of CPU : " + str(os.cpu_count()))
 
 # Views
 @login_required
-def home(request):
+def dashboard(request):
+    context = {
+        "empty": "dashboard",
+    }
+    return render(request, "dashboard.html", context)
+
+
+@login_required
+def profile(request):
+    context = {
+        "empty": "profile",
+    }
+    return render(request, "profile.html", context)
+
+
+@login_required
+def contracts(request):
+    contracts = Contract.objects.all()[:20]
+    context = {
+        "contracts": contracts,
+    }
+    return render(request, "contracts.html", context)
+
+
+@login_required
+def contracts_paginated(request, page):
+    contracts = Contract.objects.all().order_by("name")
+    paginator = Paginator(contracts, per_page=10)
+    page_contracts = paginator.get_page(page)
+    page_contracts.adjusted_elided_pages = paginator.get_elided_page_range(page)
+    context = {
+        "page_contracts": page_contracts,
+    }
+    return render(request, "contracts.html", context)
+
+
+@login_required
+def wallets(request):
     if request.method == "POST":
         form = WalletForm(request.POST or None)
 
         if form.is_valid():
             address = form.cleaned_data["address"]
+            name = form.cleaned_data["name"]
             user = request.user
             wallet = Wallet.objects.create(
-                address=address,
+                address=address.lower(),
+                name=name,
                 user=user,
             )
             wallet.save()
 
             wallets = Wallet.objects.all()
-            blockchains = Blockchain.objects.all()
+            # blockchains = Blockchain.objects.all()
 
             logger.info("New wallet is added")
 
             context = {
                 "wallets": wallets,
-                "blockchains": blockchains,
+                # "blockchains": blockchains,
             }
-            return render(request, "home.html", context)
+            return render(request, "wallets.html", context)
     else:
         wallets = Wallet.objects.all()
-        blockchains = Blockchain.objects.all()
+        # blockchains = Blockchain.objects.all()
 
         context = {
             "wallets": wallets,
-            "blockchains": blockchains,
+            # "blockchains": blockchains,
         }
-        return render(request, "home.html", context)
+        return render(request, "wallets.html", context)
+
+
+@login_required
+def blockchains(request):
+    blockchains = Blockchain.objects.all()
+    context = {
+        "blockchains": blockchains,
+    }
+    return render(request, "blockchains.html", context)
+
+
+@login_required
+def positions(request):
+    positions = Position.objects.all()
+    context = {
+        "positions": positions,
+    }
+    return render(request, "positions.html", context)
+
+
+@login_required
+def positions_paginated(request, page):
+    positions = Position.objects.all().order_by("contract")
+    paginator = Paginator(positions, per_page=10)
+    page_positions = paginator.get_page(page)
+    page_positions.adjusted_elided_pages = paginator.get_elided_page_range(page)
+    context = {
+        "page_positions": page_positions,
+    }
+    return render(request, "positions.html", context)
+
+
+@login_required
+def transactions(request):
+    transactions = Transaction.objects.all()
+    context = {
+        "transactions": transactions,
+    }
+    return render(request, "transactions.html", context)
+
+
+@login_required
+def transactions_paginated(request, page):
+    transactions = Transaction.objects.all().order_by("-date")
+    paginator = Paginator(transactions, per_page=10)
+    page_transactions = paginator.get_page(page)
+    page_transactions.adjusted_elided_pages = paginator.get_elided_page_range(page)
+    context = {
+        "page_transactions": page_transactions,
+    }
+    return render(request, "transactions.html", context)
+
+
+@login_required
+def wallet_positions_paginated(request, wallet_id, page):
+    wallet = Wallet.objects.get(id=wallet_id)
+    positions = Position.objects.filter(wallet=wallet).order_by("-amount")
+    paginator = Paginator(positions, per_page=10)
+    page_positions = paginator.get_page(page)
+    page_positions.adjusted_elided_pages = paginator.get_elided_page_range(page)
+    context = {
+        "page_positions": page_positions,
+        "wallet":wallet,
+    }
+    return render(request, "positions.html", context)
+
+
+@login_required
+def position_transactions_paginated(request, position_id, page):
+    position = Position.objects.get(id=position_id)
+    contract = Contract.objects.get(id=position.contract.id)
+    wallet = Wallet.objects.get(id=position.wallet.id)
+    transactions = Transaction.objects.filter(position=position).order_by("-date")
+    paginator = Paginator(transactions, per_page=10)
+    page_transactions = paginator.get_page(page)
+    page_transactions.adjusted_elided_pages = paginator.get_elided_page_range(page)
+
+    reference_avg_cost = transactions.first().avg_cost_contract_based
+    performance = (contract.price - reference_avg_cost) / reference_avg_cost * 100
+
+    context = {
+        "page_transactions": page_transactions,
+        "position":position,
+        "wallet":wallet,
+        "contract":contract,
+        "performance":performance,
+    }
+    return render(request, "transactions.html", context)
 
 
 def get_Contract_by_address(contract_address):
@@ -424,7 +551,7 @@ def register(request):
             password = form.cleaned_data.get("password1")
             user = authenticate(username=username, password=password)
             login(request, user)
-            return redirect("home")
+            return redirect("dashboard")
     else:
         form = UserCreationForm()
     return render(request, "registration/register.html", {"form": form})

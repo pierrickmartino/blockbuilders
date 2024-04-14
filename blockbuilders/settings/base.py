@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "debug_toolbar",
     "blockbuilders",
-    "app"
+    "app",
+    "celery",
 ]
 
 MIDDLEWARE = [
@@ -151,7 +152,7 @@ CELERY_RESULT_BACKEND = config("REDIS_BACKEND")
 
 # Login & Logout URLs
 LOGIN_URL = "/login/"
-LOGIN_REDIRECT_URL = "/home/"
+LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/login/"
 
 # Logging
