@@ -10,6 +10,7 @@ from app.utils.utils import find_between_strings
 logger = logging.getLogger("blockbuilders")
 
 from django.db.models import Count, Q
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import get_object_or_404, render, redirect
