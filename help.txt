@@ -18,7 +18,12 @@ https://polygonscan.com/tx/
 docker-compose build
 docker-compose run --rm web python manage.py migrate
 docker-compose up --build
+
 docker-compose -f docker-compose.prod.yml up --build
+docker-compose run --rm web python manage.py createsuperuser
+docker-compose run --rm web python manage.py loaddata blockchains.json
+docker-compose run --rm web python manage.py loaddata fiats.json
+docker-compose run --rm web python manage.py loaddata contracts_polygon.json
 
 docker ps
 docker exec -it XXXXXXXX bash
