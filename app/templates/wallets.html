@@ -57,7 +57,6 @@
           <table class="table is-fullwidth is-striped is-hoverable is-sortable is-fullwidth">
             <thead>
               <tr>
-                <th></th>
                 <th>Address</th>
                 <th>Name</th>
                 <th>Balance</th>
@@ -71,12 +70,7 @@
               {% if wallets %}
                 {% for wallet in wallets %}
                 <tr>
-                  <td class="is-image-cell">
-                    <div class="image">
-
-                    </div>
-                  </td>
-                  <td data-label="Address">{{ wallet.address }}</td>
+                  <td data-label="Address">{{ wallet.address|truncatechars:35 }}</td>
                   <td data-label="Name">{{ wallet.name }}</td>
                   <td data-label="Balance">{{ wallet.balance|floatformat:"-2g" }}</td>
                   <td data-label="NumPositions">{{ wallet.wallet_positions.count }}</td>
@@ -106,7 +100,7 @@
                 {% endfor %}
               {% else %}  
               <tr class="is-empty">
-                <td colspan="8">
+                <td colspan="7">
                   <section class="section">
                     <div class="content has-text-grey has-text-centered">
                       <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
