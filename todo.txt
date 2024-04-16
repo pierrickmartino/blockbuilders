@@ -3,9 +3,7 @@ todo
     urgent
         - gérer les transactions qui ne sont pas 1 entrante vs 1 sortante
         - basculer du mode contract_based au mode usd_based
-        - réparer la page position lorsque l'on a pas encore de positions
     medium
-        - faire fonctionner la page de login
         - utiliser docker pour le déploiement final
         - optimiser les appels en base de données
         - utiliser des appels asynchrones
