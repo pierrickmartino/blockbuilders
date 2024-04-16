@@ -25,6 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 POLYGONSCAN_API_KEY = config('POLYGONSCAN_API_KEY')
 POLYGONSCAN_SECRET_KEY = config('POLYGONSCAN_SECRET_KEY')
+BINANCE_API_KEY = config('BINANCE_API_KEY')
+BINANCE_SECRET_KEY = config('BINANCE_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)

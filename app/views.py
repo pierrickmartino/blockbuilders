@@ -1,15 +1,29 @@
+import asyncio
 import decimal
 import logging, os
+import time
 from app.utils.polygon.models_polygon import Polygon_ERC20_Raw
 from app.utils.polygon.view_polygon import (
     get_erc20_transactions_by_wallet,
     get_erc20_transactions_by_wallet_and_contract,
 )
+from app.utils.market_data import get_crypto_price
 from app.utils.utils import find_between_strings
+from app.tasks import (
+    aggregate_transactions_task,
+    calculate_cost_transaction_task,
+    calculate_running_quantity_transaction_task,
+    clean_transaction_task,
+    create_erc20_process_task,
+    create_transactions_from_erc20_task,
+    delete_position_task,
+    delete_wallet_task,
+    get_erc20_transactions_by_wallet_task,
+)
 
 logger = logging.getLogger("blockbuilders")
 
-from django.db.models import Count, Q
+from django.db.models import Sum, Q
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.template import loader
@@ -22,6 +36,10 @@ from app.forms import ContractForm, WalletForm
 from app.models import Blockchain, Contract, Fiat, Position, Transaction, Wallet
 
 from datetime import datetime
+
+from aiohttp import ClientSession
+from asgiref.sync import sync_to_async
+from celery import chain
 
 logger.info("Number of CPU : " + str(os.cpu_count()))
 
@@ -161,7 +179,7 @@ def wallet_positions_paginated(request, wallet_id, page):
     page_positions.adjusted_elided_pages = paginator.get_elided_page_range(page)
     context = {
         "page_positions": page_positions,
-        "wallet":wallet,
+        "wallet": wallet,
     }
     return render(request, "positions.html", context)
 
@@ -181,10 +199,10 @@ def position_transactions_paginated(request, position_id, page):
 
     context = {
         "page_transactions": page_transactions,
-        "position":position,
-        "wallet":wallet,
-        "contract":contract,
-        "performance":performance,
+        "position": position,
+        "wallet": wallet,
+        "contract": contract,
+        "performance": performance,
     }
     return render(request, "transactions.html", context)
 
@@ -227,54 +245,24 @@ def get_Polygon_ERC20_Raw_by_Wallet_address(wallet_address):
 @login_required
 def get_information_Wallet_by_id(request, wallet_id):
     wallet = get_object_or_404(Wallet, id=wallet_id)
-    result = get_erc20_transactions_by_wallet(wallet.address)
 
     # Clean existing ERC20 transactions for this Wallet
     # todo : replace by get or update to optimize data queries
     erc20_existing = get_Polygon_ERC20_Raw_by_Wallet_address(wallet.address)
     erc20_existing.delete()
 
-    for erc20 in result:
-        divider = 10
-        for x in range(1, int(erc20["tokenDecimal"])):
-            divider = divider * 10
+    chained_task = chain(
+        get_erc20_transactions_by_wallet_task.s(wallet.address)
+        | create_erc20_process_task.s()
+    )
+    result = chained_task.apply_async()
 
-        erc20_raw = Polygon_ERC20_Raw.objects.create(
-            blockNumber=erc20["blockNumber"],
-            timeStamp=erc20["timeStamp"],
-            hash=erc20["hash"],
-            nonce=erc20["nonce"],
-            blockHash=erc20["blockHash"],
-            fromAddress=erc20["from"],
-            toAddress=erc20["to"],
-            contractAddress=erc20["contractAddress"],
-            value=erc20["value"],
-            tokenName=erc20["tokenName"],
-            tokenDecimal=erc20["tokenDecimal"],
-            transactionIndex=erc20["transactionIndex"],
-            gas=erc20["gas"],
-            gasPrice=erc20["gasPrice"],
-            gasUsed=erc20["gasUsed"],
-            cumulativeGasUsed=erc20["cumulativeGasUsed"],
-            input=erc20["input"],
-            confirmations=erc20["confirmations"],
-        )
-        erc20_raw.save()
-
-    return redirect("home")
+    return redirect("wallets")
 
 
 @login_required
 def resync_information_Wallet_by_id(request, wallet_id):
     logger.info("Resync wallet " + str(wallet_id))
-
-    wallet = get_object_or_404(Wallet, id=wallet_id)
-    erc20_list = get_Polygon_ERC20_Raw_by_Wallet_address(wallet.address)
-    fiat_USD = get_object_or_404(Fiat, code="USD")
-
-    logger.info("Ready to sync " + str(len(erc20_list)) + " transactions ERC20")
-
-    positions = Position.objects.filter(wallet=wallet)
 
     # 0. Clean contracts addresses
     contracts = Contract.objects.all()
@@ -282,164 +270,33 @@ def resync_information_Wallet_by_id(request, wallet_id):
         contract.address = contract.address.lower()
         contract.save()
 
-    # 1. Clean existing information
-    for position in positions:
-        delete_Position_by_id(request, position.id)
+    chained_task = chain(
+        clean_transaction_task.s(wallet_id)
+        | create_transactions_from_erc20_task.s()
+        | aggregate_transactions_task.s()
+        | calculate_cost_transaction_task.s()
+        | calculate_running_quantity_transaction_task.s()
+    )
+    result = chained_task.apply_async()
 
-    # 2. Map existing contract list with erc20 transaction data and create Position
-    for erc20 in erc20_list:
-        logger.info("Process " + erc20.hash)
-        transactionType = "BUY"
-        if erc20.fromAddress == wallet.address:
-            transactionType = "SEL"
-        if erc20.toAddress == wallet.address:
-            transactionType = "BUY"
-
-        divider = 10
-        for x in range(1, int(erc20.tokenDecimal)):
-            divider = divider * 10
-
-        try:
-            contract = get_Contract_by_address(erc20.contractAddress)
-
-            # 3. Create the position
-            position, position_created = Position.objects.get_or_create(
-                contract=contract,
-                wallet=wallet,
-                is_active=True,
-            )
-            position.save()
-
-            # 4. Create the transaction
-            transaction = Transaction.objects.create(
-                position=position,
-                type=transactionType,
-                date=datetime.fromtimestamp(int(erc20.timeStamp)),
-                hash=erc20.hash,
-                quantity=(int(erc20.value) / divider),
-                against_fiat=fiat_USD,
-            )
-            transaction.save()
-
-        except Contract.DoesNotExist:
-            logger.info("Object does not exist : " + erc20.contractAddress)
-
-    # 5. Aggregate transactions when not 1 vs 1
-    transactions_by_wallet_to_aggregate = get_Transactions_by_Wallet(wallet)
-    for transaction in transactions_by_wallet_to_aggregate:
-        condition = Transaction.objects.filter(hash=transaction.hash)
-        if condition.count() > 2:
-            logger.info("Transaction > 2")
-            
-            transaction_agg = Transaction.objects.create(
-                position=transaction.position,
-                date=transaction.date,
-                hash=transaction.hash,
-                against_fiat=transaction.against_fiat,
-            )
-            
-            transactions_to_aggregate = Transaction.objects.filter(hash=transaction.hash).filter(position=transaction.position)
-            quantity_agg = 0
-            for t_agg in transactions_to_aggregate:
-                logger.info(t_agg)
-                quantity_agg += t_agg.quantity if t_agg.type == "BUY" else t_agg.quantity * -1
-                t_agg.delete()
-
-            transaction_agg.type = "BUY" if quantity_agg > 0 else "SEL"
-            transaction_agg.quantity = abs(quantity_agg)
-            logger.info(transaction_agg)
-            transaction_agg.save()
-
-    # 6. Retrieve the contract against the transaction to calculate cost
-    transactions_by_wallet = get_Transactions_by_Wallet(wallet)
-    for transaction in transactions_by_wallet:
-        condition = Transaction.objects.filter(hash=transaction.hash)
-        if condition.count() == 2:
-            logger.info("Transaction = 2")
-            transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)  # type: ignore
-            position = Position.objects.get(id=transaction_ref[0].position.id)
-            transaction.against_contract = position.contract
-            transaction.cost_contract_based = transaction_ref[0].quantity
-            if transaction.quantity == 0:
-                transaction.price_contract_based = 0  # type: ignore
-            else:
-                transaction.price_contract_based = (
-                    transaction_ref[0].quantity / transaction.quantity
-                )
-            transaction.save()
-
-    # 7. Calculate the running quantity for each position
-    positions_by_Wallet = get_Positions_by_Wallet(wallet)
-    logger.info("Running Quantity and Perf information calculation")
-    
-    for position in positions_by_Wallet:
-        logger.info(position)
-        transactions_by_Position = get_Transactions_by_Position(position)
-        running_quantity, buy_quantity, sell_quantity, total_cost, avg_cost = 0, 0, 0, 0, 0
-
-        for transaction in transactions_by_Position:
-            capital_gain, capital_gain_perc = 0, 0
-
-            logger.info(transaction)
-            logger.info("running_quantity prev.:" + str(running_quantity))
-            logger.info("transaction.cost_contract_based:" + str(transaction.cost_contract_based))
-
-            if transaction.type == "BUY":
-                if (running_quantity * transaction.cost_contract_based) < 1:
-                    total_cost = transaction.cost_contract_based
-                    buy_quantity = transaction.quantity
-                else: 
-                    total_cost += transaction.cost_contract_based
-                    buy_quantity += transaction.quantity
-            
-
-            running_quantity += transaction.quantity if transaction.type == "BUY" else transaction.quantity * -1
-            sell_quantity += transaction.quantity if transaction.type == "SEL" else 0
-            avg_cost = total_cost / buy_quantity
-
-            if transaction.type == "SEL" and avg_cost != 0:
-                capital_gain = transaction.cost_contract_based - transaction.quantity * avg_cost
-                capital_gain_perc = (transaction.price_contract_based - avg_cost) / avg_cost * decimal.Decimal(100)
-
-            logger.info("running_quantity:" + str(running_quantity))
-            logger.info("buy_quantity:" + str(buy_quantity))
-            logger.info("sell_quantity:" + str(sell_quantity))
-            logger.info("total_cost:" +  str(total_cost))
-            logger.info("avg_cost:" + str(avg_cost))
-            logger.info("capital_gain:" + str(capital_gain))
-            logger.info("capital_gain_perc:" + str(capital_gain_perc))
-
-            transaction.running_quantity = running_quantity
-            transaction.buy_quantity = buy_quantity
-            transaction.sell_quantity = sell_quantity
-            transaction.total_cost_contract_based = total_cost
-            transaction.avg_cost_contract_based = avg_cost
-            transaction.capital_gain_contract_based = capital_gain
-            transaction.capital_gain_percentage_contract_based = capital_gain_perc
-
-            transaction.save()
-            
-        position.quantity = running_quantity
-        position.save()
-
-    return redirect("home")
+    return redirect("wallets")
 
 
 @login_required
 def delete_Wallet_by_id(request, wallet_id):
-    wallet = get_object_or_404(Wallet, id=wallet_id)
-    wallet.delete()
-    return redirect("home")
+    result = delete_wallet_task.delay(wallet_id, 100)
+    return redirect("wallets")
+    # return HttpResponse(f"Task triggered. Task ID: {result.id}")
+    # return JsonResponse({'task_id': str(result)})
 
 
 @login_required
 def delete_Position_by_id(request, position_id):
-    position = get_object_or_404(Position, id=position_id)
-    wallet = position.wallet
-    position.delete()
-    return redirect("wallet", wallet_id=wallet.id)
+    result = delete_position_task.delay(position_id, 100)
+    return redirect("wallets")
 
 
+# todo : still needed ?
 @login_required
 def enable_Position_by_id(request, position_id):
     position = get_object_or_404(Position, id=position_id)
@@ -448,6 +305,7 @@ def enable_Position_by_id(request, position_id):
     return redirect("wallet", wallet_id=wallet.id)
 
 
+# todo : still needed ?
 @login_required
 def disable_Position_by_id(request, position_id):
     position = get_object_or_404(Position, id=position_id)
@@ -456,6 +314,7 @@ def disable_Position_by_id(request, position_id):
     return redirect("wallet", wallet_id=wallet.id)
 
 
+# todo : still needed ?
 @login_required
 def view_wallet(request, wallet_id):
     wallet = Wallet.objects.get(id=wallet_id)
@@ -529,6 +388,7 @@ def view_wallet(request, wallet_id):
         return HttpResponse(template.render(context, request))
 
 
+# todo : still needed ?
 @login_required
 def view_position(request, position_id):
     position = Position.objects.get(id=position_id)
@@ -556,3 +416,79 @@ def register(request):
     else:
         form = UserCreationForm()
     return render(request, "registration/register.html", {"form": form})
+
+
+@sync_to_async
+def async_get_position_by_id(position_id):
+    position = get_object_or_404(Position, id=position_id)
+    return position
+
+
+@sync_to_async
+def async_get_position_by_wallet_id(wallet_id):
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+    positions = Position.objects.filter(wallet=wallet)
+    positions_list = []
+    for position in positions:
+        positions_list.append(position)
+    return positions_list
+
+
+@sync_to_async
+def async_get_symbol_by_position(position):
+    symbol = position.contract.symbol + "/USDT"
+    return symbol
+
+
+@sync_to_async
+def async_calculate_total_wallet(wallet_id):
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+    balance = Wallet.objects.filter(id__exact=wallet_id).aggregate(
+        Sum("wallet_positions__amount", default=0)
+    )
+    wallet.balance = balance["wallet_positions__amount__sum"]
+    wallet.save()
+    return wallet
+
+
+async def refresh_wallet_position_price(request, wallet_id):
+    print("refresh_wallet_position_price for wallet " + str(wallet_id))
+
+    for position in await async_get_position_by_wallet_id(wallet_id):
+        start_time = time.time()
+        symbol = await async_get_symbol_by_position(position)
+        if symbol != "USDT/USDT":
+            task = asyncio.create_task(get_price_from_market(symbol))
+            await task
+
+            print(
+                f"Fetch total {symbol} urls and process takes {time.time() - start_time} seconds"
+            )
+
+            await set_price(position.contract, task.result()[0])
+            await calculate_position_amount(position)
+
+    await async_calculate_total_wallet(wallet_id)
+
+    return redirect("wallets")
+
+
+@sync_to_async
+def set_price(contract, price):
+    contract.price = price
+    contract.save()
+
+
+@sync_to_async
+def calculate_position_amount(position):
+    position.amount = decimal.Decimal(position.contract.price) * position.quantity
+    position.save()
+
+
+async def get_price_from_market(symbol):
+    tasks = []
+    async with ClientSession() as session:
+        task = asyncio.ensure_future(get_crypto_price(symbol))
+        tasks.append(task)
+        responses = await asyncio.gather(*tasks)
+    return responses
