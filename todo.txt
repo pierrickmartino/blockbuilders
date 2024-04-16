@@ -1,10 +1,11 @@
 
 todo
-    top
+    urgent
         - gérer les transactions qui ne sont pas 1 entrante vs 1 sortante
         - basculer du mode contract_based au mode usd_based
-        - implement CoinGecko API V3 to retrieve historical price
+        - réparer la page position lorsque l'on a pas encore de positions
     medium
+        - faire fonctionner la page de login
         - utiliser docker pour le déploiement final
         - optimiser les appels en base de données
         - utiliser des appels asynchrones
@@ -12,8 +13,8 @@ todo
         - pouvoir extraire de la synchro les process relatifs à l'ajout d'une transaction
         - améliorer l'entete des pages wallet / position / transaction
         - restreindre la vision à un seul utilisateur
-        - récupérer les prix du jour
-        - récupérer les prix historiques
+        - récupérer les prix du jour avec CryptoCompare API
+        - récupérer les prix historiques avec CryptoCompare API
         - ajouter des contrats liés à des protocoles spécifiques (ex AAVE)
         - ajouter du cache sur les requêtes (ex Contract)
         - récupérer toutes les plateformes dispo à partir de CoinGecko
