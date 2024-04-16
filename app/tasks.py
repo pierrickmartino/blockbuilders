@@ -71,9 +71,7 @@ def create_erc20_process_task(erc20_list):
         erc20_raw.save()
 
 @shared_task
-def create_transactions_from_erc20_task(wallet_id):
-    wallet = get_object_or_404(Wallet, id=wallet_id)
-
+def create_transactions_from_erc20_task(wallet):
     erc20_list = Polygon_ERC20_Raw.objects.filter(
         Q(fromAddress=wallet.address) | Q(toAddress=wallet.address)
     )
@@ -117,13 +115,12 @@ def create_transactions_from_erc20_task(wallet_id):
         except Contract.DoesNotExist:
             logger.info("Object does not exist : " + erc20.contractAddress)
     
-    return wallet_id
+    return wallet
 
 
 @shared_task
-def aggregate_transactions_task(wallet_id):
+def aggregate_transactions_task(wallet):
     # 5. Aggregate transactions when not 1 vs 1
-    wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     transactions_by_wallet_to_aggregate = []
     for position in positions:
@@ -159,12 +156,11 @@ def aggregate_transactions_task(wallet_id):
             logger.info(transaction_agg)
             transaction_agg.save()
     
-    return wallet_id
+    return wallet
 
 @shared_task
-def calculate_cost_transaction_task(wallet_id):
+def calculate_cost_transaction_task(wallet):
     # 6. Retrieve the contract against the transaction to calculate cost
-    wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     transactions_by_wallet = []
     for position in positions:
@@ -188,22 +184,20 @@ def calculate_cost_transaction_task(wallet_id):
                 )
             transaction.save()
     
-    return wallet_id
+    return wallet
 
 @shared_task
-def clean_transaction_task(wallet_id):
+def clean_transaction_task(wallet):
     # 1. Clean existing information
-    wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     for position in positions:
         position = get_object_or_404(Position, id=position.id)
         result = position.delete()
-    return wallet_id
+    return wallet
 
 @shared_task
-def calculate_running_quantity_transaction_task(wallet_id):
+def calculate_running_quantity_transaction_task(wallet):
     # 7. Calculate the running quantity for each position
-    wallet = get_object_or_404(Wallet, id=wallet_id)
     positions_by_Wallet = Position.objects.filter(wallet=wallet)
     logger.info("Running Quantity and Perf information calculation")
 

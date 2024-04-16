@@ -263,6 +263,8 @@ def get_information_Wallet_by_id(request, wallet_id):
 @login_required
 def resync_information_Wallet_by_id(request, wallet_id):
     logger.info("Resync wallet " + str(wallet_id))
+    
+    wallet = get_object_or_404(Wallet, id=wallet_id)
 
     # 0. Clean contracts addresses
     contracts = Contract.objects.all()
@@ -271,7 +273,7 @@ def resync_information_Wallet_by_id(request, wallet_id):
         contract.save()
 
     chained_task = chain(
-        clean_transaction_task.s(wallet_id)
+        clean_transaction_task.s(wallet)
         | create_transactions_from_erc20_task.s()
         | aggregate_transactions_task.s()
         | calculate_cost_transaction_task.s()

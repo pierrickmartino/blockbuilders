@@ -8,11 +8,8 @@ class Blockchain(Enum):
 
 
 class TypeTransaction(Enum):
-    BUY = "Buy"
-    SEL = "Sell"
-    DEP = "Deposit"
-    WTH = "Withdrawal"
-
+    IN = "IN"
+    OUT = "OUT"
 
 class TimeStampModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
