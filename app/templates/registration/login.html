@@ -1,4 +1,4 @@
-{% extends 'base_before_login.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 
@@ -38,7 +38,7 @@
       </header>
       <div class="card-content">
         <form method="POST" action="{% url 'login' %}">
-        {% csrf_token %}
+          {% csrf_token %}
           <div class="field is-horizontal">
             <div class="field-label is-normal">
               <label class="label">Username</label>
@@ -46,7 +46,7 @@
             <div class="field-body">
               <div class="field">
                 <p class="control is-expanded has-icons-left">
-                  <input class="input" type="text" placeholder="Username" maxlength="150" id="id_username" required >
+                  <input class="input" type="text" placeholder="Username" maxlength="150" id="id_username" name="username" required >
                   <span class="icon is-small is-left"><i class="mdi mdi-account"></i></span>
                 </p>
               </div>
@@ -59,8 +59,8 @@
               <div class="field-body">
                 <div class="field">
                   <p class="control is-expanded has-icons-left">
-                    <input class="input" type="password" placeholder="Password" id="id_password" required >
-                    <span class="icon is-small is-left"><i class="mdi mdi-account"></i></span>
+                    <input class="input" type="password" placeholder="Password" id="id_password" name="password" required >
+                    <span class="icon is-small is-left"><i class="mdi mdi-lock"></i></span>
                   </p>
                 </div>
               </div>

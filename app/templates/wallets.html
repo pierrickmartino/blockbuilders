@@ -68,41 +68,54 @@
               </tr>
             </thead>
             <tbody>
-              {% for wallet in wallets %}
-              <tr>
-                <td class="is-image-cell">
-                  <div class="image">
+              {% if wallets %}
+                {% for wallet in wallets %}
+                <tr>
+                  <td class="is-image-cell">
+                    <div class="image">
 
-                  </div>
-                </td>
-                <td data-label="Address">{{ wallet.address }}</td>
-                <td data-label="Name">{{ wallet.name }}</td>
-                <td data-label="Balance">{{ wallet.balance|floatformat:"-2g" }}</td>
-                <td data-label="NumPositions">{{ wallet.wallet_positions.count }}</td>
-                <td data-label="Progress" class="is-progress-cell">
-                  <progress max="100" class="progress is-small is-primary" value="79">79</progress>
-                </td>
-                <td data-label="Created">
-                  <small class="has-text-grey is-abbr-like">{{ wallet.created_at }}</small>
-                </td>
-                <td class="is-actions-cell">
-                  <div class="buttons is-right">
-                    <a href="{% url 'wallet_download_info' wallet.id %}" class="button is-small is-primary" type="button">
-                      <span class="icon"><i class="mdi mdi-download"></i></span>
-                    </a>
-                    <a href="{% url 'wallet_resync_info' wallet.id %}" class="button is-small is-primary" type="button">
-                      <span class="icon"><i class="mdi mdi-reload"></i></span>
-                    </a>
-                    <a href="{% url 'wallet-positions-by-page' wallet.id 1 %}" class="button is-small is-primary" type="button">
-                      <span class="icon"><i class="mdi mdi-eye"></i></span>
-                    </a>
-                    <a href="{% url 'delete_wallet' wallet.id %}" class="button is-small is-danger" type="button">
-                      <span class="icon"><i class="mdi mdi-trash-can"></i></span>
-                    </a>
-                  </div>
+                    </div>
+                  </td>
+                  <td data-label="Address">{{ wallet.address }}</td>
+                  <td data-label="Name">{{ wallet.name }}</td>
+                  <td data-label="Balance">{{ wallet.balance|floatformat:"-2g" }}</td>
+                  <td data-label="NumPositions">{{ wallet.wallet_positions.count }}</td>
+                  <td data-label="Progress" class="is-progress-cell">
+                    <progress max="100" class="progress is-small is-primary" value="79">79</progress>
+                  </td>
+                  <td data-label="Created">
+                    <small class="has-text-grey is-abbr-like">{{ wallet.created_at }}</small>
+                  </td>
+                  <td class="is-actions-cell">
+                    <div class="buttons is-right">
+                      <a href="{% url 'wallet_download_info' wallet.id %}" class="button is-small is-primary" type="button">
+                        <span class="icon"><i class="mdi mdi-download"></i></span>
+                      </a>
+                      <a href="{% url 'wallet_resync_info' wallet.id %}" class="button is-small is-primary" type="button">
+                        <span class="icon"><i class="mdi mdi-reload"></i></span>
+                      </a>
+                      <a href="{% url 'wallet-positions-by-page' wallet.id 1 %}" class="button is-small is-primary" type="button">
+                        <span class="icon"><i class="mdi mdi-eye"></i></span>
+                      </a>
+                      <a href="{% url 'delete_wallet' wallet.id %}" class="button is-small is-danger" type="button">
+                        <span class="icon"><i class="mdi mdi-trash-can"></i></span>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}  
+              <tr class="is-empty">
+                <td colspan="8">
+                  <section class="section">
+                    <div class="content has-text-grey has-text-centered">
+                      <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
+                      <p>Nothing's there…</p>
+                    </div>
+                  </section>
                 </td>
               </tr>
-              {% endfor %}
+              {% endif %}
             </tbody>
           </table>
         </div>

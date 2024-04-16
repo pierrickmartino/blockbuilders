@@ -36,7 +36,7 @@
           <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
           Positions
         </p>
-        <a href="{% url 'refresh_wallet_position_price' wallet.id %}" class="card-header-icon">
+        <a href="#" class="card-header-icon">
           <span class="icon"><i class="mdi mdi-reload"></i></span>
         </a>
       </header>
@@ -58,38 +58,51 @@
                 </tr>
               </thead>
               <tbody>
-                {% for position in page_positions %}
-                {% with total_transaction=position.position_transactions.count %}
-                <tr>
-                  <td class="is-image-cell">
-                    <div class="image">
-  
-                    </div>
-                  </td>
-                  <td data-label="Token">{{ position.contract.name }}</td>
-                  <td data-label="Address">{{ position.contract.address }}</td>
-                  <td data-label="Qty">{{ position.quantity|floatformat:"-6g" }}</td>
-                  <td data-label="Amount">{{ position.amount|floatformat:"-2g" }}</td>
-                  <td data-label="NumPositions">{{ total_transaction }}</td>
-                  <td data-label="Progress" class="is-progress-cell">
-                    <progress max="{{ wallet.balance }}" class="progress is-small is-primary" value="{{ position.amount }}">position.amount</progress>
-                  </td>
-                  <td data-label="Created">
-                    <small class="has-text-grey is-abbr-like">{{ position.created_at }}</small>
-                  </td>
-                  <td class="is-actions-cell">
-                    <div class="buttons is-right">
-                      <a href="{% url 'position-transactions-by-page' position.id 1 %}" class="button is-small is-primary" type="button">
-                        <span class="icon"><i class="mdi mdi-eye"></i></span>
-                      </a>
-                      <a href="{% url 'delete_position' position.id %}" class="button is-small is-danger" type="button">
-                        <span class="icon"><i class="mdi mdi-trash-can"></i></span>
-                      </a>
-                    </div>
+                {% if page_positions %}
+                  {% for position in page_positions %}
+                  {% with total_transaction=position.position_transactions.count %}
+                  <tr>
+                    <td class="is-image-cell">
+                      <div class="image">
+    
+                      </div>
+                    </td>
+                    <td data-label="Token">{{ position.contract.name }}</td>
+                    <td data-label="Address">{{ position.contract.address }}</td>
+                    <td data-label="Qty">{{ position.quantity|floatformat:"-6g" }}</td>
+                    <td data-label="Amount">{{ position.amount|floatformat:"-2g" }}</td>
+                    <td data-label="NumPositions">{{ total_transaction }}</td>
+                    <td data-label="Progress" class="is-progress-cell">
+                      <progress max="{{ wallet.balance }}" class="progress is-small is-primary" value="{{ position.amount }}">position.amount</progress>
+                    </td>
+                    <td data-label="Created">
+                      <small class="has-text-grey is-abbr-like">{{ position.created_at }}</small>
+                    </td>
+                    <td class="is-actions-cell">
+                      <div class="buttons is-right">
+                        <a href="{% url 'position-transactions-by-page' position.id 1 %}" class="button is-small is-primary" type="button">
+                          <span class="icon"><i class="mdi mdi-eye"></i></span>
+                        </a>
+                        <a href="{% url 'delete_position' position.id %}" class="button is-small is-danger" type="button">
+                          <span class="icon"><i class="mdi mdi-trash-can"></i></span>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                  {% endwith %}
+                  {% endfor %}
+                {% else %}  
+                <tr class="is-empty">
+                  <td colspan="9">
+                    <section class="section">
+                      <div class="content has-text-grey has-text-centered">
+                        <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
+                        <p>Nothing's there…</p>
+                      </div>
+                    </section>
                   </td>
                 </tr>
-                {% endwith %}
-                {% endfor %}
+                {% endif %}
               </tbody>
             </table>
           </div>
