@@ -55,3 +55,17 @@ Array.from(document.getElementsByClassName('jb-notification-dismiss')).forEach(f
     e.currentTarget.closest('.notification').classList.add('is-hidden');
   });
 });
+
+$('.button').on('click', function() {
+  $.ajax({
+    url: '/tasks/',
+    data: { type: $(this).data('type') },
+    method: 'POST',
+  })
+  .done((res) => {
+    getStatus(res.task_id);
+  })
+  .fail((err) => {
+    console.log(err);
+  });
+});
