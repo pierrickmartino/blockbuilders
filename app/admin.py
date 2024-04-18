@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.models import Blockchain, Wallet, Contract, Position, Transaction, Fiat
+from app.models import Blockchain, Wallet, Contract, Position, Transaction, Fiat, Wallet_Process
 from app.utils.polygon.models_polygon import Polygon_ERC20_Raw
 
 class Polygon_ERC20_Raw_Admin(admin.ModelAdmin):
@@ -28,6 +28,15 @@ class Wallet_Admin(admin.ModelAdmin):
     list_display = (
         "id",
         "address",
+        "name",
+    )
+
+class Wallet_Process_Admin(admin.ModelAdmin):
+    list_display = (
+        "wallet",
+        "download_task",
+        "resync_task",
+        "delete_task",
     )
 
 class Fiat_Admin(admin.ModelAdmin):
@@ -82,6 +91,7 @@ class Transaction_Admin(admin.ModelAdmin):
     )
 
 admin.site.register(Wallet, Wallet_Admin)
+admin.site.register(Wallet_Process, Wallet_Process_Admin)
 admin.site.register(Blockchain, Blockchain_Admin)
 admin.site.register(Fiat, Fiat_Admin)
 admin.site.register(Contract, Contract_Admin)

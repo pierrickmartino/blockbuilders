@@ -55,3 +55,4 @@ Array.from(document.getElementsByClassName('jb-notification-dismiss')).forEach(f
     e.currentTarget.closest('.notification').classList.add('is-hidden');
   });
 });
+

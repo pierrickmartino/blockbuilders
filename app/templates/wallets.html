@@ -74,9 +74,13 @@
                   <td data-label="Name">{{ wallet.name }}</td>
                   <td data-label="Balance">{{ wallet.balance|floatformat:"-2g" }}</td>
                   <td data-label="NumPositions">{{ wallet.wallet_positions.count }}</td>
-                  <td data-label="Progress" class="is-progress-cell">
+                  <!-- <td data-label="Progress" class="is-progress-cell">
                     <progress max="100" class="progress is-small is-primary" value="79">79</progress>
-                  </td>
+                  </td> -->
+                  <td id="status_{{ wallet.id }}" data-task-id="{{ wallet.wallet_process.download_task }}">
+                    <!-- Initial status could be set here, or just show loading indicator -->
+                    Checking status...
+                </td>
                   <td data-label="Created">
                     <small class="has-text-grey is-abbr-like">{{ wallet.created_at }}</small>
                   </td>
@@ -180,4 +184,33 @@
   </div>
   <button class="modal-close is-large jb-modal-close" aria-label="close"></button>
 </div>
+
+<script>
+
+  function updateTaskStatus(walletId, taskId) {
+      fetch(`/get_download_task_status/${taskId}/`)
+          .then(response => response.json())
+          .then(data => {
+              const statusCell = document.getElementById('status_' + walletId);
+              if (data.status === 'SUCCESS') {
+                  statusCell.innerText = 'Completed';
+              } else if (data.status === 'FAILURE') {
+                  statusCell.innerText = 'Failed';
+              } else {
+                  statusCell.innerText = 'In Progress...';
+              }
+          });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const statusCells = document.querySelectorAll('[data-task-id]');
+    statusCells.forEach(cell => {
+        const walletId = cell.parentNode.getAttribute('id').split('_')[1];
+        const taskId = cell.getAttribute('data-task-id');
+        updateTaskStatus(walletId, taskId);
+        setInterval(() => updateTaskStatus(walletId, taskId), 2000); // Poll every 2 seconds
+    });
+  });
+  </script>
+
 {% endblock %}

@@ -61,6 +61,11 @@ urlpatterns = [
         name="wallet_download_info",
     ),
     path(
+        "get_download_task_status/<uuid:task_id>/",
+        views.get_download_task_status,
+        name="get_download_task_status",
+    ),
+    path(
         "wallet_resync_info/<int:wallet_id>/",
         views.resync_information_Wallet_by_id,
         name="wallet_resync_info",

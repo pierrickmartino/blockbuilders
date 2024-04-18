@@ -17,6 +17,7 @@ todo
         - ajouter des contrats liés à des protocoles spécifiques (ex AAVE)
         - ajouter du cache sur les requêtes (ex Contract)
         - récupérer toutes les plateformes dispo à partir de CoinGecko
+        - séparer les logs celery dans un fichier dédié
     low
         - reprendre les best-practice pour mieux optimiser le code
         - aligner blockchain sur la droite sur l'ecran wallet

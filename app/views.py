@@ -21,7 +21,6 @@ from app.tasks import (
     get_erc20_transactions_by_wallet_task,
 )
 
-from django.views.decorators.csrf import csrf_exempt
 from celery.result import AsyncResult
 
 logger = logging.getLogger("blockbuilders")
@@ -36,7 +35,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 from app.forms import ContractForm, WalletForm
-from app.models import Blockchain, Contract, Fiat, Position, Transaction, Wallet
+from app.models import Blockchain, Contract, Fiat, Position, Transaction, Wallet, Wallet_Process
 
 from datetime import datetime
 
@@ -102,22 +101,23 @@ def wallets(request):
             wallet.save()
 
             wallets = Wallet.objects.all()
-            # blockchains = Blockchain.objects.all()
 
-            logger.info("New wallet is added")
+            logger.info("New wallet is created")
+
+            wallet_process = Wallet_Process.objects.create(wallet=wallet)
+            wallet_process.save()
+
+            logger.info("New wallet process is created")
 
             context = {
                 "wallets": wallets,
-                # "blockchains": blockchains,
             }
             return render(request, "wallets.html", context)
     else:
         wallets = Wallet.objects.all()
-        # blockchains = Blockchain.objects.all()
 
         context = {
             "wallets": wallets,
-            # "blockchains": blockchains,
         }
         return render(request, "wallets.html", context)
 
@@ -244,23 +244,6 @@ def get_Polygon_ERC20_Raw_by_Wallet_address(wallet_address):
     )
     return result
 
-@csrf_exempt
-def run_task(request):
-    if request.POST:
-        task_type = request.POST.get("type")
-        task = create_task.delay(int(task_type))
-        return JsonResponse({"task_id": task.id}, status=202)
-    
-@csrf_exempt
-def get_status(request, task_id):
-    task_result = AsyncResult(task_id)
-    result = {
-        "task_id": task_id,
-        "task_status": task_result.status,
-        "task_result": task_result.result
-    }
-    return JsonResponse(result, status=200)
-
 @login_required 
 def get_information_Wallet_by_id(request, wallet_id):
     wallet = get_object_or_404(Wallet, id=wallet_id)
@@ -276,8 +259,19 @@ def get_information_Wallet_by_id(request, wallet_id):
     )
     result = chained_task.apply_async()
 
+    logger.info("Download wallet information")
+    logger.info("for wallet id : " + str(wallet_id))
+    logger.info("with task id : " + str(result.id))
+
+    wallet_process = Wallet_Process.objects.filter(wallet=wallet)
+    wallet_process.download_task = result.id
+    wallet_process.save()
+
     return redirect("wallets")
 
+def get_download_task_status(request, download_task):
+    task_result = AsyncResult(download_task)
+    return JsonResponse({'status': task_result.status})
 
 @login_required
 def resync_information_Wallet_by_id(request, wallet_id):

@@ -1,6 +1,7 @@
 from enum import Enum
 from django.db import models
 from django.contrib.auth.models import User
+import uuid
 
 
 class Blockchain(Enum):
@@ -34,6 +35,21 @@ class Wallet(TimeStampModel):
 
     def __str__(self):
         return f"{self.address}"
+    
+class Wallet_Process(TimeStampModel):
+    wallet = models.OneToOneField(
+        Wallet, on_delete=models.CASCADE, primary_key=True,
+    )
+    download_task = models.UUIDField(default=uuid.uuid4)
+    resync_task = models.UUIDField(default=uuid.uuid4)
+    delete_task = models.UUIDField(default=uuid.uuid4)
+
+    class Meta:
+        verbose_name = "Wallet Process"
+        verbose_name_plural = "Wallets Processes"
+
+    def __str__(self):
+        return f"{self.wallet} processes"
 
 
 class Blockchain(models.Model):
@@ -83,11 +99,6 @@ class Contract(models.Model):
 
     def __str__(self):
         return f"{self.name}"
-
-
-class ContractCalculator:
-    def __init__(self, contract):
-        self.contract = contract
 
 
 class ContractCalculator:
