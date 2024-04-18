@@ -61,14 +61,19 @@ urlpatterns = [
         name="wallet_download_info",
     ),
     path(
-        "get_download_task_status/<uuid:task_id>/",
-        views.get_download_task_status,
-        name="get_download_task_status",
+        "download_wallet_task_status/<uuid:task_id>/",
+        views.download_wallet_task_status,
+        name="download_wallet_task_status",
     ),
     path(
         "wallet_resync_info/<int:wallet_id>/",
         views.resync_information_Wallet_by_id,
         name="wallet_resync_info",
+    ),
+    path(
+        "resync_wallet_task_status/<uuid:task_id>/",
+        views.resync_wallet_task_status,
+        name="resync_wallet_task_status",
     ),
     # POSITION
     path("positions/", views.positions, name="positions"),

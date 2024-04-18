@@ -272,10 +272,17 @@ def get_information_Wallet_by_id(request, wallet_id):
     return redirect("wallets")
 
 @csrf_exempt
-def get_download_task_status(request, task_id):
-    logger.info("Download AsyncResult for : " + str(task_id))
+def download_wallet_task_status(request, task_id):
+    # logger.info("Download AsyncResult for : " + str(task_id))
     task_result = AsyncResult(str(task_id))
-    logger.info("Download task status : " + str(task_result.status))
+    # logger.info("Download task status : " + str(task_result.status))
+    return JsonResponse({'status': task_result.status})
+
+@csrf_exempt
+def resync_wallet_task_status(request, task_id):
+    # logger.info("Download AsyncResult for : " + str(task_id))
+    task_result = AsyncResult(str(task_id))
+    # logger.info("Download task status : " + str(task_result.status))
     return JsonResponse({'status': task_result.status})
 
 @login_required
@@ -298,6 +305,15 @@ def resync_information_Wallet_by_id(request, wallet_id):
         | calculate_running_quantity_transaction_task.s()
     )
     result = chained_task.apply_async()
+
+    logger.info("Resync wallet information")
+    logger.info("for wallet id : " + str(wallet_id))
+    logger.info("with task id : " + str(result.id))
+
+    wallet_process = Wallet_Process.objects.get(wallet=wallet)
+    logger.info("Wallet process : " + str(wallet_process))
+    wallet_process.resync_task = result.id
+    wallet_process.save()
 
     return redirect("wallets")
 
