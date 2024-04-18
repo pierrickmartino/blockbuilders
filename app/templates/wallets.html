@@ -192,6 +192,8 @@
           .then(response => response.json())
           .then(data => {
               const statusCell = document.getElementById('status_' + walletId);
+              console.log("Found " + statusCell.length + " status cell to update");
+
               if (data.status === 'SUCCESS') {
                   statusCell.innerText = 'Completed';
               } else if (data.status === 'FAILURE') {
@@ -204,11 +206,26 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     const statusCells = document.querySelectorAll('[data-task-id]');
+    console.log("Found " + statusCells.length + " status cells");
+
     statusCells.forEach(cell => {
-        const walletId = cell.parentNode.getAttribute('id').split('_')[1];
-        const taskId = cell.getAttribute('data-task-id');
-        updateTaskStatus(walletId, taskId);
-        setInterval(() => updateTaskStatus(walletId, taskId), 2000); // Poll every 2 seconds
+      if (!cell.parentNode || !cell.getAttribute('id')) {
+        console.log("Missing ID for parent node of a cell with task ID: " + cell.getAttribute('data-task-id'));
+        return; // Skip this iteration because the necessary ID is not available
+      }
+
+      const walletId = cell.getAttribute('id').split('_')[1];
+      const taskId = cell.getAttribute('data-task-id');
+      console.log("Checking status for Wallet ID: " + walletId + " with Task ID: " + taskId);
+      
+      // Call the update function immediately for initial check
+      updateTaskStatus(walletId, taskId);
+      
+      // Then set interval
+      setInterval(() => {
+            console.log("Updating status for Wallet ID: " + walletId);
+            updateTaskStatus(walletId, taskId);
+        }, 2000); // Poll every 2 seconds
     });
   });
   </script>

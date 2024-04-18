@@ -32,6 +32,13 @@ docker exec -it XXXXXXXX bash
 for mac only
 chmod +x entrypoint.sh
 
+sudo lsof -i :5432
+sudo kill 604
+
+cd .docker
+nano config.json
+"credStore" au lieu de "credsStore"
+
 thx !!!
 https://dev.to/documatic/start-a-production-ready-dockerized-django-project-5eop
 https://github.com/vikdiesel/admin-one-bulma-dashboard/blob/master/src/html/index.html

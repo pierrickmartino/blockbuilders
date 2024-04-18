@@ -22,6 +22,7 @@ from app.tasks import (
 )
 
 from celery.result import AsyncResult
+from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger("blockbuilders")
 
@@ -263,14 +264,18 @@ def get_information_Wallet_by_id(request, wallet_id):
     logger.info("for wallet id : " + str(wallet_id))
     logger.info("with task id : " + str(result.id))
 
-    wallet_process = Wallet_Process.objects.filter(wallet=wallet)
+    wallet_process = Wallet_Process.objects.get(wallet=wallet)
+    logger.info("Wallet process : " + str(wallet_process))
     wallet_process.download_task = result.id
     wallet_process.save()
 
     return redirect("wallets")
 
-def get_download_task_status(request, download_task):
-    task_result = AsyncResult(download_task)
+@csrf_exempt
+def get_download_task_status(request, task_id):
+    logger.info("Download AsyncResult for : " + str(task_id))
+    task_result = AsyncResult(str(task_id))
+    logger.info("Download task status : " + str(task_result.status))
     return JsonResponse({'status': task_result.status})
 
 @login_required
