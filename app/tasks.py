@@ -75,6 +75,7 @@ def create_transactions_from_erc20_task(wallet):
     erc20_list = Polygon_ERC20_Raw.objects.filter(
         Q(fromAddress=wallet.address) | Q(toAddress=wallet.address)
     )
+    logger.info("Transactions trouvées : " + str(erc20_list.count))
 
     fiat_USD = get_object_or_404(Fiat, code="USD")
     
@@ -189,10 +190,15 @@ def calculate_cost_transaction_task(wallet):
 @shared_task
 def clean_transaction_task(wallet):
     # 1. Clean existing information
-    positions = Position.objects.filter(wallet=wallet)
-    for position in positions:
-        position = get_object_or_404(Position, id=position.id)
-        result = position.delete()
+    try:
+        positions = Position.objects.filter(wallet=wallet)
+        for position in positions:
+            position = get_object_or_404(Position, id=position.id)
+            result = position.delete()
+            logger.info("Positions are now clean")
+    except Position.DoesNotExist:
+            logger.info("Object Position does not exist for : " + wallet.id)
+
     return wallet
 
 @shared_task

@@ -193,7 +193,7 @@
               const statusDownloadLink = document.getElementById('status_download_' + walletId);
               // console.log("Found " + statusDownloadLink.length + " status cell to update");
               // console.log("Status " + data.status)
-              if (data.status === 'PENDING' || data.status === 'STARTED' || data.status === 'RETRY' || data.status === 'FAILED') {
+              if (data.status === 'PENDING' || data.status === 'STARTED' || data.status === 'RETRY') {
                 statusDownloadLink.classList.add('is-loading');
             } else {
                 statusDownloadLink.classList.remove('is-loading');
@@ -208,7 +208,7 @@
               const statusDownloadLink = document.getElementById('status_resync_' + walletId);
               console.log("Found " + statusDownloadLink.length + " status cell to update");
               console.log("Status " + data.status)
-              if (data.status === 'PENDING' || data.status === 'STARTED' || data.status === 'RETRY' || data.status === 'FAILED') {
+              if (data.status === 'PENDING' || data.status === 'STARTED' || data.status === 'RETRY') {
                 statusDownloadLink.classList.add('is-loading');
             } else {
                 statusDownloadLink.classList.remove('is-loading');

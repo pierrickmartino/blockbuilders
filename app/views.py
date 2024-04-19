@@ -296,6 +296,7 @@ def resync_information_Wallet_by_id(request, wallet_id):
     for contract in contracts:
         contract.address = contract.address.lower()
         contract.save()
+    logger.info("Contracts are now clean")
 
     chained_task = chain(
         clean_transaction_task.s(wallet)
