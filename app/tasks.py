@@ -17,14 +17,14 @@ from datetime import datetime
 logger = logging.getLogger("blockbuilders")
 
 @shared_task
-def delete_wallet_task(wallet_id, sleep_duration):
+def delete_wallet_task(wallet_id, sleep_duration : float):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     result = wallet.delete()
     time.sleep(sleep_duration)
     return result
 
 @shared_task
-def delete_position_task(position_id, sleep_duration):
+def delete_position_task(position_id, sleep_duration : float):
     position = get_object_or_404(Position, id=position_id)
     result = position.delete()
     time.sleep(sleep_duration)
@@ -71,7 +71,7 @@ def create_erc20_process_task(erc20_list):
         erc20_raw.save()
 
 @shared_task
-def create_transactions_from_erc20_task(wallet):
+def create_transactions_from_erc20_task(wallet : Wallet):
     erc20_list = Polygon_ERC20_Raw.objects.filter(
         Q(fromAddress=wallet.address) | Q(toAddress=wallet.address)
     )
@@ -114,13 +114,13 @@ def create_transactions_from_erc20_task(wallet):
             transaction.save()
 
         except Contract.DoesNotExist:
-            logger.info("Object does not exist : " + erc20.contractAddress)
+            logger.error("Object does not exist : " + erc20.contractAddress)
     
     return wallet
 
 
 @shared_task
-def aggregate_transactions_task(wallet):
+def aggregate_transactions_task(wallet : Wallet):
     # 5. Aggregate transactions when not 1 vs 1
     positions = Position.objects.filter(wallet=wallet)
     transactions_by_wallet_to_aggregate = []
@@ -160,7 +160,7 @@ def aggregate_transactions_task(wallet):
     return wallet
 
 @shared_task
-def calculate_cost_transaction_task(wallet):
+def calculate_cost_transaction_task(wallet : Wallet):
     # 6. Retrieve the contract against the transaction to calculate cost
     positions = Position.objects.filter(wallet=wallet)
     transactions_by_wallet = []
@@ -188,8 +188,9 @@ def calculate_cost_transaction_task(wallet):
     return wallet
 
 @shared_task
-def clean_transaction_task(wallet):
+def clean_transaction_task(wallet : Wallet):
     # 1. Clean existing information
+    logger.info("Clean transaction for wallet : " + str(wallet.id))
     try:
         positions = Position.objects.filter(wallet=wallet)
         for position in positions:
@@ -197,12 +198,14 @@ def clean_transaction_task(wallet):
             result = position.delete()
             logger.info("Positions are now clean")
     except Position.DoesNotExist:
-            logger.info("Object Position does not exist for : " + wallet.id)
+        logger.info("Object Position does not exist for : " + str(wallet.id))
+    except Exception as error:
+        logger.error("An error occurred : " + type(error).__name__)
 
     return wallet
 
 @shared_task
-def calculate_running_quantity_transaction_task(wallet):
+def calculate_running_quantity_transaction_task(wallet : Wallet):
     # 7. Calculate the running quantity for each position
     positions_by_Wallet = Position.objects.filter(wallet=wallet)
     logger.info("Running Quantity and Perf information calculation")

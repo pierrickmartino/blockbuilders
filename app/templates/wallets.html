@@ -217,53 +217,51 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
-    const statusCells = document.querySelectorAll('[data-task-download-id]');
-    // console.log("Found " + statusCells.length + " status cells");
+    const statusCells_download = document.querySelectorAll('[data-task-download-id]');
+    console.log("Found " + statusCells_download.length + " status cells download");
+    const statusCells_resync = document.querySelectorAll('[data-task-resync-id]');
+    console.log("Found " + statusCells_resync.length + " status cells resync");
 
-    statusCells.forEach(cell => {
+    statusCells_download.forEach(cell => {
       if (!cell.parentNode || !cell.getAttribute('id')) {
-        // console.log("Missing ID for parent node of a cell with task ID: " + cell.getAttribute('data-task-id'));
+        // console.log("Missing ID for parent node of a cell with task ID: " + cell.getAttribute('data-task-download-id'));
         return; // Skip this iteration because the necessary ID is not available
       }
 
-      const walletId = cell.getAttribute('id').split('_')[2];
-      const taskId = cell.getAttribute('data-task-download-id');
+      const download_walletId = cell.getAttribute('id').split('_')[2];
+      const download_taskId = cell.getAttribute('data-task-download-id');
       // console.log("Checking status for Wallet ID: " + walletId + " with Task ID: " + taskId);
       
       // Call the update function immediately for initial check
-      updateDownloadWalletTaskStatus(walletId, taskId);
+      updateDownloadWalletTaskStatus(download_walletId, download_taskId);
       
       // Then set interval
       setInterval(() => {
             // console.log("Updating status for Wallet ID: " + walletId);
-            updateDownloadWalletTaskStatus(walletId, taskId);
-        }, 3000); // Poll every 3 seconds
+            updateDownloadWalletTaskStatus(download_walletId, download_taskId);
+        }, 4000); // Poll every 3 seconds
     });
-  });
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const statusCells = document.querySelectorAll('[data-task-resync-id]');
-    console.log("Found " + statusCells.length + " status cells");
-
-    statusCells.forEach(cell => {
+    statusCells_resync.forEach(cell => {
       if (!cell.parentNode || !cell.getAttribute('id')) {
-        console.log("Missing ID for parent node of a cell with task ID: " + cell.getAttribute('data-task-id'));
+        console.log("Missing ID for parent node of a cell with task ID: " + cell.getAttribute('data-task-resync-id'));
         return; // Skip this iteration because the necessary ID is not available
       }
 
-      const walletId = cell.getAttribute('id').split('_')[2];
-      const taskId = cell.getAttribute('data-task-resync-id');
-      console.log("Checking status for Wallet ID: " + walletId + " with Task ID: " + taskId);
+      const resync_walletId = cell.getAttribute('id').split('_')[2];
+      const resync_taskId = cell.getAttribute('data-task-resync-id');
+      console.log("Checking Resync status for Wallet ID: " + resync_walletId + " with Task ID: " + resync_taskId);
       
       // Call the update function immediately for initial check
-      updateResyncWalletTaskStatus(walletId, taskId);
+      updateResyncWalletTaskStatus(resync_walletId, resync_taskId);
       
       // Then set interval
       setInterval(() => {
-            console.log("Updating status for Wallet ID: " + walletId);
-            updateResyncWalletTaskStatus(walletId, taskId);
+            console.log("Updating Resync status for Wallet ID: " + resync_walletId);
+            updateResyncWalletTaskStatus(resync_walletId, resync_taskId);
         }, 3000); // Poll every 3 seconds
     });
+
   });
 
   </script>
