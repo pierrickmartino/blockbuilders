@@ -260,12 +260,7 @@ def get_information_Wallet_by_id(request, wallet_id):
     )
     result = chained_task.apply_async()
 
-    logger.info("Download wallet information")
-    logger.info("for wallet id : " + str(wallet_id))
-    logger.info("with task id : " + str(result.id))
-
     wallet_process = Wallet_Process.objects.get(wallet=wallet)
-    logger.info("Wallet process : " + str(wallet_process))
     wallet_process.download_task = result.id
     wallet_process.save()
 
@@ -287,34 +282,24 @@ def resync_wallet_task_status(request, task_id):
 
 @login_required
 def resync_information_Wallet_by_id(request, wallet_id):
-    logger.info("Resync wallet " + str(wallet_id))
-    
-    wallet = get_object_or_404(Wallet, id=wallet_id)
-
     # 0. Clean contracts addresses
     contracts = Contract.objects.all()
     for contract in contracts:
         contract.address = contract.address.lower()
         contract.save()
-    logger.info("Contracts are now clean")
-
-    logger.info("Ready to process : " + str(wallet.id))
 
     chained_task = chain(
-        clean_transaction_task.s(wallet)
-        # | create_transactions_from_erc20_task.s()
-        # | aggregate_transactions_task.s()
-        # | calculate_cost_transaction_task.s()
-        # | calculate_running_quantity_transaction_task.s()
+        clean_transaction_task.s(wallet_id)
+        | create_transactions_from_erc20_task.s()
+        | aggregate_transactions_task.s()
+        | calculate_cost_transaction_task.s()
+        | calculate_running_quantity_transaction_task.s()
     )
     result = chained_task.apply_async()
 
-    logger.info("Resync wallet information")
-    logger.info("for wallet id : " + str(wallet_id))
-    logger.info("with task id : " + str(result.id))
+    wallet = get_object_or_404(Wallet, id=wallet_id)
 
     wallet_process = Wallet_Process.objects.get(wallet=wallet)
-    logger.info("Wallet process : " + str(wallet_process))
     wallet_process.resync_task = result.id
     wallet_process.save()
 

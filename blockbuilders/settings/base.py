@@ -181,7 +181,7 @@ LOGGING = {
             "style": "{",
         },
         "simple": {
-            "format": "{levelname} {message}",
+            "format": "{asctime} - {levelname} - {message}",
             "style": "{",
         },
     },
