@@ -6,7 +6,6 @@ todo
     medium
         - afficher un tooltip sur le libellé de l'adresse tronquée
         - ajouter un filtre sur les positions dont le montant évalué est < 0.1
-        - retirer les adresses sur la liste des positions
         - utiliser docker pour le déploiement final
         - optimiser les appels en base de données
         - utiliser des appels asynchrones

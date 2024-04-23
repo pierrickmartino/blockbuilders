@@ -77,6 +77,11 @@ urlpatterns = [
     ),
     # POSITION
     path("positions/", views.positions, name="positions"),
+    path(
+        "position/<int:position_id>/refresh_price/",
+        views.refresh_position_price,
+        name="refresh_position_price",
+    ),
     path("positions/<int:page>", views.positions_paginated, name="positions-by-page"),
     path(
         "position/<int:position_id>/transactions/<int:page>",

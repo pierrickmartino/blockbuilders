@@ -443,13 +443,13 @@ def register(request):
 
 
 @sync_to_async
-def async_get_position_by_id(position_id):
+def async_get_position_by_id(position_id : int):
     position = get_object_or_404(Position, id=position_id)
     return position
 
 
 @sync_to_async
-def async_get_position_by_wallet_id(wallet_id):
+def async_get_position_by_wallet_id(wallet_id : int):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     positions_list = []
@@ -459,13 +459,13 @@ def async_get_position_by_wallet_id(wallet_id):
 
 
 @sync_to_async
-def async_get_symbol_by_position(position):
+def async_get_symbol_by_position(position : Position):
     symbol = position.contract.symbol + "/USDT"
     return symbol
 
 
 @sync_to_async
-def async_calculate_total_wallet(wallet_id):
+def async_calculate_total_wallet(wallet_id : int):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     balance = Wallet.objects.filter(id__exact=wallet_id).aggregate(
         Sum("wallet_positions__amount", default=0)
@@ -474,6 +474,27 @@ def async_calculate_total_wallet(wallet_id):
     wallet.save()
     return wallet
 
+async def refresh_position_price(request, position_id : int):
+    print("refresh_position_price for position " + str(position_id))
+
+    position = await async_get_position_by_id(position_id)
+
+    start_time = time.time()
+    symbol = await async_get_symbol_by_position(position)
+    if symbol != "USDT/USDT":
+        task = asyncio.create_task(get_price_from_market(symbol))
+        await task
+
+        print(
+            f"Fetch total {symbol} urls and process takes {time.time() - start_time} seconds"
+        )
+
+        await set_price(position.contract, task.result()[0])
+        await calculate_position_amount(position)
+
+    # await async_calculate_total_wallet(wallet_id)
+
+    return redirect("wallets")
 
 async def refresh_wallet_position_price(request, wallet_id):
     print("refresh_wallet_position_price for wallet " + str(wallet_id))

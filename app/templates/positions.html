@@ -36,7 +36,7 @@
           <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
           Positions
         </p>
-        <a href="#" class="card-header-icon">
+        <a href="{% url 'refresh_wallet_position_price' wallet.id %}" class="card-header-icon">
           <span class="icon"><i class="mdi mdi-reload"></i></span>
         </a>
       </header>
@@ -46,7 +46,6 @@
             <table class="table is-fullwidth is-striped is-hoverable is-sortable is-fullwidth">
               <thead>
                 <tr>
-                  <th></th>
                   <th>Token</th>
                   <th>Address</th>
                   <th>Qty</th>
@@ -62,13 +61,8 @@
                   {% for position in page_positions %}
                   {% with total_transaction=position.position_transactions.count %}
                   <tr>
-                    <td class="is-image-cell">
-                      <div class="image">
-    
-                      </div>
-                    </td>
                     <td data-label="Token">{{ position.contract.name }}</td>
-                    <td data-label="Address">{{ position.contract.address }}</td>
+                    <td data-label="Symbol">{{ position.contract.symbol }}</td>
                     <td data-label="Qty">{{ position.quantity|floatformat:"-6g" }}</td>
                     <td data-label="Amount">{{ position.amount|floatformat:"-2g" }}</td>
                     <td data-label="NumPositions">{{ total_transaction }}</td>
@@ -80,6 +74,9 @@
                     </td>
                     <td class="is-actions-cell">
                       <div class="buttons is-right">
+                        <a id="status_resync_{{ position.id }}" data-task-resync-id="0" href="{% url 'refresh_position_price' position.id %}" class="button is-small is-primary" type="button">
+                          <span class="icon"><i class="mdi mdi-reload"></i></span>
+                        </a>
                         <a href="{% url 'position-transactions-by-page' position.id 1 %}" class="button is-small is-primary" type="button">
                           <span class="icon"><i class="mdi mdi-eye"></i></span>
                         </a>
@@ -93,7 +90,7 @@
                   {% endfor %}
                 {% else %}  
                 <tr class="is-empty">
-                  <td colspan="9">
+                  <td colspan="8">
                     <section class="section">
                       <div class="content has-text-grey has-text-centered">
                         <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
