@@ -4,7 +4,6 @@ todo
         - gérer les transactions qui ne sont pas 1 entrante vs 1 sortante
         - basculer du mode contract_based au mode usd_based
     medium
-        X remplacer les appels .get() par des .first() pour éviter les erreurs
         - afficher un tooltip sur le libellé de l'adresse tronquée
         - ajouter un filtre sur les positions dont le montant évalué est < 0.1
         - utiliser docker pour le déploiement final
