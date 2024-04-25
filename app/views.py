@@ -176,7 +176,7 @@ def transactions_paginated(request, page):
 
 @login_required
 def wallet_positions_paginated(request, wallet_id, page):
-    wallet = Wallet.objects.get(id=wallet_id)
+    wallet = Wallet.objects.filter(id=wallet_id).first()
     positions = Position.objects.filter(wallet=wallet).order_by("-amount")
     paginator = Paginator(positions, per_page=10)
     page_positions = paginator.get_page(page)
@@ -190,9 +190,9 @@ def wallet_positions_paginated(request, wallet_id, page):
 
 @login_required
 def position_transactions_paginated(request, position_id, page):
-    position = Position.objects.get(id=position_id)
-    contract = Contract.objects.get(id=position.contract.id)
-    wallet = Wallet.objects.get(id=position.wallet.id)
+    position = Position.objects.filter(id=position_id).first()
+    contract = Contract.objects.filter(id=position.contract.id).first()
+    wallet = Wallet.objects.filter(id=position.wallet.id).first()
     transactions = Transaction.objects.filter(position=position).order_by("-date")
     paginator = Paginator(transactions, per_page=10)
     page_transactions = paginator.get_page(page)
@@ -212,7 +212,7 @@ def position_transactions_paginated(request, position_id, page):
 
 
 def get_Contract_by_address(contract_address):
-    contract = Contract.objects.filter(address=contract_address).get()
+    contract = Contract.objects.filter(address=contract_address).first()
     return contract
 
 
@@ -260,7 +260,7 @@ def get_information_Wallet_by_id(request, wallet_id):
     )
     result = chained_task.apply_async()
 
-    wallet_process = Wallet_Process.objects.get(wallet=wallet)
+    wallet_process = Wallet_Process.objects.filter(wallet=wallet).first()
     wallet_process.download_task = result.id
     wallet_process.save()
 
@@ -299,7 +299,7 @@ def resync_information_Wallet_by_id(request, wallet_id):
 
     wallet = get_object_or_404(Wallet, id=wallet_id)
 
-    wallet_process = Wallet_Process.objects.get(wallet=wallet)
+    wallet_process = Wallet_Process.objects.filter(wallet=wallet).first()
     wallet_process.resync_task = result.id
     wallet_process.save()
 
@@ -341,14 +341,14 @@ def disable_Position_by_id(request, position_id):
 # todo : still needed ?
 @login_required
 def view_wallet(request, wallet_id):
-    wallet = Wallet.objects.get(id=wallet_id)
+    wallet = Wallet.objects.filter(id=wallet_id).first()
 
     if request.method == "POST":
         form = ContractForm(request.POST or None)
 
         if form.is_valid():
             address = find_between_strings(form.cleaned_data["address"], "[", "]", 0)
-            contract = Contract.objects.get(address=address)
+            contract = Contract.objects.filter(address=address).first()
             position = Position.objects.create(
                 contract=contract, wallet=wallet, is_active=True
             )
@@ -399,7 +399,7 @@ def view_wallet(request, wallet_id):
             }
             return HttpResponse(template.render(context, request))
     else:
-        wallet = Wallet.objects.get(id=wallet_id)
+        wallet = Wallet.objects.filter(id=wallet_id).first()
         positions = Position.objects.filter(wallet=wallet)
         contracts = Contract.objects.all()
         template = loader.get_template("view_wallet.html")
@@ -415,7 +415,7 @@ def view_wallet(request, wallet_id):
 # todo : still needed ?
 @login_required
 def view_position(request, position_id):
-    position = Position.objects.get(id=position_id)
+    position = Position.objects.filter(id=position_id).first()
     transactions = Transaction.objects.filter(position=position).order_by("-date")
 
     template = loader.get_template("view_position.html")

@@ -4,6 +4,7 @@ todo
         - gérer les transactions qui ne sont pas 1 entrante vs 1 sortante
         - basculer du mode contract_based au mode usd_based
     medium
+        X remplacer les appels .get() par des .first() pour éviter les erreurs
         - afficher un tooltip sur le libellé de l'adresse tronquée
         - ajouter un filtre sur les positions dont le montant évalué est < 0.1
         - utiliser docker pour le déploiement final
@@ -19,6 +20,7 @@ todo
         - ajouter du cache sur les requêtes (ex Contract)
         - récupérer toutes les plateformes dispo à partir de CoinGecko
         - séparer les logs celery dans un fichier dédié
+        - vérifier à quoi sert le @csrf_exempt
     low
         - reprendre les best-practice pour mieux optimiser le code
         - aligner blockchain sur la droite sur l'ecran wallet

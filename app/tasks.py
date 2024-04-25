@@ -180,7 +180,7 @@ def calculate_cost_transaction_task(wallet_id: int):
         condition = Transaction.objects.filter(hash=transaction.hash)
         if condition.count() == 2:
             transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)  # type: ignore
-            position = Position.objects.get(id=transaction_ref[0].position.id)
+            position = Position.objects.filter(id=transaction_ref[0].position.id).first()
             transaction.against_contract = position.contract
             transaction.cost_contract_based = transaction_ref[0].quantity
             if transaction.quantity == 0:
