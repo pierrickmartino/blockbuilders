@@ -41,8 +41,6 @@ from datetime import datetime
 from asgiref.sync import sync_to_async
 from celery import chain
 
-logger.info("Number of CPU : " + str(os.cpu_count()))
-
 
 @login_required
 def wallets(request):

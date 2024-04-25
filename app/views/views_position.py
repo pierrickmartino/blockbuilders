@@ -29,9 +29,6 @@ from app.models import (
 from asgiref.sync import sync_to_async
 
 
-logger.info("Number of CPU : " + str(os.cpu_count()))
-
-
 @login_required
 def positions(request):
     positions = Position.objects.all()

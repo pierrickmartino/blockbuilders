@@ -13,8 +13,6 @@ from app.models import (
     Wallet,
 )
 
-logger.info("Number of CPU : " + str(os.cpu_count()))
-
 
 @login_required
 def transactions(request):

@@ -10,8 +10,6 @@ from app.models import (
     Contract,
 )
 
-logger.info("Number of CPU : " + str(os.cpu_count()))
-
 
 @login_required
 def contracts(request):

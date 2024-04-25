@@ -9,8 +9,6 @@ logger = logging.getLogger("blockbuilders")
 from aiohttp import ClientSession
 from asgiref.sync import sync_to_async
 
-logger.info("Number of CPU : " + str(os.cpu_count()))
-
 
 @sync_to_async
 def set_price(contract: Contract, price):

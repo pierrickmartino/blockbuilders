@@ -15,8 +15,6 @@ from app.models import (
     Blockchain,
 )
 
-logger.info("Number of CPU : " + str(os.cpu_count()))
-
 
 # Views
 @login_required
