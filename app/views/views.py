@@ -26,14 +26,6 @@ def dashboard(request: HttpRequest):
 
 
 @login_required
-def profile(request: HttpRequest):
-    context = {
-        "empty": "profile",
-    }
-    return render(request, "profile.html", context)
-
-
-@login_required
 def blockchains(request: HttpRequest):
     blockchains = Blockchain.objects.all()
     context = {

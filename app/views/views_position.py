@@ -23,6 +23,7 @@ from django.contrib.auth.decorators import login_required
 from app.models import (
     Position,
     Transaction,
+    UserSetting,
     Wallet,
 )
 
@@ -40,12 +41,25 @@ def positions(request):
 
 @login_required
 def positions_paginated(request, page):
-    positions = Position.objects.all().order_by("contract")
+
+    user_setting = UserSetting.objects.filter(user=request.user).first()
+    if user_setting and user_setting.show_positions_above_threshold:
+        positions = Position.objects.filter(amount__gt=0.5).order_by("contract")
+    else:
+        positions = Position.objects.all().order_by("contract")
+
+    logger.info("Number of positions found : " + str(positions.count()))
+    logger.info(
+        "User Setting - show_positions_above_threshold : "
+        + str(user_setting.show_positions_above_threshold)
+    )
+
     paginator = Paginator(positions, per_page=10)
     page_positions = paginator.get_page(page)
     page_positions.adjusted_elided_pages = paginator.get_elided_page_range(page)
     context = {
         "page_positions": page_positions,
+        "user_setting": user_setting,
     }
     return render(request, "positions.html", context)
 
@@ -53,13 +67,30 @@ def positions_paginated(request, page):
 @login_required
 def wallet_positions_paginated(request, wallet_id, page):
     wallet = Wallet.objects.filter(id=wallet_id).first()
-    positions = Position.objects.filter(wallet=wallet).order_by("-amount")
+
+    user_setting = UserSetting.objects.filter(user=request.user).first()
+    if user_setting and user_setting.show_positions_above_threshold:
+        positions = (
+            Position.objects.filter(wallet=wallet)
+            .filter(amount__gt=0.5)
+            .order_by("-amount")
+        )
+    else:
+        positions = Position.objects.filter(wallet=wallet).order_by("-amount")
+
+    logger.info("Number of positions found : " + str(positions.count()))
+    logger.info(
+        "User Setting - show_positions_above_threshold : "
+        + str(user_setting.show_positions_above_threshold)
+    )
+
     paginator = Paginator(positions, per_page=10)
     page_positions = paginator.get_page(page)
     page_positions.adjusted_elided_pages = paginator.get_elided_page_range(page)
     context = {
         "page_positions": page_positions,
         "wallet": wallet,
+        "user_setting": user_setting,
     }
     return render(request, "positions.html", context)
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.models import Blockchain, Wallet, Contract, Position, Transaction, Fiat, Wallet_Process
+from app.models import Blockchain, Wallet, Contract, Position, Transaction, Fiat, Wallet_Process, UserSetting
 from app.utils.polygon.models_polygon import Polygon_ERC20_Raw
 
 class Polygon_ERC20_Raw_Admin(admin.ModelAdmin):
@@ -90,6 +90,14 @@ class Transaction_Admin(admin.ModelAdmin):
         "against_fiat",
     )
 
+class UserSetting_Admin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "user",
+        "show_positions_above_threshold",
+    )
+
+admin.site.register(UserSetting, UserSetting_Admin)
 admin.site.register(Wallet, Wallet_Admin)
 admin.site.register(Wallet_Process, Wallet_Process_Admin)
 admin.site.register(Blockchain, Blockchain_Admin)

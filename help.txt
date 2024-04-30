@@ -25,6 +25,7 @@ docker-compose run --rm web python manage.py loaddata blockchains.json
 docker-compose run --rm web python manage.py loaddata fiats.json
 docker-compose run --rm web python manage.py loaddata contracts_polygon.json
 docker-compose run --rm web python manage.py makemigrations
+docker-compose run --rm web python manage.py migrate --run-syncdb
 
 docker ps
 docker exec -it XXXXXXXX bash

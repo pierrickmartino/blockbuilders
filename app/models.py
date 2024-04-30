@@ -6,6 +6,10 @@ import uuid
 
 class Blockchain(Enum):
     POLYGON = "Polygon"
+    BNB = "BNB Chain"
+    METIS = "Metis"
+    ARBITRUM = "Arbitrum"
+    OPTIMISTIC = "Optimistic"
 
 
 class TypeTransaction(Enum):
@@ -189,3 +193,14 @@ class Transaction(TimeStampModel):
 class TransactionCalculator:
     def __init__(self, transaction):
         self.transaction = transaction
+
+class UserSetting(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    show_positions_above_threshold = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "UserSetting"
+        verbose_name_plural = "UserSettings"
+
+    def __str__(self):
+        return f"{self.user.username}'s settings"

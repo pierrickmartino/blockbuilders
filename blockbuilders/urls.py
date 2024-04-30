@@ -18,7 +18,15 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
-from app.views import views
+from app.views import (
+    views,
+    views_contract,
+    views_market,
+    views_position,
+    views_transaction,
+    views_wallet,
+    views_profile
+)
 
 
 urlpatterns = [
@@ -30,80 +38,84 @@ urlpatterns = [
     path("login/", auth_views.LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("register/", views.register, name="register"),
-    path("profile/", views.profile, name="profile"),
+    path("profile/", views_profile.profile, name="profile"),
+    path("profile/update/", views_profile.update_user_settings, name="update_user_settings"),
+
     # DASHBOARD
     path("dashboard/", views.dashboard, name="dashboard"),
     # BLOCKCHAIN
     path("blockchains/", views.blockchains, name="blockchains"),
     # CONTRACT
-    path("contracts/", views.contracts, name="contracts"),
-    path("contracts/<int:page>", views.contracts_paginated, name="contracts-by-page"),
+    path("contracts/", views_contract.contracts, name="contracts"),
+    path(
+        "contracts/<int:page>",
+        views_contract.contracts_paginated,
+        name="contracts-by-page",
+    ),
     # WALLET
-    path("wallets/", views.wallets, name="wallets"),
+    path("wallets/", views_wallet.wallets, name="wallets"),
     path(
         "delete_wallet/<int:wallet_id>/",
-        views.delete_Wallet_by_id,
+        views_wallet.delete_Wallet_by_id,
         name="delete_wallet",
     ),
     path(
-        "wallet/<int:wallet_id>/positions/<int:page>",
-        views.wallet_positions_paginated,
-        name="wallet-positions-by-page",
-    ),
-    path(
-        "wallet/<int:wallet_id>/refresh_price/",
-        views.refresh_wallet_position_price,
-        name="refresh_wallet_position_price",
-    ),
-    path(
         "wallet_download_info/<int:wallet_id>/",
-        views.get_information_Wallet_by_id,
+        views_wallet.get_information_Wallet_by_id,
         name="wallet_download_info",
     ),
     path(
         "download_wallet_task_status/<uuid:task_id>/",
-        views.download_wallet_task_status,
+        views_wallet.download_wallet_task_status,
         name="download_wallet_task_status",
     ),
     path(
         "wallet_resync_info/<int:wallet_id>/",
-        views.resync_information_Wallet_by_id,
+        views_wallet.resync_information_Wallet_by_id,
         name="wallet_resync_info",
     ),
     path(
         "resync_wallet_task_status/<uuid:task_id>/",
-        views.resync_wallet_task_status,
+        views_wallet.resync_wallet_task_status,
         name="resync_wallet_task_status",
     ),
     # POSITION
-    path("positions/", views.positions, name="positions"),
+    path("positions/", views_position.positions, name="positions"),
     path(
         "position/<int:position_id>/refresh_price/",
-        views.refresh_position_price,
+        views_position.refresh_position_price,
         name="refresh_position_price",
     ),
-    path("positions/<int:page>", views.positions_paginated, name="positions-by-page"),
     path(
-        "position/<int:position_id>/transactions/<int:page>",
-        views.position_transactions_paginated,
-        name="position-transactions-by-page",
+        "positions/<int:page>",
+        views_position.positions_paginated,
+        name="positions-by-page",
     ),
     path(
         "delete_position/<int:position_id>/",
-        views.delete_Position_by_id,
+        views_position.delete_Position_by_id,
         name="delete_position",
     ),
-
+    path(
+        "wallet/<int:wallet_id>/positions/<int:page>",
+        views_position.wallet_positions_paginated,
+        name="wallet-positions-by-page",
+    ),
+    path(
+        "wallet/<int:wallet_id>/refresh_price/",
+        views_position.refresh_wallet_position_price,
+        name="refresh_wallet_position_price",
+    ),
     # TRANSACTION
-    path("transactions/", views.transactions, name="transactions"),
+    path("transactions/", views_transaction.transactions, name="transactions"),
     path(
         "transactions/<int:page>",
-        views.transactions_paginated,
+        views_transaction.transactions_paginated,
         name="transactions-by-page",
     ),
     path(
-        "delete_wallet/<int:wallet_id>/",
-        views.delete_Wallet_by_id,
-        name="delete_wallet",
-    ),
+        "position/<int:position_id>/transactions/<int:page>",
+        views_transaction.position_transactions_paginated,
+        name="position-transactions-by-page",
+    )
 ]
