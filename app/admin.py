@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.models import Blockchain, Wallet, Contract, Position, Transaction, Fiat, Wallet_Process, UserSetting
+from app.models import Blockchain, Wallet, Contract, Position, Transaction, Fiat, WalletProcess, UserSetting
 from app.utils.polygon.models_polygon import Polygon_ERC20_Raw
 
 class Polygon_ERC20_Raw_Admin(admin.ModelAdmin):
@@ -69,6 +69,12 @@ class Position_Admin(admin.ModelAdmin):
         "is_active",
         "quantity",
         "amount",
+        "total_buy_quantity",
+        "avg_cost",
+        "total_cost",
+        "unrealized_gain",
+        "unrealized_gain_percentage",
+        "capital_gain"
     )
 
 class Transaction_Admin(admin.ModelAdmin):
@@ -84,6 +90,9 @@ class Transaction_Admin(admin.ModelAdmin):
         "price_contract_based",
         "cost",
         "cost_contract_based",
+        "avg_cost_contract_based",
+        "capital_gain_contract_based",
+        "capital_gain_percentage_contract_based",
         "date",
         "hash",
         "against_contract",
@@ -99,7 +108,7 @@ class UserSetting_Admin(admin.ModelAdmin):
 
 admin.site.register(UserSetting, UserSetting_Admin)
 admin.site.register(Wallet, Wallet_Admin)
-admin.site.register(Wallet_Process, Wallet_Process_Admin)
+admin.site.register(WalletProcess, Wallet_Process_Admin)
 admin.site.register(Blockchain, Blockchain_Admin)
 admin.site.register(Fiat, Fiat_Admin)
 admin.site.register(Contract, Contract_Admin)

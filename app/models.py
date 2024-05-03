@@ -40,7 +40,7 @@ class Wallet(TimeStampModel):
     def __str__(self):
         return f"{self.address}"
     
-class Wallet_Process(TimeStampModel):
+class WalletProcess(TimeStampModel):
     wallet = models.OneToOneField(
         Wallet, on_delete=models.CASCADE, primary_key=True,
     )
@@ -119,6 +119,15 @@ class Position(TimeStampModel):
     )
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
     amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    
+    # Performance calculation
+    total_buy_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
+    avg_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    total_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    unrealized_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    unrealized_gain_percentage = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    capital_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+
     is_active = models.BooleanField()
 
     class Meta:
@@ -160,7 +169,6 @@ class Transaction(TimeStampModel):
     price_contract_based = models.DecimalField(max_digits=15, decimal_places=8, default=0)
     cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     cost_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    total_cost_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     avg_cost_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     capital_gain_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     capital_gain_percentage_contract_based = models.DecimalField(max_digits=15, decimal_places=8, default=0)
