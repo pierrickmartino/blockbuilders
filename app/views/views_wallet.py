@@ -33,7 +33,7 @@ from app.models import (
     Position,
     Transaction,
     Wallet,
-    Wallet_Process,
+    WalletProcess,
 )
 
 from datetime import datetime
@@ -62,7 +62,7 @@ def wallets(request):
 
             logger.info("New wallet is created")
 
-            wallet_process = Wallet_Process.objects.create(wallet=wallet)
+            wallet_process = WalletProcess.objects.create(wallet=wallet)
             wallet_process.save()
 
             logger.info("New wallet process is created")
@@ -115,7 +115,7 @@ def resync_information_Wallet_by_id(request, wallet_id):
 
     wallet = get_object_or_404(Wallet, id=wallet_id)
 
-    wallet_process = Wallet_Process.objects.filter(wallet=wallet).first()
+    wallet_process = WalletProcess.objects.filter(wallet=wallet).first()
     wallet_process.resync_task = result.id
     wallet_process.save()
 
@@ -145,7 +145,7 @@ def get_information_Wallet_by_id(request, wallet_id):
     )
     result = chained_task.apply_async()
 
-    wallet_process = Wallet_Process.objects.filter(wallet=wallet).first()
+    wallet_process = WalletProcess.objects.filter(wallet=wallet).first()
     wallet_process.download_task = result.id
     wallet_process.save()
 
