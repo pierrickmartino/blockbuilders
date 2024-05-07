@@ -40,6 +40,18 @@ cd .docker
 nano config.json
 "credStore" au lieu de "credsStore"
 
+docker tag redis:7 pierrickmartino/redis:7
+docker tag postgres:16 pierrickmartino/postgres:16
+docker tag blockbuilders-celery pierrickmartino/blockbuilders-celery:latest
+docker tag blockbuilders-nginx pierrickmartino/blockbuilders-nginx:latest
+docker tag blockbuilders-web pierrickmartino/blockbuilders-web:latest
+
+docker push pierrickmartino/postgres:16
+docker push pierrickmartino/redis:7
+docker push pierrickmartino/blockbuilders-celery:latest
+docker push pierrickmartino/blockbuilders-nginx:latest
+docker push pierrickmartino/blockbuilders-web:latest
+
 thx !!!
 https://dev.to/documatic/start-a-production-ready-dockerized-django-project-5eop
 https://github.com/vikdiesel/admin-one-bulma-dashboard/blob/master/src/html/index.html
