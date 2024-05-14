@@ -3,218 +3,251 @@
 {% block content %}
 
 <section class="section is-title-bar">
+  <div class="level">
+    <div class="level-left">
+      <div class="level-item">
+        <ul>
+          <li>App</li>
+          {% if wallet %}<li><a href="{% url 'wallets' %}">Wallet <small>({{ wallet.name }})</small></a></li>{% endif %}
+          {% if wallet %}<li><a href="{% url 'wallet-positions-by-page' wallet.id 1 %}">Position <small>({{ position.contract }})</small></a></li>{% endif %}
+          <li>Transactions</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="hero is-hero-bar">
+  <div class="hero-body">
     <div class="level">
       <div class="level-left">
         <div class="level-item">
-          <ul>
-            <li>App</li>
-            {% if wallet %}<li><a href="{% url 'wallets' %}">Wallet <small>({{ wallet.name }})</small></a></li>{% endif %}
-            {% if wallet %}<li><a href="{% url 'wallet-positions-by-page' wallet.id 1 %}">Position <small>({{ position.contract }})</small></a></li>{% endif %}
-            <li>Transactions</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="hero is-hero-bar">
-    <div class="hero-body">
-      <div class="level">
-        <div class="level-left">
-          <div class="level-item"><h1 class="title">
+          <h4 class="title is-4">
             Transactions
-          </h1></div>
+          </h4>
         </div>
-        <div class="level-right" style="display: none;">
-          <div class="level-item"></div>
-        </div>
+      </div>
+      <div class="level-right" style="display: none;">
+        <div class="level-item"></div>
       </div>
     </div>
-  </section>
-  <section class="section is-main-section">
-    <div class="tile is-ancestor">
-      <div class="tile is-parent">
-        <div class="card tile is-child">
-          <div class="card-content">
-            <div class="level is-mobile">
-              <div class="level-item">
-                <div class="is-widget-label"><h3 class="subtitle is-spaced">
-                  Clients
-                </h3>
-                  <h1 class="title">
-                    512
-                  </h1>
-                </div>
-              </div>
-              <div class="level-item has-widget-icon">
-                <div class="is-widget-icon"><span class="icon has-text-primary is-large"><i
-                    class="mdi mdi-account-multiple mdi-48px"></i></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="tile is-parent">
-        <div class="card tile is-child">
-          <div class="card-content">
-            <div class="level is-mobile">
-              <div class="level-item">
-                <div class="is-widget-label"><h3 class="subtitle is-spaced">
+  </div>
+</section>
+<section class="section is-main-section">
+  <div class="tile is-ancestor">
+    <div class="tile is-parent">
+      <div class="card tile is-child">
+        <div class="card-content">
+          <div class="level is-mobile">
+            <div class="level-item">
+              <div class="is-widget-label">
+                <p class="subtitle is-spaced is-6">
                   Market Price
-                </h3>
-                  <h1 class="title">
-                    {{ contract.price|floatformat:"-6g" }}
-                  </h1>
-                </div>
-              </div>
-              <div class="level-item has-widget-icon">
-                <div class="is-widget-icon"><span class="icon has-text-info is-large"><i
-                    class="mdi mdi-cart-outline mdi-48px"></i></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="tile is-parent">
-        <div class="card tile is-child">
-          <div class="card-content">
-            <div class="level is-mobile">
-              <div class="level-item">
-                <div class="is-widget-label"><h3 class="subtitle is-spaced">
-                  Unrealized Performance
-                </h3>
-                  <h1 class="title">
-                    {{ performance|floatformat:"-2g" }}%
-                  </h1>
-                </div>
-              </div>
-              <div class="level-item has-widget-icon">
-                <div class="is-widget-icon"><span class="icon has-text-success is-large"><i
-                    class="mdi mdi-finance mdi-48px"></i></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="card has-table has-mobile-sort-spaced">
-      <header class="card-header">
-        <p class="card-header-title">
-          <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
-          Transactions
-        </p>
-      </header>
-      <div class="card-content">
-        <div class="b-table has-pagination">
-          <div class="table-wrapper has-mobile-cards">
-            <table class="table is-fullwidth is-striped is-hoverable is-sortable is-fullwidth">
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Qty</th>
-                  <th>Run.Qty</th>
-                  <th>Price</th>
-                  <th>Cost</th>
-                  <th></th>
-                  <th>Tot.Cost</th>
-                  <th>Avg.Cost</th>
-                  <th>Cap.Gain</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% if page_transactions %}
-                  {% for transaction in page_transactions %}
-                  <tr>
-                    
-                    <td data-label="Type">{% if transaction.type == 'IN' %}
-                      <span class="tag is-success">{{ transaction.type }}</span>
-                      {% else %}
-                      <span class="tag is-danger">{{ transaction.type }}</span>
-                      {% endif %}</td>
-                    <td data-label="Qty">{{ transaction.quantity|floatformat:"-6g" }}</td>
-                    <td data-label="RunQty">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
-                    <td data-label="Price">{{ transaction.price_contract_based|floatformat:"-6g" }}</td>
-                    <td data-label="Cost">{{ transaction.cost_contract_based|floatformat:"-2g" }}</td>
-                    <td data-label="CostSymbol">{{ transaction.against_contract.symbol }}</td>
-                    <td data-label="TotCost">{{ transaction.total_cost_contract_based|floatformat:"-2g" }}</td>
-                    <td data-label="AvgCost">{{ transaction.avg_cost_contract_based|floatformat:"-2g" }}</td>
-                    <td data-label="CapGain">{% if transaction.capital_gain_percentage_contract_based == 0 %}
-                      <span></span>
-                      {% elif transaction.capital_gain_percentage_contract_based < 0 %}
-                      <span class="tag is-danger">{{ transaction.capital_gain_percentage_contract_based|floatformat:"-2g" }}%</span>
-                      {% else %}
-                      <span class="tag is-success">{{ transaction.capital_gain_percentage_contract_based|floatformat:"-2g" }}%</span>
-                      {% endif %}</td>
-                      <td data-label="Date" class="is-narrow"><small class="has-text-grey is-abbr-like">{{ transaction.date }}</small></td>
-                  </tr>
-                  {% endfor %}
-                {% else %}  
-                <tr class="is-empty">
-                  <td colspan="10">
-                    <section class="section">
-                      <div class="content has-text-grey has-text-centered">
-                        <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
-                        <p>Nothing's there…</p>
-                      </div>
-                    </section>
-                  </td>
-                </tr>
-                {% endif %}
-              </tbody>
-            </table>
-          </div>
-          {% block pagination %}
-          <div class="notification">
-            <div class="level">
-              <div class="level-left">
-                <div class="level-item">
-                  <div class="buttons has-addons">
-                    {% if page_transactions.has_previous %}
-                    <a type="button" class="button" href="{{ page_transactions.previous_page_number }}">Prev.</a>
-
-                        {% if page_transactions.number > 3 %}
-                            <a type="button" class="button" href="1">1</a>
-                            {% if page_transactions.number > 4 %}
-                            <span class="button is-static">...</span>
-                            {% endif %}
-                        {% endif %}
-                    {% endif %}
-                    {% for num in page_transactions.paginator.page_range %}
-                        {% if page_transactions.number == num %}
-                            <a type="button" class="button is-active" href="{{ num }}">{{ num }}</a>
-                        {% elif num > page_transactions.number|add:'-3' and num < page_transactions.number|add:'3' %}
-                            <a type="button" class="button" href="{{ num }}">{{ num }}</a>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if page_transactions.has_next %}
-                    {% if page_transactions.number < page_transactions.paginator.num_pages|add:'-3' %}
-                        <span class="button is-static">...</span>
-                        <a type="button" class="button" href="{{ page_transactions.paginator.num_pages }}">{{ page_transactions.paginator.num_pages }}</a>
-                    {% elif page_transactions.number < page_transactions.paginator.num_pages|add:'-2' %}
-                        <a type="button" class="button" href="{{ page_transactions.paginator.num_pages }}">{{ page_transactions.paginator.num_pages }}</a>
-                    {% endif %}
-
-                    <a type="button" class="button" href="{{ page_transactions.next_page_number }}">Next</a>
-                    {% endif %}
-                        
+                </p>
+                <p class="title is-4" style="margin: 6px">
+                  {{ contract.price|floatformat:"-2g" }}
+                </p>
+                <div class="control">
+                  <div class="tags has-addons">
+                    <span class="tag is-danger">
+                      <span class="icon">
+                        <i class="mdi mdi-arrow-down"></i>
+                      </span>
+                      <span>1.99%</span>
+                    </span>
+                    <span class="tag is-dark">compared to last month</span>
                   </div>
                 </div>
               </div>
-              <div class="level-right">
-                <div class="level-item">
-                  <small>Page {{page_transactions.number}} of {{ page_transactions.paginator.num_pages }}</small>
+              <div class="level-item has-widget-icon">
+                <div class="is-widget-icon">
                 </div>
               </div>
             </div>
           </div>
-          {% endblock %}
         </div>
       </div>
     </div>
-  </section>
-  
+    <div class="tile is-parent">
+      <div class="card tile is-child">
+        <div class="card-content">
+          <div class="level is-mobile">
+            <div class="level-item">
+              <div class="is-widget-label">
+                <p class="subtitle is-spaced is-6">
+                  Total Realized Performance
+                </p>
+                <p class="title is-4" style="margin: 6px">
+                  {{ performance|floatformat:"-2g" }}%
+                </p>
+                <div class="control">
+                  <div class="tags has-addons">
+                    <span class="tag is-success">
+                      <span class="icon">
+                        <i class="mdi mdi-arrow-up"></i>
+                      </span>
+                      <span>11.04%</span>
+                    </span>
+                    <span class="tag is-dark">compared to last month</span>
+                  </div>
+                </div>
+              </div>
+              <div class="level-item has-widget-icon">
+                <div class="is-widget-icon">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile is-parent">
+      <div class="card tile is-child">
+        <div class="card-content">
+          <div class="level is-mobile">
+            <div class="level-item">
+              <div class="is-widget-label">
+                <p class="subtitle is-spaced is-6">
+                  Total Unrealized Performance
+                </p>
+                <p class="title is-4" style="margin: 6px">
+                  {{ performance|floatformat:"-2g" }}%
+                </p>
+                <div class="control">
+                  <div class="tags has-addons">
+                    <span class="tag is-success">
+                      <span class="icon">
+                        <i class="mdi mdi-arrow-up"></i>
+                      </span>
+                      <span>99.99%</span>
+                    </span>
+                    <span class="tag is-dark">compared to last month</span>
+                  </div>
+                </div>
+              </div>
+              <div class="level-item has-widget-icon">
+                <div class="is-widget-icon">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card has-table has-mobile-sort-spaced">
+    <header class="card-header">
+      <p class="card-header-title">
+        <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
+        Transactions
+      </p>
+    </header>
+    <div class="card-content">
+      <div class="b-table has-pagination">
+        <div class="table-wrapper has-mobile-cards">
+          <table class="table is-fullwidth is-striped is-hoverable is-sortable is-fullwidth">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Qty</th>
+                <th>Run.Qty</th>
+                <th>Price</th>
+                <th>Cost</th>
+                <th></th>
+                <th>Tot.Cost</th>
+                <th>Avg.Cost</th>
+                <th>Cap.Gain</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if page_transactions %}
+              {% for transaction in page_transactions %}
+              <tr>
+
+                <td data-label="Type">{% if transaction.type == 'IN' %}
+                  <span class="tag is-success">{{ transaction.type }}</span>
+                  {% else %}
+                  <span class="tag is-danger">{{ transaction.type }}</span>
+                  {% endif %}
+                </td>
+                <td data-label="Qty">{{ transaction.quantity|floatformat:"-6g" }}</td>
+                <td data-label="RunQty">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
+                <td data-label="Price">{{ transaction.price_contract_based|floatformat:"-6g" }}</td>
+                <td data-label="Cost">{{ transaction.cost_contract_based|floatformat:"-2g" }}</td>
+                <td data-label="CostSymbol">{{ transaction.against_contract.symbol }}</td>
+                <td data-label="TotCost">{{ transaction.total_cost_contract_based|floatformat:"-2g" }}</td>
+                <td data-label="AvgCost">{{ transaction.avg_cost_contract_based|floatformat:"-2g" }}</td>
+                <td data-label="CapGain">{% if transaction.capital_gain_percentage_contract_based == 0 %}
+                  <span></span>
+                  {% elif transaction.capital_gain_percentage_contract_based < 0 %} <span class="tag is-danger">{{ transaction.capital_gain_percentage_contract_based|floatformat:"-2g" }}%</span>
+                    {% else %}
+                    <span class="tag is-success">{{ transaction.capital_gain_percentage_contract_based|floatformat:"-2g" }}%</span>
+                    {% endif %}
+                </td>
+                <td data-label="Date" class="is-narrow"><small class="has-text-grey is-abbr-like">{{ transaction.date }}</small></td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr class="is-empty">
+                <td colspan="10">
+                  <section class="section">
+                    <div class="content has-text-grey has-text-centered">
+                      <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
+                      <p>Nothing's there…</p>
+                    </div>
+                  </section>
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+        {% block pagination %}
+        <div class="notification">
+          <div class="level">
+            <div class="level-left">
+              <div class="level-item">
+                <div class="buttons has-addons">
+                  {% if page_transactions.has_previous %}
+                  <a type="button" class="button" href="{{ page_transactions.previous_page_number }}">Prev.</a>
+
+                  {% if page_transactions.number > 3 %}
+                  <a type="button" class="button" href="1">1</a>
+                  {% if page_transactions.number > 4 %}
+                  <span class="button is-static">...</span>
+                  {% endif %}
+                  {% endif %}
+                  {% endif %}
+                  {% for num in page_transactions.paginator.page_range %}
+                  {% if page_transactions.number == num %}
+                  <a type="button" class="button is-active" href="{{ num }}">{{ num }}</a>
+                  {% elif num > page_transactions.number|add:'-3' and num < page_transactions.number|add:'3' %} <a type="button" class="button" href="{{ num }}">{{ num }}</a>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if page_transactions.has_next %}
+                    {% if page_transactions.number < page_transactions.paginator.num_pages|add:'-3' %} <span class="button is-static">...</span>
+                      <a type="button" class="button" href="{{ page_transactions.paginator.num_pages }}">{{ page_transactions.paginator.num_pages }}</a>
+                      {% elif page_transactions.number < page_transactions.paginator.num_pages|add:'-2' %} <a type="button" class="button" href="{{ page_transactions.paginator.num_pages }}">{{ page_transactions.paginator.num_pages }}</a>
+                        {% endif %}
+
+                        <a type="button" class="button" href="{{ page_transactions.next_page_number }}">Next</a>
+                        {% endif %}
+
+                </div>
+              </div>
+            </div>
+            <div class="level-right">
+              <div class="level-item">
+                <small>Page {{page_transactions.number}} of {{ page_transactions.paginator.num_pages }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
