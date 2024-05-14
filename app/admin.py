@@ -59,6 +59,9 @@ class Contract_Admin(admin.ModelAdmin):
         "name",
         "address",
         "symbol",
+        "previous_day",
+        "previous_week",
+        "previous_month"
     )
 
 class Position_Admin(admin.ModelAdmin):

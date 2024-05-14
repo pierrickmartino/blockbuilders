@@ -92,6 +92,15 @@ class Contract(models.Model):
     name = models.CharField(max_length=255, default="")
     symbol = models.CharField(max_length=20, default="")
     price = models.DecimalField(max_digits=15, decimal_places=8, default=0)
+    
+    previous_day_price = models.DecimalField(max_digits=15, decimal_places=8, default=0)
+    previous_week_price = models.DecimalField(max_digits=15, decimal_places=8, default=0)
+    previous_month_price = models.DecimalField(max_digits=15, decimal_places=8, default=0)
+    
+    previous_day = models.DateTimeField()
+    previous_week = models.DateTimeField()
+    previous_month = models.DateTimeField()
+    
     logo_uri = models.CharField(max_length=255, default="")
     decimals = models.IntegerField(default=0)
     # market_cap = models.DecimalField(max_digits=20, decimal_places=2, default=0) # type: ignore
@@ -122,11 +131,34 @@ class Position(TimeStampModel):
     
     # Performance calculation
     total_buy_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
+    total_buy_quantity_prev_day = models.DecimalField(max_digits=32, decimal_places=18, default=0)
+    total_buy_quantity_prev_week = models.DecimalField(max_digits=32, decimal_places=18, default=0)
+    total_buy_quantity_prev_year = models.DecimalField(max_digits=32, decimal_places=18, default=0)
+    
     avg_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    avg_cost_prev_day = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    avg_cost_prev_week = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    avg_cost_prev_month = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    
     total_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    total_cost_prev_day = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    total_cost_prev_week = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    total_cost_prev_month = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    
     unrealized_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    unrealized_gain_prev_day = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    unrealized_gain_prev_week = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    unrealized_gain_prev_month = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    
     unrealized_gain_percentage = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    unrealized_gain_percentage_prev_day = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    unrealized_gain_percentage_prev_week = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    unrealized_gain_percentage_prev_month = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    
     capital_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    capital_gain_prev_day = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    capital_gain_prev_week = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    capital_gain_prev_month = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     is_active = models.BooleanField()
 
