@@ -68,40 +68,40 @@
             </thead>
             <tbody>
               {% if wallets %}
-                {% for wallet in wallets %}
-                <tr>
-                  <td data-label="Address">{{ wallet.address|truncatechars:35 }}</td>
-                  <td data-label="Name">{{ wallet.name }}</td>
-                  <td data-label="Balance">{{ wallet.balance|floatformat:"-2g" }}</td>
-                  <td data-label="NumPositions">{{ wallet.wallet_positions.count }}</td>
-                  <td data-label="Progress" class="is-progress-cell">
-                    <progress max="100" class="progress is-small is-primary" value="79">79</progress>
-                  </td>
-                  <!-- <td id="status_{{ wallet.id }}" data-task-id="{{ wallet.wallet_process.download_task }}">
+              {% for wallet in wallets %}
+              <tr>
+                <td data-label="Address">{{ wallet.address|truncatechars:35 }}</td>
+                <td data-label="Name">{{ wallet.name }}</td>
+                <td data-label="Balance">{{ wallet.balance|floatformat:"-2g" }}</td>
+                <td data-label="NumPositions">{{ wallet.wallet_positions.count }}</td>
+                <td data-label="Progress" class="is-progress-cell">
+                  <progress max="100" class="progress is-small is-primary" value="79">79</progress>
+                </td>
+                <!-- <td id="status_{{ wallet.id }}" data-task-id="{{ wallet.wallet_process.download_task }}">
                     Checking status...
                 </td> -->
-                  <td data-label="Created">
-                    <small class="has-text-grey is-abbr-like">{{ wallet.created_at }}</small>
-                  </td>
-                  <td class="is-actions-cell">
-                    <div class="buttons is-right">
-                      <a id="status_download_{{ wallet.id }}" data-task-download-id="{{ wallet.wallet_process.download_task }}" href="{% url 'wallet_download_info' wallet.id %}" class="button is-small is-primary" type="button">
-                        <span class="icon"><i class="mdi mdi-download"></i></span>
-                      </a>
-                      <a id="status_resync_{{ wallet.id }}" data-task-resync-id="{{ wallet.wallet_process.resync_task }}" href="{% url 'wallet_resync_info' wallet.id %}" class="button is-small is-primary" type="button">
+                <td data-label="Created">
+                  <small class="has-text-grey is-abbr-like">{{ wallet.created_at }}</small>
+                </td>
+                <td class="is-actions-cell">
+                  <div class="buttons is-right">
+                    <a id="status_download_{{ wallet.id }}" data-task-download-id="{{ wallet.wallet_process.download_task }}" href="{% url 'sync_wallet' wallet.id %}" class="button is-small is-primary" type="button">
+                      <span class="icon"><i class="mdi mdi-download"></i></span>
+                    </a>
+                    <!-- <a id="status_resync_{{ wallet.id }}" data-task-resync-id="{{ wallet.wallet_process.resync_task }}" href="{% url 'wallet_resync_info' wallet.id %}" class="button is-small is-primary" type="button">
                         <span class="icon"><i class="mdi mdi-reload"></i></span>
-                      </a>
-                      <a href="{% url 'wallet-positions-by-page' wallet.id 1 %}" class="button is-small is-primary" type="button">
-                        <span class="icon"><i class="mdi mdi-eye"></i></span>
-                      </a>
-                      <a href="{% url 'delete_wallet' wallet.id %}" class="button is-small is-danger" type="button">
-                        <span class="icon"><i class="mdi mdi-trash-can"></i></span>
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-                {% endfor %}
-              {% else %}  
+                      </a> -->
+                    <a href="{% url 'wallet-positions-by-page' wallet.id 1 %}" class="button is-small is-primary" type="button">
+                      <span class="icon"><i class="mdi mdi-eye"></i></span>
+                    </a>
+                    <a href="{% url 'delete_wallet' wallet.id %}" class="button is-small is-danger" type="button">
+                      <span class="icon"><i class="mdi mdi-trash-can"></i></span>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+              {% else %}
               <tr class="is-empty">
                 <td colspan="7">
                   <section class="section">
@@ -187,36 +187,36 @@
 <script>
 
   function updateDownloadWalletTaskStatus(walletId, taskId) {
-      fetch(`/download_wallet_task_status/${taskId}/`)
-          .then(response => response.json())
-          .then(data => {
-              const statusDownloadLink = document.getElementById('status_download_' + walletId);
-              // console.log("Found " + statusDownloadLink.length + " status cell to update");
-              // console.log("Status " + data.status)
-              if (data.status === 'PENDING' || data.status === 'STARTED' || data.status === 'RETRY') {
-                statusDownloadLink.classList.add('is-loading');
-            } else {
-                statusDownloadLink.classList.remove('is-loading');
-            }
-          });
+    fetch(`/download_wallet_task_status/${taskId}/`)
+      .then(response => response.json())
+      .then(data => {
+        const statusDownloadLink = document.getElementById('status_download_' + walletId);
+        // console.log("Found " + statusDownloadLink.length + " status cell to update");
+        // console.log("Status " + data.status)
+        if (data.status === 'PENDING' || data.status === 'STARTED' || data.status === 'RETRY') {
+          statusDownloadLink.classList.add('is-loading');
+        } else {
+          statusDownloadLink.classList.remove('is-loading');
+        }
+      });
   }
 
   function updateResyncWalletTaskStatus(walletId, taskId) {
-      fetch(`/resync_wallet_task_status/${taskId}/`)
-          .then(response => response.json())
-          .then(data => {
-              const statusDownloadLink = document.getElementById('status_resync_' + walletId);
-              console.log("Found " + statusDownloadLink.length + " status cell to update");
-              console.log("Status " + data.status)
-              if (data.status === 'PENDING' || data.status === 'STARTED' || data.status === 'RETRY') {
-                statusDownloadLink.classList.add('is-loading');
-            } else {
-                statusDownloadLink.classList.remove('is-loading');
-            }
-          });
+    fetch(`/resync_wallet_task_status/${taskId}/`)
+      .then(response => response.json())
+      .then(data => {
+        const statusDownloadLink = document.getElementById('status_resync_' + walletId);
+        console.log("Found " + statusDownloadLink.length + " status cell to update");
+        console.log("Status " + data.status)
+        if (data.status === 'PENDING' || data.status === 'STARTED' || data.status === 'RETRY') {
+          statusDownloadLink.classList.add('is-loading');
+        } else {
+          statusDownloadLink.classList.remove('is-loading');
+        }
+      });
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const statusCells_download = document.querySelectorAll('[data-task-download-id]');
     console.log("Found " + statusCells_download.length + " status cells download");
     const statusCells_resync = document.querySelectorAll('[data-task-resync-id]');
@@ -231,15 +231,15 @@
       const download_walletId = cell.getAttribute('id').split('_')[2];
       const download_taskId = cell.getAttribute('data-task-download-id');
       // console.log("Checking status for Wallet ID: " + walletId + " with Task ID: " + taskId);
-      
+
       // Call the update function immediately for initial check
       updateDownloadWalletTaskStatus(download_walletId, download_taskId);
-      
+
       // Then set interval
       setInterval(() => {
-            // console.log("Updating status for Wallet ID: " + walletId);
-            updateDownloadWalletTaskStatus(download_walletId, download_taskId);
-        }, 4000); // Poll every 3 seconds
+        // console.log("Updating status for Wallet ID: " + walletId);
+        updateDownloadWalletTaskStatus(download_walletId, download_taskId);
+      }, 4000); // Poll every 3 seconds
     });
 
     statusCells_resync.forEach(cell => {
@@ -251,19 +251,19 @@
       const resync_walletId = cell.getAttribute('id').split('_')[2];
       const resync_taskId = cell.getAttribute('data-task-resync-id');
       console.log("Checking Resync status for Wallet ID: " + resync_walletId + " with Task ID: " + resync_taskId);
-      
+
       // Call the update function immediately for initial check
       updateResyncWalletTaskStatus(resync_walletId, resync_taskId);
-      
+
       // Then set interval
       setInterval(() => {
-            console.log("Updating Resync status for Wallet ID: " + resync_walletId);
-            updateResyncWalletTaskStatus(resync_walletId, resync_taskId);
-        }, 3000); // Poll every 3 seconds
+        console.log("Updating Resync status for Wallet ID: " + resync_walletId);
+        updateResyncWalletTaskStatus(resync_walletId, resync_taskId);
+      }, 3000); // Poll every 3 seconds
     });
 
   });
 
-  </script>
+</script>
 
 {% endblock %}
