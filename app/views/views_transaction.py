@@ -10,6 +10,7 @@ from app.models import (
     Contract,
     Position,
     Transaction,
+    TransactionCalculator,
     Wallet,
 )
 
@@ -41,15 +42,35 @@ def position_transactions_paginated(request, position_id, page):
     contract = Contract.objects.filter(id=position.contract.id).first()
     wallet = Wallet.objects.filter(id=position.wallet.id).first()
     transactions = Transaction.objects.filter(position=position).order_by("-date")
-    paginator = Paginator(transactions, per_page=10)
+    paginator = Paginator(transactions, per_page=20)
     page_transactions = paginator.get_page(page)
     page_transactions.adjusted_elided_pages = paginator.get_elided_page_range(page)
 
-    reference_avg_cost = transactions.first().avg_cost_contract_based
+    # Calculate the average cost for each transaction
+    transactions_with_calculator = []
+    for transaction in page_transactions:
+        calculator = TransactionCalculator(transaction)
+        avg_cost_contract_based = calculator.calculate_avg_cost_contract_based()
+        cost_contract_based = calculator.calculate_cost_contract_based()
+        capital_gain_contract_based = calculator.calculate_capital_gain_contract_based()
+        transactions_with_calculator.append({
+            'type': transaction.type,
+            'quantity': transaction.quantity,
+            'running_quantity': transaction.running_quantity,
+            'price_contract_based': transaction.price_contract_based,
+            'cost_contract_based': cost_contract_based,
+            'against_contract': transaction.against_contract,
+            'total_cost_contract_based': transaction.total_cost_contract_based,
+            'capital_gain_contract_based': capital_gain_contract_based,
+            'date': transaction.date,
+            'avg_cost_contract_based': avg_cost_contract_based
+        })
+
+    reference_avg_cost = TransactionCalculator(transactions.first()).calculate_avg_cost_contract_based()
     performance = (contract.price - reference_avg_cost) / reference_avg_cost * 100
 
     context = {
-        "page_transactions": page_transactions,
+        "page_transactions": transactions_with_calculator,
         "position": position,
         "wallet": wallet,
         "contract": contract,

@@ -205,7 +205,8 @@ def sync_wallet(request, wallet_id: int):
     wallet_process.download_task = chain_result.id
     wallet_process.save()
     logger.info(f"Started syncing wallet with id {wallet_id}")
-    return redirect("view_wallet", wallet_id=wallet.id)
+    # return redirect("wallet-positions-by-page", wallet_id=wallet.id)
+    return redirect("wallets")
 
 
 # todo : still needed ?

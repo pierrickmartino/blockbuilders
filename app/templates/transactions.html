@@ -177,11 +177,11 @@
                 <td data-label="CostSymbol">{{ transaction.against_contract.symbol }}</td>
                 <td data-label="TotCost">{{ transaction.total_cost_contract_based|floatformat:"-2g" }}</td>
                 <td data-label="AvgCost">{{ transaction.avg_cost_contract_based|floatformat:"-2g" }}</td>
-                <td data-label="CapGain">{% if transaction.capital_gain_percentage_contract_based == 0 %}
+                <td data-label="CapGain">{% if transaction.capital_gain_contract_based == 0 %}
                   <span></span>
-                  {% elif transaction.capital_gain_percentage_contract_based < 0 %} <span class="tag is-danger">{{ transaction.capital_gain_percentage_contract_based|floatformat:"-2g" }}%</span>
+                  {% elif transaction.capital_gain_contract_based < 0 %} <span class="tag is-danger">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
                     {% else %}
-                    <span class="tag is-success">{{ transaction.capital_gain_percentage_contract_based|floatformat:"-2g" }}%</span>
+                    <span class="tag is-success">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
                     {% endif %}
                 </td>
                 <td data-label="Date" class="is-narrow"><small class="has-text-grey is-abbr-like">{{ transaction.date }}</small></td>

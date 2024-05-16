@@ -88,9 +88,6 @@
                     <a id="status_download_{{ wallet.id }}" data-task-download-id="{{ wallet.wallet_process.download_task }}" href="{% url 'sync_wallet' wallet.id %}" class="button is-small is-primary" type="button">
                       <span class="icon"><i class="mdi mdi-download"></i></span>
                     </a>
-                    <!-- <a id="status_resync_{{ wallet.id }}" data-task-resync-id="{{ wallet.wallet_process.resync_task }}" href="{% url 'wallet_resync_info' wallet.id %}" class="button is-small is-primary" type="button">
-                        <span class="icon"><i class="mdi mdi-reload"></i></span>
-                      </a> -->
                     <a href="{% url 'wallet-positions-by-page' wallet.id 1 %}" class="button is-small is-primary" type="button">
                       <span class="icon"><i class="mdi mdi-eye"></i></span>
                     </a>

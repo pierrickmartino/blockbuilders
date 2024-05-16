@@ -276,29 +276,29 @@ class TransactionCalculator:
             else 0
         )
 
-    def calculate_gain(self, current_price):
+    def calculate_amount(self, current_price):
         # Calculate the amount of a transaction
         return self.transaction.running_quantity * current_price
 
-    def calculate_cost(self):
-        # Calculate the cost of the transaction
-        return self.transaction.quantity * self.transaction.price
+    def calculate_cost_contract_based(self):
+        # Calculate the cost of the transaction based on contract price
+        return self.transaction.quantity * self.transaction.price_contract_based
 
     def calculate_gain(self, current_price):
         # Calculate the gain of the transaction
-        initial_cost = self.calculate_cost()
+        initial_cost = self.calculate_cost_contract_based()
         current_value = self.transaction.quantity * current_price
         return current_value - initial_cost
 
     def calculate_performance(self, current_price):
         # Calculate the performance of the transaction as a percentage
-        initial_cost = self.calculate_cost()
+        initial_cost = self.calculate_cost_contract_based()
         gain = self.calculate_gain(current_price)
         return (gain / initial_cost) * 100 if initial_cost != 0 else 0
 
     def calculate_capital_gain_contract_based(self):
         # Calculate the capital gain of the transaction based on contract price
-        cost = self.calculate_cost()
+        cost = self.calculate_cost_contract_based()
         avg_cost = self.calculate_avg_cost_contract_based()
         return (
             cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT else 0
@@ -306,7 +306,7 @@ class TransactionCalculator:
 
     def calculate_capital_gain_fiat_based(self):
         # Calculate the capital gain of the transaction based on fiat price
-        cost = self.calculate_cost()
+        cost = self.calculate_cost_contract_based()
         avg_cost = self.calculate_avg_cost_fiat_based()
         return (
             cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT else 0
