@@ -86,7 +86,8 @@ def create_transactions_from_erc20_task(wallet_id: int):
         transactions = get_erc20_transactions_by_wallet(wallet.address)
         for erc20 in transactions:
             contract_address = erc20["contractAddress"]
-            contract, created = Contract.objects.get_or_create(address=contract_address)
+            # contract, created = Contract.objects.get_or_create(address=contract_address)
+            contract = Contract.objects.filter(address=contract_address).get()
             position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
             transaction_type = TypeTransactionChoices.IN if erc20["to"].upper() == wallet.address.upper() else TypeTransactionChoices.OUT
             Transaction.objects.create(
@@ -97,6 +98,8 @@ def create_transactions_from_erc20_task(wallet_id: int):
                 hash=erc20["hash"],
             ).save()
         logger.info(f"Created transactions from ERC20 for wallet id {wallet_id}")
+    except Contract.DoesNotExist:             
+        logger.error("Contract with address {erc20.contractAddress} does not exist")
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
 
