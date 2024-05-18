@@ -59,21 +59,27 @@ urlpatterns = [
         views_wallet.delete_Wallet_by_id,
         name="delete_wallet",
     ),
+    # path(
+    #     "wallet_download_info/<int:wallet_id>/",
+    #     views_wallet.get_information_Wallet_by_id,
+    #     name="wallet_download_info",
+    # ),
     path(
-        "wallet_download_info/<int:wallet_id>/",
-        views_wallet.get_information_Wallet_by_id,
-        name="wallet_download_info",
+        "sync_wallet/<int:wallet_id>/",
+        views_wallet.sync_wallet,
+        name="sync_wallet",
     ),
+
     path(
         "download_wallet_task_status/<uuid:task_id>/",
         views_wallet.download_wallet_task_status,
         name="download_wallet_task_status",
     ),
-    path(
-        "wallet_resync_info/<int:wallet_id>/",
-        views_wallet.resync_information_Wallet_by_id,
-        name="wallet_resync_info",
-    ),
+    # path(
+    #     "wallet_resync_info/<int:wallet_id>/",
+    #     views_wallet.resync_information_Wallet_by_id,
+    #     name="wallet_resync_info",
+    # ),
     path(
         "resync_wallet_task_status/<uuid:task_id>/",
         views_wallet.resync_wallet_task_status,

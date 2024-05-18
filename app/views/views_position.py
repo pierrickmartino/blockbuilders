@@ -135,7 +135,8 @@ def view_position(request, position_id):
 
 
 async def refresh_position_price(request, position_id: int):
-    print("refresh_position_price for position " + str(position_id))
+    # print("refresh_position_price for position " + str(position_id))
+    logger.info("Refresh position price for : " + str(position_id))
 
     position = await async_get_position_by_id(position_id)
 
@@ -158,7 +159,8 @@ async def refresh_position_price(request, position_id: int):
 
 
 async def refresh_wallet_position_price(request, wallet_id):
-    print("refresh_wallet_position_price for wallet " + str(wallet_id))
+    # print("refresh_wallet_position_price for wallet " + str(wallet_id))
+    logger.info("Refresh wallet position price for : " + str(wallet_id))
 
     for position in await async_get_position_by_wallet_id(wallet_id):
         start_time = time.time()
@@ -172,6 +174,11 @@ async def refresh_wallet_position_price(request, wallet_id):
             )
 
             await set_price(position.contract, task.result()[0])
+            
+            # if previous_day is empty or before yesterday or previous_day_price is 0 -> we need to call the API
+            # if previous_week is empty or before last week or previous_week_price is 0 -> we need to call the API
+            # if previous_month is empty or before last month or previous_month_price is 0 -> we need to call the API
+            
             await calculate_position_amount(position)
 
     await async_calculate_total_wallet(wallet_id)
