@@ -196,9 +196,9 @@ def sync_wallet(request, wallet_id: int):
     chain_result = chain(
         # get_erc20_transactions_by_wallet_task.s(wallet.address),
         create_transactions_from_erc20_task.s(wallet.id),
-        aggregate_transactions_task.s(wallet.id),
-        calculate_cost_transaction_task.s(wallet.id),
-        calculate_running_quantity_transaction_task.s(wallet.id),
+        aggregate_transactions_task.s(),
+        calculate_cost_transaction_task.s(),
+        calculate_running_quantity_transaction_task.s(),
         # clean_transaction_task.s(wallet.id),
     )()
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)

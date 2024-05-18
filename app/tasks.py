@@ -98,11 +98,13 @@ def create_transactions_from_erc20_task(wallet_id: int):
                 hash=erc20["hash"],
             ).save()
         logger.info(f"Created transactions from ERC20 for wallet id {wallet_id}")
+        
     except Contract.DoesNotExist:             
-        logger.error("Contract with address {erc20.contractAddress} does not exist")
+        logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
 
+    return wallet_id
 
 # @shared_task
 # def create_transactions_from_erc20_task(wallet_id: int):
@@ -182,7 +184,7 @@ def aggregate_transactions_task(wallet_id: int):
             )
             quantity_agg = 0
             for t_agg in transactions_to_aggregate:
-                logger.info(t_agg)
+                # logger.info(t_agg)
                 quantity_agg += t_agg.quantity if t_agg.type == TypeTransactionChoices.IN else t_agg.quantity * -1
                 t_agg.delete()
 
@@ -218,6 +220,8 @@ def calculate_cost_transaction_task(wallet_id: int):
                 else:
                     transaction.price_contract_based = transaction_ref[0].quantity / transaction.quantity
                 transaction.save()
+
+        return wallet_id
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
@@ -261,11 +265,11 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
             for transaction in transactions:
                 if transaction.type == TypeTransactionChoices.IN:
                     # Reset total_cost and buy_quantity if we sold everything (or almost) on last transaction
-                    if (running_quantity * transaction.cost_contract_based) < 1:
-                        total_cost = transaction.cost_contract_based
+                    if (running_quantity * transaction.total_cost_contract_based) < 1:
+                        total_cost = transaction.total_cost_contract_based
                         buy_quantity = transaction.quantity
                     else:
-                        total_cost += transaction.cost_contract_based
+                        total_cost += transaction.total_cost_contract_based
                         buy_quantity += transaction.quantity
                     # Then update the running_quantity
                     running_quantity += transaction.quantity

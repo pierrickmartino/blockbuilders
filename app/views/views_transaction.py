@@ -42,17 +42,18 @@ def position_transactions_paginated(request, position_id, page):
     contract = Contract.objects.filter(id=position.contract.id).first()
     wallet = Wallet.objects.filter(id=position.wallet.id).first()
     transactions = Transaction.objects.filter(position=position).order_by("-date")
-    paginator = Paginator(transactions, per_page=20)
-    page_transactions = paginator.get_page(page)
-    page_transactions.adjusted_elided_pages = paginator.get_elided_page_range(page)
 
     # Calculate the average cost for each transaction
     transactions_with_calculator = []
-    for transaction in page_transactions:
+    total_realized_gain = 0
+    for transaction in transactions:
         calculator = TransactionCalculator(transaction)
         avg_cost_contract_based = calculator.calculate_avg_cost_contract_based()
         cost_contract_based = calculator.calculate_cost_contract_based()
         capital_gain_contract_based = calculator.calculate_capital_gain_contract_based()
+        
+        total_realized_gain += capital_gain_contract_based
+        
         transactions_with_calculator.append({
             'type': transaction.type,
             'quantity': transaction.quantity,
@@ -66,15 +67,22 @@ def position_transactions_paginated(request, position_id, page):
             'avg_cost_contract_based': avg_cost_contract_based
         })
 
+    paginator = Paginator(transactions_with_calculator, per_page=20)
+    page_transactions = paginator.get_page(page)
+    page_transactions.adjusted_elided_pages = paginator.get_elided_page_range(page)
+
     reference_avg_cost = TransactionCalculator(transactions.first()).calculate_avg_cost_contract_based()
-    performance = (contract.price - reference_avg_cost) / reference_avg_cost * 100
+    total_unrealized_gain = (contract.price - reference_avg_cost) / reference_avg_cost * 100 
+    
+    # logger.info(f"Performance information :  {total_unrealized_gain} /  {total_realized_gain}")
 
     context = {
-        "page_transactions": transactions_with_calculator,
+        "page_transactions": page_transactions,
         "position": position,
         "wallet": wallet,
         "contract": contract,
-        "performance": performance,
+        "total_unrealized_gain": total_unrealized_gain,
+        "total_realized_gain": total_realized_gain
     }
     return render(request, "transactions.html", context)
 

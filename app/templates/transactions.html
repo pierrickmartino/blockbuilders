@@ -77,7 +77,7 @@
                   Total Realized Performance
                 </p>
                 <p class="title is-4" style="margin: 6px">
-                  ${{ performance|floatformat:"-2g" }}
+                  ${{ total_realized_gain|floatformat:"-2g" }}
                 </p>
                 <div class="control">
                   <div class="tags has-addons">
@@ -110,7 +110,7 @@
                   Total Unrealized Performance
                 </p>
                 <p class="title is-4" style="margin: 6px">
-                  {{ performance|floatformat:"-2g" }}%
+                  {{ total_unrealized_gain|floatformat:"-2g" }}%
                 </p>
                 <div class="control">
                   <div class="tags has-addons">
@@ -178,7 +178,6 @@
                 <td data-label="TotCost">{{ transaction.total_cost_contract_based|floatformat:"-2g" }}</td>
                 <td data-label="AvgCost">{{ transaction.avg_cost_contract_based|floatformat:"-2g" }}</td>
                 <td data-label="CapGain">{% if transaction.capital_gain_contract_based == 0 %}
-                  <span></span>
                   {% elif transaction.capital_gain_contract_based < 0 %} <span class="tag is-danger">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
                     {% else %}
                     <span class="tag is-success">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
