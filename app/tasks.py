@@ -9,7 +9,7 @@ from app.utils.polygon.view_polygon import get_erc20_transactions_by_wallet
 from blockbuilders.settings.base import POLYGONSCAN_API_KEY
 from polygonscan import PolygonScan
 
-from app.models import Contract, Fiat, Position, Transaction, TypeTransactionChoices, Wallet
+from app.models import Contract, Fiat, Position, Transaction, TransactionCalculator, TypeTransactionChoices, Wallet
 from app.utils.polygon.models_polygon import Polygon_ERC20_Raw
 from django.db.models import Q
 
@@ -261,21 +261,28 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
             buy_quantity = 0
             sell_quantity = 0
             total_cost = 0
+            price_contract_based = 0
             
             for transaction in transactions:
+                
+                calculator = TransactionCalculator(transaction)
+                cost_contract_based = calculator.calculate_cost_contract_based()
+
                 if transaction.type == TypeTransactionChoices.IN:
                     # Reset total_cost and buy_quantity if we sold everything (or almost) on last transaction
-                    if (running_quantity * transaction.total_cost_contract_based) < 1:
-                        total_cost = transaction.total_cost_contract_based
+                    if (running_quantity * price_contract_based) < 1:
+                        total_cost = cost_contract_based
                         buy_quantity = transaction.quantity
                     else:
-                        total_cost += transaction.total_cost_contract_based
+                        total_cost += cost_contract_based
                         buy_quantity += transaction.quantity
                     # Then update the running_quantity
                     running_quantity += transaction.quantity
                 elif transaction.type == TypeTransactionChoices.OUT:
                     running_quantity -= transaction.quantity
                     sell_quantity += transaction.quantity
+
+                price_contract_based = transaction.price_contract_based
                 
                 # Update the running quantity for the transaction
                 transaction.running_quantity = running_quantity
