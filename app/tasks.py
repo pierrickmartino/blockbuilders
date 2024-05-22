@@ -1,6 +1,5 @@
 import logging
 import time
-import decimal
 
 from celery import shared_task
 from django.shortcuts import get_object_or_404
@@ -9,9 +8,7 @@ from app.utils.polygon.view_polygon import get_erc20_transactions_by_wallet
 from blockbuilders.settings.base import POLYGONSCAN_API_KEY
 from polygonscan import PolygonScan
 
-from app.models import Contract, Fiat, Position, Transaction, TransactionCalculator, TypeTransactionChoices, Wallet
-from app.utils.polygon.models_polygon import Polygon_ERC20_Raw
-from django.db.models import Q
+from app.models import Contract, Position, Transaction, TransactionCalculator, TypeTransactionChoices, Wallet
 
 from datetime import datetime
 
@@ -82,21 +79,21 @@ def create_transactions_from_erc20_task(wallet_id: int):
     Task to create transactions from ERC20 data for a wallet.
     """
     try:
-        wallet = Wallet.objects.get(id=wallet_id)
+        wallet = get_object_or_404(Wallet, id=wallet_id)
         transactions = get_erc20_transactions_by_wallet(wallet.address)
         for erc20 in transactions:
             contract_address = erc20["contractAddress"]
-            # contract, created = Contract.objects.get_or_create(address=contract_address)
-            contract = Contract.objects.filter(address=contract_address).get()
-            position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
-            transaction_type = TypeTransactionChoices.IN if erc20["to"].upper() == wallet.address.upper() else TypeTransactionChoices.OUT
-            Transaction.objects.create(
-                position=position,
-                type=transaction_type,
-                quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
-                date=datetime.fromtimestamp(int(erc20["timeStamp"])),
-                hash=erc20["hash"],
-            ).save()
+            contract = Contract.objects.filter(address=contract_address).first()
+            if contract is not None:
+                position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
+                transaction_type = TypeTransactionChoices.IN if erc20["to"].upper() == wallet.address.upper() else TypeTransactionChoices.OUT
+                Transaction.objects.create(
+                    position=position,
+                    type=transaction_type,
+                    quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
+                    date=datetime.fromtimestamp(int(erc20["timeStamp"])),
+                    hash=erc20["hash"],
+                ).save()
         logger.info(f"Created transactions from ERC20 for wallet id {wallet_id}")
         
     except Contract.DoesNotExist:             
@@ -228,6 +225,16 @@ def calculate_cost_transaction_task(wallet_id: int):
 
 
 @shared_task
+def clean_contract_address_task(wallet_id: int):
+     # 0. Clean contracts addresses
+    contracts = Contract.objects.all()
+    for contract in contracts:
+        contract.address = contract.address.lower()
+        contract.save()
+
+    return wallet_id
+
+@shared_task
 def clean_transaction_task(wallet_id: int):
     # 1. Clean existing information
     wallet = get_object_or_404(Wallet, id=wallet_id)
@@ -236,10 +243,11 @@ def clean_transaction_task(wallet_id: int):
         for position in positions:
             position = get_object_or_404(Position, id=position.id)
             result = position.delete()
+            logger.info(f"Position with id {position.id} has been deleted")
     except Position.DoesNotExist:
-        logger.info("Object Position does not exist for : " + str(wallet.id))
+        logger.info(f"Object Position does not exist for : " + str(wallet.id))
     except Exception as error:
-        logger.error("An error occurred : " + type(error).__name__)
+        logger.error(f"An error occurred : " + type(error).__name__)
 
     return wallet_id
 
@@ -291,6 +299,9 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
                 transaction.total_cost_contract_based = total_cost
                 transaction.save()
         
+            position.quantity = running_quantity
+            position.save()
+
         logger.info(f"Calculated running quantities for all positions in wallet id {wallet_id}")
 
     except Wallet.DoesNotExist:

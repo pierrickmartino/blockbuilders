@@ -3,6 +3,8 @@ from app.tasks import (
     aggregate_transactions_task,
     calculate_cost_transaction_task,
     calculate_running_quantity_transaction_task,
+    clean_contract_address_task,
+    clean_transaction_task,
     create_transactions_from_erc20_task,
     delete_wallet_task,
 )
@@ -138,8 +140,8 @@ def delete_Wallet_by_id(request, wallet_id):
 @sync_to_async
 def async_calculate_total_wallet(wallet_id: int):
     wallet = get_object_or_404(Wallet, id=wallet_id)
-    balance = Wallet.objects.filter(id__exact=wallet_id).aggregate(Sum("wallet_positions__amount", default=0))
-    wallet.balance = balance["wallet_positions__amount__sum"]
+    balance = Wallet.objects.filter(id__exact=wallet_id).aggregate(Sum("positions__amount", default=0))
+    wallet.balance = balance["positions__amount__sum"]
     wallet.save()
     return wallet
 
@@ -193,13 +195,16 @@ def sync_wallet(request, wallet_id: int):
     View to sync wallet data by chaining several Celery tasks.
     """
     wallet = get_object_or_404(Wallet, id=wallet_id)
+
     chain_result = chain(
+        # clean_transaction_task.s(wallet_id),
         # get_erc20_transactions_by_wallet_task.s(wallet.address),
-        create_transactions_from_erc20_task.s(wallet.id),
+        clean_contract_address_task.s(wallet_id),
+        clean_transaction_task.s(),
+        create_transactions_from_erc20_task.s(),
         aggregate_transactions_task.s(),
         calculate_cost_transaction_task.s(),
         calculate_running_quantity_transaction_task.s(),
-        # clean_transaction_task.s(wallet.id),
     )()
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.download_task = chain_result.id
