@@ -18,22 +18,36 @@ logger = logging.getLogger("blockbuilders")
 
 @shared_task
 def delete_wallet_task(wallet_id, sleep_duration: float):
+    """
+    Task to delete a wallet with a given id after a sleep duration.
+    """
+    logger.info(f"Deleting wallet with id {wallet_id} after sleeping for {sleep_duration} seconds.")
     wallet = get_object_or_404(Wallet, id=wallet_id)
     result = wallet.delete()
     time.sleep(sleep_duration)
+    logger.info(f"Deleted wallet with id {wallet_id}.")
     return result
 
 
 @shared_task
 def delete_position_task(position_id, sleep_duration: float):
+    """
+    Task to delete a position with a given id after a sleep duration.
+    """
+    logger.info(f"Deleting position with id {position_id} after sleeping for {sleep_duration} seconds.")
     position = get_object_or_404(Position, id=position_id)
     result = position.delete()
     time.sleep(sleep_duration)
+    logger.info(f"Deleted position with id {position_id}.")
     return result
 
 
 @shared_task
 def get_erc20_transactions_by_wallet_task(wallet_address):
+    """
+    Task to fetch ERC20 transactions for a given wallet address.
+    """
+    logger.info(f"Fetching ERC20 transactions for wallet address {wallet_address}.")
     with PolygonScan(POLYGONSCAN_API_KEY, False) as matic:  # type: ignore
         result = matic.get_erc20_token_transfer_events_by_address(
             address=wallet_address,
@@ -41,37 +55,8 @@ def get_erc20_transactions_by_wallet_task(wallet_address):
             endblock=99999999,
             sort="asc",
         )
+        logger.info(f"Fetched {len(result)} transactions for wallet address {wallet_address}.")
         return result
-
-
-# @shared_task
-# def create_erc20_process_task(erc20_list):
-#     for erc20 in erc20_list:
-#         divider = 10
-#         for x in range(1, int(erc20["tokenDecimal"])):
-#             divider = divider * 10
-
-#         erc20_raw = Polygon_ERC20_Raw.objects.create(
-#             blockNumber=erc20["blockNumber"],
-#             timeStamp=erc20["timeStamp"],
-#             hash=erc20["hash"],
-#             nonce=erc20["nonce"],
-#             blockHash=erc20["blockHash"],
-#             fromAddress=erc20["from"],
-#             toAddress=erc20["to"],
-#             contractAddress=erc20["contractAddress"],
-#             value=erc20["value"],
-#             tokenName=erc20["tokenName"],
-#             tokenDecimal=erc20["tokenDecimal"],
-#             transactionIndex=erc20["transactionIndex"],
-#             gas=erc20["gas"],
-#             gasPrice=erc20["gasPrice"],
-#             gasUsed=erc20["gasUsed"],
-#             cumulativeGasUsed=erc20["cumulativeGasUsed"],
-#             input=erc20["input"],
-#             confirmations=erc20["confirmations"],
-#         )
-#         erc20_raw.save()
 
 
 @shared_task
@@ -79,6 +64,7 @@ def create_transactions_from_erc20_task(wallet_id: int):
     """
     Task to create transactions from ERC20 data for a wallet.
     """
+    logger.info(f"Creating transactions from ERC20 data for wallet id {wallet_id}.")
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
         transactions = get_erc20_transactions_by_wallet(wallet.address)
@@ -99,70 +85,24 @@ def create_transactions_from_erc20_task(wallet_id: int):
                     date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), utc),
                     hash=erc20["hash"],
                 ).save()
-        logger.info(f"Created transactions from ERC20 for wallet id {wallet_id}")
+        logger.info(f"Created transactions from ERC20 for wallet id {wallet_id} successfully.")
 
     except Contract.DoesNotExist:
         logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
+    except Exception as e:
+        logger.error(f"An error occurred while creating transactions from ERC20 for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
 
 
-# @shared_task
-# def create_transactions_from_erc20_task(wallet_id: int):
-#     """
-#     Task to create transactions from ERC20 data for a wallet.
-#     """
-#     wallet = get_object_or_404(Wallet, id=wallet_id)
-
-#     erc20_list = Polygon_ERC20_Raw.objects.filter(Q(fromAddress=wallet.address) | Q(toAddress=wallet.address))
-
-#     fiat_USD = get_object_or_404(Fiat, code="USD")
-
-#     for erc20 in erc20_list:
-#         logger.info("Process " + erc20.hash)
-#         transactionType = "IN"
-#         if erc20.fromAddress == wallet.address:
-#             transactionType = "OUT"
-#         if erc20.toAddress == wallet.address:
-#             transactionType = "IN"
-
-#         divider = 10
-#         for x in range(1, int(erc20.tokenDecimal)):
-#             divider = divider * 10
-
-#         try:
-#             contract = Contract.objects.filter(address=erc20.contractAddress).get()
-
-#             # 3. Create the position
-#             position, position_created = Position.objects.get_or_create(
-#                 contract=contract,
-#                 wallet=wallet,
-#                 is_active=True,
-#             )
-#             position.save()
-
-#             # 4. Create the transaction
-#             transaction = Transaction.objects.create(
-#                 position=position,
-#                 type=transactionType,
-#                 date=datetime.fromtimestamp(int(erc20.timeStamp)),
-#                 hash=erc20.hash,
-#                 quantity=(int(erc20.value) / divider),
-#                 against_fiat=fiat_USD,
-#             )
-#             transaction.save()
-
-#         except Contract.DoesNotExist:
-#             logger.error("Object does not exist : " + erc20.contractAddress)
-
-#     return wallet_id
-
-
 @shared_task
 def aggregate_transactions_task(wallet_id: int):
-    # 5. Aggregate transactions when not 1 vs 1
+    """
+    Task to aggregate transactions for a given wallet.
+    """
+    logger.info(f"Aggregating transactions for wallet id {wallet_id}.")
     wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     transactions_by_wallet_to_aggregate = []
@@ -196,12 +136,16 @@ def aggregate_transactions_task(wallet_id: int):
             logger.info(f"Transaction with hash {transaction_agg.hash} has been aggregated")
             transaction_agg.save()
 
+    logger.info(f"Aggregated transactions for wallet id {wallet_id} successfully.")
     return wallet_id
 
 
 @shared_task
 def calculate_cost_transaction_task(wallet_id: int):
-    # 6. Retrieve the contract against the transaction to calculate cost
+    """
+    Task to calculate the cost of transactions for a given wallet.
+    """
+    logger.info(f"Calculating transaction costs for wallet id {wallet_id}.")
     try:
         wallet = Wallet.objects.get(id=wallet_id)
         positions = Position.objects.filter(wallet=wallet)
@@ -224,26 +168,35 @@ def calculate_cost_transaction_task(wallet_id: int):
                     transaction.price_contract_based = transaction_ref[0].quantity / transaction.quantity
                 transaction.save()
 
+        logger.info(f"Calculated transaction costs for wallet id {wallet_id} successfully.")
         return wallet_id
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
+    except Exception as e:
+        logger.error(f"An error occurred while calculating transaction costs for wallet id {wallet_id}: {str(e)}")
 
 
 @shared_task
 def clean_contract_address_task(wallet_id: int):
-    # 0. Clean contracts addresses
+    """
+    Task to clean contract addresses.
+    """
+    logger.info(f"Cleaning contract addresses.")
     contracts = Contract.objects.all()
     for contract in contracts:
         contract.address = contract.address.lower()
         contract.save()
-
+    logger.info(f"Cleaned contract addresses successfully.")
     return wallet_id
 
 
 @shared_task
 def clean_transaction_task(wallet_id: int):
-    # 1. Clean existing information
+    """
+    Task to clean existing transaction information for a given wallet.
+    """
+    logger.info(f"Cleaning transactions for wallet id {wallet_id}.")
     wallet = get_object_or_404(Wallet, id=wallet_id)
     try:
         positions = Position.objects.filter(wallet=wallet)
@@ -252,9 +205,11 @@ def clean_transaction_task(wallet_id: int):
             result = position.delete()
             logger.info(f"Position with id {position.id} has been deleted")
     except Position.DoesNotExist:
-        logger.info(f"Object Position does not exist for : " + str(wallet.id))
+        logger.info(f"Position does not exist for wallet id {wallet_id}.")
     except Exception as error:
-        logger.error(f"An error occurred : " + type(error).__name__)
+        logger.error(
+            f"An error occurred while cleaning transactions for wallet id {wallet_id}: {type(error).__name__}"
+        )
 
     return wallet_id
 
@@ -264,6 +219,7 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
     """
     Task to calculate the running quantity of transactions in a wallet.
     """
+    logger.info(f"Calculating running quantities for transactions in wallet id {wallet_id}.")
     try:
         wallet = Wallet.objects.get(id=wallet_id)
         positions = Position.objects.filter(wallet=wallet)
@@ -314,4 +270,4 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(f"An error occurred while calculating running quantities: {str(e)}")
+        logger.error(f"An error occurred while calculating running quantities for wallet id {wallet_id}: {str(e)}")
