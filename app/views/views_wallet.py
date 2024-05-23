@@ -118,6 +118,7 @@ def sync_wallet(request, wallet_id: int):
         aggregate_transactions_task.s(),
         calculate_cost_transaction_task.s(),
         calculate_running_quantity_transaction_task.s(),
+        # TODO : add a task to get the token used for fees (f.e. Polygon --> MATIC)
     )()
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.download_task = chain_result.id
