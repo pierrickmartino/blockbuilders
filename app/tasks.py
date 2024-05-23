@@ -3,7 +3,8 @@ import time
 
 from celery import shared_task
 from django.shortcuts import get_object_or_404
-
+from django.utils import timezone
+from django.utils.timezone import utc
 from app.utils.polygon.view_polygon import get_erc20_transactions_by_wallet
 from blockbuilders.settings.base import POLYGONSCAN_API_KEY
 from polygonscan import PolygonScan
@@ -91,7 +92,7 @@ def create_transactions_from_erc20_task(wallet_id: int):
                     position=position,
                     type=transaction_type,
                     quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
-                    date=datetime.fromtimestamp(int(erc20["timeStamp"])),
+                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), utc),
                     hash=erc20["hash"],
                 ).save()
         logger.info(f"Created transactions from ERC20 for wallet id {wallet_id}")
