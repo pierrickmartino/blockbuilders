@@ -87,7 +87,11 @@ def create_transactions_from_erc20_task(wallet_id: int):
             contract = Contract.objects.filter(address=contract_address).first()
             if contract is not None:
                 position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
-                transaction_type = TypeTransactionChoices.IN if erc20["to"].upper() == wallet.address.upper() else TypeTransactionChoices.OUT
+                transaction_type = (
+                    TypeTransactionChoices.IN
+                    if erc20["to"].upper() == wallet.address.upper()
+                    else TypeTransactionChoices.OUT
+                )
                 Transaction.objects.create(
                     position=position,
                     type=transaction_type,
@@ -96,13 +100,14 @@ def create_transactions_from_erc20_task(wallet_id: int):
                     hash=erc20["hash"],
                 ).save()
         logger.info(f"Created transactions from ERC20 for wallet id {wallet_id}")
-        
-    except Contract.DoesNotExist:             
+
+    except Contract.DoesNotExist:
         logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
 
     return wallet_id
+
 
 # @shared_task
 # def create_transactions_from_erc20_task(wallet_id: int):
@@ -167,11 +172,11 @@ def aggregate_transactions_task(wallet_id: int):
             transactions_by_wallet_to_aggregate.append(transaction)
 
     for transaction in transactions_by_wallet_to_aggregate:
-        
+
         transactions_to_aggregate = Transaction.objects.filter(hash=transaction.hash).filter(
-                position=transaction.position
-            )
-        
+            position=transaction.position
+        )
+
         if transactions_to_aggregate.count() >= 2:
 
             transaction_agg = Transaction.objects.create(
@@ -227,13 +232,14 @@ def calculate_cost_transaction_task(wallet_id: int):
 
 @shared_task
 def clean_contract_address_task(wallet_id: int):
-     # 0. Clean contracts addresses
+    # 0. Clean contracts addresses
     contracts = Contract.objects.all()
     for contract in contracts:
         contract.address = contract.address.lower()
         contract.save()
 
     return wallet_id
+
 
 @shared_task
 def clean_transaction_task(wallet_id: int):
@@ -271,9 +277,9 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
             sell_quantity = 0
             total_cost = 0
             price_contract_based = 0
-            
+
             for transaction in transactions:
-                
+
                 calculator = TransactionCalculator(transaction)
                 cost_contract_based = calculator.calculate_cost_contract_based()
 
@@ -292,14 +298,14 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
                     sell_quantity += transaction.quantity
 
                 price_contract_based = transaction.price_contract_based
-                
+
                 # Update the running quantity for the transaction
                 transaction.running_quantity = running_quantity
                 transaction.buy_quantity = buy_quantity
                 transaction.sell_quantity = sell_quantity
                 transaction.total_cost_contract_based = total_cost
                 transaction.save()
-        
+
             position.quantity = running_quantity
             position.save()
 

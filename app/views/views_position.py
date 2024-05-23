@@ -49,10 +49,7 @@ def positions_paginated(request, page):
         positions = Position.objects.all().order_by("contract")
 
     logger.info("Number of positions found : " + str(positions.count()))
-    logger.info(
-        "User Setting - show_positions_above_threshold : "
-        + str(user_setting.show_positions_above_threshold)
-    )
+    logger.info("User Setting - show_positions_above_threshold : " + str(user_setting.show_positions_above_threshold))
 
     paginator = Paginator(positions, per_page=10)
     page_positions = paginator.get_page(page)
@@ -70,19 +67,12 @@ def wallet_positions_paginated(request, wallet_id, page):
 
     user_setting = UserSetting.objects.filter(user=request.user).first()
     if user_setting and user_setting.show_positions_above_threshold:
-        positions = (
-            Position.objects.filter(wallet=wallet)
-            .filter(amount__gt=0.5)
-            .order_by("-amount")
-        )
+        positions = Position.objects.filter(wallet=wallet).filter(amount__gt=0.5).order_by("-amount")
     else:
         positions = Position.objects.filter(wallet=wallet).order_by("-amount")
 
     logger.info("Number of positions found : " + str(positions.count()))
-    logger.info(
-        "User Setting - show_positions_above_threshold : "
-        + str(user_setting.show_positions_above_threshold)
-    )
+    logger.info("User Setting - show_positions_above_threshold : " + str(user_setting.show_positions_above_threshold))
 
     paginator = Paginator(positions, per_page=10)
     page_positions = paginator.get_page(page)
@@ -146,9 +136,7 @@ async def refresh_position_price(request, position_id: int):
         task = asyncio.create_task(get_price_from_market(symbol))
         await task
 
-        print(
-            f"Fetch total {symbol} urls and process takes {time.time() - start_time} seconds"
-        )
+        print(f"Fetch total {symbol} urls and process takes {time.time() - start_time} seconds")
 
         await set_price(position.contract, task.result()[0])
         await calculate_position_amount(position)
@@ -169,16 +157,14 @@ async def refresh_wallet_position_price(request, wallet_id):
             task = asyncio.create_task(get_price_from_market(symbol))
             await task
 
-            print(
-                f"Fetch total {symbol} urls and process takes {time.time() - start_time} seconds"
-            )
+            print(f"Fetch total {symbol} urls and process takes {time.time() - start_time} seconds")
 
             await set_price(position.contract, task.result()[0])
-            
+
             # if previous_day is empty or before yesterday or previous_day_price is 0 -> we need to call the API
             # if previous_week is empty or before last week or previous_week_price is 0 -> we need to call the API
             # if previous_month is empty or before last month or previous_month_price is 0 -> we need to call the API
-            
+
             await calculate_position_amount(position)
 
     await async_calculate_total_wallet(wallet_id)
