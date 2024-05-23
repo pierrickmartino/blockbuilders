@@ -166,8 +166,12 @@ def aggregate_transactions_task(wallet_id: int):
             transactions_by_wallet_to_aggregate.append(transaction)
 
     for transaction in transactions_by_wallet_to_aggregate:
-        condition = Transaction.objects.filter(hash=transaction.hash)
-        if condition.count() > 2:
+        
+        transactions_to_aggregate = Transaction.objects.filter(hash=transaction.hash).filter(
+                position=transaction.position
+            )
+        
+        if transactions_to_aggregate.count() >= 2:
 
             transaction_agg = Transaction.objects.create(
                 position=transaction.position,
@@ -176,18 +180,14 @@ def aggregate_transactions_task(wallet_id: int):
                 against_fiat=transaction.against_fiat,
             )
 
-            transactions_to_aggregate = Transaction.objects.filter(hash=transaction.hash).filter(
-                position=transaction.position
-            )
             quantity_agg = 0
             for t_agg in transactions_to_aggregate:
-                # logger.info(t_agg)
                 quantity_agg += t_agg.quantity if t_agg.type == TypeTransactionChoices.IN else t_agg.quantity * -1
                 t_agg.delete()
 
             transaction_agg.type = TypeTransactionChoices.IN if quantity_agg > 0 else TypeTransactionChoices.OUT
             transaction_agg.quantity = abs(quantity_agg)
-            logger.info(transaction_agg)
+            logger.info(f"Transaction with hash {transaction_agg.hash} has been aggregated")
             transaction_agg.save()
 
     return wallet_id
