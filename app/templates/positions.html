@@ -50,6 +50,7 @@
               <tr>
                 <th>Token</th>
                 <th>Address</th>
+                <th>Blockchain</th>
                 <th>Qty</th>
                 <th>Amount</th>
                 <th># Tx</th>
@@ -65,6 +66,7 @@
               <tr>
                 <td data-label="Token">{{ position.contract.name }}</td>
                 <td data-label="Symbol">{{ position.contract.symbol }}</td>
+                <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
                 <td data-label="Qty">{{ position.quantity|floatformat:"-6g" }}</td>
                 <td data-label="Amount">{{ position.amount|floatformat:"-2g" }}</td>
                 <td data-label="NumPositions">{{ total_transaction }}</td>

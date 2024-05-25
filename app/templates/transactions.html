@@ -165,6 +165,7 @@
             <thead>
               <tr>
                 <th>Type</th>
+                <th>Blockchain</th>
                 <th>Qty</th>
                 <th>Run.Qty</th>
                 <th>Price</th>
@@ -187,6 +188,7 @@
                   <span class="tag is-danger">{{ transaction.type }}</span>
                   {% endif %}
                 </td>
+                <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
                 <td data-label="Qty">{{ transaction.quantity|floatformat:"-6g" }}</td>
                 <td data-label="RunQty">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
                 <td data-label="Price">{{ transaction.price_contract_based|floatformat:"-6g" }}</td>
