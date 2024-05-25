@@ -5,7 +5,7 @@ from celery import shared_task
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
-from app.utils.polygon.view_polygon import get_erc20_transactions_by_wallet
+from app.utils.polygon.view_polygon import get_erc20_transactions_by_wallet, get_matic_balance_by_wallet
 from blockbuilders.settings.base import POLYGONSCAN_API_KEY
 from polygonscan import PolygonScan
 
@@ -58,6 +58,28 @@ def get_erc20_transactions_by_wallet_task(wallet_address):
         logger.info(f"Fetched {len(result)} transactions for wallet address {wallet_address}.")
         return result
 
+@shared_task
+def get_polygon_token_balance(wallet_id: int):
+    """
+    Task to get the MATIC balance for a wallet.
+    """
+    logger.info(f"Get MATIC balance for wallet id {wallet_id}.")
+    try:
+        wallet = get_object_or_404(Wallet, id=wallet_id)
+        contract_address = '0x0000000000000000000000000000000000001010'
+        balance = get_matic_balance_by_wallet(wallet.address)
+        contract = Contract.objects.filter(address=contract_address).first()
+        position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
+        position.quantity = int(balance) / int(1000000000000000000)
+        position.save()
+    except Contract.DoesNotExist:
+        logger.error(f"Contract with address {contract_address} does not exist")
+    except Wallet.DoesNotExist:
+        logger.error(f"Wallet with id {wallet_id} does not exist")
+    except Exception as e:
+        logger.error(f"An error occurred while creating transactions from ERC20 for wallet id {wallet_id}: {str(e)}")
+
+    return wallet_id
 
 @shared_task
 def create_transactions_from_erc20_task(wallet_id: int):
@@ -202,8 +224,9 @@ def clean_transaction_task(wallet_id: int):
         positions = Position.objects.filter(wallet=wallet)
         for position in positions:
             position = get_object_or_404(Position, id=position.id)
+            position_id = position.id
             result = position.delete()
-            logger.info(f"Position with id {position.id} has been deleted")
+            logger.info(f"Position with id {position_id} has been deleted")
     except Position.DoesNotExist:
         logger.info(f"Position does not exist for wallet id {wallet_id}.")
     except Exception as error:
@@ -271,3 +294,5 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
         logger.error(f"An error occurred while calculating running quantities for wallet id {wallet_id}: {str(e)}")
+
+    return wallet_id
