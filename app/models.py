@@ -146,6 +146,20 @@ class Contract(models.Model):
         return f"{self.name} ({self.symbol})"
 
 
+# Utility class for calculating contract details
+class ContractCalculator:
+    def __init__(self, contract):
+        self.contract = contract
+
+    def calculate_daily_price_delta(self):
+        # Calculate the daily delta price of the contract
+        return (
+            100 * (self.contract.price - self.contract.previous_day_price) / self.contract.previous_day_price
+            if self.contract.previous_day_price != 0
+            else 0
+        )
+
+
 # Model to represent a position in a wallet
 class Position(TimeStampModel):
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name="positions")  # Reference to the wallet

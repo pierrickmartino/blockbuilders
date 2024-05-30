@@ -50,6 +50,7 @@
               <tr>
                 <th>Token</th>
                 <th>Address</th>
+                <th>Daily</th>
                 <th>Blockchain</th>
                 <th>Qty</th>
                 <th>Amount</th>
@@ -66,6 +67,12 @@
               <tr>
                 <td data-label="Token">{{ position.contract.name }}</td>
                 <td data-label="Symbol">{{ position.contract.symbol }}</td>
+                <td data-label="Today">{% if position.daily_price_delta == 0 %}
+                  {% elif position.daily_price_delta < 0 %} <span class="tag is-danger">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
+                    {% else %}
+                    <span class="tag is-success">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
+                    {% endif %}
+                </td>
                 <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
                 <td data-label="Qty">{{ position.quantity|floatformat:"-6g" }}</td>
                 <td data-label="Amount">{{ position.amount|floatformat:"-2g" }}</td>
@@ -94,7 +101,7 @@
               {% endfor %}
               {% else %}
               <tr class="is-empty">
-                <td colspan="8">
+                <td colspan="9">
                   <section class="section">
                     <div class="content has-text-grey has-text-centered">
                       <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>

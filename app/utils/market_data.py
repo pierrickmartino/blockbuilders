@@ -61,8 +61,11 @@ async def get_crypto_price(symbol):
         await exchange.close()
      
         result = float(ticker['bid'])
-        print(str(result) + ' - ' + ticker['symbol'])
-        return result
+        open = float(ticker['open'])
+        diff = result - open
+        diff_percentage = diff/open
+        print('price:' + str(result) + ' - open:' + str(open) + ' - ' + str(diff_percentage*100) + '% - ' + ticker['symbol'])
+        return ticker
     except Exception as e:
         print(e)
         return float(0)

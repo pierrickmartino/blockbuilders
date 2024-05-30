@@ -21,6 +21,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 
 from app.models import (
+    ContractCalculator,
     Position,
     Transaction,
     UserSetting,
@@ -74,7 +75,25 @@ def wallet_positions_paginated(request, wallet_id, page):
     logger.info("Number of positions found : " + str(positions.count()))
     logger.info("User Setting - show_positions_above_threshold : " + str(user_setting.show_positions_above_threshold))
 
-    paginator = Paginator(positions, per_page=10)
+    positions_with_calculator = []
+    for position in positions:
+        calculator = ContractCalculator(position.contract)
+        daily_price_delta = calculator.calculate_daily_price_delta()
+
+        positions_with_calculator.append(
+            {
+                "id": position.id,
+                "wallet": position.wallet,
+                "contract": position.contract,
+                "quantity": position.quantity,
+                "amount": position.amount,
+                "avg_cost": position.avg_cost,
+                "created_at": position.created_at,
+                "daily_price_delta": daily_price_delta,
+            }
+        )
+
+    paginator = Paginator(positions_with_calculator, per_page=10)
     page_positions = paginator.get_page(page)
     page_positions.adjusted_elided_pages = paginator.get_elided_page_range(page)
     context = {
@@ -161,7 +180,6 @@ async def refresh_wallet_position_price(request, wallet_id):
 
             await set_price(position.contract, task.result()[0])
 
-            # if previous_day is empty or before yesterday or previous_day_price is 0 -> we need to call the API
             # if previous_week is empty or before last week or previous_week_price is 0 -> we need to call the API
             # if previous_month is empty or before last month or previous_month_price is 0 -> we need to call the API
 
