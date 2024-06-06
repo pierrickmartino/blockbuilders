@@ -38,7 +38,7 @@ class BSCScanAPI:
         response = requests.get(self.base_url, params=params)
         return self._handle_response(response)
     
-    def get_erc20_token_transfer_events_by_address(self, address):
+    def get_bep20_token_transfer_events_by_address(self, address):
         params = {
             "module": "account",
             "action": "tokentx",

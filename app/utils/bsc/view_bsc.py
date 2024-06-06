@@ -16,7 +16,7 @@ def normal_transactions_by_address(address):
     transactions = scan.get_normal_transactions_by_address(address)
     return transactions
 
-def erc20_transactions_by_wallet(address):
+def bep20_transactions_by_wallet(address):
     scan = BSCScanAPI()
-    transactions = scan.get_erc20_token_transfer_events_by_address(address)
+    transactions = scan.get_bep20_token_transfer_events_by_address(address)
     return transactions
