@@ -5,9 +5,7 @@ from celery import shared_task
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
-from app.utils.polygon.view_polygon import get_erc20_transactions_by_wallet, get_matic_balance_by_wallet
-from blockbuilders.settings.base import POLYGONSCAN_API_KEY
-from polygonscan import PolygonScan
+from app.utils.polygon.view_polygon import account_balance_by_address, erc20_transactions_by_wallet
 
 from app.models import Contract, Position, Transaction, TransactionCalculator, TypeTransactionChoices, Wallet
 
@@ -42,21 +40,15 @@ def delete_position_task(position_id, sleep_duration: float):
     return result
 
 
-@shared_task
-def get_erc20_transactions_by_wallet_task(wallet_address):
-    """
-    Task to fetch ERC20 transactions for a given wallet address.
-    """
-    logger.info(f"Fetching ERC20 transactions for wallet address {wallet_address}.")
-    with PolygonScan(POLYGONSCAN_API_KEY, False) as matic:  # type: ignore
-        result = matic.get_erc20_token_transfer_events_by_address(
-            address=wallet_address,
-            startblock=0,
-            endblock=99999999,
-            sort="asc",
-        )
-        logger.info(f"Fetched {len(result)} transactions for wallet address {wallet_address}.")
-        return result
+# @shared_task
+# def get_erc20_transactions_by_wallet_task(wallet_address):
+#     """
+#     Task to fetch ERC20 transactions for a given wallet address.
+#     """
+#     logger.info(f"Fetching ERC20 transactions for wallet address {wallet_address}.")
+#     result = erc20_transactions_by_wallet(wallet_address)
+#     logger.info(f"Fetched {len(result)} transactions for wallet address {wallet_address}.")
+#     return result
 
 @shared_task
 def get_polygon_token_balance(wallet_id: int):
@@ -67,7 +59,7 @@ def get_polygon_token_balance(wallet_id: int):
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
         contract_address = '0x0000000000000000000000000000000000001010'
-        balance = get_matic_balance_by_wallet(wallet.address)
+        balance = account_balance_by_address(wallet.address)
         contract = Contract.objects.filter(address=contract_address).first()
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
@@ -89,7 +81,7 @@ def create_transactions_from_erc20_task(wallet_id: int):
     logger.info(f"Creating transactions from ERC20 data for wallet id {wallet_id}.")
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
-        transactions = get_erc20_transactions_by_wallet(wallet.address)
+        transactions = erc20_transactions_by_wallet(wallet.address)
         for erc20 in transactions:
             contract_address = erc20["contractAddress"]
             contract = Contract.objects.filter(address=contract_address).first()
