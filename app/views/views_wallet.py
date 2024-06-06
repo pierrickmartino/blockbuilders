@@ -127,4 +127,3 @@ def sync_wallet(request, wallet_id: int):
     wallet_process.save()
     logger.info(f"Started syncing wallet with id {wallet_id}")
     return redirect("wallets")
-

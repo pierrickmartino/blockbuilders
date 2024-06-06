@@ -24,6 +24,7 @@ from app.models import (
     ContractCalculator,
     Position,
     Transaction,
+    TransactionCalculator,
     UserSetting,
     Wallet,
 )
@@ -80,6 +81,10 @@ def wallet_positions_paginated(request, wallet_id, page):
         calculator = ContractCalculator(position.contract)
         daily_price_delta = calculator.calculate_daily_price_delta()
 
+        last_transaction = Transaction.objects.filter(position=position).order_by("-date").first()
+        reference_avg_cost = TransactionCalculator(last_transaction).calculate_avg_cost_contract_based() if last_transaction and last_transaction.running_quantity != 0 else 0
+        total_unrealized_gain = (position.contract.price - reference_avg_cost) / reference_avg_cost * 100 if reference_avg_cost != 0 else 0
+
         positions_with_calculator.append(
             {
                 "id": position.id,
@@ -90,6 +95,7 @@ def wallet_positions_paginated(request, wallet_id, page):
                 "avg_cost": position.avg_cost,
                 "created_at": position.created_at,
                 "daily_price_delta": daily_price_delta,
+                "total_unrealized_gain": total_unrealized_gain,
             }
         )
 

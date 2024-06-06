@@ -32,6 +32,108 @@
   </div>
 </section>
 <section class="section is-main-section">
+  <div class="tile is-ancestor">
+    <div class="tile is-parent">
+      <div class="card tile is-child">
+        <div class="card-content">
+          <div class="level is-mobile">
+            <div class="level-item">
+              <div class="is-widget-label">
+                <p class="subtitle is-spaced is-6">
+                  Total Amount
+                </p>
+                <p class="title is-4" style="margin-top: 6px; margin-bottom: 6px">
+                  0
+                </p>
+                <div class="control">
+                  <div class="tags has-addons">
+                    <span class="tag is-danger">
+                      <span class="icon">
+                        <i class="mdi mdi-arrow-down"></i>
+                      </span>
+                      <span>1.99%</span>
+                    </span>
+                    <span class="tag is-dark">this month</span>
+                  </div>
+                </div>
+              </div>
+              <div class="level-item has-widget-icon">
+                <div class="is-widget-icon">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile is-parent">
+      <div class="card tile is-child">
+        <div class="card-content">
+          <div class="level is-mobile">
+            <div class="level-item">
+              <div class="is-widget-label">
+                <p class="subtitle is-spaced is-6">
+                  Total Realized Performance
+                </p>
+                <p class="title is-4" style="margin-top: 6px; margin-bottom: 6px">
+                  $0
+                </p>
+                <div class="control">
+                  <div class="tags has-addons">
+                    <span class="tag is-success">
+                      <span class="icon">
+                        <i class="mdi mdi-arrow-up"></i>
+                      </span>
+                      <span>11.04%</span>
+                    </span>
+                    <span class="tag is-dark">this month</span>
+                  </div>
+                </div>
+              </div>
+              <div class="level-item has-widget-icon">
+                <div class="is-widget-icon">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tile is-parent">
+      <div class="card tile is-child">
+        <div class="card-content">
+          <div class="level is-mobile">
+            <div class="level-item">
+              <div class="is-widget-label">
+                <p class="subtitle is-spaced is-6">
+                  Total Unrealized Performance
+                </p>
+                <p class="title is-4" style="margin-top: 6px; margin-bottom: 6px">
+                  0%
+                </p>
+                <div class="control">
+                  <div class="tags has-addons">
+                    <span class="tag is-success">
+                      <span class="icon">
+                        <i class="mdi mdi-arrow-up"></i>
+                      </span>
+                      <span>99.99%</span>
+                    </span>
+                    <span class="tag is-dark">this month</span>
+                  </div>
+                </div>
+              </div>
+              <div class="level-item has-widget-icon">
+                <div class="is-widget-icon">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<section class="section is-main-section">
   <div class="card has-table has-mobile-sort-spaced">
     <header class="card-header">
       <p class="card-header-title">
@@ -51,10 +153,11 @@
                 <th>Token</th>
                 <th>Address</th>
                 <th>Daily</th>
+                <th>Price</th>
                 <th>Blockchain</th>
                 <th>Qty</th>
                 <th>Amount</th>
-                <th># Tx</th>
+                <th>Unrealized</th>
                 <th>Progress</th>
                 <th>Created</th>
                 <th></th>
@@ -67,16 +170,22 @@
               <tr>
                 <td data-label="Token">{{ position.contract.name }}</td>
                 <td data-label="Symbol">{{ position.contract.symbol }}</td>
-                <td data-label="Today">{% if position.daily_price_delta == 0 %}
+                <td data-label="Daily">{% if position.daily_price_delta == 0 %}
                   {% elif position.daily_price_delta < 0 %} <span class="tag is-danger">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
                     {% else %}
                     <span class="tag is-success">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
                     {% endif %}
                 </td>
+                <td data-label="Price">${{ position.contract.price|floatformat:"-2g" }}</td>
                 <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
                 <td data-label="Qty">{{ position.quantity|floatformat:"-6g" }}</td>
                 <td data-label="Amount">{{ position.amount|floatformat:"-2g" }}</td>
-                <td data-label="NumPositions">{{ total_transaction }}</td>
+                <td data-label="Unrealized">{% if position.total_unrealized_gain == 0 %}
+                  {% elif position.total_unrealized_gain < 0 %} <span class="tag is-danger">${{ position.total_unrealized_gain|floatformat:"-2g" }}</span>
+                    {% else %}
+                    <span class="tag is-success">${{ position.total_unrealized_gain|floatformat:"-2g" }}</span>
+                    {% endif %}
+                </td>
                 <td data-label="Progress" class="is-progress-cell">
                   <progress max="{{ wallet.balance }}" class="progress is-small is-primary" value="{{ position.amount }}">position.amount</progress>
                 </td>
@@ -86,13 +195,10 @@
                 <td class="is-actions-cell">
                   <div class="buttons is-right">
                     <a id="status_resync_{{ position.id }}" data-task-resync-id="0" href="{% url 'refresh_position_price' position.id %}" class="button is-small is-primary" type="button">
-                      <span class="icon"><i class="mdi mdi-reload"></i></span>
+                      Refresh
                     </a>
                     <a href="{% url 'position-transactions-by-page' position.id 1 %}" class="button is-small is-primary" type="button">
-                      <span class="icon"><i class="mdi mdi-eye"></i></span>
-                    </a>
-                    <a href="{% url 'delete_position' position.id %}" class="button is-small is-danger" type="button">
-                      <span class="icon"><i class="mdi mdi-trash-can"></i></span>
+                      Details
                     </a>
                   </div>
                 </td>
