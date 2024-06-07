@@ -1,4 +1,4 @@
-from app.services.optimistic_scan import OptimismScanAPI
+from app.services.optimism_scan import OptimismScanAPI
 
 
 def ethereum_price(request):

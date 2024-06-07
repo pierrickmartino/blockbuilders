@@ -1,95 +1,7 @@
 from django.contrib import admin
 
 from app.models import Blockchain, Wallet, Contract, Position, Transaction, Fiat, WalletProcess, UserSetting
-from app.utils.arbitrum.models_arbitrum import Arbitrum_ERC20_Raw
-from app.utils.bsc.models_bsc import BSC_BEP20_Raw
-from app.utils.optimism.models_optimism import Optimism_ERC20_Raw
-from app.utils.polygon.models_polygon import Polygon_ERC20_Raw
 
-
-class Polygon_ERC20_Raw_Admin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "blockNumber",
-        "timeStamp",
-        "hash",
-        "nonce",
-        "blockHash",
-        "fromAddress",
-        "toAddress",
-        "contractAddress",
-        "value",
-        "tokenName",
-        "tokenDecimal",
-        "transactionIndex",
-        "gas",
-        "gasPrice",
-        "gasUsed",
-        "cumulativeGasUsed",
-    )
-
-class Arbitrum_ERC20_Raw_Admin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "blockNumber",
-        "timeStamp",
-        "hash",
-        "nonce",
-        "blockHash",
-        "fromAddress",
-        "toAddress",
-        "contractAddress",
-        "value",
-        "tokenName",
-        "tokenDecimal",
-        "transactionIndex",
-        "gas",
-        "gasPrice",
-        "gasUsed",
-        "cumulativeGasUsed",
-    )
-
-class BSC_BEP20_Raw_Admin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "blockNumber",
-        "timeStamp",
-        "hash",
-        "nonce",
-        "blockHash",
-        "fromAddress",
-        "toAddress",
-        "contractAddress",
-        "value",
-        "tokenName",
-        "tokenDecimal",
-        "transactionIndex",
-        "gas",
-        "gasPrice",
-        "gasUsed",
-        "cumulativeGasUsed",
-    )
-
-class Optimism_ERC20_Raw_Admin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "blockNumber",
-        "timeStamp",
-        "hash",
-        "nonce",
-        "blockHash",
-        "fromAddress",
-        "toAddress",
-        "contractAddress",
-        "value",
-        "tokenName",
-        "tokenDecimal",
-        "transactionIndex",
-        "gas",
-        "gasPrice",
-        "gasUsed",
-        "cumulativeGasUsed",
-    )
 
 class Wallet_Admin(admin.ModelAdmin):
     list_display = ("id", "address", "name", "balance", "description")
@@ -172,7 +84,3 @@ admin.site.register(Fiat, Fiat_Admin)
 admin.site.register(Contract, Contract_Admin)
 admin.site.register(Position, Position_Admin)
 admin.site.register(Transaction, Transaction_Admin)
-admin.site.register(Polygon_ERC20_Raw, Polygon_ERC20_Raw_Admin)
-admin.site.register(BSC_BEP20_Raw, BSC_BEP20_Raw_Admin)
-admin.site.register(Optimism_ERC20_Raw, Optimism_ERC20_Raw_Admin)
-admin.site.register(Arbitrum_ERC20_Raw, Arbitrum_ERC20_Raw_Admin)

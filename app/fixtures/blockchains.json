@@ -3,7 +3,63 @@
       "model": "app.blockchain",
       "pk": 1,
       "fields": {
-        "name": "POLYGON",
+        "name": "Polygon",
+        "icon": "img/polygon_POS-Icon.svg",
+        "is_active": true,
+        "gecko_id": "polygon-pos",
+        "gecko_chain_identifier": 137,
+        "gecko_name": "Polygon POS",
+        "gecko_shortname": "MATIC",
+        "gecko_native_coin_id": "matic-network"
+      }
+    },
+    {
+      "model": "app.blockchain",
+      "pk": 2,
+      "fields": {
+        "name": "BSC",
+        "icon": "img/polygon_POS-Icon.svg",
+        "is_active": true,
+        "gecko_id": "",
+        "gecko_chain_identifier": 137,
+        "gecko_name": "Polygon POS",
+        "gecko_shortname": "MATIC",
+        "gecko_native_coin_id": "binance-smart-chain"
+      }
+    },
+    {
+      "model": "app.blockchain",
+      "pk": 3,
+      "fields": {
+        "name": "Metis",
+        "icon": "img/polygon_POS-Icon.svg",
+        "is_active": true,
+        "gecko_id": "polygon-pos",
+        "gecko_chain_identifier": 137,
+        "gecko_name": "Polygon POS",
+        "gecko_shortname": "MATIC",
+        "gecko_native_coin_id": "matic-network"
+      }
+    },
+    {
+      "model": "app.blockchain",
+      "pk": 4,
+      "fields": {
+        "name": "Optimism",
+        "icon": "img/polygon_POS-Icon.svg",
+        "is_active": true,
+        "gecko_id": "polygon-pos",
+        "gecko_chain_identifier": 137,
+        "gecko_name": "Polygon POS",
+        "gecko_shortname": "MATIC",
+        "gecko_native_coin_id": "matic-network"
+      }
+    },
+    {
+      "model": "app.blockchain",
+      "pk": 5,
+      "fields": {
+        "name": "Arbitrum",
         "icon": "img/polygon_POS-Icon.svg",
         "is_active": true,
         "gecko_id": "polygon-pos",

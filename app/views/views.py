@@ -1,7 +1,6 @@
 import logging, os
 
 from django.http import HttpRequest
-from app.utils.polygon.models_polygon import Polygon_ERC20_Raw
 
 logger = logging.getLogger("blockbuilders")
 
@@ -32,13 +31,6 @@ def blockchains(request: HttpRequest):
         "blockchains": blockchains,
     }
     return render(request, "blockchains.html", context)
-
-
-def get_Polygon_ERC20_Raw_by_Wallet_address(wallet_address: str):
-    result = Polygon_ERC20_Raw.objects.filter(
-        Q(fromAddress=wallet_address) | Q(toAddress=wallet_address)
-    )
-    return result
 
 
 def register(request: HttpRequest):

@@ -5,10 +5,24 @@ from celery import shared_task
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
-from app.utils.polygon.view_polygon import account_balance_by_address as polygon_account_balance_by_address, erc20_transactions_by_wallet
-from app.utils.bsc.view_bsc import account_balance_by_address as bsc_account_balance_by_address, bep20_transactions_by_wallet 
+from app.utils.polygon.view_polygon import (
+    account_balance_by_address as polygon_account_balance_by_address,
+    erc20_transactions_by_wallet,
+)
+from app.utils.bsc.view_bsc import (
+    account_balance_by_address as bsc_account_balance_by_address,
+    bep20_transactions_by_wallet,
+)
 
-from app.models import Contract, Position, Transaction, TransactionCalculator, TypeTransactionChoices, Wallet
+from app.models import (
+    Blockchain,
+    Contract,
+    Position,
+    Transaction,
+    TransactionCalculator,
+    TypeTransactionChoices,
+    Wallet,
+)
 
 from datetime import datetime
 
@@ -51,6 +65,7 @@ def delete_position_task(position_id, sleep_duration: float):
 #     logger.info(f"Fetched {len(result)} transactions for wallet address {wallet_address}.")
 #     return result
 
+
 @shared_task
 def get_polygon_token_balance(wallet_id: int):
     """
@@ -58,10 +73,24 @@ def get_polygon_token_balance(wallet_id: int):
     """
     logger.info(f"Get MATIC balance for wallet id {wallet_id}.")
     try:
+        blockchain = Blockchain.objects.filter(name="Polygon").first()
         wallet = get_object_or_404(Wallet, id=wallet_id)
-        contract_address = '0x0000000000000000000000000000000000001010'
+        contract_address = "0x0000000000000000000000000000000000001010"
+        contract_name = "MATIC"
+        contract_symbol = "MATIC"
         balance = polygon_account_balance_by_address(wallet.address)
-        contract = Contract.objects.filter(address=contract_address).first()
+        contract, created = Contract.objects.get_or_create(
+                blockchain_id=blockchain.id,
+                address=contract_address,
+                name=contract_name,
+                symbol=contract_symbol,
+                defaults={
+                    "decimals":18,
+                    "previous_day": timezone.make_aware(datetime.now(), utc),
+                    "previous_week": timezone.make_aware(datetime.now(), utc),
+                    "previous_month": timezone.make_aware(datetime.now(), utc),
+                },
+            )
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
         position.save()
@@ -70,9 +99,10 @@ def get_polygon_token_balance(wallet_id: int):
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(f"An error occurred while creating transactions from ERC20 for wallet id {wallet_id}: {str(e)}")
+        logger.error(f"An error occurred while getting MATIC balance for for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
+
 
 @shared_task
 def create_transactions_from_polygon_erc20_task(wallet_id: int):
@@ -83,23 +113,37 @@ def create_transactions_from_polygon_erc20_task(wallet_id: int):
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
         transactions = erc20_transactions_by_wallet(wallet.address)
+        blockchain = Blockchain.objects.filter(name="Polygon").first()
         for erc20 in transactions:
             contract_address = erc20["contractAddress"]
-            contract = Contract.objects.filter(address=contract_address).first()
-            if contract is not None:
-                position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
-                transaction_type = (
-                    TypeTransactionChoices.IN
-                    if erc20["to"].upper() == wallet.address.upper()
-                    else TypeTransactionChoices.OUT
-                )
-                Transaction.objects.create(
-                    position=position,
-                    type=transaction_type,
-                    quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
-                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), utc),
-                    hash=erc20["hash"],
-                ).save()
+            contract_name = erc20["tokenName"]
+            contract_symbol = erc20["tokenSymbol"]
+            # contract = Contract.objects.filter(address=contract_address).first()
+            contract, created = Contract.objects.get_or_create(
+                blockchain_id=blockchain.id,
+                address=contract_address,
+                name=contract_name,
+                symbol=contract_symbol,
+                defaults={
+                    "previous_day": timezone.make_aware(datetime.now(), utc),
+                    "previous_week": timezone.make_aware(datetime.now(), utc),
+                    "previous_month": timezone.make_aware(datetime.now(), utc),
+                },
+            )
+            # if contract is not None:
+            position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
+            transaction_type = (
+                TypeTransactionChoices.IN
+                if erc20["to"].upper() == wallet.address.upper()
+                else TypeTransactionChoices.OUT
+            )
+            Transaction.objects.create(
+                position=position,
+                type=transaction_type,
+                quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
+                date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), utc),
+                hash=erc20["hash"],
+            ).save()
         logger.info(f"Created transactions from polygon ERC20 for wallet id {wallet_id} successfully.")
 
     except Contract.DoesNotExist:
@@ -107,7 +151,9 @@ def create_transactions_from_polygon_erc20_task(wallet_id: int):
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(f"An error occurred while creating transactions from polygon ERC20 for wallet id {wallet_id}: {str(e)}")
+        logger.error(
+            f"An error occurred while creating transactions from polygon ERC20 for wallet id {wallet_id}: {str(e)}"
+        )
 
     return wallet_id
 
@@ -119,10 +165,24 @@ def get_bsc_token_balance(wallet_id: int):
     """
     logger.info(f"Get BNB balance for wallet id {wallet_id}.")
     try:
+        blockchain = Blockchain.objects.filter(name="BSC").first()
         wallet = get_object_or_404(Wallet, id=wallet_id)
-        contract_address = '0x0000000000000000000000000000000000001010'
-        balance = bsc_account_balance_by_address(wallet.address)
-        contract = Contract.objects.filter(address=contract_address).first()
+        contract_address = "0x0000000000000000000000000000000000001010"
+        contract_name = "BNB"
+        contract_symbol = "BNB"
+        balance = polygon_account_balance_by_address(wallet.address)
+        contract, created = Contract.objects.get_or_create(
+                blockchain_id=blockchain.id,
+                address=contract_address,
+                name=contract_name,
+                symbol=contract_symbol,
+                defaults={
+                    "decimals":18,
+                    "previous_day": timezone.make_aware(datetime.now(), utc),
+                    "previous_week": timezone.make_aware(datetime.now(), utc),
+                    "previous_month": timezone.make_aware(datetime.now(), utc),
+                },
+            )
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
         position.save()
@@ -131,7 +191,7 @@ def get_bsc_token_balance(wallet_id: int):
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(f"An error occurred while creating transactions from ERC20 for wallet id {wallet_id}: {str(e)}")
+        logger.error(f"An error occurred while getting BNB balance for for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
 
@@ -144,24 +204,38 @@ def create_transactions_from_bsc_bep20_task(wallet_id: int):
     logger.info(f"Creating transactions from bsc BEP20 data for wallet id {wallet_id}.")
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
-        transactions = bep20_transactions_by_wallet(wallet.address)
+        transactions = erc20_transactions_by_wallet(wallet.address)
+        blockchain = Blockchain.objects.filter(name="BSC").first()
         for bep20 in transactions:
             contract_address = bep20["contractAddress"]
-            contract = Contract.objects.filter(address=contract_address).first()
-            if contract is not None:
-                position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
-                transaction_type = (
-                    TypeTransactionChoices.IN
-                    if bep20["to"].upper() == wallet.address.upper()
-                    else TypeTransactionChoices.OUT
-                )
-                Transaction.objects.create(
-                    position=position,
-                    type=transaction_type,
-                    quantity=int(bep20["value"]) / (10 ** int(bep20["tokenDecimal"])),
-                    date=timezone.make_aware(datetime.fromtimestamp(int(bep20["timeStamp"])), utc),
-                    hash=bep20["hash"],
-                ).save()
+            contract_name = bep20["tokenName"]
+            contract_symbol = bep20["tokenSymbol"]
+            # contract = Contract.objects.filter(address=contract_address).first()
+            contract, created = Contract.objects.get_or_create(
+                blockchain_id=blockchain.id,
+                address=contract_address,
+                name=contract_name,
+                symbol=contract_symbol,
+                defaults={
+                    "previous_day": timezone.make_aware(datetime.now(), utc),
+                    "previous_week": timezone.make_aware(datetime.now(), utc),
+                    "previous_month": timezone.make_aware(datetime.now(), utc),
+                },
+            )
+            # if contract is not None:
+            position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
+            transaction_type = (
+                TypeTransactionChoices.IN
+                if bep20["to"].upper() == wallet.address.upper()
+                else TypeTransactionChoices.OUT
+            )
+            Transaction.objects.create(
+                position=position,
+                type=transaction_type,
+                quantity=int(bep20["value"]) / (10 ** int(bep20["tokenDecimal"])),
+                date=timezone.make_aware(datetime.fromtimestamp(int(bep20["timeStamp"])), utc),
+                hash=bep20["hash"],
+            ).save()
         logger.info(f"Created transactions from bsc BEP20 for wallet id {wallet_id} successfully.")
 
     except Contract.DoesNotExist:
@@ -169,9 +243,12 @@ def create_transactions_from_bsc_bep20_task(wallet_id: int):
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(f"An error occurred while creating transactions from polygon ERC20 for wallet id {wallet_id}: {str(e)}")
+        logger.error(
+            f"An error occurred while creating transactions from polygon ERC20 for wallet id {wallet_id}: {str(e)}"
+        )
 
     return wallet_id
+
 
 @shared_task
 def aggregate_transactions_task(wallet_id: int):

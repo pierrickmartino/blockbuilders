@@ -8,10 +8,10 @@ import uuid
 # Using TextChoices for better enumeration
 class BlockchainChoices(models.TextChoices):
     POLYGON = "Polygon", "Polygon"
-    BNB = "BNB Chain", "BNB Chain"
+    BSC = "BSC", "BSC"
     METIS = "Metis", "Metis"
     ARBITRUM = "Arbitrum", "Arbitrum"
-    OPTIMISTIC = "Optimistic", "Optimistic"
+    OPTIMISTIC = "Optimism", "Optimism"
 
 
 class TypeTransactionChoices(models.TextChoices):
@@ -221,12 +221,12 @@ class Transaction(TimeStampModel):
         max_length=3, choices=TypeTransactionChoices.choices
     )  # Type of the transaction (IN or OUT)
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)  # Quantity of the transaction
-    price = models.DecimalField(max_digits=15, decimal_places=8, default=0)  # Price of the transaction
+    price = models.DecimalField(max_digits=24, decimal_places=8, default=0)  # Price of the transaction
     date = models.DateTimeField(db_index=True)  # Date of the transaction
     comment = models.TextField(default="", blank=True)  # Comment about the transaction
     hash = models.CharField(max_length=255, default="")  # Hash of the transaction
 
-    price_contract_based = models.DecimalField(max_digits=15, decimal_places=8, default=0)
+    price_contract_based = models.DecimalField(max_digits=24, decimal_places=8, default=0)
     price_fiat_based = models.DecimalField(max_digits=15, decimal_places=8, default=0)
 
     running_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
