@@ -5,10 +5,14 @@ from app.tasks import (
     calculate_running_quantity_transaction_task,
     clean_contract_address_task,
     clean_transaction_task,
+    create_transactions_from_arbitrum_erc20_task,
     create_transactions_from_bsc_bep20_task,
+    create_transactions_from_optimism_erc20_task,
     create_transactions_from_polygon_erc20_task,
     delete_wallet_task,
+    get_arbitrum_token_balance,
     get_bsc_token_balance,
+    get_optimism_token_balance,
     get_polygon_token_balance,
 )
 
@@ -119,12 +123,16 @@ def sync_wallet(request, wallet_id: int):
         clean_transaction_task.s(),
         create_transactions_from_polygon_erc20_task.s(),
         create_transactions_from_bsc_bep20_task.s(),
+        create_transactions_from_optimism_erc20_task.s(),
+        create_transactions_from_arbitrum_erc20_task.s(),
         aggregate_transactions_task.s(),
         calculate_cost_transaction_task.s(),
         calculate_running_quantity_transaction_task.s(),
         # TODO : add a task to get the token used for fees (f.e. Polygon --> MATIC)
         get_polygon_token_balance.s(),
-        # get_bsc_token_balance.s(),
+        get_bsc_token_balance.s(),
+        get_optimism_token_balance.s(),
+        get_arbitrum_token_balance.s(),
     )()
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.download_task = chain_result.id
