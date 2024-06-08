@@ -137,7 +137,7 @@
   <div class="card has-table has-mobile-sort-spaced">
     <header class="card-header">
       <p class="card-header-title">
-        <span class="icon"><i class="mdi mdi-account-multiple"></i></span>
+        <span class="icon"><i class="mdi mdi-layers"></i></span>
         Positions
       </p>
       <a href="{% url 'refresh_wallet_position_price' wallet.id %}" class="card-header-icon">
@@ -168,7 +168,7 @@
               {% for position in page_positions %}
               {% with total_transaction=position.position_transactions.count %}
               <tr>
-                <td data-label="Token">{{ position.contract.name }}</td>
+                <td data-label="Token">{% if position.contract.category == "suspicious" %}<span class="icon"><i class="mdi mdi-alert-circle"></i></span>{% endif %}{{ position.contract.name }}</td>
                 <td data-label="Symbol">{{ position.contract.symbol }}</td>
                 <td data-label="Daily">{% if position.daily_price_delta == 0 %}
                   {% elif position.daily_price_delta < 0 %} <span class="tag is-danger">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
