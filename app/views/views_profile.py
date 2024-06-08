@@ -27,6 +27,7 @@ def update_user_settings(request: HttpRequest):
     if request.method == "POST":
         user_setting, created = UserSetting.objects.get_or_create(user=request.user)
         user_setting.show_positions_above_threshold = "filter_above" in request.POST
+        user_setting.show_only_secure_contracts = "filter_secure" in request.POST
         user_setting.save()
         return redirect("profile")
 

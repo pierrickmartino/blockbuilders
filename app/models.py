@@ -114,14 +114,12 @@ class Blockchain(models.Model):
 class Contract(models.Model):
     STANDARD = "standard"
     FEE = "fee"
-    SCAM = "scam"
     SUSPICIOUS = "suspicious"
     COLLATERAL = "collateral"
 
     CATEGORY_CHOICES = [
         (STANDARD, "Standard"),
         (FEE, "Fee"),
-        (SCAM, "Scam"),
         (SUSPICIOUS, "Suspicious"),
         (COLLATERAL, "Collateral"),
     ]
@@ -350,6 +348,7 @@ class UserSetting(models.Model):
     show_positions_above_threshold = models.BooleanField(
         default=False
     )  # Whether to show positions above a certain threshold
+    show_only_secure_contracts = models.BooleanField(default=True) # Whether to show only contracts that are not identified as scam
 
     class Meta:
         verbose_name = "User Setting"

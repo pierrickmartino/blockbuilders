@@ -200,6 +200,9 @@
                     <a href="{% url 'position-transactions-by-page' position.id 1 %}" class="button is-small is-primary" type="button">
                       Details
                     </a>
+                    <a href="{% url 'blacklist_contract' position.contract.id %}" class="button is-small is-danger" type="button">
+                      Suspicious
+                    </a>
                   </div>
                 </td>
               </tr>

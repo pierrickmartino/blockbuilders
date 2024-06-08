@@ -165,6 +165,19 @@
             </div>
           </div>
         </div>
+        <div class="field is-horizontal">
+          <div class="field-label">
+            <label class="label">Show only secure contracts</label>
+            <p class="help">Avoid scam contracts</p>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input id="secureFilterCheckbox" type="checkbox" name="filter_secure" value="1" {% if user_setting.show_only_secure_contracts %}checked{% endif %}>
+              </div>
+            </div>
+          </div>
+        </div>
         <hr>
         <div class="field is-horizontal">
           <div class="field-label is-normal"></div>

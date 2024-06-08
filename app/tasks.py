@@ -153,20 +153,20 @@ def create_transactions_from_polygon_erc20_task(wallet_id: int):
                     "previous_month": timezone.make_aware(datetime.now(), utc),
                 },
             )
-            # if contract is not None:
-            position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
-            transaction_type = (
-                TypeTransactionChoices.IN
-                if erc20["to"].upper() == wallet.address.upper()
-                else TypeTransactionChoices.OUT
-            )
-            Transaction.objects.create(
-                position=position,
-                type=transaction_type,
-                quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
-                date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), utc),
-                hash=erc20["hash"],
-            ).save()
+            if contract.category is not Contract.SUSPICIOUS:
+                position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
+                transaction_type = (
+                    TypeTransactionChoices.IN
+                    if erc20["to"].upper() == wallet.address.upper()
+                    else TypeTransactionChoices.OUT
+                )
+                Transaction.objects.create(
+                    position=position,
+                    type=transaction_type,
+                    quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
+                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), utc),
+                    hash=erc20["hash"],
+                ).save()
         logger.info(f"Created transactions from ERC20 (Polygon) for wallet id {wallet_id} successfully.")
 
     except Contract.DoesNotExist:

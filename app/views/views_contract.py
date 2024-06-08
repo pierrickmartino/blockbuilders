@@ -3,7 +3,7 @@ import logging, os
 logger = logging.getLogger("blockbuilders")
 
 from django.core.paginator import Paginator
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 
 from app.models import (
@@ -37,8 +37,8 @@ def get_Contract_by_address(contract_address):
     return contract
 
 
-def blacklist_Contract_by_id(contract_address):
-    contract = Contract.objects.filter(address=contract_address).first()
-    contract.category = Contract.SCAM
+def blacklist_Contract_by_id(request, contract_id):
+    contract = get_object_or_404(Contract, id=contract_id)
+    contract.category = Contract.SUSPICIOUS
     contract.save()
-    return contract
+    return redirect("wallets")
