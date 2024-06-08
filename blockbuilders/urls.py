@@ -46,6 +46,11 @@ urlpatterns = [
         views_contract.contracts_paginated,
         name="contracts-by-page",
     ),
+    path(
+        "blacklist_contract/<int:contract_id>/",
+        views_contract.blacklist_Contract_by_id,
+        name="blacklist_contract",
+    ),
     # WALLET
     path("wallets/", views_wallet.wallets, name="wallets"),
     path(

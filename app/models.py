@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
@@ -113,6 +112,20 @@ class Blockchain(models.Model):
 
 # Model to represent a smart contract
 class Contract(models.Model):
+    STANDARD = "standard"
+    FEE = "fee"
+    SCAM = "scam"
+    SUSPICIOUS = "suspicious"
+    COLLATERAL = "collateral"
+
+    CATEGORY_CHOICES = [
+        (STANDARD, "Standard"),
+        (FEE, "Fee"),
+        (SCAM, "Scam"),
+        (SUSPICIOUS, "Suspicious"),
+        (COLLATERAL, "Collateral"),
+    ]
+
     blockchain = models.ForeignKey(
         Blockchain, on_delete=models.CASCADE, related_name="contracts"
     )  # Reference to the blockchain
@@ -131,6 +144,8 @@ class Contract(models.Model):
     previous_day = models.DateTimeField(default=datetime.now)
     previous_week = models.DateTimeField(default=datetime.now)
     previous_month = models.DateTimeField(default=datetime.now)
+
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default=STANDARD)
 
     # market_cap = models.DecimalField(max_digits=20, decimal_places=2, default=0) # type: ignore
     # volume = models.DecimalField(max_digits=20, decimal_places=10, default=0) # type: ignore

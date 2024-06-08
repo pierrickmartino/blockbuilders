@@ -35,3 +35,10 @@ def contracts_paginated(request, page):
 def get_Contract_by_address(contract_address):
     contract = Contract.objects.filter(address=contract_address).first()
     return contract
+
+
+def blacklist_Contract_by_id(contract_address):
+    contract = Contract.objects.filter(address=contract_address).first()
+    contract.category = Contract.SCAM
+    contract.save()
+    return contract

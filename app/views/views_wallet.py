@@ -128,7 +128,6 @@ def sync_wallet(request, wallet_id: int):
         aggregate_transactions_task.s(),
         calculate_cost_transaction_task.s(),
         calculate_running_quantity_transaction_task.s(),
-        # TODO : add a task to get the token used for fees (f.e. Polygon --> MATIC)
         get_polygon_token_balance.s(),
         get_bsc_token_balance.s(),
         get_optimism_token_balance.s(),
