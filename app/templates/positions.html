@@ -2,6 +2,30 @@
 
 {% block content %}
 
+<script>
+  function blacklistContract(contractId) {
+    fetch(`/blacklist_contract/${contractId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          location.reload();  // Refresh the page
+        } else {
+          alert('Failed to blacklist contract.');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+</script>
+
 <section class="section is-title-bar">
   <div class="level">
     <div class="level-left">
@@ -133,142 +157,143 @@
       </div>
     </div>
   </div>
-<section class="section is-main-section">
-  <div class="card has-table has-mobile-sort-spaced">
-    <header class="card-header">
-      <p class="card-header-title">
-        <span class="icon"><i class="mdi mdi-layers"></i></span>
-        Positions
-      </p>
-      <a href="{% url 'refresh_wallet_position_price' wallet.id %}" class="card-header-icon">
-        <span class="icon"><i class="mdi mdi-reload"></i></span>
-      </a>
-    </header>
-    <div class="card-content">
-      <div class="b-table has-pagination">
-        <div class="table-wrapper has-mobile-cards">
-          <table class="table is-fullwidth is-striped is-hoverable is-sortable is-fullwidth">
-            <thead>
-              <tr>
-                <th>Token</th>
-                <th>Symbol</th>
-                <th>Daily</th>
-                <th>Price</th>
-                <th>Blockchain</th>
-                <th>Qty</th>
-                <th>Amount</th>
-                <th>Unrealized</th>
-                <th>Progress</th>
-                <th>Created</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% if page_positions %}
-              {% for position in page_positions %}
-              {% with total_transaction=position.position_transactions.count %}
-              <tr>
-                <td data-label="Token">{% if position.contract.category == "suspicious" %}<span class="icon"><i class="mdi mdi-alert-circle"></i></span>{% endif %}{{ position.contract.name }}</td>
-                <td data-label="Symbol">{{ position.contract.symbol }}</td>
-                <td data-label="Daily">{% if position.daily_price_delta == 0 %}
-                  {% elif position.daily_price_delta < 0 %} <span class="tag is-danger">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
-                    {% else %}
-                    <span class="tag is-success">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
-                    {% endif %}
-                </td>
-                <td data-label="Price">${{ position.contract.price|floatformat:"-2g" }}</td>
-                <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
-                <td data-label="Qty">{{ position.quantity|floatformat:"-6g" }}</td>
-                <td data-label="Amount">{{ position.amount|floatformat:"-2g" }}</td>
-                <td data-label="Unrealized">{% if position.total_unrealized_gain == 0 %}
-                  {% elif position.total_unrealized_gain < 0 %} <span class="tag is-danger">${{ position.total_unrealized_gain|floatformat:"-2g" }}</span>
-                    {% else %}
-                    <span class="tag is-success">${{ position.total_unrealized_gain|floatformat:"-2g" }}</span>
-                    {% endif %}
-                </td>
-                <td data-label="Progress" class="is-progress-cell">
-                  <progress max="{{ wallet.balance }}" class="progress is-small is-primary" value="{{ position.amount }}">position.amount</progress>
-                </td>
-                <td data-label="Created">
-                  <small class="has-text-grey is-abbr-like">{{ position.created_at }}</small>
-                </td>
-                <td class="is-actions-cell">
-                  <div class="buttons is-right">
-                    <a id="status_resync_{{ position.id }}" data-task-resync-id="0" href="{% url 'refresh_position_price' position.id %}" class="button is-small is-primary" type="button">
-                      Refresh
-                    </a>
-                    <a href="{% url 'position-transactions-by-page' position.id 1 %}" class="button is-small is-primary" type="button">
-                      Details
-                    </a>
-                    <a href="{% url 'blacklist_contract' position.contract.id %}" class="button is-small is-danger" type="button">
-                      Suspicious
-                    </a>
-                  </div>
-                </td>
-              </tr>
-              {% endwith %}
-              {% endfor %}
-              {% else %}
-              <tr class="is-empty">
-                <td colspan="9">
-                  <section class="section">
-                    <div class="content has-text-grey has-text-centered">
-                      <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
-                      <p>Nothing's there…</p>
+  <section class="section is-main-section">
+    <div class="card has-table has-mobile-sort-spaced">
+      <header class="card-header">
+        <p class="card-header-title">
+          <span class="icon"><i class="mdi mdi-layers"></i></span>
+          Positions
+        </p>
+        <a href="{% url 'refresh_wallet_position_price' wallet.id %}" class="card-header-icon">
+          <span class="icon"><i class="mdi mdi-reload"></i></span>
+        </a>
+      </header>
+      <div class="card-content">
+        <div class="b-table has-pagination">
+          <div class="table-wrapper has-mobile-cards">
+            <table class="table is-fullwidth is-striped is-hoverable is-sortable is-fullwidth">
+              <thead>
+                <tr>
+                  <th>Token</th>
+                  <th>Symbol</th>
+                  <th>Daily</th>
+                  <th>Price</th>
+                  <th>Blockchain</th>
+                  <th>Qty</th>
+                  <th>Amount</th>
+                  <th>Unrealized</th>
+                  <th>Progress</th>
+                  <th>Created</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if page_positions %}
+                {% for position in page_positions %}
+                {% with total_transaction=position.position_transactions.count %}
+                <tr>
+                  <td data-label="Token">{% if position.contract.category == "suspicious" %}<span class="icon"><i class="mdi mdi-alert-circle"></i></span>{% endif %}{{ position.contract.name }}</td>
+                  <td data-label="Symbol">{{ position.contract.symbol }}</td>
+                  <td data-label="Daily">{% if position.daily_price_delta == 0 %}
+                    {% elif position.daily_price_delta < 0 %} <span class="tag is-danger">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
+                      {% else %}
+                      <span class="tag is-success">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
+                      {% endif %}
+                  </td>
+                  <td data-label="Price">${{ position.contract.price|floatformat:"-2g" }}</td>
+                  <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
+                  <td data-label="Qty">{{ position.quantity|floatformat:"-6g" }}</td>
+                  <td data-label="Amount">{{ position.amount|floatformat:"-2g" }}</td>
+                  <td data-label="Unrealized">{% if position.total_unrealized_gain == 0 %}
+                    {% elif position.total_unrealized_gain < 0 %} <span class="tag is-danger">${{ position.total_unrealized_gain|floatformat:"-2g" }}</span>
+                      {% else %}
+                      <span class="tag is-success">${{ position.total_unrealized_gain|floatformat:"-2g" }}</span>
+                      {% endif %}
+                  </td>
+                  <td data-label="Progress" class="is-progress-cell">
+                    <progress max="{{ wallet.balance }}" class="progress is-small is-primary" value="{{ position.amount }}">position.amount</progress>
+                  </td>
+                  <td data-label="Created">
+                    <small class="has-text-grey is-abbr-like">{{ position.created_at }}</small>
+                  </td>
+                  <td class="is-actions-cell">
+                    <div class="buttons is-right">
+                      <a id="status_resync_{{ position.id }}" data-task-resync-id="0" href="{% url 'refresh_position_price' position.id %}" class="button is-small is-primary" type="button">
+                        Refresh
+                      </a>
+                      <a href="{% url 'position-transactions-by-page' position.id 1 %}" class="button is-small is-primary" type="button">
+                        Details
+                      </a>
+                      <button class="button is-small is-danger" type="button" onclick="blacklistContract({{ position.contract.id }})">
+                        Suspicious
+                      </button>
                     </div>
-                  </section>
-                </td>
-              </tr>
-              {% endif %}
-            </tbody>
-          </table>
-        </div>
-        {% block pagination %}
-        <div class="notification">
-          <div class="level">
-            <div class="level-left">
-              <div class="level-item">
-                <div class="buttons has-addons">
-                  {% if page_positions.has_previous %}
-                  <a type="button" class="button" href="{{ page_positions.previous_page_number }}">Prev.</a>
+                  </td>
+                </tr>
+                {% endwith %}
+                {% endfor %}
+                {% else %}
+                <tr class="is-empty">
+                  <td colspan="9">
+                    <section class="section">
+                      <div class="content has-text-grey has-text-centered">
+                        <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
+                        <p>Nothing's there…</p>
+                      </div>
+                    </section>
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+          {% block pagination %}
+          <div class="notification">
+            <div class="level">
+              <div class="level-left">
+                <div class="level-item">
+                  <div class="buttons has-addons">
+                    {% if page_positions.has_previous %}
+                    <a type="button" class="button" href="{{ page_positions.previous_page_number }}">Prev.</a>
 
-                  {% if page_positions.number > 3 %}
-                  <a type="button" class="button" href="1">1</a>
-                  {% if page_positions.number > 4 %}
-                  <span class="button is-static">...</span>
-                  {% endif %}
-                  {% endif %}
-                  {% endif %}
-                  {% for num in page_positions.paginator.page_range %}
-                  {% if page_positions.number == num %}
-                  <a type="button" class="button is-active" href="{{ num }}">{{ num }}</a>
-                  {% elif num > page_positions.number|add:'-3' and num < page_positions.number|add:'3' %} <a type="button" class="button" href="{{ num }}">{{ num }}</a>
+                    {% if page_positions.number > 3 %}
+                    <a type="button" class="button" href="1">1</a>
+                    {% if page_positions.number > 4 %}
+                    <span class="button is-static">...</span>
                     {% endif %}
-                    {% endfor %}
+                    {% endif %}
+                    {% endif %}
+                    {% for num in page_positions.paginator.page_range %}
+                    {% if page_positions.number == num %}
+                    <a type="button" class="button is-active" href="{{ num }}">{{ num }}</a>
+                    {% elif num > page_positions.number|add:'-3' and num < page_positions.number|add:'3' %} <a type="button" class="button" href="{{ num }}">{{ num }}</a>
+                      {% endif %}
+                      {% endfor %}
 
-                    {% if page_positions.has_next %}
-                    {% if page_positions.number < page_positions.paginator.num_pages|add:'-3' %} <span class="button is-static">...</span>
-                      <a type="button" class="button" href="{{ page_positions.paginator.num_pages }}">{{ page_positions.paginator.num_pages }}</a>
-                      {% elif page_positions.number < page_positions.paginator.num_pages|add:'-2' %} <a type="button" class="button" href="{{ page_positions.paginator.num_pages }}">{{ page_positions.paginator.num_pages }}</a>
-                        {% endif %}
+                      {% if page_positions.has_next %}
+                      {% if page_positions.number < page_positions.paginator.num_pages|add:'-3' %} <span class="button is-static">...</span>
+                        <a type="button" class="button" href="{{ page_positions.paginator.num_pages }}">{{ page_positions.paginator.num_pages }}</a>
+                        {% elif page_positions.number < page_positions.paginator.num_pages|add:'-2' %} <a type="button" class="button" href="{{ page_positions.paginator.num_pages }}">{{ page_positions.paginator.num_pages }}</a>
+                          {% endif %}
 
-                        <a type="button" class="button" href="{{ page_positions.next_page_number }}">Next</a>
-                        {% endif %}
+                          <a type="button" class="button" href="{{ page_positions.next_page_number }}">Next</a>
+                          {% endif %}
 
+                  </div>
+                </div>
+              </div>
+              <div class="level-right">
+                <div class="level-item">
+                  <small>Page {{page_positions.number}} of {{ page_positions.paginator.num_pages }}</small>
                 </div>
               </div>
             </div>
-            <div class="level-right">
-              <div class="level-item">
-                <small>Page {{page_positions.number}} of {{ page_positions.paginator.num_pages }}</small>
-              </div>
-            </div>
           </div>
+          {% endblock %}
         </div>
-        {% endblock %}
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-{% endblock %}
+
+  {% endblock %}

@@ -1,5 +1,7 @@
 import logging, os
 
+from django.http import JsonResponse
+
 logger = logging.getLogger("blockbuilders")
 
 from django.core.paginator import Paginator
@@ -38,7 +40,9 @@ def get_Contract_by_address(contract_address):
 
 
 def blacklist_Contract_by_id(request, contract_id):
-    contract = get_object_or_404(Contract, id=contract_id)
-    contract.category = Contract.SUSPICIOUS
-    contract.save()
-    return redirect("wallets")
+    if request.method == "POST":
+        contract = get_object_or_404(Contract, id=contract_id)
+        contract.category = Contract.SUSPICIOUS
+        contract.save()
+        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)

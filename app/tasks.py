@@ -19,7 +19,7 @@ from app.utils.optimism.view_optimism import (
 )
 from app.utils.bsc.view_bsc import (
     account_balance_by_address as bsc_account_balance_by_address,
-    bep20_transactions_by_wallet
+    bep20_transactions_by_wallet,
 )
 
 from app.models import (
@@ -127,6 +127,7 @@ def create_transactions_from_bsc_bep20_task(wallet_id: int):
 
     return wallet_id
 
+
 @shared_task
 def create_transactions_from_polygon_erc20_task(wallet_id: int):
     """
@@ -180,6 +181,7 @@ def create_transactions_from_polygon_erc20_task(wallet_id: int):
 
     return wallet_id
 
+
 @shared_task
 def create_transactions_from_arbitrum_erc20_task(wallet_id: int):
     """
@@ -232,6 +234,7 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: int):
         )
 
     return wallet_id
+
 
 @shared_task
 def create_transactions_from_optimism_erc20_task(wallet_id: int):
@@ -287,7 +290,6 @@ def create_transactions_from_optimism_erc20_task(wallet_id: int):
     return wallet_id
 
 
-
 @shared_task
 def get_polygon_token_balance(wallet_id: int):
     """
@@ -302,17 +304,17 @@ def get_polygon_token_balance(wallet_id: int):
         contract_symbol = "MATIC"
         balance = polygon_account_balance_by_address(wallet.address)
         contract, created = Contract.objects.get_or_create(
-                blockchain_id=blockchain.id,
-                address=contract_address,
-                name=contract_name,
-                symbol=contract_symbol,
-                defaults={
-                    "decimals":18,
-                    "previous_day": timezone.make_aware(datetime.now(), utc),
-                    "previous_week": timezone.make_aware(datetime.now(), utc),
-                    "previous_month": timezone.make_aware(datetime.now(), utc),
-                },
-            )
+            blockchain_id=blockchain.id,
+            address=contract_address,
+            name=contract_name,
+            symbol=contract_symbol,
+            defaults={
+                "decimals": 18,
+                "previous_day": timezone.make_aware(datetime.now(), utc),
+                "previous_week": timezone.make_aware(datetime.now(), utc),
+                "previous_month": timezone.make_aware(datetime.now(), utc),
+            },
+        )
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
         position.save()
@@ -321,9 +323,12 @@ def get_polygon_token_balance(wallet_id: int):
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(f"An error occurred while getting MATIC (Polygon) balance for for wallet id {wallet_id}: {str(e)}")
+        logger.error(
+            f"An error occurred while getting MATIC (Polygon) balance for for wallet id {wallet_id}: {str(e)}"
+        )
 
     return wallet_id
+
 
 @shared_task
 def get_bsc_token_balance(wallet_id: int):
@@ -339,17 +344,17 @@ def get_bsc_token_balance(wallet_id: int):
         contract_symbol = "BNB"
         balance = bsc_account_balance_by_address(wallet.address)
         contract, created = Contract.objects.get_or_create(
-                blockchain_id=blockchain.id,
-                address=contract_address,
-                name=contract_name,
-                symbol=contract_symbol,
-                defaults={
-                    "decimals":18,
-                    "previous_day": timezone.make_aware(datetime.now(), utc),
-                    "previous_week": timezone.make_aware(datetime.now(), utc),
-                    "previous_month": timezone.make_aware(datetime.now(), utc),
-                },
-            )
+            blockchain_id=blockchain.id,
+            address=contract_address,
+            name=contract_name,
+            symbol=contract_symbol,
+            defaults={
+                "decimals": 18,
+                "previous_day": timezone.make_aware(datetime.now(), utc),
+                "previous_week": timezone.make_aware(datetime.now(), utc),
+                "previous_month": timezone.make_aware(datetime.now(), utc),
+            },
+        )
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
         position.save()
@@ -361,6 +366,7 @@ def get_bsc_token_balance(wallet_id: int):
         logger.error(f"An error occurred while getting BNB (BSC) balance for for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
+
 
 @shared_task
 def get_arbitrum_token_balance(wallet_id: int):
@@ -376,17 +382,17 @@ def get_arbitrum_token_balance(wallet_id: int):
         contract_symbol = "ETH"
         balance = arbitrum_account_balance_by_address(wallet.address)
         contract, created = Contract.objects.get_or_create(
-                blockchain_id=blockchain.id,
-                address=contract_address,
-                name=contract_name,
-                symbol=contract_symbol,
-                defaults={
-                    "decimals":18,
-                    "previous_day": timezone.make_aware(datetime.now(), utc),
-                    "previous_week": timezone.make_aware(datetime.now(), utc),
-                    "previous_month": timezone.make_aware(datetime.now(), utc),
-                },
-            )
+            blockchain_id=blockchain.id,
+            address=contract_address,
+            name=contract_name,
+            symbol=contract_symbol,
+            defaults={
+                "decimals": 18,
+                "previous_day": timezone.make_aware(datetime.now(), utc),
+                "previous_week": timezone.make_aware(datetime.now(), utc),
+                "previous_month": timezone.make_aware(datetime.now(), utc),
+            },
+        )
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
         position.save()
@@ -398,6 +404,7 @@ def get_arbitrum_token_balance(wallet_id: int):
         logger.error(f"An error occurred while getting ETH (Arbitrum) balance for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
+
 
 @shared_task
 def get_optimism_token_balance(wallet_id: int):
@@ -413,17 +420,17 @@ def get_optimism_token_balance(wallet_id: int):
         contract_symbol = "ETH"
         balance = optimism_account_balance_by_address(wallet.address)
         contract, created = Contract.objects.get_or_create(
-                blockchain_id=blockchain.id,
-                address=contract_address,
-                name=contract_name,
-                symbol=contract_symbol,
-                defaults={
-                    "decimals":18,
-                    "previous_day": timezone.make_aware(datetime.now(), utc),
-                    "previous_week": timezone.make_aware(datetime.now(), utc),
-                    "previous_month": timezone.make_aware(datetime.now(), utc),
-                },
-            )
+            blockchain_id=blockchain.id,
+            address=contract_address,
+            name=contract_name,
+            symbol=contract_symbol,
+            defaults={
+                "decimals": 18,
+                "previous_day": timezone.make_aware(datetime.now(), utc),
+                "previous_week": timezone.make_aware(datetime.now(), utc),
+                "previous_month": timezone.make_aware(datetime.now(), utc),
+            },
+        )
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
         position.save()
@@ -435,6 +442,7 @@ def get_optimism_token_balance(wallet_id: int):
         logger.error(f"An error occurred while getting ETH (Optimism) balance for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
+
 
 @shared_task
 def aggregate_transactions_task(wallet_id: int):

@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 def profile(request: HttpRequest):
     user = get_object_or_404(User, id=request.user.id)
     user_setting = UserSetting.objects.filter(user=request.user).first()
-    
+
     context = {
         "user": user,
         "user_setting": user_setting,

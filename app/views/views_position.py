@@ -82,8 +82,14 @@ def wallet_positions_paginated(request, wallet_id, page):
         daily_price_delta = calculator.calculate_daily_price_delta()
 
         last_transaction = Transaction.objects.filter(position=position).order_by("-date").first()
-        reference_avg_cost = TransactionCalculator(last_transaction).calculate_avg_cost_contract_based() if last_transaction and last_transaction.running_quantity != 0 else 0
-        total_unrealized_gain = (position.contract.price - reference_avg_cost) / reference_avg_cost * 100 if reference_avg_cost != 0 else 0
+        reference_avg_cost = (
+            TransactionCalculator(last_transaction).calculate_avg_cost_contract_based()
+            if last_transaction and last_transaction.running_quantity != 0
+            else 0
+        )
+        total_unrealized_gain = (
+            (position.contract.price - reference_avg_cost) / reference_avg_cost * 100 if reference_avg_cost != 0 else 0
+        )
 
         positions_with_calculator.append(
             {
@@ -114,24 +120,6 @@ def wallet_positions_paginated(request, wallet_id, page):
 def delete_Position_by_id(request, position_id):
     result = delete_position_task.delay(position_id, 100)
     return redirect("wallets")
-
-
-# todo : still needed ?
-@login_required
-def enable_Position_by_id(request, position_id):
-    position = get_object_or_404(Position, id=position_id)
-    position.mark_as_active()
-    wallet = position.wallet
-    return redirect("wallet", wallet_id=wallet.id)
-
-
-# todo : still needed ?
-@login_required
-def disable_Position_by_id(request, position_id):
-    position = get_object_or_404(Position, id=position_id)
-    position.mark_as_inactive()
-    wallet = position.wallet
-    return redirect("wallet", wallet_id=wallet.id)
 
 
 # todo : still needed ?

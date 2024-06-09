@@ -123,8 +123,16 @@ urlpatterns = [
         name="position-transactions-by-page",
     ),
     # SCAN
-    path("polygon/balance/<str:address>/", view_polygon.account_balance_by_address, name="polygon_account_balance_by_address"),
-    path("polygon/erc20transactions/<str:address>/", view_polygon.erc20_transactions_by_wallet, name="polygon_erc20_transactions_by_wallet"),
+    path(
+        "polygon/balance/<str:address>/",
+        view_polygon.account_balance_by_address,
+        name="polygon_account_balance_by_address",
+    ),
+    path(
+        "polygon/erc20transactions/<str:address>/",
+        view_polygon.erc20_transactions_by_wallet,
+        name="polygon_erc20_transactions_by_wallet",
+    ),
     path("polygon/matic/", view_polygon.matic_price, name="polygon_matic_price"),
     path("arbitrum/ethereum/", view_arbitrum.ethereum_price, name="arbitrum_ethereum_price"),
     path("optimism/ethereum/", view_optimism.ethereum_price, name="optimism_ethereum_price"),
