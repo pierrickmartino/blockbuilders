@@ -69,8 +69,16 @@
             <tbody>
               {% if wallets %}
               {% for wallet in wallets %}
+              {% load static %}
               <tr>
-                <td data-label="Address">{{ wallet.address|truncatechars:35 }}</td>
+                <td data-label="Address"><span>{{ wallet.address|truncatechars:35 }}</span>
+                  <div class="tooltip">
+                    <span class="icon">
+                      <i class="mdi mdi-emoticon-sad"></i> <!-- FontAwesome icon -->
+                    </span>
+                    <span class="tooltiptext">{{ wallet.address }}</span> <!-- Full string in the tooltip -->
+                  </div>
+                </td>
                 <td data-label="Name">{{ wallet.name }}</td>
                 <td data-label="Balance">{{ wallet.balance|floatformat:"-2g" }}</td>
                 <td data-label="NumPositions">{{ wallet.wallet_positions.count }}</td>
