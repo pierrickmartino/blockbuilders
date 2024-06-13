@@ -34,7 +34,7 @@ from app.models import (
 
 
 from asgiref.sync import sync_to_async
-from celery import chain
+from celery import chain, chord, group
 
 
 @csrf_exempt
@@ -118,20 +118,28 @@ def sync_wallet(request, wallet_id: int):
     """
     wallet = get_object_or_404(Wallet, id=wallet_id)
 
-    chain_result = chain(
-        clean_contract_address_task.s(wallet_id),
-        clean_transaction_task.s(),
+    transactions_chord = chord(
+    group(
         create_transactions_from_polygon_erc20_task.s(),
         create_transactions_from_bsc_bep20_task.s(),
         create_transactions_from_optimism_erc20_task.s(),
         create_transactions_from_arbitrum_erc20_task.s(),
-        aggregate_transactions_task.s(),
+    ),
+    aggregate_transactions_task.s(wallet_id)  # Callback task
+)
+
+    chain_result = chain(
+        clean_contract_address_task.s(wallet_id),
+        clean_transaction_task.s(),
+        transactions_chord,  # The chord is part of the chain
         calculate_cost_transaction_task.s(),
         calculate_running_quantity_transaction_task.s(),
-        get_polygon_token_balance.s(),
-        get_bsc_token_balance.s(),
-        get_optimism_token_balance.s(),
-        get_arbitrum_token_balance.s(),
+        group(
+            get_polygon_token_balance.s(),
+            get_bsc_token_balance.s(),
+            get_optimism_token_balance.s(),
+            get_arbitrum_token_balance.s(),
+        )
     )()
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.download_task = chain_result.id

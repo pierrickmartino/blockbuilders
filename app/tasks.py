@@ -445,7 +445,7 @@ def get_optimism_token_balance(wallet_id: int):
 
 
 @shared_task
-def aggregate_transactions_task(wallet_id: int):
+def aggregate_transactions_task(previous_return:int, wallet_id: int):
     """
     Task to aggregate transactions for a given wallet.
     """
