@@ -22,6 +22,8 @@ class Blockchain_Admin(admin.ModelAdmin):
 class Contract_Admin(admin.ModelAdmin):
     list_display = (
         "id",
+        "blockchain",
+        "category",
         "name",
         "address",
         "symbol",
@@ -42,7 +44,6 @@ class Position_Admin(admin.ModelAdmin):
         "wallet",
         "contract",
         "quantity",
-        "amount",
         "avg_cost",
         "total_cost",
         "unrealized_gain",
@@ -73,7 +74,12 @@ class Transaction_Admin(admin.ModelAdmin):
 
 
 class UserSetting_Admin(admin.ModelAdmin):
-    list_display = ("id", "user", "show_positions_above_threshold")
+    list_display = (
+        "id",
+        "user",
+        "show_positions_above_threshold",
+        "show_only_secure_contracts",
+    )
 
 
 admin.site.register(UserSetting, UserSetting_Admin)

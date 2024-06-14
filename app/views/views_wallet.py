@@ -21,7 +21,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger("blockbuilders")
 
-from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
@@ -33,7 +32,6 @@ from app.models import (
 )
 
 
-from asgiref.sync import sync_to_async
 from celery import chain, chord, group
 
 
@@ -57,15 +55,6 @@ def resync_wallet_task_status(request, task_id):
 def delete_Wallet_by_id(request, wallet_id):
     result = delete_wallet_task.delay(wallet_id, 100)
     return redirect("wallets")
-
-
-@sync_to_async
-def async_calculate_total_wallet(wallet_id: int):
-    wallet = get_object_or_404(Wallet, id=wallet_id)
-    balance = Wallet.objects.filter(id__exact=wallet_id).aggregate(Sum("positions__amount", default=0))
-    wallet.balance = balance["positions__amount__sum"]
-    wallet.save()
-    return wallet
 
 
 # NEW
@@ -119,14 +108,14 @@ def sync_wallet(request, wallet_id: int):
     wallet = get_object_or_404(Wallet, id=wallet_id)
 
     transactions_chord = chord(
-    group(
-        create_transactions_from_polygon_erc20_task.s(),
-        create_transactions_from_bsc_bep20_task.s(),
-        create_transactions_from_optimism_erc20_task.s(),
-        create_transactions_from_arbitrum_erc20_task.s(),
-    ),
-    aggregate_transactions_task.s(wallet_id)  # Callback task
-)
+        group(
+            create_transactions_from_polygon_erc20_task.s(),
+            create_transactions_from_bsc_bep20_task.s(),
+            create_transactions_from_optimism_erc20_task.s(),
+            create_transactions_from_arbitrum_erc20_task.s(),
+        ),
+        aggregate_transactions_task.s(wallet_id),  # Callback task
+    )
 
     chain_result = chain(
         clean_contract_address_task.s(wallet_id),
@@ -139,7 +128,7 @@ def sync_wallet(request, wallet_id: int):
             get_bsc_token_balance.s(),
             get_optimism_token_balance.s(),
             get_arbitrum_token_balance.s(),
-        )
+        ),
     )()
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.download_task = chain_result.id

@@ -67,7 +67,7 @@
                   Total Amount
                 </p>
                 <p class="title is-4" style="margin-top: 6px; margin-bottom: 6px">
-                  0
+                  {{ wallet.balance|floatformat:"-2g" }}
                 </p>
                 <div class="control">
                   <div class="tags has-addons">
@@ -161,7 +161,7 @@
     <div class="card has-table has-mobile-sort-spaced">
       <header class="card-header">
         <p class="card-header-title">
-          <span class="icon"><i class="mdi mdi-layers"></i></span>
+          <span class="icon"><i class="mdi mdi-view-list"></i></span>
           Positions
         </p>
         <a href="{% url 'refresh_wallet_position_price' wallet.id %}" class="card-header-icon">
@@ -175,6 +175,7 @@
               <thead>
                 <tr>
                   <th>Token</th>
+                  <th>Info</th>
                   <th>Symbol</th>
                   <th>Daily</th>
                   <th>Price</th>
@@ -183,7 +184,6 @@
                   <th>Amount</th>
                   <th>Unrealized</th>
                   <th>Progress</th>
-                  <th>Created</th>
                   <th></th>
                 </tr>
               </thead>
@@ -193,7 +193,14 @@
                 {% with total_transaction=position.position_transactions.count %}
                 <tr>
                   <td data-label="Token">{% if position.contract.category == "suspicious" %}<span class="icon"><i class="mdi mdi-alert-circle"></i></span>{% endif %}{{ position.contract.name }}</td>
-                  <td data-label="Symbol">{{ position.contract.symbol }}</td>
+                  <td data-label="Info"><div class="tooltip">
+                    <span class="icon">
+                      <i class="mdi mdi-information"></i> <!-- FontAwesome icon -->
+                    </span>
+                    <span class="tooltiptext">{{ position.contract.address }}</span> <!-- Full string in the tooltip -->
+                  </div></td>
+                  <td data-label="Symbol">{{ position.contract.symbol }}
+                </td>
                   <td data-label="Daily">{% if position.daily_price_delta == 0 %}
                     {% elif position.daily_price_delta < 0 %} <span class="tag is-danger">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
                       {% else %}
@@ -213,14 +220,8 @@
                   <td data-label="Progress" class="is-progress-cell">
                     <progress max="{{ wallet.balance }}" class="progress is-small is-primary" value="{{ position.amount }}">position.amount</progress>
                   </td>
-                  <td data-label="Created">
-                    <small class="has-text-grey is-abbr-like">{{ position.created_at }}</small>
-                  </td>
                   <td class="is-actions-cell">
                     <div class="buttons is-right">
-                      <a id="status_resync_{{ position.id }}" data-task-resync-id="0" href="{% url 'refresh_position_price' position.id %}" class="button is-small is-primary" type="button">
-                        Refresh
-                      </a>
                       <a href="{% url 'position-transactions-by-page' position.id 1 %}" class="button is-small is-primary" type="button">
                         Details
                       </a>

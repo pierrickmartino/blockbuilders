@@ -182,7 +182,7 @@ class Position(TimeStampModel):
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)  # Quantity of the position
     avg_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Average cost of the position
 
-    amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    # amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     # Performance calculation
     # total_buy_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
@@ -223,6 +223,15 @@ class Position(TimeStampModel):
 
     def __str__(self):
         return f"{self.wallet} - {self.contract} - {self.quantity}"
+
+# Utility class for calculating transaction details
+class PositionCalculator:
+    def __init__(self, position):
+        self.position = position
+
+    def calculate_amount(self):
+        # Calculate the amount of a position
+        return self.position.quantity * self.position.contract.price
 
 
 # Model to represent a transaction

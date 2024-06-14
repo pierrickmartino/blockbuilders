@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 
@@ -5,6 +6,7 @@ from celery import shared_task
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
+from app.utils.cryptocompare.view_cryptocompare import get_multiple_symbols_price
 from app.utils.polygon.view_polygon import (
     account_balance_by_address as polygon_account_balance_by_address,
     erc20_transactions_by_wallet as polygon_erc20_transactions_by_wallet,
@@ -26,6 +28,7 @@ from app.models import (
     Blockchain,
     Contract,
     Position,
+    PositionCalculator,
     Transaction,
     TransactionCalculator,
     TypeTransactionChoices,
@@ -413,7 +416,7 @@ def get_optimism_token_balance(wallet_id: int):
     """
     logger.info(f"Get ETH (Optimism) balance for wallet id {wallet_id}.")
     try:
-        blockchain = Blockchain.objects.filter(name="Arbitrum").first()
+        blockchain = Blockchain.objects.filter(name="Optimism").first()
         wallet = get_object_or_404(Wallet, id=wallet_id)
         contract_address = "0x0000000000000000000000000000000000001010"
         contract_name = "ETH"
@@ -445,7 +448,7 @@ def get_optimism_token_balance(wallet_id: int):
 
 
 @shared_task
-def aggregate_transactions_task(previous_return:int, wallet_id: int):
+def aggregate_transactions_task(previous_return: int, wallet_id: int):
     """
     Task to aggregate transactions for a given wallet.
     """
@@ -619,5 +622,66 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
         logger.error(f"An error occurred while calculating running quantities for wallet id {wallet_id}: {str(e)}")
+
+    return wallet_id
+
+
+@shared_task
+def get_price_from_market_task(symbol_list: list[str]):
+    """
+    Task to get the market price of a list of symbols.
+    """
+    logger.info(f"Get market price for {','.join(symbol_list)}.")
+    try:
+
+        # Get the price for each of the symbols in the list
+        prices = get_multiple_symbols_price(symbol_list)
+
+        # Then update the price column in the Contract object
+        for symbol, value in prices.items():
+            try:
+                if symbol == "USDC":
+                    contracts = Contract.objects.filter(symbol__startswith=symbol)
+                else:
+                    contracts = Contract.objects.filter(symbol=symbol)
+
+                if contracts.exists():
+                    for contract in contracts:
+                        contract.price = value["USD"]
+                        contract.save()
+            except Contract.DoesNotExist:
+                print(f"Contract with symbol {symbol} does not exist.")
+
+    except Exception as e:
+        logger.error(
+            f"An error occurred while getting the market price of a list of symbols {','.join(symbol_list)}: {str(e)}"
+        )
+
+    return symbol_list
+
+
+@shared_task
+def calculate_wallet_balance_task(previous_return: int, wallet_id: int):
+    """
+    Task to calculate the balance of a wallet.
+    """
+    logger.info(f"Calculating balance for wallet id {wallet_id}.")
+    try:
+
+        wallet = Wallet.objects.get(id=wallet_id)
+        positions = Position.objects.filter(wallet=wallet)
+        balance = 0
+
+        for position in positions:
+            position_calculator = PositionCalculator(position)
+            balance += position_calculator.calculate_amount()
+
+        wallet.balance = balance
+        wallet.save()
+
+    except Wallet.DoesNotExist:
+        logger.error(f"Wallet with id {wallet_id} does not exist")
+    except Exception as e:
+        logger.error(f"An error occurred while calculating balance for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
