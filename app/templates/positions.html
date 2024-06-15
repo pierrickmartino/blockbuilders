@@ -218,7 +218,7 @@
                       {% endif %}
                   </td>
                   <td data-label="Progress" class="is-progress-cell">
-                    <progress max="{{ wallet.balance }}" class="progress is-small is-primary" value="{{ position.amount }}">position.amount</progress>
+                    <progress max="{{ wallet.balance }}" class="progress is-small is-primary" value="{{ position.amount }}">position.amount</progress>{{ position.progress_percentage|floatformat:"-2g" }}%
                   </td>
                   <td class="is-actions-cell">
                     <div class="buttons is-right">

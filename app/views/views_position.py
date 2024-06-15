@@ -87,6 +87,7 @@ def wallet_positions_paginated(request, wallet_id, page):
         )
 
         position_amount = position_calculator.calculate_amount()
+        progress_percentage = position_amount / position.wallet.balance * 100
 
         # if the user only wants to see positions above the $0.5 threshold --> filter
         if user_setting and user_setting.show_positions_above_threshold:
@@ -102,6 +103,7 @@ def wallet_positions_paginated(request, wallet_id, page):
                         "created_at": position.created_at,
                         "daily_price_delta": daily_price_delta,
                         "total_unrealized_gain": total_unrealized_gain,
+                        "progress_percentage": progress_percentage
                     }
                 )
         else:
@@ -116,6 +118,7 @@ def wallet_positions_paginated(request, wallet_id, page):
                     "created_at": position.created_at,
                     "daily_price_delta": daily_price_delta,
                     "total_unrealized_gain": total_unrealized_gain,
+                    "progress_percentage": progress_percentage
                 }
             )
 
@@ -138,21 +141,6 @@ def delete_Position_by_id(request, position_id):
     return redirect("wallets")
 
 
-# todo : still needed ?
-@login_required
-def view_position(request, position_id):
-    position = Position.objects.filter(id=position_id).first()
-    transactions = Transaction.objects.filter(position=position).order_by("-date")
-
-    template = loader.get_template("view_position.html")
-
-    context = {
-        "position": position,
-        "transactions": transactions,
-    }
-    return HttpResponse(template.render(context, request))
-
-
 @login_required
 def refresh_wallet_position_price(request, wallet_id: int):
     """
@@ -170,29 +158,3 @@ def refresh_wallet_position_price(request, wallet_id: int):
     logger.info(f"Started getting position prices for wallet with id {wallet_id}")
     return redirect("wallets")
 
-
-@sync_to_async
-def async_get_symbol_by_position(position: Position):
-    symbol = position.contract.symbol + "/USDT"
-    return symbol
-
-
-@sync_to_async
-def async_get_position_by_id(position_id: int):
-    position = get_object_or_404(Position, id=position_id)
-    return position
-
-
-@sync_to_async
-def async_get_position_by_wallet_id(wallet_id: int):
-    wallet = get_object_or_404(Wallet, id=wallet_id)
-    positions = Position.objects.filter(wallet=wallet)
-    positions_list = []
-    for position in positions:
-        positions_list.append(position)
-    return positions_list
-
-
-def get_Positions_by_Wallet(wallet):
-    positions = Position.objects.filter(wallet=wallet)
-    return positions
