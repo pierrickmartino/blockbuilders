@@ -78,11 +78,11 @@ urlpatterns = [
     #     views_wallet.resync_information_Wallet_by_id,
     #     name="wallet_resync_info",
     # ),
-    path(
-        "resync_wallet_task_status/<uuid:task_id>/",
-        views_wallet.resync_wallet_task_status,
-        name="resync_wallet_task_status",
-    ),
+    # path(
+    #     "resync_wallet_task_status/<uuid:task_id>/",
+    #     views_wallet.resync_wallet_task_status,
+    #     name="resync_wallet_task_status",
+    # ),
     # POSITION
     path("positions/", views_position.positions, name="positions"),
     # path(

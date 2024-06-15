@@ -43,12 +43,12 @@ def download_wallet_task_status(request, task_id):
     return JsonResponse({"status": task_result.status})
 
 
-@csrf_exempt
-def resync_wallet_task_status(request, task_id):
-    # logger.info("Download AsyncResult for : " + str(task_id))
-    task_result = AsyncResult(str(task_id))
-    # logger.info("Download task status : " + str(task_result.status))
-    return JsonResponse({"status": task_result.status})
+# @csrf_exempt
+# def resync_wallet_task_status(request, task_id):
+#     # logger.info("Download AsyncResult for : " + str(task_id))
+#     task_result = AsyncResult(str(task_id))
+#     # logger.info("Download task status : " + str(task_result.status))
+#     return JsonResponse({"status": task_result.status})
 
 
 @login_required

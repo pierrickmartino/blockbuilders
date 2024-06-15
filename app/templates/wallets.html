@@ -68,7 +68,6 @@
             <tbody>
               {% if wallets %}
               {% for wallet in wallets %}
-              {% load static %}
               <tr>
                 <td data-label="Address"><span>{{ wallet.address|truncatechars:35 }}</span>
                   <div class="tooltip">
@@ -194,21 +193,6 @@
       .then(response => response.json())
       .then(data => {
         const statusDownloadLink = document.getElementById('status_download_' + walletId);
-        // console.log("Found " + statusDownloadLink.length + " status cell to update");
-        // console.log("Status " + data.status)
-        if (data.status === 'PENDING' || data.status === 'STARTED' || data.status === 'RETRY') {
-          statusDownloadLink.classList.add('is-loading');
-        } else {
-          statusDownloadLink.classList.remove('is-loading');
-        }
-      });
-  }
-
-  function updateResyncWalletTaskStatus(walletId, taskId) {
-    fetch(`/resync_wallet_task_status/${taskId}/`)
-      .then(response => response.json())
-      .then(data => {
-        const statusDownloadLink = document.getElementById('status_resync_' + walletId);
         console.log("Found " + statusDownloadLink.length + " status cell to update");
         console.log("Status " + data.status)
         if (data.status === 'PENDING' || data.status === 'STARTED' || data.status === 'RETRY') {
@@ -222,46 +206,24 @@
   document.addEventListener('DOMContentLoaded', function () {
     const statusCells_download = document.querySelectorAll('[data-task-download-id]');
     console.log("Found " + statusCells_download.length + " status cells download");
-    const statusCells_resync = document.querySelectorAll('[data-task-resync-id]');
-    console.log("Found " + statusCells_resync.length + " status cells resync");
-
+    
     statusCells_download.forEach(cell => {
       if (!cell.parentNode || !cell.getAttribute('id')) {
-        // console.log("Missing ID for parent node of a cell with task ID: " + cell.getAttribute('data-task-download-id'));
+        console.log("Missing ID for parent node of a cell with task ID: " + cell.getAttribute('data-task-download-id'));
         return; // Skip this iteration because the necessary ID is not available
       }
 
       const download_walletId = cell.getAttribute('id').split('_')[2];
       const download_taskId = cell.getAttribute('data-task-download-id');
-      // console.log("Checking status for Wallet ID: " + walletId + " with Task ID: " + taskId);
+      console.log("Checking status for Wallet ID: " + walletId + " with Task ID: " + taskId);
 
       // Call the update function immediately for initial check
       updateDownloadWalletTaskStatus(download_walletId, download_taskId);
 
       // Then set interval
       setInterval(() => {
-        // console.log("Updating status for Wallet ID: " + walletId);
+        console.log("Updating status for Wallet ID: " + walletId);
         updateDownloadWalletTaskStatus(download_walletId, download_taskId);
-      }, 4000); // Poll every 3 seconds
-    });
-
-    statusCells_resync.forEach(cell => {
-      if (!cell.parentNode || !cell.getAttribute('id')) {
-        console.log("Missing ID for parent node of a cell with task ID: " + cell.getAttribute('data-task-resync-id'));
-        return; // Skip this iteration because the necessary ID is not available
-      }
-
-      const resync_walletId = cell.getAttribute('id').split('_')[2];
-      const resync_taskId = cell.getAttribute('data-task-resync-id');
-      console.log("Checking Resync status for Wallet ID: " + resync_walletId + " with Task ID: " + resync_taskId);
-
-      // Call the update function immediately for initial check
-      updateResyncWalletTaskStatus(resync_walletId, resync_taskId);
-
-      // Then set interval
-      setInterval(() => {
-        console.log("Updating Resync status for Wallet ID: " + resync_walletId);
-        updateResyncWalletTaskStatus(resync_walletId, resync_taskId);
       }, 3000); // Poll every 3 seconds
     });
 
