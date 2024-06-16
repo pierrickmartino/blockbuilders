@@ -98,7 +98,7 @@
                 </p>
                 <div class="control">
                   <div class="tags has-addons">
-                    <span class="tag is-success">
+                    <span class="tag is-primary">
                       <span class="icon">
                         <i class="mdi mdi-arrow-up"></i>
                       </span>
@@ -131,7 +131,7 @@
                 </p>
                 <div class="control">
                   <div class="tags has-addons">
-                    <span class="tag is-success">
+                    <span class="tag is-primary">
                       <span class="icon">
                         <i class="mdi mdi-arrow-up"></i>
                       </span>
@@ -183,7 +183,7 @@
               <tr>
 
                 <td data-label="Type">{% if transaction.type == 'IN' %}
-                  <span class="tag is-success">{{ transaction.type }}</span>
+                  <span class="tag is-primary">{{ transaction.type }}</span>
                   {% else %}
                   <span class="tag is-danger">{{ transaction.type }}</span>
                   {% endif %}
@@ -199,7 +199,7 @@
                 <td data-label="CapGain">{% if transaction.capital_gain_contract_based == 0 %}
                   {% elif transaction.capital_gain_contract_based < 0 %} <span class="tag is-danger">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
                     {% else %}
-                    <span class="tag is-success">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
+                    <span class="tag is-primary">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
                     {% endif %}
                 </td>
                 <td data-label="Date" class="is-narrow"><small class="has-text-grey is-abbr-like">{{ transaction.date }}</small></td>
