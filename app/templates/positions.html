@@ -177,13 +177,13 @@
                   <th>Token</th>
                   <th>Info</th>
                   <th>Symbol</th>
-                  <th>Daily</th>
-                  <th>Price</th>
+                  <th class="has-text-right">Daily</th>
+                  <th class="has-text-right">Price</th>
                   <th>Blockchain</th>
-                  <th>Qty</th>
-                  <th>Amount</th>
-                  <th>Unrealized</th>
-                  <th>Progress</th>
+                  <th class="has-text-right">Qty</th>
+                  <th class="has-text-right">Amount</th>
+                  <th class="has-text-right">Unrealized</th>
+                  <th class="has-text-right">Progress</th>
                   <th></th>
                 </tr>
               </thead>
@@ -201,24 +201,24 @@
                   </div></td>
                   <td data-label="Symbol">{{ position.contract.symbol }}
                 </td>
-                  <td data-label="Daily">{% if position.daily_price_delta == 0 %}
+                  <td data-label="Daily" class="has-text-right">{% if position.daily_price_delta == 0 %}
                     {% elif position.daily_price_delta < 0 %} <span class="tag is-danger">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
                       {% else %}
                       <span class="tag is-success">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
                       {% endif %}
                   </td>
-                  <td data-label="Price">${{ position.contract.price|floatformat:"-2g" }}</td>
+                  <td data-label="Price" class="has-text-right">${{ position.contract.price|floatformat:"-2g" }}</td>
                   <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
-                  <td data-label="Qty">{{ position.quantity|floatformat:"-6g" }}</td>
-                  <td data-label="Amount">{{ position.amount|floatformat:"-2g" }}</td>
-                  <td data-label="Unrealized">{% if position.total_unrealized_gain == 0 %}
+                  <td data-label="Qty" class="has-text-right">{{ position.quantity|floatformat:"-6g" }}</td>
+                  <td data-label="Amount" class="has-text-right">{{ position.amount|floatformat:"-2g" }}</td>
+                  <td data-label="Unrealized" class="has-text-right">{% if position.total_unrealized_gain == 0 %}
                     {% elif position.total_unrealized_gain < 0 %} <span class="tag is-danger">${{ position.total_unrealized_gain|floatformat:"-2g" }}</span>
                       {% else %}
                       <span class="tag is-success">${{ position.total_unrealized_gain|floatformat:"-2g" }}</span>
                       {% endif %}
                   </td>
-                  <td data-label="Progress" class="is-progress-cell">
-                    <progress max="{{ wallet.balance }}" class="progress is-small is-primary" value="{{ position.amount }}">position.amount</progress>{{ position.progress_percentage|floatformat:"-2g" }}%
+                  <td data-label="Progress" class="is-progress-cell has-text-right">
+                    <progress max="{{ wallet.balance }}" class="progress is-small is-primary" style="margin-bottom:0;" value="{{ position.amount }}">position.amount</progress><small class="is-small">{{ position.progress_percentage|floatformat:"-2g" }}%</small>
                   </td>
                   <td class="is-actions-cell">
                     <div class="buttons is-right">
