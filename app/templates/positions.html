@@ -100,7 +100,7 @@
                   Total Realized Performance
                 </p>
                 <p class="title is-4" style="margin-top: 6px; margin-bottom: 6px">
-                  $0
+                  ${{ total_realized_gain|floatformat:"-2g" }}
                 </p>
                 <div class="control">
                   <div class="tags has-addons">
@@ -108,7 +108,7 @@
                       <span class="icon">
                         <i class="mdi mdi-arrow-up"></i>
                       </span>
-                      <span>11.04%</span>
+                      <span>99%</span>
                     </span>
                     <span class="tag is-dark">this month</span>
                   </div>
@@ -133,7 +133,7 @@
                   Total Unrealized Performance
                 </p>
                 <p class="title is-4" style="margin-top: 6px; margin-bottom: 6px">
-                  0%
+                  {{ total_unrealized_gain|floatformat:"-2g" }}%
                 </p>
                 <div class="control">
                   <div class="tags has-addons">
@@ -141,7 +141,7 @@
                       <span class="icon">
                         <i class="mdi mdi-arrow-up"></i>
                       </span>
-                      <span>99.99%</span>
+                      <span>33%</span>
                     </span>
                     <span class="tag is-dark">this month</span>
                   </div>
@@ -182,6 +182,7 @@
                   <th>Blockchain</th>
                   <th class="has-text-right">Qty</th>
                   <th class="has-text-right">Amount</th>
+                  <th class="has-text-right">Realized</th>
                   <th class="has-text-right">Unrealized</th>
                   <th class="has-text-right">Progress</th>
                   <th></th>
@@ -213,10 +214,16 @@
                   <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
                   <td data-label="Qty" class="has-text-right">{{ position.quantity|floatformat:"-6g" }}</td>
                   <td data-label="Amount" class="has-text-right">{{ position.amount|floatformat:"-2g" }}</td>
-                  <td data-label="Unrealized" class="has-text-right">{% if position.total_unrealized_gain == 0 %}
-                    {% elif position.total_unrealized_gain < 0 %} <span class="tag is-danger">${{ position.total_unrealized_gain|floatformat:"-2g" }}</span>
+                  <td data-label="Realized" class="has-text-right">{% if position.realized_gain == 0 %}
+                    {% elif position.realized_gain < 0 %} <span class="tag is-danger">${{ position.realized_gain|floatformat:"-2g" }}</span>
                       {% else %}
-                      <span class="tag is-primary">${{ position.total_unrealized_gain|floatformat:"-2g" }}</span>
+                      <span class="tag is-primary">${{ position.realized_gain|floatformat:"-2g" }}</span>
+                      {% endif %}
+                  </td>
+                  <td data-label="Unrealized" class="has-text-right">{% if position.unrealized_gain == 0 %}
+                    {% elif position.unrealized_gain < 0 %} <span class="tag is-danger">${{ position.unrealized_gain|floatformat:"-2g" }}</span>
+                      {% else %}
+                      <span class="tag is-primary">${{ position.unrealized_gain|floatformat:"-2g" }}</span>
                       {% endif %}
                   </td>
                   <td data-label="Progress" class="is-progress-cell has-text-right">
@@ -238,7 +245,7 @@
                 {% endfor %}
                 {% else %}
                 <tr class="is-empty">
-                  <td colspan="9">
+                  <td colspan="12">
                     <section class="section">
                       <div class="content has-text-grey has-text-centered">
                         <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>

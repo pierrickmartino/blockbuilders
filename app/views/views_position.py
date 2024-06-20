@@ -71,6 +71,9 @@ def wallet_positions_paginated(request, wallet_id, page):
     logger.info("User Setting - show_positions_above_threshold : " + str(user_setting.show_positions_above_threshold))
 
     positions_with_calculator = []
+    total_realized_gain = 0
+    total_unrealized_gain = 0
+
     for position in positions:
         position_calculator = PositionCalculator(position)
         contract_calculator = ContractCalculator(position.contract)
@@ -82,45 +85,41 @@ def wallet_positions_paginated(request, wallet_id, page):
             if last_transaction and last_transaction.running_quantity != 0
             else 0
         )
-        total_unrealized_gain = (
+        unrealized_gain = (
             (position.contract.price - reference_avg_cost) / reference_avg_cost * 100 if reference_avg_cost != 0 else 0
         )
+        total_unrealized_gain += unrealized_gain
 
         position_amount = position_calculator.calculate_amount()
         progress_percentage = position_amount / position.wallet.balance * 100
 
+        # Calculate realized gain for the position
+        realized_gain = sum(
+            TransactionCalculator(transaction).calculate_capital_gain_contract_based()
+            for transaction in Transaction.objects.filter(position=position)
+        )
+        total_realized_gain += realized_gain
+
+        position_data = {
+            "id": position.id,
+            "wallet": position.wallet,
+            "contract": position.contract,
+            "quantity": position.quantity,
+            "amount": position_amount,
+            "avg_cost": position.avg_cost,
+            "created_at": position.created_at,
+            "daily_price_delta": daily_price_delta,
+            "unrealized_gain": unrealized_gain,
+            "realized_gain": realized_gain,
+            "progress_percentage": progress_percentage
+        }
+
         # if the user only wants to see positions above the $0.5 threshold --> filter
         if user_setting and user_setting.show_positions_above_threshold:
             if position_amount > 0.5:
-                positions_with_calculator.append(
-                    {
-                        "id": position.id,
-                        "wallet": position.wallet,
-                        "contract": position.contract,
-                        "quantity": position.quantity,
-                        "amount": position_amount,
-                        "avg_cost": position.avg_cost,
-                        "created_at": position.created_at,
-                        "daily_price_delta": daily_price_delta,
-                        "total_unrealized_gain": total_unrealized_gain,
-                        "progress_percentage": progress_percentage
-                    }
-                )
+                positions_with_calculator.append(position_data)
         else:
-            positions_with_calculator.append(
-                {
-                    "id": position.id,
-                    "wallet": position.wallet,
-                    "contract": position.contract,
-                    "quantity": position.quantity,
-                    "amount": position_amount,
-                    "avg_cost": position.avg_cost,
-                    "created_at": position.created_at,
-                    "daily_price_delta": daily_price_delta,
-                    "total_unrealized_gain": total_unrealized_gain,
-                    "progress_percentage": progress_percentage
-                }
-            )
+            positions_with_calculator.append(position_data)
 
     sorted_positions_desc = sorted(positions_with_calculator, key=lambda x: x['amount'], reverse=True)
 
@@ -131,6 +130,8 @@ def wallet_positions_paginated(request, wallet_id, page):
         "page_positions": page_positions,
         "wallet": wallet,
         "user_setting": user_setting,
+        "total_realized_gain": total_realized_gain,
+        "total_unrealized_gain": total_unrealized_gain,
     }
     return render(request, "positions.html", context)
 
