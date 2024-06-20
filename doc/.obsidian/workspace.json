@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "installation/README.md",
+                "file": "usage/README.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "installation/README.md",
+                "file": "usage/README.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "installation/README.md",
+                "file": "usage/README.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "installation/README.md"
+                "file": "usage/README.md"
               }
             }
           }
@@ -148,6 +148,8 @@
   },
   "active": "075fd29fd7f131eb",
   "lastOpenFiles": [
+    "installation/README.md",
+    "introduction/README.md",
     "changelog/2024-06-20.md"
   ]
 }
