@@ -7,6 +7,7 @@ from app.tasks import (
     delete_position_task,
     get_historical_price_from_market_task,
     get_price_from_market_task,
+    update_contract_information,
 )
 
 logger = logging.getLogger("blockbuilders")
@@ -152,7 +153,9 @@ def refresh_wallet_position_price(request, wallet_id: int):
     symbol_list = list(symbol_set)
 
     for symbol in symbol_list:
-        get_historical_price_from_market_task.delay(symbol)
+        chain(get_historical_price_from_market_task.s(symbol),
+              update_contract_information.s(symbol)
+        )()
 
     chain_result = chain(
         get_price_from_market_task.s(symbol_list),

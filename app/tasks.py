@@ -1,9 +1,9 @@
-import json
 import logging
 import time
 
 from celery import shared_task
 from django.shortcuts import get_object_or_404
+from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.utils.timezone import utc
 from app.utils.cryptocompare.view_cryptocompare import get_daily_pair_ohlcv, get_multiple_symbols_price
@@ -713,6 +713,37 @@ def get_historical_price_from_market_task(symbol: str):
         logger.error(
             f"An error occurred while getting the historical market price of a symbol {symbol}: {str(e)}"
         )
+
+    return symbol
+
+@shared_task
+def update_contract_information(previous_return: int, symbol: str):
+    """
+    Task to update contract information based on market data.
+    """
+    logger.info(f"Updating contract information based on market data for {symbol}.")
+    try:
+
+        contracts = Contract.objects.filter(symbol=symbol)
+
+        one_day_ago = timezone.now().date() - relativedelta(days=1)
+        one_week_ago = timezone.now().date() - relativedelta(weeks=1)
+        one_month_ago = timezone.now().date() - relativedelta(months=5)
+
+        previous_day_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__range=[one_day_ago, one_day_ago]).first()
+        previous_week_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=[one_week_ago, one_week_ago]).first()
+        previous_month_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=[one_month_ago, one_month_ago]).first()
+
+        for contract in contracts:
+            contract.previous_day_price = previous_day_price
+            contract.previous_week_price = previous_week_price
+            contract.previous_month_price = previous_month_price
+            contract.save()
+
+    except Contract.DoesNotExist:
+        logger.error(f"Contract with symbol {symbol} does not exist")
+    except Exception as e:
+        logger.error(f"An error occurred while updating contract information based on market data for {symbol}: {str(e)}")
 
     return symbol
 
