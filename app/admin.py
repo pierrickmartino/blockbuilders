@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.models import Blockchain, Wallet, Contract, Position, Transaction, Fiat, WalletProcess, UserSetting
+from app.models import Blockchain, Wallet, Contract, Position, Transaction, Fiat, WalletProcess, UserSetting, MarketData
 
 
 class Wallet_Admin(admin.ModelAdmin):
@@ -72,6 +72,20 @@ class Transaction_Admin(admin.ModelAdmin):
         "against_fiat",
     )
 
+class MarketData_Admin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "symbol",
+        "reference",
+        "time",
+        "high",
+        "low",
+        "open",
+        "close",
+        "volume_from",
+        "volume_to",
+    )
+
 
 class UserSetting_Admin(admin.ModelAdmin):
     list_display = (
@@ -90,3 +104,4 @@ admin.site.register(Fiat, Fiat_Admin)
 admin.site.register(Contract, Contract_Admin)
 admin.site.register(Position, Position_Admin)
 admin.site.register(Transaction, Transaction_Admin)
+admin.site.register(MarketData, MarketData_Admin)

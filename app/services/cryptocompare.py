@@ -18,6 +18,17 @@ class CryptoCompareAPI:
         response = requests.get(self.base_url, params=params)
         return self._handle_response(response)
     
+    def get_daily_pair_ohlcv(self, symbol: str, limit: int):
+        self.base_url = self.base_url + "/v2/histoday"
+        params = {
+            "fsym": symbol,
+            "tsym": "USD",
+            "limit": limit,
+            "api_key": self.api_key,
+        }
+        response = requests.get(self.base_url, params=params)
+        return self._handle_response(response)
+
     def _handle_response(self, response):
         if response.status_code != 200:
             return {"error": "API request failed"}

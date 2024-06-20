@@ -224,6 +224,7 @@ class Position(TimeStampModel):
     def __str__(self):
         return f"{self.wallet} - {self.contract} - {self.quantity}"
 
+
 # Utility class for calculating transaction details
 class PositionCalculator:
     def __init__(self, position):
@@ -349,6 +350,41 @@ class TransactionCalculator:
         )
 
 
+# Model to store market data information
+class MarketData(TimeStampModel):
+    symbol = models.CharField(max_length=50, db_index=True)  # Symbol of interest
+    reference = models.CharField(max_length=50, db_index=True)  # The currency symbol to convert into
+    time = models.DateTimeField(db_index=True)  # Date for the start of this data point
+    high = models.DecimalField(
+        max_digits=24, decimal_places=8, default=0
+    )  # Highest price of the requested pair during this period of time
+    low = models.DecimalField(
+        max_digits=24, decimal_places=8, default=0
+    )  # lowest price of the requested pair during this period of time.
+    open = models.DecimalField(
+        max_digits=24, decimal_places=8, default=0
+    )  # Price of the requested pair at the start of this period of time
+    close = models.DecimalField(
+        max_digits=24, decimal_places=8, default=0
+    )  # Price of the requested pair at the end of this period of time
+    volume_from = models.DecimalField(
+        max_digits=24, decimal_places=4, default=0
+    )  # Total amount of the base currency traded into the quote currency during this period of time
+    volume_to = models.DecimalField(
+        max_digits=24, decimal_places=4, default=0
+    )  # Total amount of the quote currency traded into the base currency during this period of time
+
+    class Meta:
+        verbose_name = "Market Data"
+        verbose_name_plural = "Market Data"
+        indexes = [
+            models.Index(fields=["symbol", "reference", "time"]),  # Index for frequent queries
+        ]
+
+    def __str__(self):
+        return f"{self.symbol}/{self.reference} {self.time} ({self.close})"
+
+
 # Model to store user-specific settings
 class UserSetting(models.Model):
     user = models.OneToOneField(
@@ -357,7 +393,9 @@ class UserSetting(models.Model):
     show_positions_above_threshold = models.BooleanField(
         default=False
     )  # Whether to show positions above a certain threshold
-    show_only_secure_contracts = models.BooleanField(default=True) # Whether to show only contracts that are not identified as scam
+    show_only_secure_contracts = models.BooleanField(
+        default=True
+    )  # Whether to show only contracts that are not identified as scam
 
     class Meta:
         verbose_name = "User Setting"

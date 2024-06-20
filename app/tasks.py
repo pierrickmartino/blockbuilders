@@ -6,7 +6,7 @@ from celery import shared_task
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.timezone import utc
-from app.utils.cryptocompare.view_cryptocompare import get_multiple_symbols_price
+from app.utils.cryptocompare.view_cryptocompare import get_daily_pair_ohlcv, get_multiple_symbols_price
 from app.utils.polygon.view_polygon import (
     account_balance_by_address as polygon_account_balance_by_address,
     erc20_transactions_by_wallet as polygon_erc20_transactions_by_wallet,
@@ -27,6 +27,7 @@ from app.utils.bsc.view_bsc import (
 from app.models import (
     Blockchain,
     Contract,
+    MarketData,
     Position,
     PositionCalculator,
     Transaction,
@@ -35,7 +36,7 @@ from app.models import (
     Wallet,
 )
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 logger = logging.getLogger("blockbuilders")
 
@@ -658,6 +659,62 @@ def get_price_from_market_task(symbol_list: list[str]):
         )
 
     return symbol_list
+
+@shared_task
+def get_historical_price_from_market_task(symbol: str):
+    """
+    Task to get the historical market price of a symbol.
+    """
+    logger.info(f"Get market historical price for {symbol}.")
+    try:
+        
+        # Get today's date
+        hundred_days_ago = timezone.now().date() - timedelta(days=100)
+
+        # Test if the data is already there
+        data = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=hundred_days_ago)
+        record_count = data.count()
+
+        if record_count >= 100:
+            logger.info(f"Already have 100 or more entries starting from today. No need to fetch new data for symbol {symbol}.")
+            return symbol
+
+        data.delete()
+        logger.info(f"Historical prices are cleaned up for symbol {symbol}.")
+
+        # Get the historical prices for the symbol
+        prices = get_daily_pair_ohlcv(symbol, 100)
+
+        # Iterate over each data point
+        for record in prices['Data']['Data']:
+            time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), utc)
+            high = record['high']
+            low = record['low']
+            open_price = record['open']
+            close = record['close']
+            volume_from = record['volumefrom']
+            volume_to = record['volumeto']
+
+            # Create and save the MarketData object
+            market_data = MarketData(
+                symbol=symbol,
+                reference="USD",
+                time=time,
+                high=high,
+                low=low,
+                open=open_price,
+                close=close,
+                volume_from=volume_from,
+                volume_to=volume_to
+            )
+            market_data.save()
+
+    except Exception as e:
+        logger.error(
+            f"An error occurred while getting the historical market price of a symbol {symbol}: {str(e)}"
+        )
+
+    return symbol
 
 
 @shared_task

@@ -1,18 +1,17 @@
 import logging
 
-from celery import chain
+from celery import chain, chord, group
 
 from app.tasks import (
     calculate_wallet_balance_task,
     delete_position_task,
+    get_historical_price_from_market_task,
     get_price_from_market_task,
 )
 
 logger = logging.getLogger("blockbuilders")
 
 from django.core.paginator import Paginator
-from django.http import HttpResponse
-from django.template import loader
 from django.shortcuts import get_object_or_404, render, redirect
 
 from django.contrib.auth.decorators import login_required
@@ -26,8 +25,6 @@ from app.models import (
     UserSetting,
     Wallet,
 )
-
-from asgiref.sync import sync_to_async
 
 
 @login_required
@@ -111,7 +108,7 @@ def wallet_positions_paginated(request, wallet_id, page):
             "daily_price_delta": daily_price_delta,
             "unrealized_gain": unrealized_gain,
             "realized_gain": realized_gain,
-            "progress_percentage": progress_percentage
+            "progress_percentage": progress_percentage,
         }
 
         # if the user only wants to see positions above the $0.5 threshold --> filter
@@ -121,7 +118,7 @@ def wallet_positions_paginated(request, wallet_id, page):
         else:
             positions_with_calculator.append(position_data)
 
-    sorted_positions_desc = sorted(positions_with_calculator, key=lambda x: x['amount'], reverse=True)
+    sorted_positions_desc = sorted(positions_with_calculator, key=lambda x: x["amount"], reverse=True)
 
     paginator = Paginator(sorted_positions_desc, per_page=10)
     page_positions = paginator.get_page(page)
@@ -154,8 +151,13 @@ def refresh_wallet_position_price(request, wallet_id: int):
     }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
     symbol_list = list(symbol_set)
 
-    chain_result = chain(get_price_from_market_task.s(symbol_list), calculate_wallet_balance_task.s(wallet_id))()
+    for symbol in symbol_list:
+        get_historical_price_from_market_task.delay(symbol)
+
+    chain_result = chain(
+        get_price_from_market_task.s(symbol_list),
+        calculate_wallet_balance_task.s(wallet_id),
+    )()
 
     logger.info(f"Started getting position prices for wallet with id {wallet_id}")
     return redirect("wallets")
-
