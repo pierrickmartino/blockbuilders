@@ -726,18 +726,21 @@ def update_contract_information(previous_return: int, symbol: str):
 
         contracts = Contract.objects.filter(symbol=symbol)
 
-        one_day_ago = timezone.now().date() - relativedelta(days=1)
-        one_week_ago = timezone.now().date() - relativedelta(weeks=1)
-        one_month_ago = timezone.now().date() - relativedelta(months=5)
+        # Get the current time
+        now = timezone.now()
 
-        previous_day_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__range=[one_day_ago, one_day_ago]).first()
-        previous_week_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=[one_week_ago, one_week_ago]).first()
-        previous_month_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=[one_month_ago, one_month_ago]).first()
+        one_day_ago = now - relativedelta(days=1)
+        one_week_ago = now - relativedelta(weeks=1)
+        one_month_ago = now - relativedelta(months=1)
+
+        previous_day_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_day_ago).order_by('-time').first()
+        previous_week_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_week_ago).order_by('-time').first()
+        previous_month_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_month_ago).order_by('-time').first()
 
         for contract in contracts:
-            contract.previous_day_price = previous_day_price
-            contract.previous_week_price = previous_week_price
-            contract.previous_month_price = previous_month_price
+            contract.previous_day_price = previous_day_price.close if previous_day_price else 0
+            contract.previous_week_price = previous_week_price.close if previous_week_price else 0
+            contract.previous_month_price = previous_month_price.close if previous_month_price else 0
             contract.save()
 
     except Contract.DoesNotExist:
