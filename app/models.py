@@ -172,6 +172,22 @@ class ContractCalculator:
             else 0
         )
 
+    def calculate_weekly_price_delta(self):
+        # Calculate the weekly delta price of the contract
+        return (
+            100 * (self.contract.price - self.contract.previous_week_price) / self.contract.previous_week_price
+            if self.contract.previous_week_price != 0
+            else 0
+        )
+
+    def calculate_monthly_price_delta(self):
+        # Calculate the monthly delta price of the contract
+        return (
+            100 * (self.contract.price - self.contract.previous_month_price) / self.contract.previous_month_price
+            if self.contract.previous_month_price != 0
+            else 0
+        )
+
 
 # Model to represent a position in a wallet
 class Position(TimeStampModel):

@@ -75,7 +75,10 @@ def wallet_positions_paginated(request, wallet_id, page):
     for position in positions:
         position_calculator = PositionCalculator(position)
         contract_calculator = ContractCalculator(position.contract)
+
         daily_price_delta = contract_calculator.calculate_daily_price_delta()
+        weekly_price_delta = contract_calculator.calculate_weekly_price_delta()
+        monthly_price_delta = contract_calculator.calculate_monthly_price_delta()
 
         last_transaction = Transaction.objects.filter(position=position).order_by("-date").first()
         reference_avg_cost = (
@@ -107,6 +110,8 @@ def wallet_positions_paginated(request, wallet_id, page):
             "avg_cost": position.avg_cost,
             "created_at": position.created_at,
             "daily_price_delta": daily_price_delta,
+            "weekly_price_delta": weekly_price_delta,
+            "monthly_price_delta": monthly_price_delta,
             "unrealized_gain": unrealized_gain,
             "realized_gain": realized_gain,
             "progress_percentage": progress_percentage,
