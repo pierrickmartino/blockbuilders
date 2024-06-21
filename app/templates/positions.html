@@ -174,12 +174,13 @@
             <table class="table is-fullwidth is-striped is-hoverable is-sortable is-fullwidth">
               <thead>
                 <tr>
+                  
                   <th>Token</th>
-                  <th>Info</th>
-                  <th>Symbol</th>
+                  <th></th>
                   <th class="has-text-right">Daily</th>
+                  <th class="has-text-right">Weekly</th>
+                  <th class="has-text-right">Monthly</th>
                   <th class="has-text-right">Price</th>
-                  <th>Blockchain</th>
                   <th class="has-text-right">Qty</th>
                   <th class="has-text-right">Amount</th>
                   <th class="has-text-right">Realized</th>
@@ -193,27 +194,38 @@
                 {% for position in page_positions %}
                 {% with total_transaction=position.position_transactions.count %}
                 <tr>
-                  <td data-label="Token">{% if position.contract.category == "suspicious" %}<span class="icon"><i class="mdi mdi-alert-circle"></i></span>{% endif %}{{ position.contract.name }}</td>
-                  <td data-label="Info">
-                    <div class="tooltip">
-                      <span class="icon">
-                        <i class="mdi mdi-information"></i> <!-- FontAwesome icon -->
-                      </span>
-                      <span class="tooltiptext">{{ position.contract.address }}</span> <!-- Full string in the tooltip -->
-                    </div>
-                  </td>
-                  <td data-label="Symbol">{{ position.contract.symbol }}
-                  </td>
+                  
+                  <td data-label="Token">{% if position.contract.category == "suspicious" %}<span class="icon"><i class="mdi mdi-alert-circle"></i></span>{% endif %}{{ position.contract.symbol }} - {{ position.contract.name }}</td>
+        
+                  <td><div class="tooltip">
+                    <span class="icon">
+                      <figure class="image is-128x128">
+                        <img class="is-rounded" src="/static/img/{{ position.contract.blockchain.icon }}" />
+                      </figure> <!-- FontAwesome icon -->
+                    </span>
+                    <span class="tooltiptext">{{ position.contract.address }}</span> <!-- Full string in the tooltip -->
+                  </div></td>
                   <td data-label="Daily" class="has-text-right">{% if position.daily_price_delta == 0 %}
                     {% elif position.daily_price_delta < 0 %} <span class="tag is-danger">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
                       {% else %}
                       <span class="tag is-primary">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
                       {% endif %}
                   </td>
+                  <td data-label="Daily" class="has-text-right">{% if position.weekly_price_delta == 0 %}
+                    {% elif position.weekly_price_delta < 0 %} <span class="tag is-danger">{{ position.weekly_price_delta|floatformat:"-2g" }}%</span>
+                      {% else %}
+                      <span class="tag is-primary">{{ position.weekly_price_delta|floatformat:"-2g" }}%</span>
+                      {% endif %}
+                  </td>
+                  <td data-label="Daily" class="has-text-right">{% if position.monthly_price_delta == 0 %}
+                    {% elif position.monthly_price_delta < 0 %} <span class="tag is-danger">{{ position.monthly_price_delta|floatformat:"-2g" }}%</span>
+                      {% else %}
+                      <span class="tag is-primary">{{ position.monthly_price_delta|floatformat:"-2g" }}%</span>
+                      {% endif %}
+                  </td>
                   <td data-label="Price" class="has-text-right">${{ position.contract.price|floatformat:"-2g" }}</td>
-                  <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
                   <td data-label="Qty" class="has-text-right">{{ position.quantity|floatformat:"-6g" }}</td>
-                  <td data-label="Amount" class="has-text-right">{{ position.amount|floatformat:"-2g" }}</td>
+                  <td data-label="Amount" class="has-text-right">${{ position.amount|floatformat:"-2g" }}</td>
                   <td data-label="Realized" class="has-text-right">{% if position.realized_gain == 0 %}
                     {% elif position.realized_gain < 0 %} <span class="tag is-danger">${{ position.realized_gain|floatformat:"-2g" }}</span>
                       {% else %}
