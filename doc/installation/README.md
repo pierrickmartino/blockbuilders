@@ -15,11 +15,13 @@ Make sure you have the following software installed on your system:
 
 1. **Clone the Repository**:
     Open your terminal and run the following command to clone the BlockBuilders repository:
-    `git clone https://github.com/yourusername/blockbuilders.git cd blockbuilders`
+    `git clone https://github.com/yourusername/blockbuilders.git` 
+    `cd blockbuilders`
     
 2. **Set Up a Virtual Environment**:
     It's recommended to create a virtual environment to manage dependencies:    
-    `` python3 -m venv venv source venv/bin/activate  # On Windows use `venv\Scripts\activate` ``
+    `python3 -m venv venv` 
+    `source venv/bin/activate`  # On Windows use `venv\Scripts\activate`
     
 3. **Install Dependencies**:
     Install the required Python packages using pip:    
