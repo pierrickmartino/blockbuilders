@@ -12,6 +12,7 @@ services:
       - traefik.http.routers.web.rule=Host(`app.blockbuilders.tech`)
       - traefik.http.routers.web.tls=true
       - traefik.http.routers.web.tls.certresolver=lets-encrypt
+      - traefik.http.services.web.loadbalancer.server.port=8000
       - traefik.port=80
     volumes:
       - static_volume:/code/staticfiles
