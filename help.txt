@@ -20,8 +20,8 @@ docker-compose run --rm web python manage.py migrate
 docker-compose up --build
 
 docker-compose down -v --remove-orphans
-docker-compose -f docker-compose.prod.yml build --no-cache
-docker-compose -f docker-compose.prod.yml up --build --remove-orphans
+docker-compose -f docker-compose.server.yml build --no-cache
+docker-compose -f docker-compose.server.yml up --build --remove-orphans
 docker network inspect blockbuilders_internal
 
 docker-compose -f docker-compose.prod.yml up --build

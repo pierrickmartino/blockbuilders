@@ -55,10 +55,10 @@ services:
         - db
         - redis
         - web
-  volumes:
-    postgres_data:
-    static_volume:
-    media_volume:
-  networks:
-    internal:
-      driver: bridge
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+networks:
+  internal:
+    driver: bridge
