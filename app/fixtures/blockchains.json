@@ -4,7 +4,7 @@
       "pk": 1,
       "fields": {
         "name": "Polygon",
-        "icon": "img/polygon_POS-Icon.svg",
+        "icon": "polygon_logo.svg",
         "is_active": true,
         "gecko_id": "polygon-pos",
         "gecko_chain_identifier": 137,
@@ -18,9 +18,9 @@
       "pk": 2,
       "fields": {
         "name": "BSC",
-        "icon": "img/polygon_POS-Icon.svg",
+        "icon": "bscscan_logo.svg",
         "is_active": true,
-        "gecko_id": "",
+        "gecko_id": "bsc-chain",
         "gecko_chain_identifier": 137,
         "gecko_name": "Polygon POS",
         "gecko_shortname": "MATIC",
@@ -32,7 +32,7 @@
       "pk": 3,
       "fields": {
         "name": "Metis",
-        "icon": "img/polygon_POS-Icon.svg",
+        "icon": "metis_logo.svg",
         "is_active": true,
         "gecko_id": "polygon-pos",
         "gecko_chain_identifier": 137,
@@ -46,7 +46,7 @@
       "pk": 4,
       "fields": {
         "name": "Optimism",
-        "icon": "img/polygon_POS-Icon.svg",
+        "icon": "optimism_logo.svg",
         "is_active": true,
         "gecko_id": "polygon-pos",
         "gecko_chain_identifier": 137,
@@ -60,7 +60,7 @@
       "pk": 5,
       "fields": {
         "name": "Arbitrum",
-        "icon": "img/polygon_POS-Icon.svg",
+        "icon": "arbitrum_logo.svg",
         "is_active": true,
         "gecko_id": "polygon-pos",
         "gecko_chain_identifier": 137,
