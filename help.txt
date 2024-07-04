@@ -27,6 +27,7 @@ docker-compose run --rm web python manage.py loaddata blockchains.json
 docker-compose run --rm web python manage.py loaddata fiats.json
 docker-compose -f docker-compose.server.yml up --build --remove-orphans
 docker volume prune -a
+docker image prune -a
 docker network inspect blockbuilders_internal
 
 
@@ -38,6 +39,7 @@ docker-compose run --rm web python manage.py loaddata blockchains.json
 docker-compose run --rm web python manage.py loaddata fiats.json
 docker-compose -f docker-compose.prod.yml up --build --remove-orphans
 docker volume prune -a
+docker image prune -a
 
 # PREVIOUS
 docker-compose -f docker-compose.prod.yml up --build
