@@ -3,7 +3,7 @@
       "model": "app.fiat",
       "pk": 1,
       "fields": {
-        "code": "USD",
+        "symbol": "USD",
         "name": "US Dollar"
       }
     }

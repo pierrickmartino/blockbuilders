@@ -62,8 +62,12 @@ def positions_paginated(request, page):
 @login_required
 def wallet_positions_paginated(request, wallet_id, page):
     wallet = Wallet.objects.filter(id=wallet_id).first()
-    user_setting = UserSetting.objects.filter(user=request.user).first()
     positions = Position.objects.filter(wallet=wallet)
+
+    user_setting, created = UserSetting.objects.get_or_create(user=request.user)
+    user_setting.show_positions_above_threshold = False
+    user_setting.show_only_secure_contracts = True
+    user_setting.save()
 
     logger.info("Number of positions found : " + str(positions.count()))
     logger.info("User Setting - show_positions_above_threshold : " + str(user_setting.show_positions_above_threshold))
@@ -92,7 +96,7 @@ def wallet_positions_paginated(request, wallet_id, page):
         total_unrealized_gain += unrealized_gain
 
         position_amount = position_calculator.calculate_amount()
-        progress_percentage = position_amount / position.wallet.balance * 100
+        progress_percentage = position_amount / position.wallet.balance * 100 if position.wallet.balance != 0 else 0
 
         # Calculate realized gain for the position
         realized_gain = sum(
@@ -158,9 +162,7 @@ def refresh_wallet_position_price(request, wallet_id: int):
     symbol_list = list(symbol_set)
 
     for symbol in symbol_list:
-        chain(get_historical_price_from_market_task.s(symbol),
-              update_contract_information.s(symbol)
-        )()
+        chain(get_historical_price_from_market_task.s(symbol), update_contract_information.s(symbol))()
 
     chain_result = chain(
         get_price_from_market_task.s(symbol_list),

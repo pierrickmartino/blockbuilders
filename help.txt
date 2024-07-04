@@ -22,11 +22,24 @@ docker-compose up --build
 # SERVER command
 docker-compose down -v --remove-orphans
 docker-compose -f docker-compose.server.yml build --no-cache
+docker-compose run --rm web python manage.py createsuperuser
+docker-compose run --rm web python manage.py loaddata blockchains.json
+docker-compose run --rm web python manage.py loaddata fiats.json
 docker-compose -f docker-compose.server.yml up --build --remove-orphans
+docker volume prune -a
 docker network inspect blockbuilders_internal
-docker volume prune
+
 
 # DEV command
+docker-compose down -v --remove-orphans
+docker-compose -f docker-compose.prod.yml build --no-cache
+docker-compose run --rm web python manage.py createsuperuser
+docker-compose run --rm web python manage.py loaddata blockchains.json
+docker-compose run --rm web python manage.py loaddata fiats.json
+docker-compose -f docker-compose.prod.yml up --build --remove-orphans
+docker volume prune -a
+
+# PREVIOUS
 docker-compose -f docker-compose.prod.yml up --build
 docker-compose run --rm web python manage.py createsuperuser
 docker-compose run --rm web python manage.py loaddata blockchains.json
