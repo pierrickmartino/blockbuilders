@@ -211,13 +211,13 @@
                       <span class="tag is-primary">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
                       {% endif %}
                   </td>
-                  <td data-label="Daily" class="has-text-right">{% if position.weekly_price_delta == 0 %}
+                  <td data-label="Weekly" class="has-text-right">{% if position.weekly_price_delta == 0 %}
                     {% elif position.weekly_price_delta < 0 %} <span class="tag is-danger">{{ position.weekly_price_delta|floatformat:"-2g" }}%</span>
                       {% else %}
                       <span class="tag is-primary">{{ position.weekly_price_delta|floatformat:"-2g" }}%</span>
                       {% endif %}
                   </td>
-                  <td data-label="Daily" class="has-text-right">{% if position.monthly_price_delta == 0 %}
+                  <td data-label="Monthly" class="has-text-right">{% if position.monthly_price_delta == 0 %}
                     {% elif position.monthly_price_delta < 0 %} <span class="tag is-danger">{{ position.monthly_price_delta|floatformat:"-2g" }}%</span>
                       {% else %}
                       <span class="tag is-primary">{{ position.monthly_price_delta|floatformat:"-2g" }}%</span>
