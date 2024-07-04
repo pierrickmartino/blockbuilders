@@ -54,7 +54,7 @@
     <div class="card-content">
       <div class="b-table has-pagination">
         <div class="table-wrapper has-mobile-cards">
-          <table class="table is-fullwidth is-striped is-hoverable is-sortable is-fullwidth">
+          <table class="table is-fullwidth is-striped is-hoverable is-sortable">
             <thead>
               <tr>
                 <th>Address</th>
@@ -69,13 +69,8 @@
               {% if wallets %}
               {% for wallet in wallets %}
               <tr>
-                <td data-label="Address"><span>{{ wallet.address|truncatechars:25 }}</span>
-                  <div class="tooltip">
-                    <span class="icon">
-                      <i class="mdi mdi-information"></i> <!-- FontAwesome icon -->
-                    </span>
-                    <span class="tooltiptext">{{ wallet.address }}</span> <!-- Full string in the tooltip -->
-                  </div>
+                <td data-label="Address">
+                    <span>{{ wallet.address|truncatechars:25 }}</span>
                 </td>
                 <td data-label="Name">{{ wallet.name }}</td>
                 <td data-label="Balance">{{ wallet.balance|floatformat:"-2g" }}</td>
