@@ -65,8 +65,6 @@ def wallet_positions_paginated(request, wallet_id, page):
     positions = Position.objects.filter(wallet=wallet)
 
     user_setting, created = UserSetting.objects.get_or_create(user=request.user)
-    user_setting.show_positions_above_threshold = False
-    user_setting.show_only_secure_contracts = True
     user_setting.save()
 
     logger.info("Number of positions found : " + str(positions.count()))
