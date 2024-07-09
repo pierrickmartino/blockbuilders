@@ -191,7 +191,11 @@
                   <span class="tag is-danger">{{ transaction.type }}</span>
                   {% endif %}
                 </td>
-                <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
+                <td data-label="Blockchain"><span class="icon">
+                  <figure class="image is-128x128">
+                    <img class="is-rounded" src="/static/img/{{ position.contract.blockchain.icon }}" />
+                  </figure> <!-- FontAwesome icon -->
+                </span></td>
                 <td data-label="Quantity">{{ transaction.quantity|floatformat:"-6g" }}</td>
                 <td data-label="Running Quantity">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
                 <td data-label="Price">{{ transaction.price_contract_based|floatformat:"-6g" }}</td>
