@@ -238,9 +238,8 @@
                       <span class="tag is-primary">${{ position.unrealized_gain|floatformat:"-2g" }}</span>
                       {% endif %}
                   </td>
-                  <td data-label="Progress" class="is-progress-cell has-text-right">
-                    <progress max="{{ wallet.balance }}" class="progress is-small is-primary" style="margin-bottom:0;" value="{{ position.amount }}">position.amount</progress>
-                    <small class="is-small">{{ position.progress_percentage|floatformat:"-2g" }}%</small>
+                  <td data-label="Progress" class="has-text-right">
+                    {{ position.progress_percentage|floatformat:"-2g" }}%
                   </td>
                   <td class="is-actions-cell">
                     <div class="buttons is-right">
