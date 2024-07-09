@@ -101,6 +101,7 @@ class Blockchain(models.Model):
     gecko_name = models.CharField(max_length=255, default="")  # Gecko name
     gecko_shortname = models.CharField(max_length=255, default="")  # Gecko short name
     gecko_native_coin_id = models.CharField(max_length=255, default="")  # Gecko native coin id
+    transaction_link = models.URLField(max_length=255) # Url link of the transaction on the blockchain explorer
 
     class Meta:
         verbose_name = "Blockchain"
