@@ -8,8 +8,6 @@
       <div class="level-item">
         <ul>
           <li>App</li>
-          {% if wallet %}<li><a href="{% url 'wallets' %}">Wallet <small>({{ wallet.name }})</small></a></li>{% endif %}
-          {% if wallet %}<li><a href="{% url 'wallet-positions-by-page' wallet.id 1 %}">Position <small>({{ position.contract }})</small></a></li>{% endif %}
           <li>Transactions</li>
         </ul>
       </div>
@@ -22,14 +20,17 @@
       <div class="level-left">
         <div class="level-item">
           <h4 class="title is-4">
-            Transactions
+            Transactions for position {{ position.contract }}
           </h4>
         </div>
       </div>
       <div class="level-right">
         <div class="level-item">
-          <a href="{% url 'export_transactions_csv' position.id %}" class="button">
-            Export
+          <a href="{% url 'wallet-positions-by-page' wallet.id 1 %}" class="button">
+            <span class="icon">
+              <i class="mdi mdi-arrow-left"></i>
+            </span>
+            <span>Back</span>
         </a>
         </div>
       </div>
@@ -161,6 +162,12 @@
         <span class="icon"><i class="mdi mdi-view-list"></i></span>
         Transactions
       </p>
+      <a type="button" class="button button is-small" style="margin-right: .75rem; display: inline-flex; align-self: center;" href="{% url 'export_transactions_csv' position.id %}">
+        <span class="icon">
+          <i class="mdi mdi-file-excel"></i>
+        </span>
+        <span>Export</span>
+</a>
       
     </header>
     <div class="card-content">

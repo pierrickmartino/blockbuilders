@@ -43,18 +43,18 @@ def download_wallet_task_status(request, task_id):
     return JsonResponse({"status": task_result.status})
 
 
-# @csrf_exempt
-# def resync_wallet_task_status(request, task_id):
-#     # logger.info("Download AsyncResult for : " + str(task_id))
-#     task_result = AsyncResult(str(task_id))
-#     # logger.info("Download task status : " + str(task_result.status))
-#     return JsonResponse({"status": task_result.status})
+@csrf_exempt
+def resync_wallet_task_status(request, task_id):
+    # logger.info("Download AsyncResult for : " + str(task_id))
+    task_result = AsyncResult(str(task_id))
+    # logger.info("Download task status : " + str(task_result.status))
+    return JsonResponse({"status": task_result.status})
 
 
 @login_required
 def delete_Wallet_by_id(request, wallet_id):
-    result = delete_wallet_task.delay(wallet_id, 100)
-    return redirect("wallets")
+    result = delete_wallet_task.delay(wallet_id, 50)
+    return redirect("dashboard")
 
 
 # NEW
@@ -86,18 +86,6 @@ def wallets(request):
             "wallets": wallets,
         }
         return render(request, "wallets.html", context)
-
-
-@login_required
-def delete_wallet(request, wallet_id: int):
-    """
-    View to delete a wallet and its associated wallet process.
-    """
-    wallet = get_object_or_404(Wallet, id=wallet_id)
-    wallet.delete()
-    WalletProcess.objects.filter(wallet=wallet).delete()
-    logger.info(f"Wallet and associated process deleted for wallet id {wallet_id}")
-    return redirect("wallets")
 
 
 @login_required

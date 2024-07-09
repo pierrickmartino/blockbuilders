@@ -32,7 +32,6 @@
       <div class="level-item">
         <ul>
           <li>App</li>
-          {% if wallet %}<li><a href="{% url 'wallets' %}">Wallet <small>({{ wallet.name }})</small></a></li>{% endif %}
           <li>Positions</li>
         </ul>
       </div>
@@ -44,13 +43,20 @@
     <div class="level">
       <div class="level-left">
         <div class="level-item">
-          <h1 class="title">
-            Positions
-          </h1>
+          <h4 class="title is-4">
+            Positions in {{ wallet.name }}
+          </h4>
         </div>
       </div>
-      <div class="level-right" style="display: none;">
-        <div class="level-item"></div>
+      <div class="level-right">
+        <div class="level-item">
+          <a href="{% url 'dashboard' %}" class="button">
+            <span class="icon">
+              <i class="mdi mdi-arrow-left"></i>
+            </span>
+            <span>Back</span>
+        </a>
+        </div>
       </div>
     </div>
   </div>
