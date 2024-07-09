@@ -76,12 +76,12 @@ def position_transactions_paginated(request, position_id, page):
     page_transactions = paginator.get_page(page)
     page_transactions.adjusted_elided_pages = paginator.get_elided_page_range(page)
 
-    reference_avg_cost = TransactionCalculator(transactions.first()).calculate_avg_cost_contract_based()
+    reference_avg_cost = TransactionCalculator(transactions.first()).calculate_avg_cost_contract_based() if transactions else 0
     total_unrealized_gain = (
         (contract.price - reference_avg_cost) / reference_avg_cost * 100
         if transactions.first().running_quantity != 0
         else 0
-    )
+    ) if transactions else 0
 
     # logger.info(f"Performance information :  {total_unrealized_gain} /  {total_realized_gain}")
 
