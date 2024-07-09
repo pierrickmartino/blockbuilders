@@ -88,13 +88,14 @@ def wallet_positions_paginated(request, wallet_id, page):
             if last_transaction and last_transaction.running_quantity != 0
             else 0
         )
-        unrealized_gain = (
-            (position.contract.price - reference_avg_cost) / reference_avg_cost * 100 if reference_avg_cost != 0 else 0
-        )
-        total_unrealized_gain += unrealized_gain
-
+        
         position_amount = position_calculator.calculate_amount()
         progress_percentage = position_amount / position.wallet.balance * 100 if position.wallet.balance != 0 else 0
+
+        unrealized_gain = (
+            (position.contract.price - reference_avg_cost) / reference_avg_cost * 100 if round(position_amount, 2) > 0 and reference_avg_cost != 0 else 0
+        )
+        total_unrealized_gain += unrealized_gain
 
         # Calculate realized gain for the position
         realized_gain = sum(
