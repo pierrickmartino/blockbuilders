@@ -57,6 +57,8 @@ def position_transactions_paginated(request, position_id, page):
 
         total_realized_gain += capital_gain_contract_based
 
+        transaction_link = transaction.position.contract.blockchain.transaction_link + transaction.hash
+
         transactions_with_calculator.append(
             {
                 "type": transaction.type,
@@ -69,6 +71,7 @@ def position_transactions_paginated(request, position_id, page):
                 "capital_gain_contract_based": capital_gain_contract_based,
                 "date": transaction.date,
                 "avg_cost_contract_based": avg_cost_contract_based,
+                "link": transaction_link,
             }
         )
 
@@ -76,12 +79,18 @@ def position_transactions_paginated(request, position_id, page):
     page_transactions = paginator.get_page(page)
     page_transactions.adjusted_elided_pages = paginator.get_elided_page_range(page)
 
-    reference_avg_cost = TransactionCalculator(transactions.first()).calculate_avg_cost_contract_based() if transactions else 0
+    reference_avg_cost = (
+        TransactionCalculator(transactions.first()).calculate_avg_cost_contract_based() if transactions else 0
+    )
     total_unrealized_gain = (
-        (contract.price - reference_avg_cost) / reference_avg_cost * 100
-        if transactions.first().running_quantity != 0
+        (
+            (contract.price - reference_avg_cost) / reference_avg_cost * 100
+            if transactions.first().running_quantity != 0
+            else 0
+        )
+        if transactions
         else 0
-    ) if transactions else 0
+    )
 
     # logger.info(f"Performance information :  {total_unrealized_gain} /  {total_realized_gain}")
 

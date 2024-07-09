@@ -164,6 +164,7 @@
           <table class="table is-fullwidth is-striped is-hoverable is-sortable">
             <thead>
               <tr>
+                <th></th>
                 <th>Type</th>
                 <th>Blockchain</th>
                 <th>Qty</th>
@@ -181,7 +182,9 @@
               {% if page_transactions %}
               {% for transaction in page_transactions %}
               <tr>
-
+                <td><a href="{{ transaction.link }}" target="_blank" class="icon">
+                  <i class="mdi mdi-link"></i>
+              </a></td>
                 <td data-label="Type">{% if transaction.type == 'IN' %}
                   <span class="tag is-primary">{{ transaction.type }}</span>
                   {% else %}
@@ -189,14 +192,14 @@
                   {% endif %}
                 </td>
                 <td data-label="Blockchain"><span class="tag is-light">{{ position.contract.blockchain }}</span></td>
-                <td data-label="Qty">{{ transaction.quantity|floatformat:"-6g" }}</td>
-                <td data-label="RunQty">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
+                <td data-label="Quantity">{{ transaction.quantity|floatformat:"-6g" }}</td>
+                <td data-label="Running Quantity">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
                 <td data-label="Price">{{ transaction.price_contract_based|floatformat:"-6g" }}</td>
                 <td data-label="Cost">{{ transaction.cost_contract_based|floatformat:"-2g" }}</td>
                 <td data-label="CostSymbol">{{ transaction.against_contract.symbol }}</td>
-                <td data-label="TotCost">{{ transaction.total_cost_contract_based|floatformat:"-2g" }}</td>
-                <td data-label="AvgCost">{{ transaction.avg_cost_contract_based|floatformat:"-2g" }}</td>
-                <td data-label="CapGain">{% if transaction.capital_gain_contract_based == 0 %}
+                <td data-label="Total Cost">{{ transaction.total_cost_contract_based|floatformat:"-2g" }}</td>
+                <td data-label="Average Cost">{{ transaction.avg_cost_contract_based|floatformat:"-2g" }}</td>
+                <td data-label="Capital Gain">{% if transaction.capital_gain_contract_based == 0 %}
                   {% elif transaction.capital_gain_contract_based < 0 %} <span class="tag is-danger">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
                     {% else %}
                     <span class="tag is-primary">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
@@ -207,7 +210,7 @@
               {% endfor %}
               {% else %}
               <tr class="is-empty">
-                <td colspan="10">
+                <td colspan="12">
                   <section class="section">
                     <div class="content has-text-grey has-text-centered">
                       <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
