@@ -10,7 +10,9 @@
         "gecko_chain_identifier": 137,
         "gecko_name": "Polygon POS",
         "gecko_shortname": "MATIC",
-        "gecko_native_coin_id": "matic-network"
+        "gecko_native_coin_id": "matic-network",
+        "transaction_link":"https://polygonscan.com/tx/"
+
       }
     },
     {
@@ -24,7 +26,8 @@
         "gecko_chain_identifier": 137,
         "gecko_name": "Polygon POS",
         "gecko_shortname": "MATIC",
-        "gecko_native_coin_id": "binance-smart-chain"
+        "gecko_native_coin_id": "binance-smart-chain",
+        "transaction_link":"https://bscscan.com/tx/"
       }
     },
     {
@@ -38,7 +41,8 @@
         "gecko_chain_identifier": 137,
         "gecko_name": "Polygon POS",
         "gecko_shortname": "MATIC",
-        "gecko_native_coin_id": "matic-network"
+        "gecko_native_coin_id": "matic-network",
+        "transaction_link":"https://explorer.metis.io/tx/"
       }
     },
     {
@@ -52,7 +56,8 @@
         "gecko_chain_identifier": 137,
         "gecko_name": "Polygon POS",
         "gecko_shortname": "MATIC",
-        "gecko_native_coin_id": "matic-network"
+        "gecko_native_coin_id": "matic-network",
+        "transaction_link":"https://optimistic.etherscan.io/tx/"
       }
     },
     {
@@ -66,7 +71,8 @@
         "gecko_chain_identifier": 137,
         "gecko_name": "Polygon POS",
         "gecko_shortname": "MATIC",
-        "gecko_native_coin_id": "matic-network"
+        "gecko_native_coin_id": "matic-network",
+        "transaction_link":"https://arbiscan.io/tx/"
       }
     }
   ]
