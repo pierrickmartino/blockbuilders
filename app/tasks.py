@@ -67,17 +67,6 @@ def delete_position_task(position_id, sleep_duration: float):
     return result
 
 
-# @shared_task
-# def get_erc20_transactions_by_wallet_task(wallet_address):
-#     """
-#     Task to fetch ERC20 transactions for a given wallet address.
-#     """
-#     logger.info(f"Fetching ERC20 transactions for wallet address {wallet_address}.")
-#     result = erc20_transactions_by_wallet(wallet_address)
-#     logger.info(f"Fetched {len(result)} transactions for wallet address {wallet_address}.")
-#     return result
-
-
 @shared_task
 def create_transactions_from_bsc_bep20_task(wallet_id: int):
     """
