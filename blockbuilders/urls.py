@@ -110,6 +110,7 @@ urlpatterns = [
         views_position.refresh_wallet_position_price,
         name="refresh_wallet_position_price",
     ),
+    
     # TRANSACTION
     path("transactions/", views_transaction.transactions, name="transactions"),
     path(
@@ -122,6 +123,7 @@ urlpatterns = [
         views_transaction.position_transactions_paginated,
         name="position-transactions-by-page",
     ),
+    path('position/<int:position_id>/transactions/export/csv/', views_transaction.export_transactions_csv, name='export_transactions_csv'),
     # SCAN
     path(
         "polygon/balance/<str:address>/",

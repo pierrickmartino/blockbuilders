@@ -1,4 +1,8 @@
+import csv
+from datetime import datetime
 import logging, os
+
+from django.http import HttpResponse
 
 logger = logging.getLogger("blockbuilders")
 
@@ -36,6 +40,25 @@ def transactions_paginated(request, page):
     }
     return render(request, "transactions.html", context)
 
+@login_required
+def export_transactions_csv(request, position_id):
+    # Generate the current timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"transactions_{timestamp}.csv"
+
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow(['id', 'date', 'quantity', 'comment', 'hash', 'price_contract_based', 'price_fiat_based', 'running_quantity', 'buy_quantity', 'sell_quantity', 'total_cost_contract_based', 'total_cost_fiat_based'])
+
+    position = Position.objects.filter(id=position_id).first()
+    transactions = Transaction.objects.filter(position=position).order_by("-date").values_list('id', 'date', 'quantity', 'comment', 'hash', 'price_contract_based', 'price_fiat_based', 'running_quantity', 'buy_quantity', 'sell_quantity', 'total_cost_contract_based', 'total_cost_fiat_based')
+    for transaction in transactions:
+        writer.writerow(transaction)
+
+    return response
 
 @login_required
 def position_transactions_paginated(request, position_id, page):
