@@ -211,19 +211,19 @@
                     </span>
                     <span class="tooltiptext">{{ position.contract.address }}</span> <!-- Full string in the tooltip -->
                   </div></td>
-                  <td data-label="Daily" class="has-text-right">{% if position.daily_price_delta == 0 %}
+                  <td data-label="Daily" class="has-text-right">{% if position.daily_price_delta == 0 %}<span class="tag is-grey">- %</span>
                     {% elif position.daily_price_delta < 0 %} <span class="tag is-danger">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
                       {% else %}
                       <span class="tag is-primary">{{ position.daily_price_delta|floatformat:"-2g" }}%</span>
                       {% endif %}
                   </td>
-                  <td data-label="Weekly" class="has-text-right">{% if position.weekly_price_delta == 0 %}
+                  <td data-label="Weekly" class="has-text-right">{% if position.weekly_price_delta == 0 %}<span class="tag is-grey">- %</span>
                     {% elif position.weekly_price_delta < 0 %} <span class="tag is-danger">{{ position.weekly_price_delta|floatformat:"-2g" }}%</span>
                       {% else %}
                       <span class="tag is-primary">{{ position.weekly_price_delta|floatformat:"-2g" }}%</span>
                       {% endif %}
                   </td>
-                  <td data-label="Monthly" class="has-text-right">{% if position.monthly_price_delta == 0 %}
+                  <td data-label="Monthly" class="has-text-right">{% if position.monthly_price_delta == 0 %}<span class="tag is-grey">- %</span>
                     {% elif position.monthly_price_delta < 0 %} <span class="tag is-danger">{{ position.monthly_price_delta|floatformat:"-2g" }}%</span>
                       {% else %}
                       <span class="tag is-primary">{{ position.monthly_price_delta|floatformat:"-2g" }}%</span>
@@ -232,13 +232,13 @@
                   <td data-label="Price" class="has-text-right">${{ position.contract.price|floatformat:"-2g" }}</td>
                   <td data-label="Quantity" class="has-text-right">{{ position.quantity|floatformat:"-6g" }}</td>
                   <td data-label="Amount" class="has-text-right">${{ position.amount|floatformat:"-2g" }}</td>
-                  <td data-label="Realized" class="has-text-right">{% if position.realized_gain == 0 %}
+                  <td data-label="Realized" class="has-text-right">{% if position.realized_gain == 0 %}<span class="tag is-grey">- %</span>
                     {% elif position.realized_gain < 0 %} <span class="tag is-danger">${{ position.realized_gain|floatformat:"-2g" }}</span>
                       {% else %}
                       <span class="tag is-primary">${{ position.realized_gain|floatformat:"-2g" }}</span>
                       {% endif %}
                   </td>
-                  <td data-label="Unrealized" class="has-text-right">{% if position.unrealized_gain == 0 %}
+                  <td data-label="Unrealized" class="has-text-right">{% if position.unrealized_gain == 0 %}<span class="tag is-grey">- %</span>
                     {% elif position.unrealized_gain < 0 %} <span class="tag is-danger">${{ position.unrealized_gain|floatformat:"-2g" }}</span>
                       {% else %}
                       <span class="tag is-primary">${{ position.unrealized_gain|floatformat:"-2g" }}</span>
