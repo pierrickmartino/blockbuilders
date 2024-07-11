@@ -1,6 +1,7 @@
 import logging
 
 from django.http import HttpRequest
+from django.db.models import Sum, F
 
 from app.forms import WalletForm
 from app.views.views_wallet import wallets
@@ -14,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 
 from app.models import (
     Blockchain,
+    Position,
     Wallet,
 )
 
@@ -42,9 +44,50 @@ def dashboard(request: HttpRequest):
             logger.info("New wallet and wallet process created")
             return redirect("dashboard")
     else:
+        
         wallets = Wallet.objects.all()
+
+        # Calculate the total balance of all positions
+        total_balance = Position.objects.aggregate(
+            total_balance=Sum(F('quantity') * F('contract__price'))
+        )['total_balance'] or 0
+
+        # Annotate positions with the amount
+        positions = Position.objects.annotate(
+            amount=F('quantity') * F('contract__price')
+        ).order_by('-amount')[:5]
+
+        # Calculate the total balance for each blockchain
+        blockchain_totals = Position.objects.values(
+            blockchain_name=F('contract__blockchain__name'),
+            blockchain_icon=F('contract__blockchain__icon'),
+        ).annotate(
+            total_amount=Sum(F('quantity') * F('contract__price'))
+        ).order_by('-total_amount')
+
+        # Get the top 5 blockchains
+        top_blockchains_data = blockchain_totals[:5]
+
+        top_positions = [{
+            'wallet': pos.wallet,
+            'contract': pos.contract,
+            'quantity': pos.quantity,
+            'amount': pos.amount,
+            'percentage': (pos.amount / total_balance * 100) if total_balance != 0 else 0
+        } for pos in positions]
+
+        # Calculate the percentage of the total balance for each of the top 5 blockchains
+        top_blockchains = [{
+            'name': blockchain['blockchain_name'],
+            'icon': blockchain['blockchain_icon'],
+            'amount': blockchain['total_amount'],
+            'percentage': (blockchain['total_amount'] / total_balance * 100) if total_balance != 0 else 0
+        } for blockchain in top_blockchains_data]
+
         context = {
             "wallets": wallets,
+            "top_positions": top_positions,
+            "top_blockchains" : top_blockchains,
         }
         return render(request, "dashboard.html", context)
     
