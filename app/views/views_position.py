@@ -145,7 +145,7 @@ def wallet_positions_paginated(request, wallet_id, page):
 @login_required
 def delete_Position_by_id(request, position_id):
     result = delete_position_task.delay(position_id, 100)
-    return redirect("wallets")
+    return redirect("dashboard")
 
 
 @login_required
@@ -169,4 +169,4 @@ def refresh_wallet_position_price(request, wallet_id: int):
     )()
 
     logger.info(f"Started getting position prices for wallet with id {wallet_id}")
-    return redirect("wallets")
+    return redirect("dashboard")
