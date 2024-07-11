@@ -187,7 +187,7 @@
                   <th class="has-text-right">Weekly</th>
                   <th class="has-text-right">Monthly</th>
                   <th class="has-text-right">Price</th>
-                  <th class="has-text-right">Qty</th>
+                  <th class="has-text-right">Quantity</th>
                   <th class="has-text-right">Amount</th>
                   <th class="has-text-right">Realized</th>
                   <th class="has-text-right">Unrealized</th>
@@ -230,7 +230,7 @@
                       {% endif %}
                   </td>
                   <td data-label="Price" class="has-text-right">${{ position.contract.price|floatformat:"-2g" }}</td>
-                  <td data-label="Qty" class="has-text-right">{{ position.quantity|floatformat:"-6g" }}</td>
+                  <td data-label="Quantity" class="has-text-right">{{ position.quantity|floatformat:"-6g" }}</td>
                   <td data-label="Amount" class="has-text-right">${{ position.amount|floatformat:"-2g" }}</td>
                   <td data-label="Realized" class="has-text-right">{% if position.realized_gain == 0 %}
                     {% elif position.realized_gain < 0 %} <span class="tag is-danger">${{ position.realized_gain|floatformat:"-2g" }}</span>
