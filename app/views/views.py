@@ -1,10 +1,10 @@
 import logging
 
 from django.http import HttpRequest
-from django.db.models import Sum, F
+from django.db.models import F, Value, Case, When, Sum, DecimalField
+from django.db.models.functions import Coalesce
 
 from app.forms import WalletForm
-from app.views.views_wallet import wallets
 
 logger = logging.getLogger("blockbuilders")
 
@@ -16,6 +16,7 @@ from django.contrib.auth.decorators import login_required
 from app.models import (
     Blockchain,
     Position,
+    Transaction,
     Wallet,
 )
 
@@ -57,6 +58,24 @@ def dashboard(request: HttpRequest):
             amount=F('quantity') * F('contract__price')
         ).order_by('-amount')[:5]
 
+        # Annotate transactions with the capital gain
+        transactions_gain = Transaction.objects.annotate(
+        capital_gain=F('quantity') * F('price_contract_based') - Case(
+            When(buy_quantity=0, then=Value(0)),
+            default=F('quantity') * (F('total_cost_contract_based') / Coalesce(F('buy_quantity'), 1)),
+            output_field=DecimalField(),
+        )
+        ).order_by('-capital_gain')[:5]
+
+        # Annotate transactions with the capital loss
+        transactions_loss = Transaction.objects.annotate(
+        capital_gain=F('quantity') * F('price_contract_based') - Case(
+            When(buy_quantity=0, then=Value(0)),
+            default=F('quantity') * (F('total_cost_contract_based') / Coalesce(F('buy_quantity'), 1)),
+            output_field=DecimalField(),
+        )
+        ).order_by('capital_gain')[:5]
+
         # Calculate the total balance for each blockchain
         blockchain_totals = Position.objects.values(
             blockchain_name=F('contract__blockchain__name'),
@@ -84,10 +103,26 @@ def dashboard(request: HttpRequest):
             'percentage': (blockchain['total_amount'] / total_balance * 100) if total_balance != 0 else 0
         } for blockchain in top_blockchains_data]
 
+        top_transactions_gain = [{
+            'date': transaction.date,
+            'contract': transaction.position.contract,
+            'capital_gain': transaction.capital_gain,
+            'icon': transaction.position.contract.blockchain.icon
+        } for transaction in transactions_gain]
+
+        top_transactions_loss = [{
+            'date': transaction.date,
+            'contract': transaction.position.contract,
+            'capital_gain': transaction.capital_gain,
+            'icon': transaction.position.contract.blockchain.icon
+        } for transaction in transactions_loss]
+
         context = {
             "wallets": wallets,
             "top_positions": top_positions,
             "top_blockchains" : top_blockchains,
+            "top_transactions_gain" : top_transactions_gain,
+            "top_transactions_loss" : top_transactions_loss
         }
         return render(request, "dashboard.html", context)
     
