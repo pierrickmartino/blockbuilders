@@ -73,12 +73,27 @@
                   </p>
                   <div class="control">
                     <div class="tags has-addons">
+                      {% if position_kpi.monthly_price_delta == 0 %}
+                        <span class="tag is-grey">
+                          <span class="icon">
+                          </span>
+                          <span>- %</span>
+                        </span>
+                      {% elif position_kpi.monthly_price_delta < 0 %}
                       <span class="tag is-danger">
                         <span class="icon">
                           <i class="mdi mdi-arrow-down"></i>
                         </span>
-                        <span>1.99%</span>
+                        <span>{{ position_kpi.monthly_price_delta|floatformat:"-2g" }}%</span>
                       </span>
+                      {% else %}
+                      <span class="tag is-primary">
+                        <span class="icon">
+                          <i class="mdi mdi-arrow-up"></i>
+                        </span>
+                        <span>{{ position_kpi.monthly_price_delta|floatformat:"-2g" }}%</span>
+                      </span>
+                      {% endif %}
                       <span class="tag is-dark">this month</span>
                     </div>
                   </div>

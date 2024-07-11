@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 
 from app.models import (
     Contract,
+    ContractCalculator,
     Position,
     PositionCalculator,
     Transaction,
@@ -68,6 +69,17 @@ def position_transactions_paginated(request, position_id, page):
     transactions = Transaction.objects.filter(position=position).order_by("-date")
     position_calculator = PositionCalculator(position)
     position_amount = position_calculator.calculate_amount()
+    
+    contract_calculator = ContractCalculator(position.contract)
+    daily_price_delta = contract_calculator.calculate_daily_price_delta()
+    weekly_price_delta = contract_calculator.calculate_weekly_price_delta()
+    monthly_price_delta = contract_calculator.calculate_monthly_price_delta()
+
+    position_kpi = {
+            "daily_price_delta": daily_price_delta,
+            "weekly_price_delta": weekly_price_delta,
+            "monthly_price_delta": monthly_price_delta
+    }
 
     # Calculate the average cost for each transaction
     transactions_with_calculator = []
@@ -125,6 +137,7 @@ def position_transactions_paginated(request, position_id, page):
         "total_unrealized_gain": total_unrealized_gain,
         "total_realized_gain": total_realized_gain,
         "position_amount": position_amount,
+        "position_kpi" : position_kpi,
     }
     return render(request, "transactions.html", context)
 
