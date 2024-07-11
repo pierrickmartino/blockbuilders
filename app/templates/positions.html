@@ -203,7 +203,7 @@
                   
                   <td data-label="Token">{% if position.contract.category == "suspicious" %}<span class="icon"><i class="mdi mdi-alert-circle"></i></span>{% endif %}{{ position.contract.symbol }} - {{ position.contract.name }}</td>
         
-                  <td><div class="tooltip">
+                  <td data-label="Blockchain"><div class="tooltip">
                     <span class="icon">
                       <figure class="image is-128x128">
                         <img class="is-rounded" src="/static/img/{{ position.contract.blockchain.icon }}" />
