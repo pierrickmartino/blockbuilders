@@ -36,7 +36,8 @@ urlpatterns = [
     path("profile/", views_profile.profile, name="profile"),
     path("profile/update/", views_profile.update_user_settings, name="update_user_settings"),
     # DASHBOARD
-    path("dashboard/", views.dashboard, name="dashboard"),
+    path('dashboard/', views.dashboard_redirect, name='dashboard_redirect'),
+    path("dashboard/<int:page>/", views.dashboard, name="dashboard"),
     # BLOCKCHAIN
     path("blockchains/", views.blockchains, name="blockchains"),
     # CONTRACT
