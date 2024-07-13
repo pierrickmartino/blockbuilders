@@ -191,7 +191,6 @@
                   <th class="has-text-right">Amount</th>
                   <th class="has-text-right">Realized</th>
                   <th class="has-text-right">Unrealized</th>
-                  <th class="has-text-right">Progress</th>
                   <th></th>
                 </tr>
               </thead>
@@ -231,7 +230,7 @@
                   </td>
                   <td data-label="Price" class="has-text-right">${{ position.contract.price|floatformat:"-2g" }}</td>
                   <td data-label="Quantity" class="has-text-right">{{ position.quantity|floatformat:"-6g" }}</td>
-                  <td data-label="Amount" class="has-text-right">${{ position.amount|floatformat:"-2g" }}</td>
+                  <td data-label="Amount" class="has-text-right">${{ position.amount|floatformat:"-2g" }} <small class="has-text-grey">({{ position.progress_percentage|floatformat:"-2g" }}%)</small></td>
                   <td data-label="Realized" class="has-text-right">{% if position.realized_gain == 0 %}<span class="tag is-grey">- %</span>
                     {% elif position.realized_gain < 0 %} <span class="tag is-danger">${{ position.realized_gain|floatformat:"-2g" }}</span>
                       {% else %}
@@ -243,9 +242,6 @@
                       {% else %}
                       <span class="tag is-primary">${{ position.unrealized_gain|floatformat:"-2g" }}</span>
                       {% endif %}
-                  </td>
-                  <td data-label="Progress" class="has-text-right">
-                    {{ position.progress_percentage|floatformat:"-2g" }}%
                   </td>
                   <td class="is-actions-cell">
                     <div class="buttons is-right">
@@ -262,7 +258,7 @@
                 {% endfor %}
                 {% else %}
                 <tr class="is-empty">
-                  <td colspan="12">
+                  <td colspan="11">
                     <section class="section">
                       <div class="content has-text-grey has-text-centered">
                         <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
