@@ -26,7 +26,7 @@ from app.utils.bsc import view_bsc
 
 urlpatterns = [
     # GLOBAL
-    path("", views.dashboard, name="dashboard"),
+    path("", views.dashboard_redirect, name="dashboard"),
     path("__debug__/", include("debug_toolbar.urls")),
     path("admin/", admin.site.urls),
     # AUTHENTICATION / USER
