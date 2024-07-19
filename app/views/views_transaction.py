@@ -77,7 +77,7 @@ def export_transactions_csv(request, position_id):
     position = Position.objects.filter(id=position_id).first()
     transactions = (
         Transaction.objects.filter(position=position)
-        .order_by("-date")
+        .order_by("date")
         .values_list(
             "id",
             "type",
