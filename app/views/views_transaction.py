@@ -41,6 +41,7 @@ def transactions_paginated(request, page):
     }
     return render(request, "transactions.html", context)
 
+
 @login_required
 def export_transactions_csv(request, position_id):
     # Generate the current timestamp
@@ -48,18 +49,57 @@ def export_transactions_csv(request, position_id):
     filename = f"transactions_{timestamp}.csv"
 
     # Create the HttpResponse object with the appropriate CSV header.
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
     writer = csv.writer(response)
-    writer.writerow(['id', 'date', 'quantity', 'comment', 'hash', 'price_contract_based', 'price_fiat_based', 'running_quantity', 'buy_quantity', 'sell_quantity', 'total_cost_contract_based', 'total_cost_fiat_based'])
+    writer.writerow(
+        [
+            "id",
+            "type",
+            "date",
+            "quantity",
+            "comment",
+            "hash",
+            "price",
+            "price_contract_based",
+            "price_fiat_based",
+            "running_quantity",
+            "buy_quantity",
+            "sell_quantity",
+            "total_cost",
+            "total_cost_contract_based",
+            "total_cost_fiat_based",
+        ]
+    )
 
     position = Position.objects.filter(id=position_id).first()
-    transactions = Transaction.objects.filter(position=position).order_by("-date").values_list('id', 'date', 'quantity', 'comment', 'hash', 'price_contract_based', 'price_fiat_based', 'running_quantity', 'buy_quantity', 'sell_quantity', 'total_cost_contract_based', 'total_cost_fiat_based')
+    transactions = (
+        Transaction.objects.filter(position=position)
+        .order_by("-date")
+        .values_list(
+            "id",
+            "type",
+            "date",
+            "quantity",
+            "comment",
+            "hash",
+            "price",
+            "price_contract_based",
+            "price_fiat_based",
+            "running_quantity",
+            "buy_quantity",
+            "sell_quantity",
+            "total_cost",
+            "total_cost_contract_based",
+            "total_cost_fiat_based",
+        )
+    )
     for transaction in transactions:
         writer.writerow(transaction)
 
     return response
+
 
 @login_required
 def position_transactions_paginated(request, position_id, page):
@@ -69,16 +109,16 @@ def position_transactions_paginated(request, position_id, page):
     transactions = Transaction.objects.filter(position=position).order_by("-date")
     position_calculator = PositionCalculator(position)
     position_amount = position_calculator.calculate_amount()
-    
+
     contract_calculator = ContractCalculator(position.contract)
     daily_price_delta = contract_calculator.calculate_daily_price_delta()
     weekly_price_delta = contract_calculator.calculate_weekly_price_delta()
     monthly_price_delta = contract_calculator.calculate_monthly_price_delta()
 
     position_kpi = {
-            "daily_price_delta": daily_price_delta,
-            "weekly_price_delta": weekly_price_delta,
-            "monthly_price_delta": monthly_price_delta
+        "daily_price_delta": daily_price_delta,
+        "weekly_price_delta": weekly_price_delta,
+        "monthly_price_delta": monthly_price_delta,
     }
 
     # Calculate the average cost for each transaction
@@ -86,11 +126,11 @@ def position_transactions_paginated(request, position_id, page):
     total_realized_gain = 0
     for transaction in transactions:
         calculator = TransactionCalculator(transaction)
-        avg_cost_contract_based = calculator.calculate_avg_cost_contract_based()
-        cost_contract_based = calculator.calculate_cost_contract_based()
-        capital_gain_contract_based = calculator.calculate_capital_gain_contract_based()
+        avg_cost = calculator.calculate_avg_cost()
+        cost = calculator.calculate_cost()
+        capital_gain = calculator.calculate_capital_gain()
 
-        total_realized_gain += capital_gain_contract_based
+        total_realized_gain += capital_gain
 
         transaction_link = transaction.position.contract.blockchain.transaction_link + transaction.hash
 
@@ -99,13 +139,13 @@ def position_transactions_paginated(request, position_id, page):
                 "type": transaction.type,
                 "quantity": transaction.quantity,
                 "running_quantity": transaction.running_quantity,
-                "price_contract_based": transaction.price_contract_based,
-                "cost_contract_based": cost_contract_based,
+                "price": transaction.price,
+                "cost": cost,
                 "against_contract": transaction.against_contract,
-                "total_cost_contract_based": transaction.total_cost_contract_based,
-                "capital_gain_contract_based": capital_gain_contract_based,
+                "total_cost": transaction.total_cost,
+                "capital_gain": capital_gain,
                 "date": transaction.date,
-                "avg_cost_contract_based": avg_cost_contract_based,
+                "avg_cost": avg_cost,
                 "link": transaction_link,
             }
         )
@@ -115,12 +155,12 @@ def position_transactions_paginated(request, position_id, page):
     page_transactions.adjusted_elided_pages = paginator.get_elided_page_range(page)
 
     reference_avg_cost = (
-        TransactionCalculator(transactions.first()).calculate_avg_cost_contract_based() if transactions else 0
+        TransactionCalculator(transactions.first()).calculate_avg_cost() if transactions else 0
     )
     total_unrealized_gain = (
         (
             (contract.price - reference_avg_cost) / reference_avg_cost * 100
-            if transactions.first().running_quantity != 0
+            if round(contract.price * transactions.first().running_quantity, 2) > 0 and reference_avg_cost != 0
             else 0
         )
         if transactions
@@ -137,7 +177,7 @@ def position_transactions_paginated(request, position_id, page):
         "total_unrealized_gain": total_unrealized_gain,
         "total_realized_gain": total_realized_gain,
         "position_amount": position_amount,
-        "position_kpi" : position_kpi,
+        "position_kpi": position_kpi,
     }
     return render(request, "transactions.html", context)
 

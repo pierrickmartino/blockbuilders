@@ -99,7 +99,7 @@ urlpatterns = [
     path(
         "delete_position/<int:position_id>/",
         views_position.delete_Position_by_id,
-        name="delete_position",
+        name="delete-position",
     ),
     path(
         "wallet/<int:wallet_id>/positions/<int:page>",
@@ -109,7 +109,12 @@ urlpatterns = [
     path(
         "wallet/<int:wallet_id>/refresh_price/",
         views_position.refresh_wallet_position_price,
-        name="refresh_wallet_position_price",
+        name="refresh-wallet-position-price",
+    ),
+    path(
+        "wallet/<int:wallet_id>/refresh_full_histo_price/",
+        views_position.refresh_full_historical_position_price,
+        name="refresh-full-histo-price",
     ),
     
     # TRANSACTION

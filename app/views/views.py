@@ -65,20 +65,20 @@ def dashboard(request: HttpRequest, page):
 
         # Annotate transactions with the capital gain
         transactions_gain = Transaction.objects.annotate(
-            capital_gain=F("quantity") * F("price_contract_based")
+            capital_gain=F("quantity") * F("price")
             - Case(
                 When(buy_quantity=0, then=Value(0)),
-                default=F("quantity") * (F("total_cost_contract_based") / Coalesce(F("buy_quantity"), 1)),
+                default=F("quantity") * (F("total_cost") / Coalesce(F("buy_quantity"), 1)),
                 output_field=DecimalField(),
             )
         ).order_by("-capital_gain")[:5]
 
         # Annotate transactions with the capital loss
         transactions_loss = Transaction.objects.annotate(
-            capital_gain=F("quantity") * F("price_contract_based")
+            capital_gain=F("quantity") * F("price")
             - Case(
                 When(buy_quantity=0, then=Value(0)),
-                default=F("quantity") * (F("total_cost_contract_based") / Coalesce(F("buy_quantity"), 1)),
+                default=F("quantity") * (F("total_cost") / Coalesce(F("buy_quantity"), 1)),
                 output_field=DecimalField(),
             )
         ).order_by("capital_gain")[:5]
