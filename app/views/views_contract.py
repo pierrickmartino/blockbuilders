@@ -46,3 +46,12 @@ def blacklist_Contract_by_id(request, contract_id):
         contract.save()
         return JsonResponse({"status": "success"})
     return JsonResponse({"status": "error"}, status=400)
+
+
+def stable_Contract_by_id(request, contract_id):
+    if request.method == "POST":
+        contract = get_object_or_404(Contract, id=contract_id)
+        contract.category = Contract.STABLE
+        contract.save()
+        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "error"}, status=400)
