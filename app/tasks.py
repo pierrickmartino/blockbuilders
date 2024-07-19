@@ -26,6 +26,7 @@ from app.utils.bsc.view_bsc import (
 
 from app.models import (
     Blockchain,
+    CategoryContractChoices,
     Contract,
     Fiat,
     MarketData,
@@ -94,7 +95,7 @@ def create_transactions_from_bsc_bep20_task(wallet_id: int):
                     "previous_month": timezone.make_aware(datetime.now(), utc),
                 },
             )
-            if contract.category != Contract.SUSPICIOUS:
+            if contract.category != CategoryContractChoices.SUSPICIOUS:
                 position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
                 transaction_type = (
                     TypeTransactionChoices.IN
@@ -148,7 +149,7 @@ def create_transactions_from_polygon_erc20_task(wallet_id: int):
                     "previous_month": timezone.make_aware(datetime.now(), utc),
                 },
             )
-            if contract.category != Contract.SUSPICIOUS:
+            if contract.category != CategoryContractChoices.SUSPICIOUS:
                 position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
                 transaction_type = (
                     TypeTransactionChoices.IN
@@ -202,7 +203,7 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: int):
                     "previous_month": timezone.make_aware(datetime.now(), utc),
                 },
             )
-            if contract.category != Contract.SUSPICIOUS:
+            if contract.category != CategoryContractChoices.SUSPICIOUS:
                 position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
                 transaction_type = (
                     TypeTransactionChoices.IN
@@ -256,7 +257,7 @@ def create_transactions_from_optimism_erc20_task(wallet_id: int):
                     "previous_month": timezone.make_aware(datetime.now(), utc),
                 },
             )
-            if contract.category != Contract.SUSPICIOUS:
+            if contract.category != CategoryContractChoices.SUSPICIOUS:
                 position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
                 transaction_type = (
                     TypeTransactionChoices.IN

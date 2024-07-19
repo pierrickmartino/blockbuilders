@@ -5,10 +5,11 @@ from django.http import JsonResponse
 logger = logging.getLogger("blockbuilders")
 
 from django.core.paginator import Paginator
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 
 from app.models import (
+    CategoryContractChoices,
     Contract,
 )
 
@@ -42,7 +43,7 @@ def get_Contract_by_address(contract_address):
 def blacklist_Contract_by_id(request, contract_id):
     if request.method == "POST":
         contract = get_object_or_404(Contract, id=contract_id)
-        contract.category = Contract.SUSPICIOUS
+        contract.category = CategoryContractChoices.SUSPICIOUS
         contract.save()
         return JsonResponse({"status": "success"})
     return JsonResponse({"status": "error"}, status=400)
@@ -51,7 +52,7 @@ def blacklist_Contract_by_id(request, contract_id):
 def stable_Contract_by_id(request, contract_id):
     if request.method == "POST":
         contract = get_object_or_404(Contract, id=contract_id)
-        contract.category = Contract.STABLE
+        contract.category = CategoryContractChoices.STABLE
         contract.save()
         return JsonResponse({"status": "success"})
     return JsonResponse({"status": "error"}, status=400)
