@@ -202,11 +202,6 @@ class Position(TimeStampModel):
     # amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     # Performance calculation
-    # total_buy_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
-    # total_buy_quantity_prev_day = models.DecimalField(max_digits=32, decimal_places=18, default=0)
-    # total_buy_quantity_prev_week = models.DecimalField(max_digits=32, decimal_places=18, default=0)
-    # total_buy_quantity_prev_year = models.DecimalField(max_digits=32, decimal_places=18, default=0)
-
     # avg_cost_prev_day = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     # avg_cost_prev_week = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     # avg_cost_prev_month = models.DecimalField(max_digits=15, decimal_places=2, default=0)
@@ -261,11 +256,11 @@ class Transaction(TimeStampModel):
         max_length=3, choices=TypeTransactionChoices.choices
     )  # Type of the transaction (IN or OUT)
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)  # Quantity of the transaction
-    price = models.DecimalField(max_digits=24, decimal_places=8, default=0)  # Price of the transaction
     date = models.DateTimeField(db_index=True)  # Date of the transaction
     comment = models.TextField(default="", blank=True)  # Comment about the transaction
     hash = models.CharField(max_length=255, default="")  # Hash of the transaction
 
+    price = models.DecimalField(max_digits=24, decimal_places=8, default=0)  # Price of the transaction
     price_contract_based = models.DecimalField(max_digits=24, decimal_places=8, default=0)
     price_fiat_based = models.DecimalField(max_digits=15, decimal_places=8, default=0)
 
@@ -273,16 +268,10 @@ class Transaction(TimeStampModel):
     buy_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
     sell_quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)
 
+    total_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     total_cost_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    # avg_cost_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    # capital_gain_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    # capital_gain_percentage_contract_based = models.DecimalField(max_digits=15, decimal_places=8, default=0)
-
     total_cost_fiat_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    # avg_cost_fiat_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    # capital_gain_fiat_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    # capital_gain_percentage_fiat_based = models.DecimalField(max_digits=15, decimal_places=8, default=0)
-
+    
     against_contract = models.ForeignKey(
         Contract,
         on_delete=models.CASCADE,
@@ -330,13 +319,29 @@ class TransactionCalculator:
             else 0
         )
 
+    def calculate_avg_cost(self):
+        # Calculate the average cost of the position based on price
+        return (
+            self.transaction.total_cost / self.transaction.buy_quantity
+            if self.transaction.buy_quantity != 0
+            else 0
+        )
+
     def calculate_amount(self, current_price):
         # Calculate the amount of a transaction
         return self.transaction.running_quantity * current_price
+    
+    def calculate_cost(self):
+        # Calculate the cost of the transaction
+        return self.transaction.quantity * self.transaction.price
 
     def calculate_cost_contract_based(self):
         # Calculate the cost of the transaction based on contract price
         return self.transaction.quantity * self.transaction.price_contract_based
+    
+    def calculate_cost_fiat_based(self):
+        # Calculate the cost of the transaction based on fiat price
+        return self.transaction.quantity * self.transaction.price_fiat_based
 
     def calculate_gain(self, current_price):
         # Calculate the gain of the transaction
@@ -362,6 +367,14 @@ class TransactionCalculator:
         # Calculate the capital gain of the transaction based on fiat price
         cost = self.calculate_cost_contract_based()
         avg_cost = self.calculate_avg_cost_fiat_based()
+        return (
+            cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT else 0
+        )
+    
+    def calculate_capital_gain(self):
+        # Calculate the capital gain of the transaction based on price
+        cost = self.calculate_cost()
+        avg_cost = self.calculate_avg_cost()
         return (
             cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT else 0
         )

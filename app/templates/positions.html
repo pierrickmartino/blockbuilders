@@ -170,8 +170,11 @@
           <span class="icon"><i class="mdi mdi-view-list"></i></span>
           Positions
         </p>
-        <a href="{% url 'refresh_wallet_position_price' wallet.id %}" class="card-header-icon">
+        <a href="{% url 'refresh-wallet-position-price' wallet.id %}" class="card-header-icon">
           <span class="icon"><i class="mdi mdi-reload"></i></span>
+        </a>
+        <a href="{% url 'refresh-full-histo-price' wallet.id %}" class="card-header-icon">
+          <span class="icon"><i class="mdi mdi-database-refresh"></i></span>
         </a>
       </header>
       <div class="card-content">

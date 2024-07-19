@@ -5,6 +5,7 @@ from celery import chain, chord, group
 from app.tasks import (
     calculate_wallet_balance_task,
     delete_position_task,
+    get_full_init_historical_price_from_market_task,
     get_historical_price_from_market_task,
     get_price_from_market_task,
     update_contract_information,
@@ -84,22 +85,24 @@ def wallet_positions_paginated(request, wallet_id, page):
 
         last_transaction = Transaction.objects.filter(position=position).order_by("-date").first()
         reference_avg_cost = (
-            TransactionCalculator(last_transaction).calculate_avg_cost_contract_based()
+            TransactionCalculator(last_transaction).calculate_avg_cost()
             if last_transaction and last_transaction.running_quantity != 0
             else 0
         )
-        
+
         position_amount = position_calculator.calculate_amount()
         progress_percentage = position_amount / position.wallet.balance * 100 if position.wallet.balance != 0 else 0
 
         unrealized_gain = (
-            (position.contract.price - reference_avg_cost) / reference_avg_cost * 100 if round(position_amount, 2) > 0 and reference_avg_cost != 0 else 0
+            (position.contract.price - reference_avg_cost) / reference_avg_cost * 100
+            if round(position_amount, 2) > 0 and reference_avg_cost != 0
+            else 0
         )
         total_unrealized_gain += unrealized_gain
 
         # Calculate realized gain for the position
         realized_gain = sum(
-            TransactionCalculator(transaction).calculate_capital_gain_contract_based()
+            TransactionCalculator(transaction).calculate_capital_gain()
             for transaction in Transaction.objects.filter(position=position)
         )
         total_realized_gain += realized_gain
@@ -169,4 +172,23 @@ def refresh_wallet_position_price(request, wallet_id: int):
     )()
 
     logger.info(f"Started getting position prices for wallet with id {wallet_id}")
+    return redirect("dashboard")
+
+
+@login_required
+def refresh_full_historical_position_price(request, wallet_id: int):
+    """
+    View to refresh full position prices of a wallet by chaining several Celery tasks.
+    """
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+    positions = Position.objects.filter(wallet=wallet)
+    symbol_set = {
+        position.contract.symbol for position in positions if not position.contract.symbol[0].islower()
+    }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
+    symbol_list = list(symbol_set)
+
+    for symbol in symbol_list:
+        chain(get_full_init_historical_price_from_market_task.s(symbol))()
+
+    logger.info(f"Started getting full position prices for wallet with id {wallet_id}")
     return redirect("dashboard")

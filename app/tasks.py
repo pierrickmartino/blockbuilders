@@ -27,6 +27,7 @@ from app.utils.bsc.view_bsc import (
 from app.models import (
     Blockchain,
     Contract,
+    Fiat,
     MarketData,
     Position,
     PositionCalculator,
@@ -316,9 +317,7 @@ def get_polygon_token_balance(wallet_id: int):
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(
-            f"An error occurred while getting MATIC (Polygon) balance for for wallet id {wallet_id}: {str(e)}"
-        )
+        logger.error(f"An error occurred while getting MATIC (Polygon) balance for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
 
@@ -356,7 +355,7 @@ def get_bsc_token_balance(wallet_id: int):
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(f"An error occurred while getting BNB (BSC) balance for for wallet id {wallet_id}: {str(e)}")
+        logger.error(f"An error occurred while getting BNB (BSC) balance for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
 
@@ -459,6 +458,9 @@ def aggregate_transactions_task(previous_return: int, wallet_id: int):
 
         if transactions_to_aggregate.count() >= 2:
 
+            if transaction.hash == "0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb":
+                logger.info(f"Transaction : {transactions_to_aggregate}")
+
             transaction_agg = Transaction.objects.create(
                 position=transaction.position,
                 date=transaction.date,
@@ -495,18 +497,81 @@ def calculate_cost_transaction_task(wallet_id: int):
             for transaction in transactions:
                 transactions_by_wallet.append(transaction)
 
+        fiat = Fiat.objects.get(symbol="USD")
+
         for transaction in transactions_by_wallet:
             condition = Transaction.objects.filter(hash=transaction.hash)
+
+            symbol = transaction.position.contract.symbol
+
             if condition.count() == 2:
-                transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)  # type: ignore
+                transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)
                 position = Position.objects.filter(id=transaction_ref[0].position.id).first()
                 transaction.against_contract = position.contract
                 transaction.cost_contract_based = transaction_ref[0].quantity
                 if transaction.quantity == 0:
-                    transaction.price_contract_based = 0  # type: ignore
+                    transaction.price_contract_based = 0
                 else:
                     transaction.price_contract_based = transaction_ref[0].quantity / transaction.quantity
+
+                if symbol.startswith("USDC."):
+                    data = (
+                        MarketData.objects.filter(symbol="USDC", reference="USD", time__lte=transaction.date)
+                        .order_by("-time")
+                        .first()
+                    )
+                else:
+                    data = (
+                        MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=transaction.date)
+                        .order_by("-time")
+                        .first()
+                    )
+
+                data = (
+                    MarketData.objects.filter(
+                        symbol=transaction.position.contract.symbol, reference="USD", time__lte=transaction.date
+                    )
+                    .order_by("-time")
+                    .first()
+                )
+                transaction.price_fiat_based = data.close if data else 0
+                transaction.price = transaction.price_contract_based if transaction.price_contract_based != 0 else transaction.price_fiat_based
+                transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
+                transaction.against_fiat = fiat
                 transaction.save()
+
+            else:
+                if symbol.startswith("USDC."):
+                    data = (
+                        MarketData.objects.filter(symbol="USDC", reference="USD", time__lte=transaction.date)
+                        .order_by("-time")
+                        .first()
+                    )
+                else:
+                    data = (
+                        MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=transaction.date)
+                        .order_by("-time")
+                        .first()
+                    )
+
+                transaction.price_fiat_based = data.close if data else 0
+                transaction.price = transaction.price_contract_based if transaction.price_contract_based != 0 else transaction.price_fiat_based
+                transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
+                transaction.against_fiat = fiat
+                transaction.save()
+
+                logger.info(f"Multi-part transaction for {transaction}")
+                if transaction.hash == "0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb":
+                    logger.info(f"transaction.position.contract.symbol : {transaction.position.contract.symbol}")
+                    logger.info(f"transaction.quantity : {transaction.quantity}")
+                    logger.info(f"transaction.date : {transaction.date}")
+                    logger.info(f"transaction.price : {transaction.price}")
+                    logger.info(f"transaction.against_contract : {transaction.against_contract}")
+                    logger.info(f"transaction.price_contract_based : {transaction.price_contract_based}")
+                    logger.info(f"transaction.against_fiat : {transaction.against_fiat}")
+                    logger.info(f"transaction.price_fiat_based : {transaction.price_fiat_based}")
+                    logger.info(f"transaction.type : {transaction.type}")
+                    logger.info(f"transaction.position : {transaction.position}")
 
         logger.info(f"Calculated transaction costs for wallet id {wallet_id} successfully.")
         return wallet_id
@@ -514,7 +579,7 @@ def calculate_cost_transaction_task(wallet_id: int):
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(f"An error occurred while calculating transaction costs for wallet id {wallet_id}: {str(e)}")
+        logger.error(f"An error occurred while calculating transaction costs for wallet id {wallet_id} : {str(e)}")
 
 
 @shared_task
@@ -565,28 +630,51 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
         wallet = Wallet.objects.get(id=wallet_id)
         positions = Position.objects.filter(wallet=wallet)
 
+        DEBUG_LINK = False
+
         for position in positions:
             # Get all transactions associated with the current position, ordered by date
             transactions = Transaction.objects.filter(position=position).order_by("date")
+
+            # DEBUG_LINK = True if position.contract.address == "0x53e0bca35ec356bd5dddfebbd1fc0fd03fabad39" else False
 
             running_quantity = 0
             buy_quantity = 0
             sell_quantity = 0
             total_cost = 0
             price_contract_based = 0
+            price_fiat_based = 0
+            price = 0
+
+            logger.info(f"Calculating running quantities for position id {position.id}.")
 
             for transaction in transactions:
 
                 calculator = TransactionCalculator(transaction)
                 cost_contract_based = calculator.calculate_cost_contract_based()
+                cost_fiat_based = calculator.calculate_cost_fiat_based()
+                cost_price_based = calculator.calculate_cost()
+
+                if DEBUG_LINK == True:
+                    logger.info(f"Calculating running quantities for transaction id {transaction.id}.")
+                    logger.info(f"BEFORE calculation")
+                    logger.info(f"transaction.date : {transaction.date}")
+                    logger.info(f"cost_contract_based : {cost_contract_based}")
+                    logger.info(f"cost_fiat_based : {cost_fiat_based}")
+                    logger.info(f"cost_price_based : {cost_price_based}")
+                    logger.info(f"transaction.type : {transaction.type}")
+                    logger.info(f"running_quantity : {running_quantity}")
+                    logger.info(f"price_contract_based : {price_contract_based}")
+                    logger.info(f"price_fiat_based : {price_fiat_based}")
+                    logger.info(f"transaction.quantity : {transaction.quantity}")
 
                 if transaction.type == TypeTransactionChoices.IN:
                     # Reset total_cost and buy_quantity if we sold everything (or almost) on last transaction
-                    if (running_quantity * price_contract_based) < 1:
-                        total_cost = cost_contract_based
+                    if (running_quantity * price) < 1:
+                        total_cost = cost_price_based
                         buy_quantity = transaction.quantity
                     else:
-                        total_cost += cost_contract_based
+                        total_cost += cost_price_based
                         buy_quantity += transaction.quantity
                     # Then update the running_quantity
                     running_quantity += transaction.quantity
@@ -595,12 +683,20 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
                     sell_quantity += transaction.quantity
 
                 price_contract_based = transaction.price_contract_based
+                price = transaction.price
+
+                if DEBUG_LINK == True:
+                    logger.info(f"AFTER calculation")
+                    logger.info(f"running_quantity : {running_quantity}")
+                    logger.info(f"buy_quantity : {buy_quantity}")
+                    logger.info(f"sell_quantity : {sell_quantity}")
+                    logger.info(f"total_cost : {total_cost}")
 
                 # Update the running quantity for the transaction
                 transaction.running_quantity = running_quantity
                 transaction.buy_quantity = buy_quantity
                 transaction.sell_quantity = sell_quantity
-                transaction.total_cost_contract_based = total_cost
+                transaction.total_cost = total_cost
                 transaction.save()
 
             position.quantity = running_quantity
@@ -649,6 +745,7 @@ def get_price_from_market_task(symbol_list: list[str]):
 
     return symbol_list
 
+
 @shared_task
 def get_historical_price_from_market_task(symbol: str):
     """
@@ -656,33 +753,37 @@ def get_historical_price_from_market_task(symbol: str):
     """
     logger.info(f"Get market historical price for {symbol}.")
     try:
-        
+
+        delta = 30
+
         # Get today's date
-        hundred_days_ago = timezone.now().date() - timedelta(days=100)
+        hundred_days_ago = timezone.now().date() - timedelta(days=delta)
 
         # Test if the data is already there
         data = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=hundred_days_ago)
         record_count = data.count()
 
-        if record_count >= 100:
-            logger.info(f"Already have 100 or more entries starting from today. No need to fetch new data for symbol {symbol}.")
+        if record_count >= delta:
+            logger.info(
+                f"Already have 100 or more entries starting from today. No need to fetch new data for symbol {symbol}."
+            )
             return symbol
 
         data.delete()
         logger.info(f"Historical prices are cleaned up for symbol {symbol}.")
 
         # Get the historical prices for the symbol
-        prices = get_daily_pair_ohlcv(symbol, 100)
+        prices = get_daily_pair_ohlcv(symbol, delta)
 
         # Iterate over each data point
-        for record in prices['Data']['Data']:
+        for record in prices["Data"]["Data"]:
             time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), utc)
-            high = record['high']
-            low = record['low']
-            open_price = record['open']
-            close = record['close']
-            volume_from = record['volumefrom']
-            volume_to = record['volumeto']
+            high = record["high"]
+            low = record["low"]
+            open_price = record["open"]
+            close = record["close"]
+            volume_from = record["volumefrom"]
+            volume_to = record["volumeto"]
 
             # Create and save the MarketData object
             market_data = MarketData(
@@ -694,16 +795,66 @@ def get_historical_price_from_market_task(symbol: str):
                 open=open_price,
                 close=close,
                 volume_from=volume_from,
-                volume_to=volume_to
+                volume_to=volume_to,
             )
             market_data.save()
 
     except Exception as e:
-        logger.error(
-            f"An error occurred while getting the historical market price of a symbol {symbol}: {str(e)}"
-        )
+        logger.error(f"An error occurred while getting the historical market price of a symbol {symbol}: {str(e)}")
 
     return symbol
+
+
+@shared_task
+def get_full_init_historical_price_from_market_task(symbol: str):
+    """
+    Task to get the full init historical market price of a symbol.
+    """
+    logger.info(f"Get full init market historical price for {symbol}.")
+    try:
+
+        delta = 1000
+
+        # Get today's date
+        hundred_days_ago = timezone.now().date() - timedelta(days=delta)
+
+        # Test if the data is already there
+        data = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=hundred_days_ago)
+        data.delete()
+        logger.info(f"Historical prices are cleaned up for symbol {symbol}.")
+
+        # Get the historical prices for the symbol
+        prices = get_daily_pair_ohlcv(symbol, delta)
+
+        # Iterate over each data point
+        for record in prices["Data"]["Data"]:
+            time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), utc)
+            high = record["high"]
+            low = record["low"]
+            open_price = record["open"]
+            close = record["close"]
+            volume_from = record["volumefrom"]
+            volume_to = record["volumeto"]
+
+            # Create and save the MarketData object
+            market_data = MarketData(
+                symbol=symbol,
+                reference="USD",
+                time=time,
+                high=high,
+                low=low,
+                open=open_price,
+                close=close,
+                volume_from=volume_from,
+                volume_to=volume_to,
+            )
+            market_data.save()
+
+    except Exception as e:
+        logger.error(f"An error occurred while getting the historical market price of a symbol {symbol}: {str(e)}")
+
+    return symbol
+
 
 @shared_task
 def update_contract_information(previous_return: int, symbol: str):
@@ -722,9 +873,17 @@ def update_contract_information(previous_return: int, symbol: str):
         one_week_ago = now - relativedelta(weeks=1)
         one_month_ago = now - relativedelta(months=1)
 
-        previous_day_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_day_ago).order_by('-time').first()
-        previous_week_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_week_ago).order_by('-time').first()
-        previous_month_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_month_ago).order_by('-time').first()
+        previous_day_price = (
+            MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_day_ago).order_by("-time").first()
+        )
+        previous_week_price = (
+            MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_week_ago).order_by("-time").first()
+        )
+        previous_month_price = (
+            MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_month_ago)
+            .order_by("-time")
+            .first()
+        )
 
         for contract in contracts:
             contract.previous_day_price = previous_day_price.close if previous_day_price else 0
@@ -735,7 +894,9 @@ def update_contract_information(previous_return: int, symbol: str):
     except Contract.DoesNotExist:
         logger.error(f"Contract with symbol {symbol} does not exist")
     except Exception as e:
-        logger.error(f"An error occurred while updating contract information based on market data for {symbol}: {str(e)}")
+        logger.error(
+            f"An error occurred while updating contract information based on market data for {symbol}: {str(e)}"
+        )
 
     return symbol
 

@@ -225,15 +225,15 @@
                 </span></td>
                 <td data-label="Quantity">{{ transaction.quantity|floatformat:"-6g" }}</td>
                 <td data-label="Running Quantity">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
-                <td data-label="Price">{{ transaction.price_contract_based|floatformat:"-6g" }}</td>
-                <td data-label="Cost">{{ transaction.cost_contract_based|floatformat:"-2g" }}</td>
+                <td data-label="Price">{{ transaction.price|floatformat:"-6g" }}</td>
+                <td data-label="Cost">{{ transaction.cost|floatformat:"-2g" }}</td>
                 <td data-label="CostSymbol">{{ transaction.against_contract.symbol }}</td>
-                <td data-label="Total Cost">{{ transaction.total_cost_contract_based|floatformat:"-2g" }}</td>
-                <td data-label="Average Cost">{{ transaction.avg_cost_contract_based|floatformat:"-2g" }}</td>
-                <td data-label="Capital Gain">{% if transaction.capital_gain_contract_based == 0 %}
-                  {% elif transaction.capital_gain_contract_based < 0 %} <span class="tag is-danger">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
+                <td data-label="Total Cost">{{ transaction.total_cost|floatformat:"-2g" }}</td>
+                <td data-label="Average Cost">{{ transaction.avg_cost|floatformat:"-2g" }}</td>
+                <td data-label="Capital Gain">{% if transaction.capital_gain == 0 %}
+                  {% elif transaction.capital_gain < 0 %} <span class="tag is-danger">{{ transaction.capital_gain|floatformat:"-2g" }}</span>
                     {% else %}
-                    <span class="tag is-primary">{{ transaction.capital_gain_contract_based|floatformat:"-2g" }}</span>
+                    <span class="tag is-primary">{{ transaction.capital_gain|floatformat:"-2g" }}</span>
                     {% endif %}
                 </td>
                 <td data-label="Date" class="is-narrow"><small class="has-text-grey is-abbr-like">{{ transaction.date }}</small></td>
