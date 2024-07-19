@@ -18,6 +18,14 @@ class TypeTransactionChoices(models.TextChoices):
     OUT = "OUT", "OUT"
 
 
+class CategoryContractChoices(models.TextChoices):
+    STANDARD = "standard", "Standard"
+    FEE = "fee", "Fee"
+    SUSPICIOUS = "suspicious", "Suspicious"
+    COLLATERAL = "collateral", "Collateral"
+    STABLE = "stable", "Stable"
+
+
 # Abstract model for timestamp fields
 class TimeStampModel(models.Model):
     created_at = models.DateTimeField(
@@ -113,20 +121,6 @@ class Blockchain(models.Model):
 
 # Model to represent a smart contract
 class Contract(models.Model):
-    STANDARD = "standard"
-    FEE = "fee"
-    SUSPICIOUS = "suspicious"
-    COLLATERAL = "collateral"
-    STABLE = "stable"
-
-    CATEGORY_CHOICES = [
-        (STANDARD, "Standard"),
-        (FEE, "Fee"),
-        (SUSPICIOUS, "Suspicious"),
-        (COLLATERAL, "Collateral"),
-        (STABLE, "Stable"),
-    ]
-
     blockchain = models.ForeignKey(
         Blockchain, on_delete=models.CASCADE, related_name="contracts"
     )  # Reference to the blockchain
@@ -146,7 +140,7 @@ class Contract(models.Model):
     previous_week = models.DateTimeField(default=datetime.now)
     previous_month = models.DateTimeField(default=datetime.now)
 
-    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default=STANDARD)
+    category = models.CharField(max_length=20, choices=CategoryContractChoices.choices, default=CategoryContractChoices.STANDARD)
 
     # market_cap = models.DecimalField(max_digits=20, decimal_places=2, default=0) # type: ignore
     # volume = models.DecimalField(max_digits=20, decimal_places=10, default=0) # type: ignore
@@ -362,7 +356,7 @@ class TransactionCalculator:
         cost = self.calculate_cost_contract_based()
         avg_cost = self.calculate_avg_cost_contract_based()
         return (
-            cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT else 0
+            cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT and self.transaction.position.contract.category == CategoryContractChoices.STANDARD else 0
         )
 
     def calculate_capital_gain_fiat_based(self):
@@ -370,7 +364,7 @@ class TransactionCalculator:
         cost = self.calculate_cost_contract_based()
         avg_cost = self.calculate_avg_cost_fiat_based()
         return (
-            cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT else 0
+            cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT and self.transaction.position.contract.category == CategoryContractChoices.STANDARD else 0
         )
     
     def calculate_capital_gain(self):
@@ -378,7 +372,7 @@ class TransactionCalculator:
         cost = self.calculate_cost()
         avg_cost = self.calculate_avg_cost()
         return (
-            cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT else 0
+            cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT and self.transaction.position.contract.category == CategoryContractChoices.STANDARD else 0
         )
 
 
