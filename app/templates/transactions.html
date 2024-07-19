@@ -193,12 +193,11 @@
               <tr>
                 <th></th>
                 <th>Type</th>
-                <th>Blockchain</th>
+                <th></th>
                 <th>Quantity</th>
                 <th>Run.Qty</th>
                 <th>Price</th>
                 <th>Cost</th>
-                <th></th>
                 <th>Tot.Cost</th>
                 <th>Avg.Cost</th>
                 <th>Cap.Gain</th>
@@ -226,8 +225,7 @@
                 <td data-label="Quantity">{{ transaction.quantity|floatformat:"-6g" }}</td>
                 <td data-label="Running Quantity">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
                 <td data-label="Price">{{ transaction.price|floatformat:"-6g" }}</td>
-                <td data-label="Cost">{{ transaction.cost|floatformat:"-2g" }}</td>
-                <td data-label="CostSymbol">{{ transaction.against_contract.symbol }}</td>
+                <td data-label="Cost">{{ transaction.cost|floatformat:"-2g" }} <small class="has-text-grey">{{ transaction.against_contract.symbol }}</small></td>
                 <td data-label="Total Cost">{{ transaction.total_cost|floatformat:"-2g" }}</td>
                 <td data-label="Average Cost">{{ transaction.avg_cost|floatformat:"-2g" }}</td>
                 <td data-label="Capital Gain">{% if transaction.capital_gain == 0 %}
@@ -241,7 +239,7 @@
               {% endfor %}
               {% else %}
               <tr class="is-empty">
-                <td colspan="12">
+                <td colspan="11">
                   <section class="section">
                     <div class="content has-text-grey has-text-centered">
                       <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
