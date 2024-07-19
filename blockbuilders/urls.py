@@ -36,7 +36,7 @@ urlpatterns = [
     path("profile/", views_profile.profile, name="profile"),
     path("profile/update/", views_profile.update_user_settings, name="update_user_settings"),
     # DASHBOARD
-    path('dashboard/', views.dashboard_redirect, name='dashboard_redirect'),
+    path("dashboard/", views.dashboard_redirect, name="dashboard_redirect"),
     path("dashboard/<int:page>/", views.dashboard, name="dashboard"),
     # BLOCKCHAIN
     path("blockchains/", views.blockchains, name="blockchains"),
@@ -51,6 +51,11 @@ urlpatterns = [
         "blacklist_contract/<int:contract_id>/",
         views_contract.blacklist_Contract_by_id,
         name="blacklist_contract",
+    ),
+    path(
+        "stable_contract/<int:contract_id>/",
+        views_contract.stable_Contract_by_id,
+        name="stable_contract",
     ),
     # WALLET
     path("wallets/", views_wallet.wallets, name="wallets"),
@@ -116,7 +121,6 @@ urlpatterns = [
         views_position.refresh_full_historical_position_price,
         name="refresh-full-histo-price",
     ),
-    
     # TRANSACTION
     path("transactions/", views_transaction.transactions, name="transactions"),
     path(
@@ -129,7 +133,11 @@ urlpatterns = [
         views_transaction.position_transactions_paginated,
         name="position-transactions-by-page",
     ),
-    path('position/<int:position_id>/transactions/export/csv/', views_transaction.export_transactions_csv, name='export_transactions_csv'),
+    path(
+        "position/<int:position_id>/transactions/export/csv/",
+        views_transaction.export_transactions_csv,
+        name="export_transactions_csv",
+    ),
     # SCAN
     path(
         "polygon/balance/<str:address>/",

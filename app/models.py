@@ -117,12 +117,14 @@ class Contract(models.Model):
     FEE = "fee"
     SUSPICIOUS = "suspicious"
     COLLATERAL = "collateral"
+    STABLE = "stable"
 
     CATEGORY_CHOICES = [
         (STANDARD, "Standard"),
         (FEE, "Fee"),
         (SUSPICIOUS, "Suspicious"),
         (COLLATERAL, "Collateral"),
+        (STABLE, "Stable"),
     ]
 
     blockchain = models.ForeignKey(
