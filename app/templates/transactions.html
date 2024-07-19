@@ -192,7 +192,6 @@
             <thead>
               <tr>
                 <th></th>
-                <th>Type</th>
                 <th></th>
                 <th>Quantity</th>
                 <th>Run.Qty</th>
@@ -211,21 +210,21 @@
                 <td><a href="{{ transaction.link }}" target="_blank" class="icon">
                   <i class="mdi mdi-link"></i>
               </a></td>
-                <td data-label="Type">{% if transaction.type == 'IN' %}
-                  <span class="tag is-primary">{{ transaction.type }}</span>
-                  {% else %}
-                  <span class="tag is-danger">{{ transaction.type }}</span>
-                  {% endif %}
-                </td>
                 <td data-label="Blockchain"><span class="icon">
                   <figure class="image is-128x128">
                     <img class="is-rounded" src="/static/img/{{ position.contract.blockchain.icon }}" />
                   </figure> <!-- FontAwesome icon -->
                 </span></td>
-                <td data-label="Quantity">{{ transaction.quantity|floatformat:"-6g" }}</td>
+
+                <td data-label="Quantity">
+                  {% if transaction.type == 'IN' %}
+                  <span class="has-text-primary">+ {{ transaction.quantity|floatformat:"-6g" }}</span>
+                  {% else %}
+                  <span class="has-text-danger">- {{ transaction.quantity|floatformat:"-6g" }}</span>
+                  {% endif %}</td>
                 <td data-label="Running Quantity">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
                 <td data-label="Price">{{ transaction.price|floatformat:"-6g" }}</td>
-                <td data-label="Cost">{{ transaction.cost|floatformat:"-2g" }} <small class="has-text-grey">{{ transaction.against_contract.symbol }}</small></td>
+                <td data-label="Cost"><small class="has-text-grey">{{ transaction.against_contract.symbol }}</small> {{ transaction.cost|floatformat:"-2g" }}</td>
                 <td data-label="Total Cost">{{ transaction.total_cost|floatformat:"-2g" }}</td>
                 <td data-label="Average Cost">{{ transaction.avg_cost|floatformat:"-2g" }}</td>
                 <td data-label="Capital Gain">{% if transaction.capital_gain == 0 %}

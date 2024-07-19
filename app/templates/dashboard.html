@@ -289,7 +289,7 @@
                 {% for wallet in page_wallets %}
                 <tr>
                   <td data-label="Address">
-                      <span>{{ wallet.address|truncatechars:25 }}</span>
+                      <span><a href="{% url 'wallet-positions-by-page' wallet.id 1 %}">{{ wallet.address|truncatechars:25 }}</a></span>
                   </td>
                   <td data-label="Name">{{ wallet.name }}</td>
                   <td data-label="Description">{{ wallet.description|truncatechars:25 }}</td>
@@ -303,13 +303,10 @@
                   <td class="is-actions-cell">
                     <div class="buttons is-right">
                       <a id="status_download_{{ wallet.id }}" data-task-download-id="{{ wallet.wallet_process.download_task }}" href="{% url 'sync_wallet' wallet.id %}" class="button is-small is-light" type="button">
-                        Download
-                      </a>
-                      <a href="{% url 'wallet-positions-by-page' wallet.id 1 %}" class="button is-small is-light" type="button">
-                        Details
+                        <span class="icon"><i class="mdi mdi-download"></i></span>
                       </a>
                       <a href="{% url 'delete_wallet' wallet.id %}" class="button is-small is-dark" type="button">
-                        Delete
+                        <span class="icon"><i class="mdi mdi-trash-can"></i></span>
                       </a>
                     </div>
                   </td>

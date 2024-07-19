@@ -203,7 +203,7 @@
                 {% with total_transaction=position.position_transactions.count %}
                 <tr>
                   
-                  <td data-label="Token">{% if position.contract.category == "suspicious" %}<span class="icon"><i class="mdi mdi-alert-circle"></i></span>{% endif %}{{ position.contract.symbol }} - {{ position.contract.name }}</td>
+                  <td data-label="Token">{% if position.contract.category == "suspicious" %}<span class="icon"><i class="mdi mdi-alert-circle"></i></span>{% endif %}<a href="{% url 'position-transactions-by-page' position.id 1 %}">{{ position.contract.symbol }} - {{ position.contract.name }}</a></td>
         
                   <td data-label="Blockchain"><div class="tooltip">
                     <span class="icon">
@@ -248,11 +248,8 @@
                   </td>
                   <td class="is-actions-cell">
                     <div class="buttons is-right">
-                      <a href="{% url 'position-transactions-by-page' position.id 1 %}" class="button is-small is-light" type="button">
-                        Details
-                      </a>
                       <button class="button is-small is-dark" type="button" onclick="blacklistContract({{ position.contract.id }})">
-                        Suspicious
+                        <span class="icon"><i class="mdi mdi-skull"></i></span>
                       </button>
                     </div>
                   </td>
