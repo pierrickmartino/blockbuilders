@@ -1,7 +1,7 @@
 import logging
 
 from django.http import HttpRequest
-from django.db.models import F, Value, Case, When, Sum, DecimalField
+from django.db.models import F, Q, Value, Case, When, Sum, DecimalField
 from django.db.models.functions import Coalesce
 
 from app.forms import WalletForm
@@ -16,6 +16,7 @@ from django.core.paginator import Paginator
 
 from app.models import (
     Blockchain,
+    CategoryContractChoices,
     Position,
     Transaction,
     Wallet,
@@ -64,7 +65,8 @@ def dashboard(request: HttpRequest, page):
         positions = Position.objects.annotate(amount=F("quantity") * F("contract__price")).order_by("-amount")[:5]
 
         # Annotate transactions with the capital gain
-        transactions_gain = Transaction.objects.annotate(
+        transactions_without_stable_and_suspicious = Transaction.objects.exclude(position__contract__category=CategoryContractChoices.STABLE).exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS)
+        transactions_gain = transactions_without_stable_and_suspicious.annotate(
             capital_gain=F("quantity") * F("price")
             - Case(
                 When(buy_quantity=0, then=Value(0)),
@@ -74,7 +76,7 @@ def dashboard(request: HttpRequest, page):
         ).order_by("-capital_gain")[:5]
 
         # Annotate transactions with the capital loss
-        transactions_loss = Transaction.objects.annotate(
+        transactions_loss = transactions_without_stable_and_suspicious.annotate(
             capital_gain=F("quantity") * F("price")
             - Case(
                 When(buy_quantity=0, then=Value(0)),
