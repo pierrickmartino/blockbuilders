@@ -20,6 +20,7 @@ class Blockchain_Admin(admin.ModelAdmin):
 
 
 class Contract_Admin(admin.ModelAdmin):
+    list_filter = ["blockchain", "category", "symbol"]
     list_display = (
         "id",
         "blockchain",
@@ -39,6 +40,7 @@ class Contract_Admin(admin.ModelAdmin):
 
 
 class Position_Admin(admin.ModelAdmin):
+    list_filter = ["wallet", "contract"]
     list_display = (
         "id",
         "wallet",
@@ -53,6 +55,7 @@ class Position_Admin(admin.ModelAdmin):
 
 
 class Transaction_Admin(admin.ModelAdmin):
+    list_filter = ["date", "type"]
     list_display = (
         "id",
         "position",
@@ -73,6 +76,7 @@ class Transaction_Admin(admin.ModelAdmin):
     )
 
 class MarketData_Admin(admin.ModelAdmin):
+    list_filter = ["symbol", "time"]
     list_display = (
         "id",
         "symbol",
@@ -88,6 +92,7 @@ class MarketData_Admin(admin.ModelAdmin):
 
 
 class UserSetting_Admin(admin.ModelAdmin):
+    list_filter = ["user"]
     list_display = (
         "id",
         "user",
