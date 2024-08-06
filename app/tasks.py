@@ -536,7 +536,11 @@ def calculate_cost_transaction_task(wallet_id: int):
                     .first()
                 )
                 transaction.price_fiat_based = data.close if data else 0
-                transaction.price = transaction.price_contract_based if transaction.price_contract_based != 0 else transaction.price_fiat_based
+                transaction.price = (
+                    transaction.price_contract_based
+                    if transaction.price_contract_based != 0
+                    else transaction.price_fiat_based
+                )
                 transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
                 transaction.against_fiat = fiat
                 transaction.save()
@@ -556,7 +560,11 @@ def calculate_cost_transaction_task(wallet_id: int):
                     )
 
                 transaction.price_fiat_based = data.close if data else 0
-                transaction.price = transaction.price_contract_based if transaction.price_contract_based != 0 else transaction.price_fiat_based
+                transaction.price = (
+                    transaction.price_contract_based
+                    if transaction.price_contract_based != 0
+                    else transaction.price_fiat_based
+                )
                 transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
                 transaction.against_fiat = fiat
                 transaction.save()
@@ -757,16 +765,16 @@ def get_historical_price_from_market_task(symbol: str):
 
         delta = 30
 
-        # Get today's date
-        hundred_days_ago = timezone.now().date() - timedelta(days=delta)
+        # Get historical date
+        days_ago = timezone.now().date() - timedelta(days=delta)
 
         # Test if the data is already there
-        data = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=hundred_days_ago)
+        data = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=days_ago)
         record_count = data.count()
 
-        if record_count >= delta:
+        if record_count > delta:
             logger.info(
-                f"Already have 100 or more entries starting from today. No need to fetch new data for symbol {symbol}."
+                f"Already have {delta} or more entries ({record_count}) starting from today. No need to fetch new data for symbol {symbol}."
             )
             return symbol
 
@@ -870,6 +878,7 @@ def update_contract_information(previous_return: int, symbol: str):
         # Get the current time
         now = timezone.now()
 
+        # Calculate the relative dates
         one_day_ago = now - relativedelta(days=1)
         one_week_ago = now - relativedelta(weeks=1)
         one_month_ago = now - relativedelta(months=1)
@@ -887,9 +896,16 @@ def update_contract_information(previous_return: int, symbol: str):
         )
 
         for contract in contracts:
+            # previous day
             contract.previous_day_price = previous_day_price.close if previous_day_price else 0
+            contract.previous_day = one_day_ago if previous_day_price else 0
+            # previous week
             contract.previous_week_price = previous_week_price.close if previous_week_price else 0
+            contract.previous_week = one_week_ago if previous_week_price else 0
+            # previous month
             contract.previous_month_price = previous_month_price.close if previous_month_price else 0
+            contract.previous_month = one_month_ago if previous_month_price else 0
+            # save
             contract.save()
 
     except Contract.DoesNotExist:
