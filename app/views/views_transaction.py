@@ -130,6 +130,7 @@ def position_transactions_paginated(request, position_id, page):
         calculator = TransactionCalculator(transaction)
         avg_cost = calculator.calculate_avg_cost()
         cost = calculator.calculate_cost()
+        cost_fiat_based = calculator.calculate_cost_fiat_based()
         capital_gain = calculator.calculate_capital_gain()
 
         total_realized_gain += capital_gain
@@ -143,7 +144,9 @@ def position_transactions_paginated(request, position_id, page):
                 "running_quantity": transaction.running_quantity,
                 "price": transaction.price,
                 "cost": cost,
+                "cost_fiat_based": cost_fiat_based,
                 "against_contract": transaction.against_contract,
+                "against_fiat": transaction.against_fiat,
                 "total_cost": transaction.total_cost,
                 "capital_gain": capital_gain,
                 "date": transaction.date,

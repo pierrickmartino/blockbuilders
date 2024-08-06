@@ -521,34 +521,17 @@ def calculate_cost_transaction_task(wallet_id: int):
                         .order_by("-time")
                         .first()
                     )
-                else:
+                elif symbol.startswith("aPol"):
+                    new_symbol = symbol.replace("aPol", "")
                     data = (
-                        MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=transaction.date)
+                        MarketData.objects.filter(symbol=new_symbol, reference="USD", time__lte=transaction.date)
                         .order_by("-time")
                         .first()
                     )
-
-                data = (
-                    MarketData.objects.filter(
-                        symbol=transaction.position.contract.symbol, reference="USD", time__lte=transaction.date
-                    )
-                    .order_by("-time")
-                    .first()
-                )
-                transaction.price_fiat_based = data.close if data else 0
-                transaction.price = (
-                    transaction.price_contract_based
-                    if transaction.price_contract_based != 0
-                    else transaction.price_fiat_based
-                )
-                transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
-                transaction.against_fiat = fiat
-                transaction.save()
-
-            else:
-                if symbol.startswith("USDC."):
+                elif symbol.startswith("am"):
+                    new_symbol = symbol.replace("am", "")
                     data = (
-                        MarketData.objects.filter(symbol="USDC", reference="USD", time__lte=transaction.date)
+                        MarketData.objects.filter(symbol=new_symbol, reference="USD", time__lte=transaction.date)
                         .order_by("-time")
                         .first()
                     )
@@ -560,17 +543,17 @@ def calculate_cost_transaction_task(wallet_id: int):
                     )
 
                 transaction.price_fiat_based = data.close if data else 0
-                transaction.price = (
-                    transaction.price_contract_based
-                    if transaction.price_contract_based != 0
-                    else transaction.price_fiat_based
-                )
+                # transaction.price = (
+                #     transaction.price_contract_based
+                #     if transaction.price_contract_based != 0
+                #     else transaction.price_fiat_based
+                # )
+                transaction.price = transaction.price_fiat_based
                 transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
                 transaction.against_fiat = fiat
                 transaction.save()
 
-                logger.info(f"Multi-part transaction for {transaction}")
-                if transaction.hash == "0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb":
+                if transaction.hash == "0xe9ca6a317ef1f07f7560d459368dc73ae354d6ae8224b9877e29bb0d6f6f04f3": 
                     logger.info(f"transaction.position.contract.symbol : {transaction.position.contract.symbol}")
                     logger.info(f"transaction.quantity : {transaction.quantity}")
                     logger.info(f"transaction.date : {transaction.date}")
@@ -579,6 +562,54 @@ def calculate_cost_transaction_task(wallet_id: int):
                     logger.info(f"transaction.price_contract_based : {transaction.price_contract_based}")
                     logger.info(f"transaction.against_fiat : {transaction.against_fiat}")
                     logger.info(f"transaction.price_fiat_based : {transaction.price_fiat_based}")
+                    logger.info(f"transaction.cost_fiat_based : {transaction.cost_fiat_based}")
+                    logger.info(f"transaction.type : {transaction.type}")
+                    logger.info(f"transaction.position : {transaction.position}")
+
+            else:
+                if symbol.startswith("USDC."):
+                    data = (
+                        MarketData.objects.filter(symbol="USDC", reference="USD", time__lte=transaction.date)
+                        .order_by("-time")
+                        .first()
+                    )
+                elif symbol.startswith("aPol"):
+                    new_symbol = symbol.replace("aPol", "")
+                    data = (
+                        MarketData.objects.filter(symbol=new_symbol, reference="USD", time__lte=transaction.date)
+                        .order_by("-time")
+                        .first()
+                    )
+                else:
+                    data = (
+                        MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=transaction.date)
+                        .order_by("-time")
+                        .first()
+                    )
+
+                transaction.price_fiat_based = data.close if data else 0
+                # transaction.price = (
+                #     transaction.price_contract_based
+                #     if transaction.price_contract_based != 0
+                #     else transaction.price_fiat_based
+                # )
+                transaction.price = transaction.price_fiat_based
+                transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
+                transaction.against_fiat = fiat
+                transaction.save()
+
+                logger.info(f"Multi-part transaction for {transaction}")
+                if transaction.hash == "0xf9746d44db326689f36d6851f5fcda84109d518437f6fb6943231094ddbeb7ed": 
+                    # 0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb
+                    logger.info(f"transaction.position.contract.symbol : {transaction.position.contract.symbol}")
+                    logger.info(f"transaction.quantity : {transaction.quantity}")
+                    logger.info(f"transaction.date : {transaction.date}")
+                    logger.info(f"transaction.price : {transaction.price}")
+                    logger.info(f"transaction.against_contract : {transaction.against_contract}")
+                    logger.info(f"transaction.price_contract_based : {transaction.price_contract_based}")
+                    logger.info(f"transaction.against_fiat : {transaction.against_fiat}")
+                    logger.info(f"transaction.price_fiat_based : {transaction.price_fiat_based}")
+                    logger.info(f"transaction.cost_fiat_based : {transaction.cost_fiat_based}")
                     logger.info(f"transaction.type : {transaction.type}")
                     logger.info(f"transaction.position : {transaction.position}")
 
@@ -825,10 +856,10 @@ def get_full_init_historical_price_from_market_task(symbol: str):
         delta = 1000
 
         # Get today's date
-        hundred_days_ago = timezone.now().date() - timedelta(days=delta)
+        days_ago = timezone.now().date() - timedelta(days=delta)
 
         # Test if the data is already there
-        data = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=hundred_days_ago)
+        data = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=days_ago)
         data.delete()
         logger.info(f"Historical prices are cleaned up for symbol {symbol}.")
 
