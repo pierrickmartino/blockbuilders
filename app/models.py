@@ -319,7 +319,7 @@ class TransactionCalculator:
         # Calculate the average cost of the position based on price
         return (
             self.transaction.total_cost / self.transaction.buy_quantity
-            if self.transaction.buy_quantity != 0
+            if self.transaction.buy_quantity != 0 and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
             else 0
         )
 
