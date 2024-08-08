@@ -503,7 +503,7 @@ def calculate_cost_transaction_task(wallet_id: int):
         for transaction in transactions_by_wallet:
             condition = Transaction.objects.filter(hash=transaction.hash)
 
-            symbol = transaction.position.contract.symbol
+            symbol = transaction.position.contract.symbol.replace("WETH", "ETH")
 
             if condition.count() == 2:
                 transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)
