@@ -81,7 +81,7 @@
             <div class="level-item">
               <div class="is-widget-label">
                 <p class="subtitle is-spaced is-6">
-                  Total Amount
+                  Total Amount ($)
                 </p>
                 <p class="title is-4" style="margin-top: 6px; margin-bottom: 6px">
                   {{ wallet.balance|floatformat:"-2g" }}
@@ -114,10 +114,10 @@
             <div class="level-item">
               <div class="is-widget-label">
                 <p class="subtitle is-spaced is-6">
-                  Total Realized Performance
+                  Total Realized Performance ($)
                 </p>
                 <p class="title is-4" style="margin-top: 6px; margin-bottom: 6px">
-                  ${{ total_realized_gain|floatformat:"-2g" }}
+                  {{ total_realized_gain|floatformat:"-2g" }}
                 </p>
                 <div class="control">
                   <div class="tags has-addons">

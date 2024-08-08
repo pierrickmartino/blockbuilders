@@ -182,6 +182,7 @@
               <tr>
                 <th></th>
                 <th></th>
+                <th>Position</th>
                 <th class="has-text-right">Quantity</th>
                 <th class="has-text-right">Run.Qty</th>
                 <th class="has-text-right">Price</th>
@@ -204,7 +205,7 @@
                     <img class="is-rounded" src="/static/img/{{ position.contract.blockchain.icon }}" />
                   </figure> <!-- FontAwesome icon -->
                 </span></td>
-
+                <td data-label="Position">{{ position.contract.symbol }} <small class="has-text-grey is-size-7">{{ transaction.against_contract.symbol }}</small></td>
                 <td data-label="Quantity" class="has-text-right">
                   {% if transaction.type == 'IN' %}
                   <span class="has-text-primary">+ {{ transaction.quantity|floatformat:"-6g" }}</span>
@@ -227,7 +228,7 @@
               {% endfor %}
               {% else %}
               <tr class="is-empty">
-                <td colspan="11">
+                <td colspan="12">
                   <section class="section">
                     <div class="content has-text-grey has-text-centered">
                       <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>

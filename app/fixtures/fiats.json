@@ -4,6 +4,7 @@
       "pk": 1,
       "fields": {
         "symbol": "USD",
+        "short_symbol": "$",
         "name": "US Dollar"
       }
     }

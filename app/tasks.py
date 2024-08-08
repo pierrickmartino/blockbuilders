@@ -1,6 +1,8 @@
 import logging
 import time
 
+from blockbuilders.settings.base import DEBUG
+
 from celery import shared_task
 from django.shortcuts import get_object_or_404
 from dateutil.relativedelta import relativedelta
@@ -503,13 +505,16 @@ def calculate_cost_transaction_task(wallet_id: int):
         for transaction in transactions_by_wallet:
             condition = Transaction.objects.filter(hash=transaction.hash)
 
-            symbol = transaction.position.contract.symbol.replace("WETH", "ETH")
+            # symbol = transaction.position.contract.symbol.replace("WETH", "ETH")
 
             if condition.count() == 2:
                 transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)
                 position = Position.objects.filter(id=transaction_ref[0].position.id).first()
                 transaction.against_contract = position.contract
                 transaction.cost_contract_based = transaction_ref[0].quantity
+
+                symbol = position.contract.symbol.replace("WETH", "ETH")
+
                 if transaction.quantity == 0:
                     transaction.price_contract_based = 0
                 else:
@@ -542,7 +547,7 @@ def calculate_cost_transaction_task(wallet_id: int):
                         .first()
                     )
 
-                transaction.price_fiat_based = data.close if data else 0
+                transaction.price_fiat_based = transaction.price_contract_based * data.close if data else 0
                 # transaction.price = (
                 #     transaction.price_contract_based
                 #     if transaction.price_contract_based != 0
@@ -553,7 +558,7 @@ def calculate_cost_transaction_task(wallet_id: int):
                 transaction.against_fiat = fiat
                 transaction.save()
 
-                if transaction.hash == "0xe9ca6a317ef1f07f7560d459368dc73ae354d6ae8224b9877e29bb0d6f6f04f3": 
+                if DEBUG == True and transaction.hash == "0x9a59d837769a45950af2bb4dffa11c05dc6f76ae8b7ecb542bf80eca36c82e12": #"0xe9ca6a317ef1f07f7560d459368dc73ae354d6ae8224b9877e29bb0d6f6f04f3": 
                     logger.info(f"transaction.position.contract.symbol : {transaction.position.contract.symbol}")
                     logger.info(f"transaction.quantity : {transaction.quantity}")
                     logger.info(f"transaction.date : {transaction.date}")
@@ -565,8 +570,13 @@ def calculate_cost_transaction_task(wallet_id: int):
                     logger.info(f"transaction.cost_fiat_based : {transaction.cost_fiat_based}")
                     logger.info(f"transaction.type : {transaction.type}")
                     logger.info(f"transaction.position : {transaction.position}")
+                    logger.info(f"symbol : {symbol}")
 
             else:
+                
+                # TODO : Need to be investigated 
+                symbol = transaction.position.contract.symbol.replace("WETH", "ETH")
+
                 if symbol.startswith("USDC."):
                     data = (
                         MarketData.objects.filter(symbol="USDC", reference="USD", time__lte=transaction.date)
@@ -599,7 +609,7 @@ def calculate_cost_transaction_task(wallet_id: int):
                 transaction.save()
 
                 logger.info(f"Multi-part transaction for {transaction}")
-                if transaction.hash == "0xf9746d44db326689f36d6851f5fcda84109d518437f6fb6943231094ddbeb7ed": 
+                if DEBUG == True and transaction.hash == "0xf9746d44db326689f36d6851f5fcda84109d518437f6fb6943231094ddbeb7ed": 
                     # 0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb
                     logger.info(f"transaction.position.contract.symbol : {transaction.position.contract.symbol}")
                     logger.info(f"transaction.quantity : {transaction.quantity}")
@@ -612,6 +622,7 @@ def calculate_cost_transaction_task(wallet_id: int):
                     logger.info(f"transaction.cost_fiat_based : {transaction.cost_fiat_based}")
                     logger.info(f"transaction.type : {transaction.type}")
                     logger.info(f"transaction.position : {transaction.position}")
+                    logger.info(f"symbol : {symbol}")
 
         logger.info(f"Calculated transaction costs for wallet id {wallet_id} successfully.")
         return wallet_id
@@ -695,7 +706,7 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
                 cost_fiat_based = calculator.calculate_cost_fiat_based()
                 cost_price_based = calculator.calculate_cost()
 
-                if DEBUG_LINK == True:
+                if DEBUG == True and DEBUG_LINK == True:
                     logger.info(f"Calculating running quantities for transaction id {transaction.id}.")
                     logger.info(f"BEFORE calculation")
                     logger.info(f"transaction.date : {transaction.date}")
@@ -725,7 +736,7 @@ def calculate_running_quantity_transaction_task(wallet_id: int):
                 price_contract_based = transaction.price_contract_based
                 price = transaction.price
 
-                if DEBUG_LINK == True:
+                if DEBUG == True and DEBUG_LINK == True:
                     logger.info(f"AFTER calculation")
                     logger.info(f"running_quantity : {running_quantity}")
                     logger.info(f"buy_quantity : {buy_quantity}")
