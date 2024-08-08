@@ -377,6 +377,85 @@
         </div>
       </div>
     </div>
+    <div class="card has-table has-mobile-sort-spaced">
+      <header class="card-header">
+        <p class="card-header-title">
+          <span class="icon"><i class="mdi mdi-view-list"></i></span>
+          Last 5 transactions
+        </p>
+        <div class="buttons is-right">
+        </div>
+      </header>
+      <div class="card-content">
+        <div class="b-table has-pagination">
+          <div class="table-wrapper has-mobile-cards">
+            <table class="table is-fullwidth is-striped is-hoverable is-sortable">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th>Position</th>
+                  <th class="has-text-right">Quantity</th>
+                  <th class="has-text-right">Run.Qty</th>
+                  <th class="has-text-right">Price</th>
+                  <th class="has-text-right">Cost</th>
+                  <th class="has-text-right">Tot.Cost</th>
+                  <th class="has-text-right">Avg.Cost</th>
+                  <th class="has-text-right">Cap.Gain</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if last_5_transactions %}
+                {% for transaction in last_5_transactions %}
+                <tr>
+                  <td class="is-narrow"><a href="{{ transaction.link }}" target="_blank" class="icon">
+                    <i class="mdi mdi-link"></i>
+                </a></td>
+                  <td data-label="Blockchain" class="is-narrow"><span class="icon">
+                    <figure class="image is-128x128">
+                      <img class="is-rounded" src="/static/img/{{ transaction.position.contract.blockchain.icon }}" />
+                    </figure> <!-- FontAwesome icon -->
+                  </span></td>
+                  <td data-label="Position">{{ transaction.position.contract.symbol }} <small class="has-text-grey is-size-7">{{ transaction.against_contract.symbol }}</small></td>
+                  <td data-label="Quantity" class="has-text-right">
+                    {% if transaction.type == 'IN' %}
+                    <span class="has-text-primary">+ {{ transaction.quantity|floatformat:"-6g" }}</span>
+                    {% else %}
+                    <span class="has-text-danger">- {{ transaction.quantity|floatformat:"-6g" }}</span>
+                    {% endif %}</td>
+                  <td data-label="Running Quantity" class="has-text-right">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
+                  <td data-label="Price" class="has-text-right"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.price|floatformat:"-6g" }}</td>
+                  <td data-label="Cost" class="has-text-right"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.cost|floatformat:"-2g" }}</td>
+                  <td data-label="Total Cost" class="has-text-right"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.total_cost|floatformat:"-2g" }}</td>
+                  <td data-label="Average Cost" class="has-text-right"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.avg_cost|floatformat:"-2g" }}</td>
+                  <td data-label="Capital Gain" class="has-text-right">{% if transaction.capital_gain == 0 %}
+                    {% elif transaction.capital_gain < 0 %} <span class="tag is-danger">{{ transaction.against_fiat.short_symbol }} {{ transaction.capital_gain|floatformat:"-2g" }}</span>
+                      {% else %}
+                      <span class="tag is-primary">{{ transaction.against_fiat.short_symbol }} {{ transaction.capital_gain|floatformat:"-2g" }}</span>
+                      {% endif %}
+                  </td>
+                  <td data-label="Date" class="is-narrow"><small class="has-text-grey is-abbr-like">{{ transaction.date }}</small></td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr class="is-empty">
+                  <td colspan="12">
+                    <section class="section">
+                      <div class="content has-text-grey has-text-centered">
+                        <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
+                        <p>Nothing's there…</p>
+                      </div>
+                    </section>
+                  </td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <div id="add-wallet-modal" class="modal">

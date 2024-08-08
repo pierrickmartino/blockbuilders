@@ -19,6 +19,7 @@ from app.models import (
     CategoryContractChoices,
     Position,
     Transaction,
+    TransactionCalculator,
     Wallet,
 )
 
@@ -65,7 +66,9 @@ def dashboard(request: HttpRequest, page):
         positions = Position.objects.annotate(amount=F("quantity") * F("contract__price")).order_by("-amount")[:5]
 
         # Annotate transactions with the capital gain
-        transactions_without_stable_and_suspicious = Transaction.objects.exclude(position__contract__category=CategoryContractChoices.STABLE).exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS)
+        transactions_without_stable_and_suspicious = Transaction.objects.exclude(
+            position__contract__category=CategoryContractChoices.STABLE
+        ).exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS)
         transactions_gain = transactions_without_stable_and_suspicious.annotate(
             capital_gain=F("quantity") * F("price")
             - Case(
@@ -160,8 +163,42 @@ def dashboard(request: HttpRequest, page):
         page_wallets = paginator.get_page(page)
         page_wallets.adjusted_elided_pages = paginator.get_elided_page_range(page)
 
+        transactions_with_calculator = []
+        transactions = Transaction.objects.exclude(
+            position__contract__category=CategoryContractChoices.STABLE
+        ).exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS).order_by("-date")[:5]
+
+        for transaction in transactions:
+            calculator = TransactionCalculator(transaction)
+            avg_cost = calculator.calculate_avg_cost()
+            cost = calculator.calculate_cost()
+            cost_fiat_based = calculator.calculate_cost_fiat_based()
+            capital_gain = calculator.calculate_capital_gain()
+
+            transaction_link = transaction.position.contract.blockchain.transaction_link + transaction.hash
+
+            transactions_with_calculator.append(
+                {
+                    "type": transaction.type,
+                    "quantity": transaction.quantity,
+                    "running_quantity": transaction.running_quantity,
+                    "price": transaction.price,
+                    "cost": cost,
+                    "cost_fiat_based": cost_fiat_based,
+                    "against_contract": transaction.against_contract,
+                    "against_fiat": transaction.against_fiat,
+                    "total_cost": transaction.total_cost,
+                    "capital_gain": capital_gain,
+                    "date": transaction.date,
+                    "avg_cost": avg_cost,
+                    "link": transaction_link,
+                    "position": transaction.position,
+                }
+            )
+
         context = {
             "page_wallets": page_wallets,
+            "last_5_transactions": transactions_with_calculator,
             "top_positions": top_positions,
             "top_blockchains": top_blockchains,
             "top_transactions_gain": top_transactions_gain,
