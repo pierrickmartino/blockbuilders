@@ -43,6 +43,7 @@ class TimeStampModel(models.Model):
 class Fiat(models.Model):
     name = models.CharField(max_length=255, unique=True)  # Unique name of the fiat currency
     symbol = models.CharField(max_length=50, unique=True)  # Unique symbol of the fiat currency
+    short_symbol = models.CharField(max_length=3, default="")  # Unique short symbol of the fiat currency ($, €, etc...)
     exchange_rate = models.DecimalField(
         max_digits=15, decimal_places=8, default=1
     )  # Exchange rate of the fiat currency
