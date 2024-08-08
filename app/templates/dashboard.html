@@ -36,7 +36,7 @@
                     {% if top_positions %}
                     {% for position in top_positions %}
                     <tr>
-                      <td data-label="Blockchain">
+                      <td data-label="Blockchain" class="is-narrow">
                         <span class="icon">
                           <figure class="image is-128x128">
                             <img class="is-rounded" src="/static/img/{{ position.contract.blockchain.icon }}" />
@@ -44,9 +44,13 @@
                         </span>
                       </td>
                       <td data-label="Position">
-                          <span><small>{{ position.contract.name|truncatechars:18 }}</small></span>
+                          <div><small>{{ position.contract.name|truncatechars:18 }}</small></div>
+                          <div><small class="has-text-grey is-size-7">{{ position.quantity|floatformat:"-3g" }} {{ position.contract.symbol }}</div>
                       </td>
-                      <td data-label="Amount (%)" class="has-text-right"><small>{{ position.amount|floatformat:"-2g" }} ({{ position.percentage |floatformat:"-2g" }}%)</small></td>
+                      <td data-label="Amount (%)" class="has-text-right">
+                        <div><small>$ {{ position.amount|floatformat:"-2g" }}</small></div>
+                        <div><small class="has-text-grey is-size-7">{{ position.percentage |floatformat:"-2g" }}%</small></div>
+                      </td>
                     </tr>
                     {% endfor %}
                     {% else %}
@@ -84,7 +88,7 @@
                     {% if top_blockchains %}
                     {% for blockchain in top_blockchains %}
                     <tr>
-                      <td data-label="Blockchain">
+                      <td data-label="Blockchain" class="is-narrow">
                         <span class="icon">
                           <figure class="image is-128x128">
                             <img class="is-rounded" src="/static/img/{{ blockchain.icon }}" />
@@ -92,9 +96,12 @@
                         </span>
                       </td>
                       <td data-label="Blockchain">
-                          <span><small>{{ blockchain.name|truncatechars:18 }}</small></span>
+                          <div><small>{{ blockchain.name|truncatechars:18 }}</small></div>
                       </td>
-                      <td data-label="Amount (%)" class="has-text-right"><small>{{ blockchain.amount|floatformat:"-2g" }} ({{ blockchain.percentage |floatformat:"-2g" }}%)</small></td>
+                      <td data-label="Amount (%)" class="has-text-right">
+                        <div><small>$ {{ blockchain.amount|floatformat:"-2g" }}</small></div>
+                        <div><small class="has-text-grey is-size-7">{{ blockchain.percentage |floatformat:"-2g" }}%</small></div>
+                      </td>
                     </tr>
                     {% endfor %}
                     {% else %}
@@ -132,7 +139,7 @@
                     {% if top_transactions_gain %}
                     {% for transaction in top_transactions_gain %}
                     <tr>
-                      <td data-label="Blockchain">
+                      <td data-label="Blockchain" class="is-narrow">
                         <span class="icon">
                           <figure class="image is-128x128">
                             <img class="is-rounded" src="/static/img/{{ transaction.icon }}" />
@@ -141,10 +148,11 @@
                       </td>
                       <td data-label="Position">
                         <span><small>{{ transaction.contract.name|truncatechars:16 }}</small></span>
-                    </td>
-                      <td data-label="Date" class="is-narrow">
-                        <span><small class="has-text-grey is-abbr-like">{{ transaction.date|date:"SHORT_DATE_FORMAT" }}</small></span>
-                      <td data-label="Gain" class="has-text-right"><small>{{ transaction.capital_gain|floatformat:"-2g" }}</small></td>
+                      </td>
+                      <td data-label="Gain" class="has-text-right">
+                        <div><small>$ {{ transaction.capital_gain|floatformat:"-2g" }}</small></div>
+                        <div><small class="has-text-grey is-abbr-like is-size-7">{{ transaction.date|date:"SHORT_DATE_FORMAT" }}</small></div>
+                      </td>
                     </tr>
                     {% endfor %}
                     {% else %}
@@ -182,7 +190,7 @@
                     {% if top_transactions_loss %}
                     {% for transaction in top_transactions_loss %}
                     <tr>
-                      <td data-label="Blockchain">
+                      <td data-label="Blockchain" class="is-narrow">
                         <span class="icon">
                           <figure class="image is-128x128">
                             <img class="is-rounded" src="/static/img/{{ transaction.icon }}" />
@@ -192,9 +200,10 @@
                       <td data-label="Position">
                         <span><small>{{ transaction.contract.name|truncatechars:16 }}</small></span>
                     </td>
-                      <td data-label="Date" class="is-narrow">
-                        <span><small class="has-text-grey is-abbr-like">{{ transaction.date|date:"SHORT_DATE_FORMAT" }}</small></span>
-                      <td data-label="Loss" class="has-text-right"><small>{{ transaction.capital_gain|floatformat:"-2g" }}</small></td>
+                      <td data-label="Loss" class="has-text-right">
+                        <div><small>$ {{ transaction.capital_gain|floatformat:"-2g" }}</small></div>
+                        <div><small class="has-text-grey is-abbr-like is-size-7">{{ transaction.date|date:"SHORT_DATE_FORMAT" }}</small></div>
+                      </td>
                     </tr>
                     {% endfor %}
                     {% else %}
@@ -262,7 +271,9 @@
                   <th>Address</th>
                   <th>Name</th>
                   <th>Description</th>
-                  <th>Balance</th>
+                  <th class="has-text-right">Balance</th>
+                  <th class="has-text-right">Realized Perf</th>
+                  <th class="has-text-right">UnRealized Perf</th>
                   <th>Created</th>
                   <th></th>
                 </tr>
@@ -276,10 +287,20 @@
                   </td>
                   <td data-label="Name">{{ wallet.name }}</td>
                   <td data-label="Description">{{ wallet.description|truncatechars:25 }}</td>
-                  <td data-label="Balance">{{ wallet.balance|floatformat:"-2g" }} <small class="has-text-grey">({{ wallet.percentage|floatformat:"-2g" }}%)</small></td>
+                  <td data-label="Balance" class="has-text-right">{{ wallet.balance|floatformat:"-2g" }} <small class="has-text-grey">({{ wallet.percentage|floatformat:"-2g" }}%)</small></td>
                   <!-- <td id="status_{{ wallet.id }}" data-task-id="{{ wallet.wallet_process.download_task }}">
                       Checking status...
                   </td> -->
+                  <td data-label="Realized Performance" class="has-text-right">{% if wallet.realized_gain == 0 %}<span class="tag is-grey">- %</span>
+                    {% elif wallet.realized_gain < 0 %} <span class="tag is-danger">${{ wallet.realized_gain|floatformat:"-2g" }}</span>
+                      {% else %}
+                      <span class="tag is-primary">${{ wallet.realized_gain|floatformat:"-2g" }}</span>
+                      {% endif %}</td>
+                  <td data-label="UnRealized Performance" class="has-text-right">{% if wallet.unrealized_gain == 0 %}<span class="tag is-grey">- %</span>
+                    {% elif wallet.unrealized_gain < 0 %} <span class="tag is-danger">${{ wallet.unrealized_gain|floatformat:"-2g" }}</span>
+                      {% else %}
+                      <span class="tag is-primary">${{ wallet.unrealized_gain|floatformat:"-2g" }}</span>
+                      {% endif %}</td>
                   <td data-label="Created">
                     <small class="has-text-grey is-abbr-like">{{ wallet.created_at }}</small>
                   </td>
@@ -297,7 +318,7 @@
                 {% endfor %}
                 {% else %}
                 <tr class="is-empty">
-                  <td colspan="5">
+                  <td colspan="7">
                     <section class="section">
                       <div class="content has-text-grey has-text-centered">
                         <p><span class="icon is-large"><i class="mdi mdi-emoticon-sad mdi-48px"></i></span></p>
