@@ -182,13 +182,13 @@
               <tr>
                 <th></th>
                 <th></th>
-                <th>Quantity</th>
-                <th>Run.Qty</th>
-                <th>Price</th>
-                <th>Cost</th>
-                <th>Tot.Cost</th>
-                <th>Avg.Cost</th>
-                <th>Cap.Gain</th>
+                <th class="has-text-right">Quantity</th>
+                <th class="has-text-right">Run.Qty</th>
+                <th class="has-text-right">Price</th>
+                <th class="has-text-right">Cost</th>
+                <th class="has-text-right">Tot.Cost</th>
+                <th class="has-text-right">Avg.Cost</th>
+                <th class="has-text-right">Cap.Gain</th>
                 <th>Date</th>
               </tr>
             </thead>
@@ -196,27 +196,27 @@
               {% if page_transactions %}
               {% for transaction in page_transactions %}
               <tr>
-                <td><a href="{{ transaction.link }}" target="_blank" class="icon">
+                <td class="is-narrow"><a href="{{ transaction.link }}" target="_blank" class="icon">
                   <i class="mdi mdi-link"></i>
               </a></td>
-                <td data-label="Blockchain"><span class="icon">
+                <td data-label="Blockchain" class="is-narrow"><span class="icon">
                   <figure class="image is-128x128">
                     <img class="is-rounded" src="/static/img/{{ position.contract.blockchain.icon }}" />
                   </figure> <!-- FontAwesome icon -->
                 </span></td>
 
-                <td data-label="Quantity">
+                <td data-label="Quantity" class="has-text-right">
                   {% if transaction.type == 'IN' %}
                   <span class="has-text-primary">+ {{ transaction.quantity|floatformat:"-6g" }}</span>
                   {% else %}
                   <span class="has-text-danger">- {{ transaction.quantity|floatformat:"-6g" }}</span>
                   {% endif %}</td>
-                <td data-label="Running Quantity">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
-                <td data-label="Price"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.price|floatformat:"-6g" }}</td>
-                <td data-label="Cost"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.cost|floatformat:"-2g" }}</td>
-                <td data-label="Total Cost"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.total_cost|floatformat:"-2g" }}</td>
-                <td data-label="Average Cost"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.avg_cost|floatformat:"-2g" }}</td>
-                <td data-label="Capital Gain">{% if transaction.capital_gain == 0 %}
+                <td data-label="Running Quantity" class="has-text-right">{{ transaction.running_quantity|floatformat:"-6g" }}</td>
+                <td data-label="Price" class="has-text-right"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.price|floatformat:"-6g" }}</td>
+                <td data-label="Cost" class="has-text-right"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.cost|floatformat:"-2g" }}</td>
+                <td data-label="Total Cost" class="has-text-right"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.total_cost|floatformat:"-2g" }}</td>
+                <td data-label="Average Cost" class="has-text-right"><small class="has-text-grey">{{ transaction.against_fiat.short_symbol }}</small> {{ transaction.avg_cost|floatformat:"-2g" }}</td>
+                <td data-label="Capital Gain" class="has-text-right">{% if transaction.capital_gain == 0 %}
                   {% elif transaction.capital_gain < 0 %} <span class="tag is-danger">{{ transaction.against_fiat.short_symbol }} {{ transaction.capital_gain|floatformat:"-2g" }}</span>
                     {% else %}
                     <span class="tag is-primary">{{ transaction.against_fiat.short_symbol }} {{ transaction.capital_gain|floatformat:"-2g" }}</span>
