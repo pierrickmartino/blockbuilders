@@ -61,25 +61,6 @@ services:
       - db
       - redis
       - web
-  flower:
-    container_name: flower
-    build: .
-    command: celery -A blockbuilders flower
-    networks:
-      - internal
-    volumes:
-      - .:/code
-    ports:
-      - 5555:5555
-    env_file:
-      - ./.env
-    environment:
-      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
-      CELERY_RESULT_BACKEND: ${REDIS_BACKEND}
-    depends_on:
-      - web
-      - redis
-      - celery
 volumes:
   postgres_data:
   static_volume:
