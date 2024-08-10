@@ -64,14 +64,13 @@ services:
   flower:
     container_name: flower
     build: .
-    restart: always
     command: celery -A blockbuilders flower
     networks:
       - internal
     volumes:
       - .:/code
     ports:
-      - "5555:5555"
+      - 5555:5555
     env_file:
       - ./.env
     environment:
