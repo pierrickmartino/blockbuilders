@@ -54,7 +54,7 @@ services:
     networks:
       - internal
     volumes:
-      - celery_volume:/code
+      - .:/code
     env_file:
       - ./.env
     depends_on:
@@ -68,7 +68,7 @@ services:
     networks:
       - internal
     volumes:
-      - flower_volume:/code
+      - .:/code
     ports:
       - 5555:5555
     env_file:
@@ -84,8 +84,6 @@ volumes:
   postgres_data:
   static_volume:
   media_volume:
-  celery_volume:
-  flower_volume:
 networks:
   internal:
     driver: bridge
