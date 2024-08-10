@@ -68,17 +68,10 @@ services:
     command: celery -A blockbuilders flower
     networks:
       - internal
-      - web
-    labels:
-      - traefik.http.routers.web.rule=Host(`app.blockbuilders.tech`)
-      - traefik.http.routers.web.tls=true
-      - traefik.http.routers.web.tls.certresolver=lets-encrypt
-      - traefik.http.services.web.loadbalancer.server.port=5555
-      - traefik.port=5555
     volumes:
       - .:/code
     ports:
-      - 5555:5555
+      - "5555:5555"
     env_file:
       - ./.env
     environment:
