@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   web:
+    container_name: web
     build: .
     restart: always
     command: gunicorn blockbuilders.wsgi:application --bind 0.0.0.0:8000
@@ -16,6 +17,7 @@ services:
     env_file:
       - ./.env
   db:
+    container_name: db
     image: postgres:16
     restart: always
     volumes:
@@ -30,7 +32,9 @@ services:
       - ./.env
   redis:
     image: redis:7
+    container_name: redis
   celery:
+    container_name: celery
     build: .
     restart: always
     command: celery -A blockbuilders worker -l info
@@ -43,6 +47,7 @@ services:
       - redis
       - web
   nginx:
+    container_name: nginx
     build: ./nginx
     restart: always
     ports:
@@ -52,6 +57,23 @@ services:
       - media_volume:/code/mediafiles
     depends_on:
       - web
+  flower:
+    container_name: flower
+    build: .
+    command: celery -A blockbuilders flower
+    volumes:
+      - .:/code
+    ports:
+      - 5555:5555
+    env_file:
+      - ./.env
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${REDIS_BACKEND}
+    depends_on:
+      - web
+      - redis
+      - celery
 volumes:
   postgres_data:
   static_volume:
