@@ -269,6 +269,7 @@
               <thead>
                 <tr>
                   <th>Address</th>
+                  <th></th>
                   <th>Name</th>
                   <th>Description</th>
                   <th class="has-text-right">Balance</th>
@@ -285,6 +286,7 @@
                   <td data-label="Address">
                       <span><a href="{% url 'wallet-positions-by-page' wallet.id 1 %}">{{ wallet.address|truncatechars:25 }}</a></span>
                   </td>
+                  <td class="is-narrow">{% if wallet.resync_status == "started" %}<span class="icon"></span><i class="mdi mdi-sync"></i>{% endif %}{% if wallet.download_status == "started" %}<i class="mdi mdi-download"></i></span>{% endif %}</td>
                   <td data-label="Name">{{ wallet.name }}</td>
                   <td data-label="Description">{{ wallet.description|truncatechars:25 }}</td>
                   <td data-label="Balance" class="has-text-right">{{ wallet.balance|floatformat:"-2g" }} <small class="has-text-grey">({{ wallet.percentage|floatformat:"-2g" }}%)</small></td>
@@ -306,9 +308,6 @@
                   </td>
                   <td class="is-actions-cell">
                     <div class="buttons is-right">
-                      <a id="status_download_{{ wallet.id }}" data-task-download-id="{{ wallet.wallet_process.download_task }}" href="{% url 'sync_wallet' wallet.id %}" class="button is-small is-light" type="button">
-                        <span class="icon"><i class="mdi mdi-download"></i></span>
-                      </a>
                       <a href="{% url 'delete_wallet' wallet.id %}" class="button is-small is-dark" type="button">
                         <span class="icon"><i class="mdi mdi-trash-can"></i></span>
                       </a>

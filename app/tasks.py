@@ -34,10 +34,12 @@ from app.models import (
     MarketData,
     Position,
     PositionCalculator,
+    TaskStatusChoices,
     Transaction,
     TransactionCalculator,
     TypeTransactionChoices,
     Wallet,
+    WalletProcess,
 )
 
 from datetime import datetime, timedelta
@@ -632,6 +634,58 @@ def calculate_cost_transaction_task(wallet_id: int):
     except Exception as e:
         logger.error(f"An error occurred while calculating transaction costs for wallet id {wallet_id} : {str(e)}")
 
+
+@shared_task
+def start_wallet_resync_task(wallet_id: int):
+    """
+    Task to update wallet process with STARTED sync status.
+    """
+    logger.info(f"Updating wallet process (sync) to STARTED.")
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+    wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
+    wallet_process.resync_task_status = TaskStatusChoices.STARTED
+    wallet_process.save()
+    logger.info(f"WalletProcess updated successfully.")
+    return wallet_id
+
+@shared_task
+def start_wallet_download_task(wallet_id: int):
+    """
+    Task to update wallet process with STARTED download status.
+    """
+    logger.info(f"Updating wallet process (download) to STARTED.")
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+    wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
+    wallet_process.download_task_status = TaskStatusChoices.STARTED
+    wallet_process.save()
+    logger.info(f"WalletProcess updated successfully.")
+    return wallet_id
+
+@shared_task
+def finish_wallet_resync_task(previous_return: list, wallet_id: int):
+    """
+    Task to update wallet process with FINISHED sync status.
+    """
+    logger.info(f"Updating wallet process (sync) to FINISHED.")
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+    wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
+    wallet_process.resync_task_status = TaskStatusChoices.FINISHED
+    wallet_process.save()
+    logger.info(f"WalletProcess updated successfully.")
+    return wallet_id
+
+@shared_task
+def finish_wallet_download_task(previous_return: list, wallet_id: int):
+    """
+    Task to update wallet process with FINISHED download status.
+    """
+    logger.info(f"Updating wallet process (download) to FINISHED.")
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+    wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
+    wallet_process.download_task_status = TaskStatusChoices.FINISHED
+    wallet_process.save()
+    logger.info(f"WalletProcess updated successfully.")
+    return wallet_id
 
 @shared_task
 def clean_contract_address_task(wallet_id: int):

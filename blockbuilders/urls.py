@@ -70,11 +70,6 @@ urlpatterns = [
     #     name="wallet_download_info",
     # ),
     path(
-        "sync_wallet/<int:wallet_id>/",
-        views_wallet.sync_wallet,
-        name="sync_wallet",
-    ),
-    path(
         "download_wallet_task_status/<uuid:task_id>/",
         views_wallet.download_wallet_task_status,
         name="download_wallet_task_status",
@@ -115,6 +110,11 @@ urlpatterns = [
         "wallet/<int:wallet_id>/refresh_price/",
         views_position.refresh_wallet_position_price,
         name="refresh-wallet-position-price",
+    ),
+    path(
+        "wallet/<int:wallet_id>/download_wallet/",
+        views_position.download_wallet,
+        name="download-wallet",
     ),
     path(
         "wallet/<int:wallet_id>/refresh_full_histo_price/",
