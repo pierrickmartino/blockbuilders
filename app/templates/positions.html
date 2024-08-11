@@ -181,6 +181,9 @@
           <span class="icon"><i class="mdi mdi-view-list"></i></span>
           Positions
         </p>
+        <a href="{% url 'download-wallet' wallet.id %}" class="card-header-icon">
+          <span class="icon"><i class="mdi mdi-download"></i></span>
+        </a>
         <a href="{% url 'refresh-wallet-position-price' wallet.id %}" class="card-header-icon">
           <span class="icon"><i class="mdi mdi-reload"></i></span>
         </a>
@@ -242,9 +245,9 @@
                       <span class="tag is-primary">{{ position.monthly_price_delta|floatformat:"-2g" }}%</span>
                       {% endif %}
                   </td>
-                  <td data-label="Price" class="has-text-right">${{ position.contract.price|floatformat:"-2g" }}</td>
+                  <td data-label="Price" class="has-text-right"><small class="has-text-grey">$</small> {{ position.contract.price|floatformat:"-2g" }}</td>
                   <td data-label="Quantity" class="has-text-right">{{ position.quantity|floatformat:"-6g" }}</td>
-                  <td data-label="Amount" class="has-text-right">${{ position.amount|floatformat:"-2g" }} <small class="has-text-grey">({{ position.progress_percentage|floatformat:"-2g" }}%)</small></td>
+                  <td data-label="Amount" class="has-text-right"><small class="has-text-grey">$</small> {{ position.amount|floatformat:"-2g" }} <small class="has-text-grey">({{ position.progress_percentage|floatformat:"-2g" }}%)</small></td>
                   <td data-label="Realized" class="has-text-right">{% if position.realized_gain == 0 %}<span class="tag is-grey">- %</span>
                     {% elif position.realized_gain < 0 %} <span class="tag is-danger">${{ position.realized_gain|floatformat:"-2g" }}</span>
                       {% else %}

@@ -26,6 +26,12 @@ class CategoryContractChoices(models.TextChoices):
     STABLE = "stable", "Stable"
 
 
+class TaskStatusChoices(models.TextChoices):
+    WAITING = "waiting", "Waiting"
+    STARTED = "started", "Started"
+    FINISHED = "finished", "Finished"
+
+
 # Abstract model for timestamp fields
 class TimeStampModel(models.Model):
     created_at = models.DateTimeField(
@@ -85,8 +91,13 @@ class WalletProcess(TimeStampModel):
         primary_key=True,
     )  # One-to-one relationship with Wallet
     download_task = models.UUIDField(default=uuid.uuid4)  # UUID for download task
+    download_task_date = models.DateTimeField(default=datetime.now)
+    download_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
     resync_task = models.UUIDField(default=uuid.uuid4)  # UUID for resync task
+    resync_task_date = models.DateTimeField(default=datetime.now)
+    resync_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
     delete_task = models.UUIDField(default=uuid.uuid4)  # UUID for delete task
+    delete_task_date = models.DateTimeField(default=datetime.now)
 
     class Meta:
         verbose_name = "Wallet Process"

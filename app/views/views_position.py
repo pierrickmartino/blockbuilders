@@ -5,10 +5,30 @@ from celery import chain, chord, group
 from app.tasks import (
     calculate_wallet_balance_task,
     delete_position_task,
+    finish_wallet_download_task,
+    finish_wallet_resync_task,
     get_full_init_historical_price_from_market_task,
     get_historical_price_from_market_task,
     get_price_from_market_task,
+    start_wallet_download_task,
+    start_wallet_resync_task,
     update_contract_information,
+)
+
+from app.tasks import (
+    aggregate_transactions_task,
+    calculate_cost_transaction_task,
+    calculate_running_quantity_transaction_task,
+    clean_contract_address_task,
+    clean_transaction_task,
+    create_transactions_from_arbitrum_erc20_task,
+    create_transactions_from_bsc_bep20_task,
+    create_transactions_from_optimism_erc20_task,
+    create_transactions_from_polygon_erc20_task,
+    get_arbitrum_token_balance,
+    get_bsc_token_balance,
+    get_optimism_token_balance,
+    get_polygon_token_balance,
 )
 
 logger = logging.getLogger("blockbuilders")
@@ -26,6 +46,7 @@ from app.models import (
     TransactionCalculator,
     UserSetting,
     Wallet,
+    WalletProcess,
 )
 
 
@@ -163,12 +184,15 @@ def refresh_wallet_position_price(request, wallet_id: int):
     }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
     symbol_list = list(symbol_set)
 
+    chain(start_wallet_resync_task.s(wallet_id))()
+
     for symbol in symbol_list:
         chain(get_historical_price_from_market_task.s(symbol), update_contract_information.s(symbol))()
 
     chain_result = chain(
         get_price_from_market_task.s(symbol_list),
         calculate_wallet_balance_task.s(wallet_id),
+        finish_wallet_resync_task.s(wallet_id),
     )()
 
     logger.info(f"Started getting position prices for wallet with id {wallet_id}")
@@ -191,4 +215,43 @@ def refresh_full_historical_position_price(request, wallet_id: int):
         chain(get_full_init_historical_price_from_market_task.s(symbol))()
 
     logger.info(f"Started getting full position prices for wallet with id {wallet_id}")
+    return redirect("dashboard")
+
+
+@login_required
+def download_wallet(request, wallet_id: int):
+    """
+    View to sync wallet data by chaining several Celery tasks.
+    """
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+
+    transactions_chord = chord(
+        group(
+            create_transactions_from_polygon_erc20_task.s(),
+            create_transactions_from_bsc_bep20_task.s(),
+            create_transactions_from_optimism_erc20_task.s(),
+            create_transactions_from_arbitrum_erc20_task.s(),
+        ),
+        aggregate_transactions_task.s(wallet_id),  # Callback task
+    )
+
+    chain_result = chain(
+        start_wallet_download_task.s(wallet_id),
+        clean_contract_address_task.s(),
+        clean_transaction_task.s(),
+        transactions_chord,  # The chord is part of the chain
+        calculate_cost_transaction_task.s(),
+        calculate_running_quantity_transaction_task.s(),
+        group(
+            get_polygon_token_balance.s(),
+            get_bsc_token_balance.s(),
+            get_optimism_token_balance.s(),
+            get_arbitrum_token_balance.s(),
+        ),
+        finish_wallet_download_task.s(wallet_id),
+    )()
+    wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
+    wallet_process.resync_task = chain_result.id
+    wallet_process.save()
+    logger.info(f"Started syncing wallet with id {wallet_id}")
     return redirect("dashboard")
