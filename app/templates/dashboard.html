@@ -147,7 +147,7 @@
                         </span>
                       </td>
                       <td data-label="Position">
-                        <span><small>{{ transaction.contract.name|truncatechars:16 }}</small></span>
+                        <span><small>{{ transaction.contract.name|truncatechars:20 }}</small></span>
                       </td>
                       <td data-label="Gain" class="has-text-right">
                         <div><small>$ {{ transaction.capital_gain|floatformat:"-2g" }}</small></div>
@@ -198,7 +198,7 @@
                         </span>
                       </td>
                       <td data-label="Position">
-                        <span><small>{{ transaction.contract.name|truncatechars:16 }}</small></span>
+                        <span><small>{{ transaction.contract.name|truncatechars:20 }}</small></span>
                     </td>
                       <td data-label="Loss" class="has-text-right">
                         <div><small>$ {{ transaction.capital_gain|floatformat:"-2g" }}</small></div>

@@ -5,6 +5,7 @@ from django.db.models import F, Q, Value, Case, When, Sum, DecimalField
 from django.db.models.functions import Coalesce
 
 from app.forms import WalletForm
+from app.views.calculators.calculators_position import calculate_wallet_positions
 from app.views.views_wallet import get_download_wallet_task_status
 
 logger = logging.getLogger("blockbuilders")
@@ -106,6 +107,8 @@ def dashboard(request: HttpRequest, page):
         for wallet in wallets:
             progress_percentage = wallet.balance / total_balance * 100 if total_balance != 0 else 0
             process, created = WalletProcess.objects.get_or_create(wallet=wallet)
+            
+            position_filtered, realized_gain, unrealized_gain = calculate_wallet_positions(wallet)
 
             wallet_data = {
                 "id": wallet.id,
@@ -117,6 +120,8 @@ def dashboard(request: HttpRequest, page):
                 "percentage": progress_percentage,
                 "download_status": process.download_task_status,
                 "resync_status": process.resync_task_status,
+                "realized_gain": realized_gain,
+                "unrealized_gain": unrealized_gain,
             }
 
             wallets_with_calculator.append(wallet_data)
