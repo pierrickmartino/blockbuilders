@@ -6,9 +6,8 @@ from django.http import HttpResponse
 
 import pandas as pd
 import pandas_ta as ta
-import mplfinance as mpf
-from io import BytesIO
-import base64
+
+import plotly.graph_objects as go
 
 logger = logging.getLogger("blockbuilders")
 
@@ -112,68 +111,6 @@ def export_transactions_csv(request, position_id):
     return response
 
 
-def plot_candlestick(data):
-    if not data:
-        return None
-    df = pd.DataFrame(data)
-    df.set_index("timestamp", inplace=True)
-
-    # Calculate Moving Averages
-    df["EMA20"] = ta.ema(df["close"], length=20)
-    df["EMA50"] = ta.ema(df["close"], length=50)
-
-    # Calculate RSI
-    df["RSI"] = ta.rsi(df["close"], length=14)
-
-    # Calculate MACD
-    # macd = ta.macd(df['close'], fast=12, slow=26, signal=9)
-    # df['MACD'] = macd['MACD_12_26_9']
-    # df['MACD_Signal'] = macd['MACDs_12_26_9']
-    # df['MACD_Hist'] = macd['MACDh_12_26_9']
-
-    # Plotting
-    mc = mpf.make_marketcolors(up="#00bcd4", down="#ff9800", inherit=True)
-    s = mpf.make_mpf_style(
-        marketcolors=mc,
-        rc={"axes.labelsize": "small"},
-        base_mpf_style="ibd",
-        facecolor="#ffffff",
-        gridstyle="dotted",
-        gridcolor="#323233",
-        gridaxis="both",
-    )
-
-    fig, axes = mpf.plot(
-        df,
-        type="candle",
-        style=s,
-        # title='Price with Technical Indicators',
-        ylabel="",
-        volume=False,
-        # mav=(20, 50),
-        addplot=[
-            mpf.make_addplot(df["EMA20"], color="blue"),
-            mpf.make_addplot(df["EMA50"], color="red"),
-            # mpf.make_addplot(df['RSI'], panel=2, color='purple', ylabel='RSI'),
-        ],
-        returnfig=True,
-        # figsize=(14, 10),  # Increase graph size
-        figscale=1.0,
-        figratio=(18, 10),
-        yscale="log",
-        datetime_format=' %d.%m.%Y',
-        # tight_layout=True
-    )
-
-    buf = BytesIO()
-    fig.savefig(buf, format="png")
-    buf.seek(0)
-    image_png = buf.getvalue()
-    buf.close()
-    image_b64 = base64.b64encode(image_png).decode("utf-8")
-    return image_b64
-
-
 @login_required
 def position_transactions_paginated(request, position_id, page):
     position = Position.objects.filter(id=position_id).first()
@@ -185,9 +122,11 @@ def position_transactions_paginated(request, position_id, page):
 
     symbol_for_plot = contract.symbol.replace("WETH", "ETH")
 
-    delta = 180
+    delta = 360
     days_ago = timezone.now().date() - timedelta(days=delta)
-    market_data = MarketData.objects.filter(symbol=symbol_for_plot, reference="USD", time__gte=days_ago).order_by("time")
+    market_data = MarketData.objects.filter(symbol=symbol_for_plot, reference="USD", time__gte=days_ago).order_by(
+        "time"
+    )
     stock_data = []
     for data in market_data:
         stock_data.append(
@@ -201,9 +140,72 @@ def position_transactions_paginated(request, position_id, page):
             }
         )
 
-    chart = plot_candlestick(stock_data) if stock_data else None
-    # if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-    #     return JsonResponse({'chart': chart, 'error': 'Invalid stock symbol or data not available.' if not chart else ''})
+    # Create the candlestick chart
+    df = pd.DataFrame(stock_data)
+    # df.set_index("timestamp", inplace=True)
+
+    # Calculate Moving Averages
+    df["EMA20"] = ta.ema(df["close"], length=20)
+    df["EMA50"] = ta.ema(df["close"], length=50)
+
+    # Calculate RSI
+    df["RSI"] = ta.rsi(df["close"], length=14)
+
+    fig = go.Figure(
+        data=[
+            go.Candlestick(
+                x=df["timestamp"],
+                open=df["open"],
+                high=df["high"],
+                low=df["low"],
+                close=df["close"],
+                increasing_line_color="#00bcd4",
+                decreasing_line_color="#ff9800",
+                line_width=1,
+            ),
+        ]
+    )
+
+    # Add EMA20 line to the chart
+    fig.add_trace(
+        go.Scatter(
+            x=df["timestamp"],
+            y=df["EMA20"],
+            mode="lines",
+            name="EMA 20",
+            line=dict(color="blue", width=2),  # Customize the line color and width
+        )
+    )
+
+    # Add EMA50 line to the chart
+    fig.add_trace(
+        go.Scatter(
+            x=df["timestamp"],
+            y=df["EMA50"],
+            mode="lines",
+            name="EMA 50",
+            line=dict(color="red", width=2),  # Customize the line color and width
+        )
+    )
+
+    # Adjust the layout for the figure
+    fig.update_layout(
+        height=575,  # Set the height of the chart
+        xaxis_rangeslider_visible=False,
+        plot_bgcolor="#ffffff",
+        xaxis=dict(
+            showgrid=True,  # Show grid lines for x-axis
+            gridcolor="#e6e6e8",  # Set grid line color
+        ),
+        yaxis=dict(
+            showgrid=True,  # Show grid lines for y-axis
+            gridcolor="#e6e6e8",  # Set grid line color
+            # type='log',  # Set y-axis to logarithmic scale
+        ),
+    )
+
+    # Convert the figure to HTML
+    chart_plotly = fig.to_html(full_html=False)
 
     contract_calculator = ContractCalculator(position.contract)
     daily_price_delta = contract_calculator.calculate_daily_price_delta()
@@ -272,7 +274,7 @@ def position_transactions_paginated(request, position_id, page):
         "total_realized_gain": total_realized_gain,
         "position_amount": position_amount,
         "position_kpi": position_kpi,
-        "chart": chart,
+        "chart_plotly": chart_plotly,
     }
     return render(request, "transactions.html", context)
 
