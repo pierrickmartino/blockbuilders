@@ -263,7 +263,7 @@
                   <td data-label="Address">
                       <span><a href="{% url 'wallet-positions-by-page' wallet.id 1 %}">{{ wallet.address|truncatechars:25 }}</a></span>
                   </td>
-                  <td class="is-narrow">{% if wallet.resync_status == "started" %}<span class="icon"></span><i class="mdi mdi-sync"></i>{% endif %}{% if wallet.download_status == "started" %}<i class="mdi mdi-download"></i></span>{% endif %}</td>
+                  <td class="is-narrow">{% if wallet.resync_status == "started" %}<button class="button is-small is-white is-loading">Loading</button>{% endif %}{% if wallet.download_status == "started" %}<button class="button is-small is-white is-loading">Loading</button>{% endif %}</td>
                   <td data-label="Name">{{ wallet.name }}</td>
                   <td data-label="Description">{{ wallet.description|truncatechars:25 }}</td>
                   <td data-label="Balance" class="has-text-right">{{ wallet.balance|floatformat:"-2g" }} <small class="has-text-grey">({{ wallet.percentage|floatformat:"-2g" }}%)</small></td>
@@ -308,6 +308,7 @@
             </table>
           </div>
           {% block pagination %}
+          {% if page_wallets.paginator.num_pages > 1 %}
           <div class="notification">
             <div class="level">
               <div class="level-left">
@@ -349,6 +350,7 @@
               </div>
             </div>
           </div>
+          {% endif %}
           {% endblock %}
         </div>
       </div>
