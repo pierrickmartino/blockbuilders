@@ -143,69 +143,72 @@ def position_transactions_paginated(request, position_id, page):
     # Create the candlestick chart
     df = pd.DataFrame(stock_data)
     # df.set_index("timestamp", inplace=True)
+    
+    if not df.empty:
+        # Calculate Moving Averages
+        df["EMA20"] = ta.ema(df["close"], length=20)
+        df["EMA50"] = ta.ema(df["close"], length=50)
 
-    # Calculate Moving Averages
-    df["EMA20"] = ta.ema(df["close"], length=20)
-    df["EMA50"] = ta.ema(df["close"], length=50)
+        # Calculate RSI
+        df["RSI"] = ta.rsi(df["close"], length=14)
 
-    # Calculate RSI
-    df["RSI"] = ta.rsi(df["close"], length=14)
+        fig = go.Figure(
+            data=[
+                go.Candlestick(
+                    x=df["timestamp"],
+                    open=df["open"],
+                    high=df["high"],
+                    low=df["low"],
+                    close=df["close"],
+                    increasing_line_color="#00bcd4",
+                    decreasing_line_color="#ff9800",
+                    line_width=1,
+                ),
+            ]
+        )
 
-    fig = go.Figure(
-        data=[
-            go.Candlestick(
+        # Add EMA20 line to the chart
+        fig.add_trace(
+            go.Scatter(
                 x=df["timestamp"],
-                open=df["open"],
-                high=df["high"],
-                low=df["low"],
-                close=df["close"],
-                increasing_line_color="#00bcd4",
-                decreasing_line_color="#ff9800",
-                line_width=1,
+                y=df["EMA20"],
+                mode="lines",
+                name="EMA 20",
+                line=dict(color="blue", width=2),  # Customize the line color and width
+            )
+        )
+
+        # Add EMA50 line to the chart
+        fig.add_trace(
+            go.Scatter(
+                x=df["timestamp"],
+                y=df["EMA50"],
+                mode="lines",
+                name="EMA 50",
+                line=dict(color="red", width=2),  # Customize the line color and width
+            )
+        )
+
+        # Adjust the layout for the figure
+        fig.update_layout(
+            height=575,  # Set the height of the chart
+            xaxis_rangeslider_visible=False,
+            plot_bgcolor="#ffffff",
+            xaxis=dict(
+                showgrid=True,  # Show grid lines for x-axis
+                gridcolor="#e6e6e8",  # Set grid line color
             ),
-        ]
-    )
-
-    # Add EMA20 line to the chart
-    fig.add_trace(
-        go.Scatter(
-            x=df["timestamp"],
-            y=df["EMA20"],
-            mode="lines",
-            name="EMA 20",
-            line=dict(color="blue", width=2),  # Customize the line color and width
+            yaxis=dict(
+                showgrid=True,  # Show grid lines for y-axis
+                gridcolor="#e6e6e8",  # Set grid line color
+                # type='log',  # Set y-axis to logarithmic scale
+            ),
         )
-    )
 
-    # Add EMA50 line to the chart
-    fig.add_trace(
-        go.Scatter(
-            x=df["timestamp"],
-            y=df["EMA50"],
-            mode="lines",
-            name="EMA 50",
-            line=dict(color="red", width=2),  # Customize the line color and width
-        )
-    )
-
-    # Adjust the layout for the figure
-    fig.update_layout(
-        height=575,  # Set the height of the chart
-        xaxis_rangeslider_visible=False,
-        plot_bgcolor="#ffffff",
-        xaxis=dict(
-            showgrid=True,  # Show grid lines for x-axis
-            gridcolor="#e6e6e8",  # Set grid line color
-        ),
-        yaxis=dict(
-            showgrid=True,  # Show grid lines for y-axis
-            gridcolor="#e6e6e8",  # Set grid line color
-            # type='log',  # Set y-axis to logarithmic scale
-        ),
-    )
-
-    # Convert the figure to HTML
-    chart_plotly = fig.to_html(full_html=False)
+        # Convert the figure to HTML
+        chart_plotly = fig.to_html(full_html=False)
+    else:
+        chart_plotly = None
 
     contract_calculator = ContractCalculator(position.contract)
     daily_price_delta = contract_calculator.calculate_daily_price_delta()

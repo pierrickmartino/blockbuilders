@@ -179,13 +179,13 @@
             </div>
           </div>
           <!-- <canvas id="big-line-chart" width="2992" height="1000" class="chartjs-render-monitor" style="display: block; height: 400px; width: 1197px;"></canvas> -->
+          {% if chart_plotly %}
           <div id="chart" style="height: 575px;">
-            {% if chart_plotly %}
               {{ chart_plotly|safe }}
             {% elif not chart_plotly and symbol %}
                 <p class="text-red-600">Invalid stock symbol or data not available.</p>
-            {% endif %}
           </div>
+          {% endif %}
         </div>
       </div>
     </div>
