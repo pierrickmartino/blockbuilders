@@ -138,6 +138,7 @@ class Contract(models.Model):
     )  # Reference to the blockchain
     name = models.CharField(max_length=255)  # Name of the contract
     symbol = models.CharField(max_length=50)  # Symbol of the contract
+    relative_symbol = models.CharField(max_length=50, default="")  # Symbol of the contract
     address = models.CharField(max_length=255)  # Unique address of the contract
     logo_uri = models.CharField(max_length=255, default="")  # Logo URI of the contract
     decimals = models.IntegerField(default=0)  # Decimals used to calculate quantity of the contract

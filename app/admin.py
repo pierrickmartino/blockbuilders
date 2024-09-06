@@ -20,7 +20,7 @@ class Blockchain_Admin(admin.ModelAdmin):
 
 
 class Contract_Admin(admin.ModelAdmin):
-    list_filter = ["blockchain", "category", "symbol"]
+    list_filter = ["blockchain", "category", "symbol", "relative_symbol"]
     list_display = (
         "id",
         "blockchain",
@@ -28,6 +28,7 @@ class Contract_Admin(admin.ModelAdmin):
         "name",
         "address",
         "symbol",
+        "relative_symbol",
         "decimals",
         "price",
         "previous_day_price",
