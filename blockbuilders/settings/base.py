@@ -36,7 +36,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = ['app.blockbuilders.tech', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['app.blockbuilders.tech', 'localhost', '127.0.0.1', 'web']
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "blockbuilders",
     "app",
     "celery",
+    "django_prometheus",
 ]
 
 MIDDLEWARE = [
@@ -67,6 +68,12 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+MIDDLEWARE = (
+    ["django_prometheus.middleware.PrometheusBeforeMiddleware"]
+    + MIDDLEWARE
+    + ["django_prometheus.middleware.PrometheusAfterMiddleware"]
+)
 
 ROOT_URLCONF = "blockbuilders.urls"
 

@@ -29,6 +29,7 @@ urlpatterns = [
     path("", views.dashboard_redirect, name="dashboard"),
     path("__debug__/", include("debug_toolbar.urls")),
     path("admin/", admin.site.urls),
+    path("prometheus/", include("django_prometheus.urls")),
     # AUTHENTICATION / USER
     path("login/", auth_views.LoginView.as_view(), name="login"),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
