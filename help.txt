@@ -38,7 +38,6 @@ docker-compose run --rm web python manage.py createsuperuser
 docker-compose run --rm web python manage.py loaddata blockchains.json
 docker-compose run --rm web python manage.py loaddata fiats.json
 docker-compose -f docker-compose.prod.yml up --build --remove-orphans
-docker-compose -f docker-compose.monitoring.yml up --build
 docker volume prune -a
 docker image prune -a
 
