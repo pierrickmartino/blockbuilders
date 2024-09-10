@@ -42,6 +42,10 @@ INTERNAL_IPS = [
     "127.0.0.1",
  ]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
 # Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -55,6 +59,9 @@ INSTALLED_APPS = [
     "app",
     "celery",
     "django_prometheus",
+    "rest_framework",
+    "channels",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -63,6 +70,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -199,3 +207,12 @@ LOGGING = {
 }
 
 FIXTURE_DIRS = "fixtures/" 
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+    
+}
