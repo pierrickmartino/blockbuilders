@@ -1,22 +1,40 @@
 version: '3.9'
 
 services:
-  web:
-    container_name: web
-    build: .
+  frontend:
+    container_name: frontend
+    image: frontend:1.0.0
+    build:
+      context: ./frontend
+      dockerfile: next.dockerfile
+    ports:
+      - 3030:3030
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    env_file:
+      - ./.env
+    depends_on:
+      - backend
+
+  backend:
+    container_name: backend
+    image: backend:1.0.0
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
     restart: always
-    command: gunicorn blockbuilders.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn blockbuilders.wsgi:application --bind 0.0.0.0:4000
     volumes:
       - static_volume:/code/staticfiles
       - media_volume:/code/mediafiles
-    expose:
-      - 8000
+    ports:
+      - 4000:4000
     depends_on:
       - db
       - redis
     env_file:
       - ./.env
-
+  
   db:
     container_name: db
     image: postgres:16
@@ -38,7 +56,10 @@ services:
 
   celery:
     container_name: celery
-    build: .
+    image: celery:1.0.0
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
     restart: always
     command: celery -A blockbuilders worker -l info
     volumes:
@@ -48,11 +69,14 @@ services:
     depends_on:
       - db
       - redis
-      - web
+      - backend
   
   nginx:
     container_name: nginx
-    build: ./nginx
+    image: nginx:1.0.0
+    build:
+      context: ./nginx
+      dockerfile: nginx.dockerfile
     restart: always
     ports:
       - ${NGINX_PORT}:80
@@ -60,11 +84,14 @@ services:
       - static_volume:/code/staticfiles
       - media_volume:/code/mediafiles
     depends_on:
-      - web
+      - backend
   
   flower:
     container_name: flower
-    build: .
+    image: flower:1.0.0
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
     command: celery -A blockbuilders flower
     volumes:
       - .:/code
@@ -76,7 +103,7 @@ services:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL}
       CELERY_RESULT_BACKEND: ${REDIS_BACKEND}
     depends_on:
-      - web
+      - backend
       - redis
       - celery
 
@@ -85,7 +112,7 @@ services:
     container_name: prometheus
     restart: unless-stopped
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./backend/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -100,7 +127,7 @@ services:
     image: grafana/grafana-oss:latest
     container_name: grafana
     ports:
-      - '3000:3000'
+      - 3000:3000
     volumes:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
@@ -110,5 +137,5 @@ volumes:
   postgres_data:
   static_volume:
   media_volume:
-  prometheus_data: {}
-  grafana-data: {}
+  prometheus_data:
+  grafana-data:

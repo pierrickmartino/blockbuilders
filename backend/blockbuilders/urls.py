@@ -1,0 +1,251 @@
+"""blockbuilders URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/4.1/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+
+from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from django.urls import include, path
+
+from app.views import views, views_contract, views_position, views_transaction, views_wallet, views_profile
+from app.utils.polygon import view_polygon
+from app.utils.arbitrum import view_arbitrum
+from app.utils.optimism import view_optimism
+from app.utils.bsc import view_bsc
+from app.views.views_api import (
+    FiatViewSet,
+    WalletPositionDetailView,
+    WalletPositionTransactionDetailView,
+    WalletPositionTransactionView,
+    WalletPositionView,
+    WalletViewSet,
+    BlockchainViewSet,
+    ContractViewSet,
+    MarketDataViewSet,
+    UserSettingViewSet,
+    TransactionViewSet,
+    PositionViewSet,
+)
+
+# from rest_framework_simplejwt.views import (
+#     TokenObtainPairView,
+#     TokenRefreshView,
+# )
+
+from rest_framework.urlpatterns import format_suffix_patterns
+
+wallet_list = WalletViewSet.as_view({"get": "list", "post": "create"})
+wallet_detail = WalletViewSet.as_view(
+    {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
+)
+wallet_position_list = WalletPositionView.as_view()
+wallet_position_detail = WalletPositionDetailView.as_view()
+wallet_position_transaction_list = WalletPositionTransactionView.as_view()
+wallet_position_transaction_detail = WalletPositionTransactionDetailView.as_view()
+
+fiat_list = FiatViewSet.as_view({"get": "list", "post": "create"})
+fiat_detail = FiatViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})
+blockchain_list = BlockchainViewSet.as_view({"get": "list", "post": "create"})
+blockchain_detail = BlockchainViewSet.as_view(
+    {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
+)
+contract_list = ContractViewSet.as_view({"get": "list", "post": "create"})
+contract_detail = ContractViewSet.as_view(
+    {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
+)
+market_data_list = MarketDataViewSet.as_view({"get": "list", "post": "create"})
+market_data_detail = MarketDataViewSet.as_view(
+    {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
+)
+user_setting_list = UserSettingViewSet.as_view({"get": "list", "post": "create"})
+user_setting_detail = UserSettingViewSet.as_view(
+    {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
+)
+transaction_list = TransactionViewSet.as_view({"get": "list", "post": "create"})
+transaction_detail = TransactionViewSet.as_view(
+    {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
+)
+position_list = PositionViewSet.as_view({"get": "list", "post": "create"})
+position_detail = PositionViewSet.as_view(
+    {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
+)
+urlpatterns = format_suffix_patterns(
+    [
+        # GLOBAL
+        path("", views.dashboard_redirect, name="dashboard"),
+        path("__debug__/", include("debug_toolbar.urls")),
+        path("admin/", admin.site.urls),
+        path("prometheus/", include("django_prometheus.urls")),
+        # AUTHENTICATION / USER
+        path("login/", auth_views.LoginView.as_view(), name="login"),
+        path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+        path("register/", views.register, name="register"),
+        path("profile/", views_profile.profile, name="profile"),
+        path("profile/update/", views_profile.update_user_settings, name="update_user_settings"),
+        # DASHBOARD
+        path("dashboard/", views.dashboard_redirect, name="dashboard_redirect"),
+        path("dashboard/<int:page>/", views.dashboard, name="dashboard"),
+        # BLOCKCHAIN
+        path("blockchains/", views.blockchains, name="blockchains"),
+        # CONTRACT
+        path("contracts/", views_contract.contracts, name="contracts"),
+        path(
+            "contracts/<int:page>",
+            views_contract.contracts_paginated,
+            name="contracts-by-page",
+        ),
+        path(
+            "blacklist_contract/<int:contract_id>/",
+            views_contract.blacklist_Contract_by_id,
+            name="blacklist_contract",
+        ),
+        path(
+            "stable_contract/<int:contract_id>/",
+            views_contract.stable_Contract_by_id,
+            name="stable_contract",
+        ),
+        # WALLET
+        path("wallets/", views_wallet.wallets, name="wallets"),
+        path(
+            "delete_wallet/<int:wallet_id>/",
+            views_wallet.delete_Wallet_by_id,
+            name="delete_wallet",
+        ),
+        # path(
+        #     "wallet_download_info/<int:wallet_id>/",
+        #     views_wallet.get_information_Wallet_by_id,
+        #     name="wallet_download_info",
+        # ),
+        path(
+            "download_wallet_task_status/<uuid:task_id>/",
+            views_wallet.download_wallet_task_status,
+            name="download_wallet_task_status",
+        ),
+        # path(
+        #     "wallet_resync_info/<int:wallet_id>/",
+        #     views_wallet.resync_information_Wallet_by_id,
+        #     name="wallet_resync_info",
+        # ),
+        # path(
+        #     "resync_wallet_task_status/<uuid:task_id>/",
+        #     views_wallet.resync_wallet_task_status,
+        #     name="resync_wallet_task_status",
+        # ),
+        # POSITION
+        path("positions/", views_position.positions, name="positions"),
+        # path(
+        #     "position/<int:position_id>/refresh_price/",
+        #     views_position.refresh_position_price,
+        #     name="refresh_position_price",
+        # ),
+        path(
+            "positions/<int:page>",
+            views_position.positions_paginated,
+            name="positions-by-page",
+        ),
+        path(
+            "delete_position/<int:position_id>/",
+            views_position.delete_Position_by_id,
+            name="delete-position",
+        ),
+        path(
+            "wallet/<int:wallet_id>/positions/<int:page>",
+            views_position.wallet_positions_paginated,
+            name="wallet-positions-by-page",
+        ),
+        path(
+            "wallet/<int:wallet_id>/refresh_price/",
+            views_position.refresh_wallet_position_price,
+            name="refresh-wallet-position-price",
+        ),
+        path(
+            "wallet/<int:wallet_id>/download_wallet/",
+            views_position.download_wallet,
+            name="download-wallet",
+        ),
+        path(
+            "wallet/<int:wallet_id>/refresh_full_histo_price/",
+            views_position.refresh_full_historical_position_price,
+            name="refresh-full-histo-price",
+        ),
+        # TRANSACTION
+        path("transactions/", views_transaction.transactions, name="transactions"),
+        path(
+            "transactions/<int:page>",
+            views_transaction.transactions_paginated,
+            name="transactions-by-page",
+        ),
+        path(
+            "position/<int:position_id>/transactions/<int:page>",
+            views_transaction.position_transactions_paginated,
+            name="position-transactions-by-page",
+        ),
+        path(
+            "position/<int:position_id>/transactions/export/csv/",
+            views_transaction.export_transactions_csv,
+            name="export_transactions_csv",
+        ),
+        # SCAN
+        path(
+            "polygon/balance/<str:address>/",
+            view_polygon.account_balance_by_address,
+            name="polygon_account_balance_by_address",
+        ),
+        path(
+            "polygon/erc20transactions/<str:address>/",
+            view_polygon.erc20_transactions_by_wallet,
+            name="polygon_erc20_transactions_by_wallet",
+        ),
+        path("polygon/matic/", view_polygon.matic_price, name="polygon_matic_price"),
+        path("arbitrum/ethereum/", view_arbitrum.ethereum_price, name="arbitrum_ethereum_price"),
+        path("optimism/ethereum/", view_optimism.ethereum_price, name="optimism_ethereum_price"),
+        path("bsc/bnb/", view_bsc.bnb_price, name="bsc_bnb_price"),
+        # API
+        # path("api/auth/", include("rest_framework.urls")),
+        # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+        # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+        path("api/wallets/", wallet_list, name="wallet-list"),
+        path("api/wallets/<int:pk>/", wallet_detail, name="wallet-detail"),
+        path("api/wallets/<int:wallet_id>/positions/", wallet_position_list, name="wallet-position-list"),
+        path(
+            "api/wallets/<int:wallet_id>/positions/<int:position_id>/",
+            wallet_position_detail,
+            name="wallet-position-detail",
+        ),
+        path(
+            "api/wallets/<int:wallet_id>/positions/<int:position_id>/transactions/",
+            wallet_position_transaction_list,
+            name="wallet-position-transaction-list",
+        ),
+        path(
+            "api/wallets/<int:wallet_id>/positions/<int:position_id>/transactions/<int:transaction_id>/",
+            wallet_position_transaction_detail,
+            name="wallet-position-transaction-detail",
+        ),
+        path("api/fiats/", fiat_list, name="fiat-list"),
+        path("api/fiats/<int:pk>/", fiat_detail, name="fiat-detail"),
+        path("api/blockchains/", blockchain_list, name="blockchain-list"),
+        path("api/blockchains/<int:pk>/", blockchain_detail, name="blockchain-detail"),
+        path("api/contracts/", contract_list, name="contract-list"),
+        path("api/contracts/<int:pk>/", contract_detail, name="contract-detail"),
+        path("api/marketdatas/", market_data_list, name="marketdata-list"),
+        path("api/marketdatas/<int:pk>/", market_data_detail, name="marketdata-detail"),
+        path("api/usersettings/", user_setting_list, name="usersetting-list"),
+        path("api/usersettings/<int:pk>/", user_setting_detail, name="usersetting-detail"),
+        path("api/transactions/", transaction_list, name="transaction-list"),
+        path("api/transactions/<int:pk>/", transaction_detail, name="transaction-detail"),
+        path("api/positions/", position_list, name="position-list"),
+        path("api/positions/<int:pk>/", position_detail, name="position-detail"),
+    ]
+)
