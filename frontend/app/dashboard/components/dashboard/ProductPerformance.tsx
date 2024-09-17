@@ -14,52 +14,7 @@ import {
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 
-const products = [
-  {
-    id: "1",
-    name: "Wallet 1",
-    address: "0x040b5f7de5b22a7a409bfa…",
-    description: "description gdsfs 1",
-    amount: "4,881.54",
-    realized: "$412.92",
-    realized_color: "success.main",
-    unrealized: "$772.92",
-    unrealized_color: "success.main",
-  },
-  {
-    id: "2",
-    name: "Wallet 2",
-    address: "0x040b5f7de5b22a7a409bfa…",
-    description: "description gdsfs 2",
-    amount: "24.5",
-    realized: "$4,012.92",
-    realized_color: "success.main",
-    unrealized: "$112.92",
-    unrealized_color: "success.main",
-  },
-  {
-    id: "3",
-    name: "Wallet 3",
-    address: "0x040b5f7de5b22a7a409bfa…",
-    description: "description gdsfs 3",
-    amount: "12.8",
-    realized: "$-1,012.92",
-    realized_color: "error.main",
-    unrealized: "$-512.92",
-    unrealized_color: "error.main",
-  },
-  {
-    id: "4",
-    name: "Wallet 4",
-    address: "0x040b5f7de5b22a7a409bfa…",
-    description: "description gdsfs 4",
-    amount: "2.4",
-    realized: "$-912.92",
-    realized_color: "error.main",
-    unrealized: "$-62.92",
-    unrealized_color: "error.main",
-  },
-];
+
 
 interface Wallet {
   id: number;
