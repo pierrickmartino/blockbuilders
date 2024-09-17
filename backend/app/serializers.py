@@ -51,4 +51,4 @@ class WalletSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Wallet
-        fields = ["id", "address", "name", "balance", "description", "positions"]
+        fields = ["id", "user", "address", "name", "balance", "description", "positions"]

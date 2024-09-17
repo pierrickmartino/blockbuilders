@@ -18,6 +18,9 @@ class WalletViewSet(viewsets.ModelViewSet):
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 
 class WalletPositionView(generics.ListAPIView):
     serializer_class = PositionSerializer
