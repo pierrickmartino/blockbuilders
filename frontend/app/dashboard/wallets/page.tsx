@@ -9,8 +9,9 @@ import MyContacts from "../components/dashboard/TheMyContacts";
 import ActivityTimeline from "../components/dashboard/TheActivityTimeline";
 import WalletTable from "../components/dashboard/WalletTable";
 import Top5Positions from '../components/dashboard/TheTop5Positions';
+import WalletWizard from '../components/dashboard/WalletWizard';
 
-const Dashboard = () => {
+const Wallets = () => {
   return (
     <PageContainer title="Wallets" description="this is Wallets">
       <Box mt={3}>
@@ -22,7 +23,7 @@ const Dashboard = () => {
             <Top5Positions />
           </Grid>
           <Grid item xs={12} lg={4}>
-            <Top5Positions />
+            <WalletWizard />
           </Grid>
           <Grid item xs={12} lg={8}>
             <SalesOverview />
@@ -52,4 +53,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard;
+export default Wallets;
