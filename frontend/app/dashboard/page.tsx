@@ -7,7 +7,7 @@ import Blogcard from './components/dashboard/TheBlogCard';
 import ProfileCard from "./components/dashboard/TheProfileCard";
 import MyContacts from "./components/dashboard/TheMyContacts";
 import ActivityTimeline from "./components/dashboard/TheActivityTimeline";
-import ProductPerfomance from "./components/dashboard/ProductPerformance";
+import WalletTable from "./components/dashboard/WalletTable";
 import Top5Positions from './components/dashboard/TheTop5Positions';
 
 const Dashboard = () => {
@@ -31,7 +31,7 @@ const Dashboard = () => {
             <Blogcard />
           </Grid>
           <Grid item xs={12} lg={12}>
-            <ProductPerfomance backendName="backend" />
+            <WalletTable />
           </Grid>
           <Grid item xs={12} lg={4}>
             <Grid container spacing={3}>

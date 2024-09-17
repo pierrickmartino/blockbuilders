@@ -15,6 +15,7 @@ services:
       - ./.env
     depends_on:
       - backend
+      - nginx
 
   backend:
     container_name: backend

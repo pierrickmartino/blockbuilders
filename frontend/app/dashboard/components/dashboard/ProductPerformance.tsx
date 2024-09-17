@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-
+import React from "react";
 import {
   Typography,
   Box,
@@ -14,88 +12,48 @@ import {
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 
+const products = [
+  {
+    id: "1",
+    name: "Sunil Joshi",
+    post: "Web Designer",
+    pname: "Elite Admin",
+    priority: "Low",
+    pbg: "primary.main",
+    budget: "3.9",
+  },
+  {
+    id: "2",
+    name: "Andrew McDownland",
+    post: "Project Manager",
+    pname: "Real Homes WP Theme",
+    priority: "Medium",
+    pbg: "secondary.main",
+    budget: "24.5",
+  },
+  {
+    id: "3",
+    name: "Christopher Jamil",
+    post: "Project Manager",
+    pname: "MedicalPro WP Theme",
+    priority: "High",
+    pbg: "error.main",
+    budget: "12.8",
+  },
+  {
+    id: "4",
+    name: "Nirav Joshi",
+    post: "Frontend Engineer",
+    pname: "Hosting Press HTML",
+    priority: "Critical",
+    pbg: "success.main",
+    budget: "2.4",
+  },
+];
 
-
-interface Wallet {
-  id: number;
-  name: string;
-  address: string;
-  description: string;
-  balance: string;
-}
-
-interface WalletInterfaceProps {
-  backendName: string;
-}
-
-const ProductPerfomance: React.FC<WalletInterfaceProps> = ({ backendName }) => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-  const [wallets, setWallets] = useState<Wallet[]>([]);
-  const [newWallet, setNewWallet] = useState({ name: '', address: '', description: '', balance: '' });
-  const [updateWallet, setUpdateWallet] = useState({ id: '', name: '', address: '', description: '', balance: '' });
-
-   // Fetch users
-   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/api/wallets/`, {
-          headers: {
-            'Authorization': 'Token c40feb748f0e17b3d7472ed387a566e9d632d4c8',
-        }
-        });
-        const results = response.data.results || [];
-        setWallets(results.reverse());
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, [backendName, apiUrl]);
-
-  // Create a wallet
-  const createWallet = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(`${apiUrl}/api/wallets/`, newWallet);
-      setWallets([response.data, ...wallets]);
-      setNewWallet({ name: '', address: '', description: '', balance: '' });
-    } catch (error) {
-      console.error('Error creating wallet:', error);
-    }
-  };
-
-  // Update a wallet
-  const handleUpdateWallet = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      await axios.put(`${apiUrl}/api/wallets/${updateWallet.id}`, { name: updateWallet.name, address: updateWallet.address, description: updateWallet.description, balance:updateWallet.balance, });
-      setUpdateWallet({ id: '', name: '', address: '', balance: '', description: '' });
-      setWallets(
-        wallets.map((wallet) => {
-          if (wallet.id === parseInt(updateWallet.id)) {
-            return { ...wallet, name: updateWallet.name, address: updateWallet.address, description: updateWallet.description, balance:updateWallet.balance, };
-          }
-          return wallet;
-        })
-      );
-    } catch (error) {
-      console.error('Error updating user:', error);
-    }
-  };
-
-  // Delete a wallet
-  const deleteWallet = async (walletId: number) => {
-    try {
-      await axios.delete(`${apiUrl}/api/wallets/${walletId}`);
-      setWallets(wallets.filter((wallet) => wallet.id !== walletId));
-    } catch (error) {
-      console.error('Error deleting wallet:', error);
-    }
-  };
-
+const ProductPerfomance = () => {
   return (
-    <BaseCard title="Wallet Table">
+    <BaseCard title="Basic Table">
       <TableContainer
         sx={{
           width: {
@@ -108,7 +66,7 @@ const ProductPerfomance: React.FC<WalletInterfaceProps> = ({ backendName }) => {
           aria-label="simple table"
           sx={{
             whiteSpace: "nowrap",
-            mt: 0,
+            mt: 2,
           }}
         >
           <TableHead>
@@ -120,88 +78,65 @@ const ProductPerfomance: React.FC<WalletInterfaceProps> = ({ backendName }) => {
               </TableCell>
               <TableCell>
                 <Typography color="textSecondary" variant="h6">
+                  Assigned
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography color="textSecondary" variant="h6">
                   Name
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography color="textSecondary" variant="h6">
-                  Address
+                  Priority
                 </Typography>
               </TableCell>
               <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
-                  Balance
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography color="textSecondary" variant="h6">
-                  Realized Perf
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography color="textSecondary" variant="h6">
-                  UnRealized Perf
+                  Budget
                 </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {wallets.map((wallet) => (
-              <TableRow key={wallet.name}>
+            {products.map((product) => (
+              <TableRow key={product.name}>
                 <TableCell>
-                  <Typography fontSize="14px" fontWeight={500}>
-                    {wallet.id}
+                  <Typography fontSize="15px" fontWeight={500}>
+                    {product.id}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Box display="flex" alignItems="center">
                     <Box>
                       <Typography fontSize="14px" fontWeight={600}>
-                        {wallet.name}
+                        {product.name}
                       </Typography>
                       <Typography color="textSecondary" fontSize="13px">
-                        {wallet.description}
+                        {product.post}
                       </Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <Box display="flex" alignItems="center">
-                    <Box>
-                      <Typography fontSize="14px">{wallet.address}</Typography>
-                    </Box>
-                  </Box>
+                  <Typography color="textSecondary" fontSize="14px">
+                    {product.pname}
+                  </Typography>
                 </TableCell>
-                <TableCell align="right">
-                  <Typography fontSize="14px">${wallet.balance}</Typography>
-                </TableCell>
-                <TableCell align="right">
+                <TableCell>
                   <Chip
                     sx={{
                       pl: "4px",
                       pr: "4px",
-                      backgroundColor: "", 
-                      // wallet.realized_color,
+                      backgroundColor: product.pbg,
                       color: "#fff",
                     }}
                     size="small"
-                    label="0"
-                    // label={wallet.realized}
+                    label={product.priority}
                   ></Chip>
                 </TableCell>
                 <TableCell align="right">
-                  <Chip
-                    sx={{
-                      pl: "4px",
-                      pr: "4px",
-                      backgroundColor: "",
-                      // backgroundColor: wallet.unrealized_color,
-                      color: "#fff",
-                    }}
-                    size="small"
-                    label="0"
-                    // label={wallet.unrealized}
-                  ></Chip>
+                  <Typography fontSize="14px">${product.budget}k</Typography>
                 </TableCell>
               </TableRow>
             ))}
@@ -210,122 +145,6 @@ const ProductPerfomance: React.FC<WalletInterfaceProps> = ({ backendName }) => {
       </TableContainer>
     </BaseCard>
   );
-
-}
-
-// const ProductPerfomance = ({}) => {
-//   return (
-//     <BaseCard title="Wallet Table">
-//       <TableContainer
-//         sx={{
-//           width: {
-//             xs: "274px",
-//             sm: "100%",
-//           },
-//         }}
-//       >
-//         <Table
-//           aria-label="simple table"
-//           sx={{
-//             whiteSpace: "nowrap",
-//             mt: 0,
-//           }}
-//         >
-//           <TableHead>
-//             <TableRow>
-//               <TableCell>
-//                 <Typography color="textSecondary" variant="h6">
-//                   Id
-//                 </Typography>
-//               </TableCell>
-//               <TableCell>
-//                 <Typography color="textSecondary" variant="h6">
-//                   Name
-//                 </Typography>
-//               </TableCell>
-//               <TableCell>
-//                 <Typography color="textSecondary" variant="h6">
-//                   Address
-//                 </Typography>
-//               </TableCell>
-//               <TableCell align="right">
-//                 <Typography color="textSecondary" variant="h6">
-//                   Balance
-//                 </Typography>
-//               </TableCell>
-//               <TableCell align="right">
-//                 <Typography color="textSecondary" variant="h6">
-//                   Realized Perf
-//                 </Typography>
-//               </TableCell>
-//               <TableCell align="right">
-//                 <Typography color="textSecondary" variant="h6">
-//                   UnRealized Perf
-//                 </Typography>
-//               </TableCell>
-//             </TableRow>
-//           </TableHead>
-//           <TableBody>
-//             {products.map((product) => (
-//               <TableRow key={product.name}>
-//                 <TableCell>
-//                   <Typography fontSize="14px" fontWeight={500}>
-//                     {product.id}
-//                   </Typography>
-//                 </TableCell>
-//                 <TableCell>
-//                   <Box display="flex" alignItems="center">
-//                     <Box>
-//                       <Typography fontSize="14px" fontWeight={600}>
-//                         {product.name}
-//                       </Typography>
-//                       <Typography color="textSecondary" fontSize="13px">
-//                         {product.description}
-//                       </Typography>
-//                     </Box>
-//                   </Box>
-//                 </TableCell>
-//                 <TableCell>
-//                   <Box display="flex" alignItems="center">
-//                     <Box>
-//                       <Typography fontSize="14px">{product.address}</Typography>
-//                     </Box>
-//                   </Box>
-//                 </TableCell>
-//                 <TableCell align="right">
-//                   <Typography fontSize="14px">${product.amount}</Typography>
-//                 </TableCell>
-//                 <TableCell align="right">
-//                   <Chip
-//                     sx={{
-//                       pl: "4px",
-//                       pr: "4px",
-//                       backgroundColor: product.realized_color,
-//                       color: "#fff",
-//                     }}
-//                     size="small"
-//                     label={product.realized}
-//                   ></Chip>
-//                 </TableCell>
-//                 <TableCell align="right">
-//                   <Chip
-//                     sx={{
-//                       pl: "4px",
-//                       pr: "4px",
-//                       backgroundColor: product.unrealized_color,
-//                       color: "#fff",
-//                     }}
-//                     size="small"
-//                     label={product.unrealized}
-//                   ></Chip>
-//                 </TableCell>
-//               </TableRow>
-//             ))}
-//           </TableBody>
-//         </Table>
-//       </TableContainer>
-//     </BaseCard>
-//   );
-// };
+};
 
 export default ProductPerfomance;
