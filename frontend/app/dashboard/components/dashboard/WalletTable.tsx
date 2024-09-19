@@ -10,11 +10,13 @@ import {
   TableRow,
   Chip,
   TableContainer,
+  IconButton,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 
 import { Wallet } from "../../../lib/definition";
 import { fetchWallets } from "../../../lib/data";
+import { IconDotsVertical } from "@tabler/icons-react";
 
 
 const WalletTable = () => {
@@ -73,6 +75,8 @@ const WalletTable = () => {
                 <Typography color="textSecondary" variant="h6">
                   UnRealized Perf
                 </Typography>
+              </TableCell>
+              <TableCell>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -133,6 +137,11 @@ const WalletTable = () => {
                     label="0"
                     // label={wallet.unrealized}
                   ></Chip>
+                </TableCell>
+                <TableCell>
+                <IconButton>
+                  <IconDotsVertical width={18} />
+                </IconButton>
                 </TableCell>
               </TableRow>
             ))}

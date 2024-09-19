@@ -23,7 +23,7 @@ const WalletWizard = () => {
     >
       <Typography variant="h5">Form</Typography>
     </Box>
-    <Box px={3} py={2} mt={2}>
+    <Box px={3} py={2} mt={1}>
       
     <Form />
       

@@ -75,6 +75,7 @@ class Wallet(TimeStampModel):
     class Meta:
         verbose_name = "Wallet"
         verbose_name_plural = "Wallets"
+        ordering = ['created_at']
         indexes = [
             models.Index(fields=["user", "address"]),  # Index for frequent queries
         ]

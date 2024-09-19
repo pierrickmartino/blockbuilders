@@ -37,7 +37,7 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = ["app.blockbuilders.tech", "localhost", "127.0.0.1", "backend"]
+ALLOWED_HOSTS = ["app.blockbuilders.tech", "localhost", "127.0.0.1", "backend", "0.0.0.0"]
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -45,9 +45,14 @@ INTERNAL_IPS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost",
+    "http://localhost:3030",
     "http://127.0.0.1",
+    "http://127.0.0.1:3030",
+    "http://0.0.0.0",
     "http://app.blockbuilders.tech",
 ]
+
+CSRF_TRUSTED_ORIGINS = ["http://localhost/", "http://0.0.0.0/", "http://127.0.0.1/", "http://app.blockbuilders.tech/"]
 
 # Application definition
 INSTALLED_APPS = [
@@ -75,7 +80,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",

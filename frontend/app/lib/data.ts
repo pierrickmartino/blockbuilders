@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Wallet } from "./definition";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 
 export const fetchWallets = async (setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>): Promise<void> => {
   try {
