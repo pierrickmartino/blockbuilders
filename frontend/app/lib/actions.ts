@@ -9,7 +9,6 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 const webUrl = process.env.NEXT_PUBLIC_WEB_URL || "http://127.0.0.1";
 
 const FormSchema = z.object({
-  user: z.string(),
   address: z.string(),
   name: z.string(),
   description: z.string(),
@@ -20,7 +19,6 @@ const CreateWallet = FormSchema;
 
 export type State = {
   errors?: {
-    user?: string[];
     address?: string[];
     name?: string[];
     description?: string[];
@@ -30,7 +28,7 @@ export type State = {
 
 export async function createWallet(
   prevState: State,
-  formData: { user: string; address: string; name: string; description: string }
+  formData: { address: string; name: string; description: string }
 ) {
   // Validate form fields using Zod
   const validatedFields = CreateWallet.safeParse(formData);
@@ -44,10 +42,10 @@ export async function createWallet(
   }
 
   // Prepare data for insertion into the database
-  const { user, address, name, description } = validatedFields.data;
+  const { address, name, description } = validatedFields.data;
 
   // Log the data being sent
-  console.log("Data being sent:", { user, address, name, description });
+  console.log("Data being sent:", { address, name, description });
   console.log("Request URL:", `${apiUrl}/api/wallets/`);
 
   // Insert data into the database
@@ -55,18 +53,17 @@ export async function createWallet(
     const response = await axios.post(
       `${apiUrl}/api/wallets/`,
       {
-        user, // Include the user field
         address, // Wallet address
         name, // Wallet name
         description, // Wallet description
       },
       {
         headers: {
-          'Authorization': 'Token c40feb748f0e17b3d7472ed387a566e9d632d4c8',
-          'Content-Type': 'application/json',
-          'Accept': '*/*',
-          'Accept-Encoding': 'gzip, deflate, br',
-          'Connection': 'keep-alive',
+          Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+          "Content-Type": "application/json",
+          Accept: "*/*",
+          "Accept-Encoding": "gzip, deflate, br",
+          Connection: "keep-alive",
         },
       }
     );
@@ -75,8 +72,10 @@ export async function createWallet(
     if (response.status === 201) {
       console.log("Wallet created successfully!");
 
+      // Revalidate the cache for the wallets page and redirect the user.
+      revalidatePath(`${webUrl}/dashboard/wallets`);
+      redirect(`${webUrl}/dashboard/wallets`);
     }
-
   } catch (error: any) {
     // Log the error for debugging
     console.error(

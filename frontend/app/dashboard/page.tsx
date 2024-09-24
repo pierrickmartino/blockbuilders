@@ -7,8 +7,8 @@ import Blogcard from './components/dashboard/TheBlogCard';
 import ProfileCard from "./components/dashboard/TheProfileCard";
 import MyContacts from "./components/dashboard/TheMyContacts";
 import ActivityTimeline from "./components/dashboard/TheActivityTimeline";
-import WalletTable from "./components/dashboard/WalletTable";
 import Top5Positions from './components/dashboard/TheTop5Positions';
+import ProductPerformance from './components/dashboard/ProductPerformance';
 
 const Dashboard = () => {
   return (
@@ -31,7 +31,7 @@ const Dashboard = () => {
             <Blogcard />
           </Grid>
           <Grid item xs={12} lg={12}>
-            <WalletTable />
+            <ProductPerformance />
           </Grid>
           <Grid item xs={12} lg={4}>
             <Grid container spacing={3}>

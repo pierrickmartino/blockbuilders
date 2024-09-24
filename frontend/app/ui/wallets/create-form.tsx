@@ -5,9 +5,13 @@ import { useState } from "react";
 import { Box, Button, Stack, TextField } from "@mui/material";
 import { Add, Save } from "@mui/icons-material";
 
-export default function Form() {
+// Define the props for WalletWizard, including the onWalletCreated function
+interface WalletWizardProps {
+  onWalletCreated: (e: React.FormEvent) => Promise<void>;
+}
+
+const Form: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
   const [formData, setFormData] = useState({
-    user: "",
     address: "",
     name: "",
     description: "",
@@ -18,7 +22,7 @@ export default function Form() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value, // Use id for setting the input values in the state
+      [e.target.id]: e.target.value,
     });
   };
 
@@ -27,24 +31,17 @@ export default function Form() {
     e.preventDefault();
 
     console.log("Form Data:", formData);
-    
+
     // Directly pass formData as JSON instead of FormData
     const result = await createWallet(state, formData);
-
-    // // Convert form data into FormData object
-    // const data = new FormData();
-    // data.append("user", formData.user);
-    // data.append("address", formData.address);
-    // data.append("name", formData.name);
-    // data.append("description", formData.description);
-
-    // // Call createWallet action
-    // const result = await createWallet(state, data);
+    // Reset form after POST
+    setFormData({ address: "", name: "", description: "" });
 
     // Handle the response
     if (result.errors) {
       setState((prev) => ({ ...prev, errors: result.errors }));
     } else {
+      onWalletCreated(e); // Trigger the wallet refresh in the parent component
       setState((prev) => ({ ...prev, message: result.message }));
     }
   };
@@ -52,10 +49,6 @@ export default function Form() {
   return (
     <Box component="form" onSubmit={handleSubmit}>
       <Stack spacing={3}>
-        <TextField id="user" label="User" variant="outlined" value={formData.user}
-          onChange={handleInputChange}
-          error={!!state.errors?.user}
-          helperText={state.errors?.user?.[0]} />
         <TextField
           id="address"
           label="Address"
@@ -65,13 +58,15 @@ export default function Form() {
           error={!!state.errors?.address}
           helperText={state.errors?.address?.[0]}
         />
-        <TextField id="name"
+        <TextField
+          id="name"
           label="Name"
           variant="outlined"
           value={formData.name}
           onChange={handleInputChange}
           error={!!state.errors?.name}
-          helperText={state.errors?.name?.[0]} />
+          helperText={state.errors?.name?.[0]}
+        />
         <TextField
           id="description"
           label="Description"
@@ -86,7 +81,12 @@ export default function Form() {
       <Box mt={4} mb={1}>
         <Stack direction="row" spacing={2}>
           {/* <ButtonGroup variant="contained" aria-label="contained button group"> */}
-          <Button variant="contained" color="success" startIcon={<Add />} onClick={handleSubmit} >
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<Add />}
+            onClick={handleSubmit}
+          >
             Add
           </Button>
           <Button variant="contained" color="primary" startIcon={<Save />}>
@@ -96,4 +96,5 @@ export default function Form() {
       </Box>
     </Box>
   );
-}
+};
+export default Form;

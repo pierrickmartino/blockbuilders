@@ -15,17 +15,21 @@ import {
 import BaseCard from "../shared/DashboardCard";
 
 import { Wallet } from "../../../lib/definition";
-import { fetchWallets } from "../../../lib/data";
+// import { fetchWallets } from "../../../lib/data";
 import { IconDotsVertical } from "@tabler/icons-react";
 
+// Define the props type that will be passed into WalletTable
+interface WalletTableProps {
+  wallets: Wallet[];
+}
 
-const WalletTable = () => {
-  const [wallets, setWallets] = useState<Wallet[]>([]);
+const WalletTable: React.FC<WalletTableProps> = ({ wallets }) => {
+  // const [wallets, setWallets] = useState<Wallet[]>([]);
 
-  useEffect(() => {
-    // Call fetchWallets function when the component mounts
-    fetchWallets(setWallets);
-  }, []);
+  // useEffect(() => {
+  //   // Call fetchWallets function when the component mounts
+  //   fetchWallets(setWallets);
+  // }, []);
   
   return (
     <BaseCard title="Wallet Table">
@@ -82,7 +86,7 @@ const WalletTable = () => {
           </TableHead>
           <TableBody>
             {wallets.map((wallet : Wallet) => (
-              <TableRow key={wallet.name}>
+              <TableRow key={wallet.id}>
                 <TableCell>
                   <Typography fontSize="14px" fontWeight={500}>
                     {wallet.id}
