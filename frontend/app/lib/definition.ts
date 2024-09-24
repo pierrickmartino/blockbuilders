@@ -6,3 +6,11 @@ export type Wallet = {
     balance: string;
     positions: any[];
   };
+
+export type Position = {
+  id : number;
+  quantity : string;
+  contract : string;
+  average_cost : string;
+  transactions: any[];
+}

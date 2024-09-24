@@ -11,12 +11,17 @@ import {
   Chip,
   TableContainer,
   IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
-
-import { Wallet } from "../../../lib/definition";
-// import { fetchWallets } from "../../../lib/data";
 import { IconDotsVertical } from "@tabler/icons-react";
+import { Wallet } from "@/app/lib/definition";
+import { Refresh } from "@mui/icons-material";
+import { Download } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
+import { Visibility } from "@mui/icons-material";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
@@ -24,13 +29,56 @@ interface WalletTableProps {
 }
 
 const WalletTable: React.FC<WalletTableProps> = ({ wallets }) => {
-  // const [wallets, setWallets] = useState<Wallet[]>([]);
+  const dummyMenuItems = [
+    {
+      title: "See details",
+      key: "wallet-details",
+      value: "wallet-details",
+      button: <Visibility fontSize="small" />,
+    },
+    {
+      title: "Download history",
+      key: "wallet-download",
+      value: "wallet-download",
+      button: <Download fontSize="small" />,
+    },
+    {
+      title: "Refresh price",
+      key: "wallet-refresh",
+      value: "wallet-refresh",
+      button: <Refresh fontSize="small" />,
+    },
+    {
+      title: "Delete wallet",
+      key: "wallet-delete",
+      value: "wallet-delete",
+      button: <Delete fontSize="small" />,
+    },
+  ];
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [selectedWalletId, setSelectedWalletId] = useState<number | null>(null); // Add state to track wallet ID
+  const open = Boolean(anchorEl);
 
-  // useEffect(() => {
-  //   // Call fetchWallets function when the component mounts
-  //   fetchWallets(setWallets);
-  // }, []);
-  
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    wallet_id: number
+  ) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedWalletId(wallet_id);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setSelectedWalletId(null);
+  };
+
+  // Handle navigation to wallet details
+  const handleNavigateToDetails = () => {
+    if (selectedWalletId !== null) {
+      window.location.href = `/dashboard/wallets/${selectedWalletId}/positions`;
+    }
+  };
+
   return (
     <BaseCard title="Wallet Table">
       <TableContainer
@@ -80,12 +128,11 @@ const WalletTable: React.FC<WalletTableProps> = ({ wallets }) => {
                   UnRealized Perf
                 </Typography>
               </TableCell>
-              <TableCell>
-              </TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {wallets.map((wallet : Wallet) => (
+            {wallets.map((wallet: Wallet) => (
               <TableRow key={wallet.id}>
                 <TableCell>
                   <Typography fontSize="14px" fontWeight={500}>
@@ -119,7 +166,7 @@ const WalletTable: React.FC<WalletTableProps> = ({ wallets }) => {
                     sx={{
                       pl: "4px",
                       pr: "4px",
-                      backgroundColor: "", 
+                      backgroundColor: "",
                       // wallet.realized_color,
                       color: "#fff",
                     }}
@@ -143,9 +190,40 @@ const WalletTable: React.FC<WalletTableProps> = ({ wallets }) => {
                   ></Chip>
                 </TableCell>
                 <TableCell>
-                <IconButton>
-                  <IconDotsVertical width={18} />
-                </IconButton>
+                  <IconButton
+                    id="basic-button"
+                    aria-controls={open ? "basic-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                    onClick={(event) => handleClick(event, wallet.id)}
+                    aria-label="Open to show more"
+                    title="Open to show more"
+                  >
+                    <IconDotsVertical width={18} />
+                  </IconButton>
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={open}
+                    onClose={handleClose}
+                  >
+                    {dummyMenuItems.map((item) => (
+                      <MenuItem
+                        onClick={() => {
+                          handleClose();
+                          if (item.key === "wallet-details") {
+                            handleNavigateToDetails();
+                          }
+                        }}
+                        key={item.key}
+                        value={item.value}
+                      >
+                        <ListItemIcon>{item.button}</ListItemIcon>
+                        {item.title}
+                      </MenuItem>
+                    ))}
+                  </Menu>
                 </TableCell>
               </TableRow>
             ))}
@@ -154,8 +232,7 @@ const WalletTable: React.FC<WalletTableProps> = ({ wallets }) => {
       </TableContainer>
     </BaseCard>
   );
-
-}
+};
 
 export default WalletTable;
 
@@ -311,7 +388,7 @@ export default WalletTable;
 //                     sx={{
 //                       pl: "4px",
 //                       pr: "4px",
-//                       backgroundColor: "", 
+//                       backgroundColor: "",
 //                       // wallet.realized_color,
 //                       color: "#fff",
 //                     }}
