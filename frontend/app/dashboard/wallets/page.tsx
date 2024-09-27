@@ -31,6 +31,10 @@ const Wallets = () => {
     fetchWalletData(); // Re-fetch wallet data after a new wallet is created
   };
 
+  const handleWalletDeleted = () => {
+    fetchWalletData(); // Re-fetch wallet data after a new wallet is created
+  };
+
   return (
     <PageContainer title="Wallets" description="this is Wallets">
       <Box mt={3}>
@@ -51,7 +55,7 @@ const Wallets = () => {
             <Blogcard />
           </Grid>
           <Grid item xs={12} lg={12}>
-            <WalletTable wallets={wallets} />
+            <WalletTable wallets={wallets}  onWalletDeleted={handleWalletDeleted} />
           </Grid>
           <Grid item xs={12} lg={4}>
             <Grid container spacing={3}>

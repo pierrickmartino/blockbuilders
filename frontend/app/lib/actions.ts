@@ -93,6 +93,23 @@ export async function createWallet(
   redirect(`${webUrl}/dashboard/wallets`);
 }
 
+export async function deleteWallet(id: string) {
+  // throw new Error('Failed to Delete Invoice');
+
+  try {
+    const response = await axios.delete(`${apiUrl}/api/wallets/${id}/`, {
+      headers: {
+        Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+      },
+    });
+    // revalidatePath(`${webUrl}/dashboard/wallets`);
+    // redirect(`${webUrl}/dashboard/wallets`);
+    return response.data;
+  } catch (error) {
+    return { message: 'Database Error: Failed to delete wallet.' };
+  }
+}
+
 // export async function updateWallet(
 //   id: string,
 //   prevState: State,
@@ -128,17 +145,7 @@ export async function createWallet(
 //   redirect('/dashboard/invoices');
 // }
 
-// export async function deleteWallet(id: string) {
-//   // throw new Error('Failed to Delete Invoice');
 
-//   try {
-//     await sql`DELETE FROM invoices WHERE id = ${id}`;
-//     revalidatePath('/dashboard/invoices');
-//     return { message: 'Deleted Invoice' };
-//   } catch (error) {
-//     return { message: 'Database Error: Failed to Delete Invoice.' };
-//   }
-// }
 
 // export async function authenticate(
 //   prevState: string | undefined,

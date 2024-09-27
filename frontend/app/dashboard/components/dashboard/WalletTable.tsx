@@ -22,13 +22,15 @@ import { Refresh } from "@mui/icons-material";
 import { Download } from "@mui/icons-material";
 import { Delete } from "@mui/icons-material";
 import { Visibility } from "@mui/icons-material";
+import { deleteWallet } from "@/app/lib/actions";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
   wallets: Wallet[];
+  onWalletDeleted: () => void;
 }
 
-const WalletTable: React.FC<WalletTableProps> = ({ wallets }) => {
+const WalletTable: React.FC<WalletTableProps> = ({ wallets, onWalletDeleted }) => {
   const dummyMenuItems = [
     {
       title: "See details",
@@ -76,6 +78,16 @@ const WalletTable: React.FC<WalletTableProps> = ({ wallets }) => {
   const handleNavigateToDetails = () => {
     if (selectedWalletId !== null) {
       window.location.href = `/dashboard/wallets/${selectedWalletId}/positions`;
+    }
+  };
+
+  // Handle navigation to wallet details
+  const handleDeletion = async () => {
+    if (selectedWalletId !== null) {
+      const response = await deleteWallet(selectedWalletId.toString());
+      if (response.message !== 'Database Error: Failed to delete wallet.') {
+        onWalletDeleted(); // Notify parent to refresh wallets
+      }
     }
   };
 
@@ -214,6 +226,9 @@ const WalletTable: React.FC<WalletTableProps> = ({ wallets }) => {
                           handleClose();
                           if (item.key === "wallet-details") {
                             handleNavigateToDetails();
+                          }
+                          if (item.key === "wallet-delete") {
+                            handleDeletion();
                           }
                         }}
                         key={item.key}

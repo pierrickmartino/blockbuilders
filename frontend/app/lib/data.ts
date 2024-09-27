@@ -21,16 +21,35 @@ export const fetchWallets = async (
   }
 };
 
+// export const deleteWallet = async (wallet_id: Number): Promise<void> => {
+//   try {
+//     const response = await axios.delete(`${apiUrl}/api/wallets/${wallet_id}`, {
+//       headers: {
+//         Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+//       },
+//     });
+
+//     const wallets: Wallet[] = response.data.results || [];
+//     // setWallets(wallets.filter((wallet) => wallet.id !== wallet_id));
+//   } catch (err) {
+//     console.error("Error fetching data from wallet API:", err);
+//     throw new Error("Failed to fetch all wallets.");
+//   }
+// };
+
 export const fetchPositions = async (
   wallet_id: number,
   setPositions: React.Dispatch<React.SetStateAction<Position[]>>
 ): Promise<void> => {
   try {
-    const response = await axios.get(`${apiUrl}/api/wallets/${wallet_id}/positions`, {
-      headers: {
-        Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
-      },
-    });
+    const response = await axios.get(
+      `${apiUrl}/api/wallets/${wallet_id}/positions`,
+      {
+        headers: {
+          Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+        },
+      }
+    );
 
     const positions: Position[] = response.data.results || [];
     setPositions(positions.reverse());
