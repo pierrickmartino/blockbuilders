@@ -7,7 +7,7 @@ from celery import shared_task
 from django.shortcuts import get_object_or_404
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
-from datetime import timezone
+from datetime import timezone as dt_timezone
 from app.utils.cryptocompare.view_cryptocompare import get_daily_pair_ohlcv, get_multiple_symbols_price
 from app.utils.polygon.view_polygon import (
     account_balance_by_address as polygon_account_balance_by_address,
@@ -94,9 +94,9 @@ def create_transactions_from_bsc_bep20_task(wallet_id: int):
                 name=contract_name,
                 symbol=contract_symbol,
                 defaults={
-                    "previous_day": timezone.make_aware(datetime.now(), timezone.utc),
-                    "previous_week": timezone.make_aware(datetime.now(), timezone.utc),
-                    "previous_month": timezone.make_aware(datetime.now(), timezone.utc),
+                    "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                    "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                    "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
                 },
             )
             if contract.category != CategoryContractChoices.SUSPICIOUS:
@@ -110,7 +110,7 @@ def create_transactions_from_bsc_bep20_task(wallet_id: int):
                     position=position,
                     type=transaction_type,
                     quantity=int(bep20["value"]) / (10 ** int(bep20["tokenDecimal"])),
-                    date=timezone.make_aware(datetime.fromtimestamp(int(bep20["timeStamp"])), timezone.utc),
+                    date=timezone.make_aware(datetime.fromtimestamp(int(bep20["timeStamp"])), dt_timezone.utc),
                     hash=bep20["hash"],
                 ).save()
         logger.info(f"Created transactions from BEP20 (BSC) for wallet id {wallet_id} successfully.")
@@ -148,9 +148,9 @@ def create_transactions_from_polygon_erc20_task(wallet_id: int):
                 name=contract_name,
                 symbol=contract_symbol,
                 defaults={
-                    "previous_day": timezone.make_aware(datetime.now(), timezone.utc),
-                    "previous_week": timezone.make_aware(datetime.now(), timezone.utc),
-                    "previous_month": timezone.make_aware(datetime.now(), timezone.utc),
+                    "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                    "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                    "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
                 },
             )
             if contract.category != CategoryContractChoices.SUSPICIOUS:
@@ -164,7 +164,7 @@ def create_transactions_from_polygon_erc20_task(wallet_id: int):
                     position=position,
                     type=transaction_type,
                     quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
-                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), timezone.utc),
+                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), dt_timezone.utc),
                     hash=erc20["hash"],
                 ).save()
         logger.info(f"Created transactions from ERC20 (Polygon) for wallet id {wallet_id} successfully.")
@@ -202,9 +202,9 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: int):
                 name=contract_name,
                 symbol=contract_symbol,
                 defaults={
-                    "previous_day": timezone.make_aware(datetime.now(), timezone.utc),
-                    "previous_week": timezone.make_aware(datetime.now(), timezone.utc),
-                    "previous_month": timezone.make_aware(datetime.now(), timezone.utc),
+                    "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                    "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                    "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
                 },
             )
             if contract.category != CategoryContractChoices.SUSPICIOUS:
@@ -218,7 +218,7 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: int):
                     position=position,
                     type=transaction_type,
                     quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
-                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), timezone.utc),
+                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), dt_timezone.utc),
                     hash=erc20["hash"],
                 ).save()
         logger.info(f"Created transactions from ERC20 (Arbitrum) for wallet id {wallet_id} successfully.")
@@ -256,9 +256,9 @@ def create_transactions_from_optimism_erc20_task(wallet_id: int):
                 name=contract_name,
                 symbol=contract_symbol,
                 defaults={
-                    "previous_day": timezone.make_aware(datetime.now(), timezone.utc),
-                    "previous_week": timezone.make_aware(datetime.now(), timezone.utc),
-                    "previous_month": timezone.make_aware(datetime.now(), timezone.utc),
+                    "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                    "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                    "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
                 },
             )
             if contract.category != CategoryContractChoices.SUSPICIOUS:
@@ -272,7 +272,7 @@ def create_transactions_from_optimism_erc20_task(wallet_id: int):
                     position=position,
                     type=transaction_type,
                     quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
-                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), timezone.utc),
+                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), dt_timezone.utc),
                     hash=erc20["hash"],
                 ).save()
         logger.info(f"Created transactions from ERC20 (Optimism) for wallet id {wallet_id} successfully.")
@@ -309,9 +309,9 @@ def get_polygon_token_balance(wallet_id: int):
             symbol=contract_symbol,
             defaults={
                 "decimals": 18,
-                "previous_day": timezone.make_aware(datetime.now(), timezone.utc),
-                "previous_week": timezone.make_aware(datetime.now(), timezone.utc),
-                "previous_month": timezone.make_aware(datetime.now(), timezone.utc),
+                "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
             },
         )
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
@@ -347,9 +347,9 @@ def get_bsc_token_balance(wallet_id: int):
             symbol=contract_symbol,
             defaults={
                 "decimals": 18,
-                "previous_day": timezone.make_aware(datetime.now(), timezone.utc),
-                "previous_week": timezone.make_aware(datetime.now(), timezone.utc),
-                "previous_month": timezone.make_aware(datetime.now(), timezone.utc),
+                "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
             },
         )
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
@@ -385,9 +385,9 @@ def get_arbitrum_token_balance(wallet_id: int):
             symbol=contract_symbol,
             defaults={
                 "decimals": 18,
-                "previous_day": timezone.make_aware(datetime.now(), timezone.utc),
-                "previous_week": timezone.make_aware(datetime.now(), timezone.utc),
-                "previous_month": timezone.make_aware(datetime.now(), timezone.utc),
+                "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
             },
         )
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
@@ -423,9 +423,9 @@ def get_optimism_token_balance(wallet_id: int):
             symbol=contract_symbol,
             defaults={
                 "decimals": 18,
-                "previous_day": timezone.make_aware(datetime.now(), timezone.utc),
-                "previous_week": timezone.make_aware(datetime.now(), timezone.utc),
-                "previous_month": timezone.make_aware(datetime.now(), timezone.utc),
+                "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
             },
         )
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
@@ -882,7 +882,7 @@ def get_historical_price_from_market_task(symbol: str):
 
         # Iterate over each data point
         for record in prices["Data"]["Data"]:
-            time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), timezone.utc)
+            time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), dt_timezone.utc)
             high = record["high"]
             low = record["low"]
             open_price = record["open"]
@@ -933,7 +933,7 @@ def get_full_init_historical_price_from_market_task(symbol: str):
 
         # Iterate over each data point
         for record in prices["Data"]["Data"]:
-            time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), timezone.utc)
+            time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), dt_timezone.utc)
             high = record["high"]
             low = record["low"]
             open_price = record["open"]

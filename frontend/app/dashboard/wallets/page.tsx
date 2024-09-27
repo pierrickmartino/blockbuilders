@@ -119,7 +119,7 @@ const Wallets = () => {
         open={open}
         autoHideDuration={6000}
         onClose={handleClose}
-        message="Wallet is downloading history..."
+        message="Download in progress"
         action={action}
       />
     </PageContainer>
