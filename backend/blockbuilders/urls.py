@@ -169,11 +169,11 @@ urlpatterns = format_suffix_patterns(
             views_position.refresh_wallet_position_price,
             name="refresh-wallet-position-price",
         ),
-        path(
-            "wallet/<int:wallet_id>/download_wallet/",
-            views_position.download_wallet,
-            name="download-wallet",
-        ),
+        # path(
+        #     "wallet/<int:wallet_id>/download_wallet/",
+        #     views_position.download_wallet,
+        #     name="download-wallet",
+        # ),
         path(
             "wallet/<int:wallet_id>/refresh_full_histo_price/",
             views_position.refresh_full_historical_position_price,
@@ -218,6 +218,7 @@ urlpatterns = format_suffix_patterns(
         path("api/wallets/", wallet_list, name="wallet-list"),
         path("api/wallets/<int:pk>/", wallet_detail, name="wallet-detail"),
         path("api/wallets/<int:wallet_id>/positions/", wallet_position_list, name="wallet-position-list"),
+        path("api/wallets/<int:wallet_id>/download/", views_position.download_wallet, name="wallet-download"),
         path(
             "api/wallets/<int:wallet_id>/positions/<int:position_id>/",
             wallet_position_detail,

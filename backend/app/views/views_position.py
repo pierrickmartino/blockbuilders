@@ -1,6 +1,7 @@
 import logging
 
 from celery import chain, chord, group
+from django.http import JsonResponse
 
 from app.tasks import (
     calculate_wallet_balance_task,
@@ -159,7 +160,8 @@ def refresh_full_historical_position_price(request, wallet_id: int):
     return redirect("dashboard")
 
 
-@login_required
+# @login_required
+# @require_POST
 def download_wallet(request, wallet_id: int):
     """
     View to sync wallet data by chaining several Celery tasks.
@@ -195,4 +197,5 @@ def download_wallet(request, wallet_id: int):
     wallet_process.resync_task = chain_result.id
     wallet_process.save()
     logger.info(f"Started syncing wallet with id {wallet_id}")
-    return redirect("dashboard")
+    # return redirect("dashboard")
+    return JsonResponse({'task_id': chain_result.id, 'status': 'Task triggered successfully'})

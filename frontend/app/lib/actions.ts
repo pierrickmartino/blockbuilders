@@ -45,8 +45,8 @@ export async function createWallet(
   const { address, name, description } = validatedFields.data;
 
   // Log the data being sent
-  console.log("Data being sent:", { address, name, description });
-  console.log("Request URL:", `${apiUrl}/api/wallets/`);
+  // console.log("Data being sent:", { address, name, description });
+  // console.log("Request URL:", `${apiUrl}/api/wallets/`);
 
   // Insert data into the database
   try {
@@ -91,6 +91,29 @@ export async function createWallet(
   // Revalidate the cache for the wallets page and redirect the user.
   revalidatePath(`${webUrl}/dashboard/wallets`);
   redirect(`${webUrl}/dashboard/wallets`);
+}
+
+export async function downloadWallet(id: string) {
+  // throw new Error('Failed to Delete Invoice');
+
+  try {
+    const response = await axios.post(`${apiUrl}/api/wallets/${id}/download/`, {
+      headers: {
+        Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+        "Content-Type": "application/json",
+          Accept: "*/*",
+          "Accept-Encoding": "gzip, deflate, br",
+          Connection: "keep-alive",
+      },
+    });
+    // revalidatePath(`${webUrl}/dashboard/wallets`);
+    // redirect(`${webUrl}/dashboard/wallets`);
+    const result = await response.data;
+    console.log('Task triggered:', result);
+    return result;
+  } catch (error) {
+    return { message: 'Database Error: Failed to delete wallet.' };
+  }
 }
 
 export async function deleteWallet(id: string) {

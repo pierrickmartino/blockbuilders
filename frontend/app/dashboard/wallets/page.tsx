@@ -1,5 +1,5 @@
 "use client";
-import { Grid, Box } from "@mui/material";
+import { Grid, Box, Snackbar, Button, IconButton, SnackbarCloseReason } from "@mui/material";
 import PageContainer from "../components/container/PageContainer";
 // components
 import SalesOverview from "../components/dashboard/TheSalesOverview";
@@ -10,12 +10,29 @@ import ActivityTimeline from "../components/dashboard/TheActivityTimeline";
 import WalletTable from "../components/dashboard/WalletTable";
 import Top5Positions from "../components/dashboard/TheTop5Positions";
 import WalletWizard from "../components/dashboard/WalletWizard";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Wallet } from "@/app/lib/definition";
 import { fetchWallets } from "@/app/lib/data";
+import { Close } from "@mui/icons-material";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [open, setOpen] = useState(false);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason,
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   // Fetch wallets function
   const fetchWalletData = async () => {
@@ -34,6 +51,28 @@ const Wallets = () => {
   const handleWalletDeleted = () => {
     fetchWalletData(); // Re-fetch wallet data after a new wallet is created
   };
+
+  const handleWalletDownloaded = () => {
+    // fetchWalletData(); // Re-fetch wallet data after a new wallet is created
+    // console.log('show notif');
+    handleClick();
+  };
+
+  const action = (
+    <Fragment>
+      <Button color="secondary" size="small" onClick={handleClose}>
+        UNDO
+      </Button>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleClose}
+      >
+        <Close fontSize="small" />
+      </IconButton>
+    </Fragment>
+  );
 
   return (
     <PageContainer title="Wallets" description="this is Wallets">
@@ -55,7 +94,11 @@ const Wallets = () => {
             <Blogcard />
           </Grid>
           <Grid item xs={12} lg={12}>
-            <WalletTable wallets={wallets}  onWalletDeleted={handleWalletDeleted} />
+            <WalletTable
+              wallets={wallets}
+              onWalletDeleted={handleWalletDeleted}
+              onWalletDownloaded={handleWalletDownloaded}
+            />
           </Grid>
           <Grid item xs={12} lg={4}>
             <Grid container spacing={3}>
@@ -72,6 +115,13 @@ const Wallets = () => {
           </Grid>
         </Grid>
       </Box>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message="Wallet is downloading history..."
+        action={action}
+      />
     </PageContainer>
   );
 };
