@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Position, Wallet } from "./definition";
+import { Position, Wallet, Transaction } from "./definition";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 
@@ -58,3 +58,27 @@ export const fetchPositions = async (
     throw new Error("Failed to fetch all positions.");
   }
 };
+
+export const fetchTransactions = async (
+  position_id: number,
+  wallet_id: number,
+  setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>
+): Promise<void> => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/api/wallets/${wallet_id}/positions/${position_id}/transactions`,
+      {
+        headers: {
+          Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+        },
+      }
+    );
+
+    const transactions: Transaction[] = response.data.results || [];
+    setTransactions(transactions.reverse());
+  } catch (err) {
+    console.error("Error fetching data from transaction API:", err);
+    throw new Error("Failed to fetch all transactions.");
+  }
+};
+

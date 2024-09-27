@@ -14,16 +14,16 @@ import {
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 
-import { Position, Wallet } from "../../../lib/definition";
+import { Transaction } from "../../../lib/definition";
 // import { fetchWallets } from "../../../lib/data";
 import { IconDotsVertical } from "@tabler/icons-react";
 
 // Define the props type that will be passed into WalletTable
-interface PositionTableProps {
-  positions: Position[];
+interface TransactionTableProps {
+  transactions: Transaction[];
 }
 
-const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
+const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => {
   // const [wallets, setWallets] = useState<Wallet[]>([]);
 
   // useEffect(() => {
@@ -32,7 +32,7 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
   // }, []);
   
   return (
-    <BaseCard title="Position Table">
+    <BaseCard title="Transaction Table">
       <TableContainer
         sx={{
           width: {
@@ -90,18 +90,18 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {positions.map((position : Position) => (
-              <TableRow key={position.id}>
+            {transactions.map((transaction : Transaction) => (
+              <TableRow key={transaction.id}>
                 <TableCell>
                   <Typography fontSize="14px">
-                    {position.contract}
+                    {transaction.contract}
                   </Typography>
                 </TableCell>
                 <TableCell>
                   <Box display="flex" alignItems="center">
                     <Box>
                       <Typography fontSize="14px">
-                        {position.perf_daily}
+                        {transaction.perf_daily}
                       </Typography>
                     </Box>
                   </Box>
@@ -109,21 +109,21 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
                 <TableCell>
                   <Box display="flex" alignItems="right">
                     <Box>
-                      <Typography fontSize="14px">{position.price}</Typography>
+                      <Typography fontSize="14px">{transaction.price}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box display="flex" alignItems="right">
                     <Box>
-                      <Typography fontSize="14px">{position.quantity}</Typography>
+                      <Typography fontSize="14px">{transaction.quantity}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box display="flex" alignItems="right">
                     <Box>
-                      <Typography fontSize="14px">{position.amount}</Typography>
+                      <Typography fontSize="14px">{transaction.amount}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
@@ -137,7 +137,7 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
                       color: "#fff",
                     }}
                     size="small"
-                    label={position.realized_gain}
+                    label={transaction.realized_gain}
                   ></Chip>
                 </TableCell>
                 <TableCell align="right">
@@ -150,7 +150,7 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
                       color: "#fff",
                     }}
                     size="small"
-                    label={position.unrealized_gain}
+                    label={transaction.unrealized_gain}
                   ></Chip>
                 </TableCell>
                 <TableCell>
@@ -168,4 +168,4 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
 
 }
 
-export default PositionTable;
+export default TransactionTable;
