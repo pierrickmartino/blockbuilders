@@ -9,7 +9,7 @@ export const fetchWallets = async (
   try {
     const response = await axios.get(`${apiUrl}/api/wallets/`, {
       headers: {
-        Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+        Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
       },
     });
 
@@ -46,7 +46,7 @@ export const fetchPositions = async (
       `${apiUrl}/api/wallets/${wallet_id}/positions`,
       {
         headers: {
-          Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+          Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
         },
       }
     );
@@ -69,7 +69,7 @@ export const fetchTransactions = async (
       `${apiUrl}/api/wallets/${wallet_id}/positions/${position_id}/transactions`,
       {
         headers: {
-          Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+          Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
         },
       }
     );

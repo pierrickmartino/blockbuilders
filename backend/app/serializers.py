@@ -43,7 +43,21 @@ class PositionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Position
-        fields = ["id", "quantity", "avg_cost", "total_cost", "unrealized_gain", "capital_gain", "transactions"]
+        fields = [
+            "id",
+            "quantity",
+            "amount",
+            "avg_cost",
+            "total_cost",
+            "unrealized_gain",
+            "capital_gain",
+            "created_at",
+            "transactions",
+            "daily_price_delta",
+            "weekly_price_delta",
+            "monthly_price_delta",
+            "progress_percentage"
+        ]
 
 
 class WalletSerializer(serializers.ModelSerializer):

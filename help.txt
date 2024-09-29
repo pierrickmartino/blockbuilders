@@ -38,8 +38,19 @@ docker-compose run --rm web python manage.py createsuperuser
 docker-compose run --rm web python manage.py loaddata blockchains.json
 docker-compose run --rm web python manage.py loaddata fiats.json
 docker-compose -f docker-compose.prod.yml up --build --remove-orphans
+docker-compose -f docker-compose.stack.yml up --build --remove-orphans
+docker-compose -f docker-compose.stack.yml run --rm backend python manage.py makemigrations
 docker volume prune -a
 docker image prune -a
+
+#Reset Procedure with STACK
+docker-compose -f docker-compose.stack.yml down -v --remove-orphans
+docker volume prune -a
+docker image prune -a
+docker-compose -f docker-compose.stack.yml up --build --remove-orphans
+docker-compose -f docker-compose.stack.yml run --rm backend python manage.py createsuperuser
+docker-compose -f docker-compose.stack.yml run --rm backend python manage.py loaddata blockchains.json
+docker-compose -f docker-compose.stack.yml run --rm backend python manage.py loaddata fiats.json
 
 # PREVIOUS
 docker-compose -f docker-compose.prod.yml up --build

@@ -59,7 +59,7 @@ export async function createWallet(
       },
       {
         headers: {
-          Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+          Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
           "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
@@ -99,7 +99,7 @@ export async function downloadWallet(id: string) {
   try {
     const response = await axios.post(`${apiUrl}/api/wallets/${id}/download/`, {
       headers: {
-        Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+        Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
         "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
@@ -122,7 +122,7 @@ export async function deleteWallet(id: string) {
   try {
     const response = await axios.delete(`${apiUrl}/api/wallets/${id}/`, {
       headers: {
-        Authorization: "Token c40feb748f0e17b3d7472ed387a566e9d632d4c8",
+        Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
       },
     });
     // revalidatePath(`${webUrl}/dashboard/wallets`);

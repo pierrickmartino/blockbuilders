@@ -208,8 +208,13 @@ class Position(TimeStampModel):
     )  # Reference to the contract
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)  # Quantity of the position
     avg_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Average cost of the position
+    amount = models.DecimalField(max_digits=15, decimal_places=2, default=0) # Amount of the position
 
-    # amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    daily_price_delta = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    weekly_price_delta = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    monthly_price_delta = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+
+    progress_percentage = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     # Performance calculation
     # avg_cost_prev_day = models.DecimalField(max_digits=15, decimal_places=2, default=0)

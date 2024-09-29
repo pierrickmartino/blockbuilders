@@ -143,7 +143,7 @@ urlpatterns = format_suffix_patterns(
         #     name="resync_wallet_task_status",
         # ),
         # POSITION
-        path("positions/", views_position.positions, name="positions"),
+        # path("positions/", views_position.positions, name="positions"),
         # path(
         #     "position/<int:position_id>/refresh_price/",
         #     views_position.refresh_position_price,
