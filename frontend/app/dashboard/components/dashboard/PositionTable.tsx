@@ -60,17 +60,17 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
                   Perf
                 </Typography>
               </TableCell>
-              <TableCell align="right">
+              <TableCell>
                 <Typography color="textSecondary" variant="h6">
                   Price
                 </Typography>
               </TableCell>
-              <TableCell align="right">
+              <TableCell>
                 <Typography color="textSecondary" variant="h6">
                   Quantity
                 </Typography>
               </TableCell>
-              <TableCell align="right">
+              <TableCell>
                 <Typography color="textSecondary" variant="h6">
                   Amount
                 </Typography>
@@ -93,41 +93,41 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
             {positions.map((position : Position) => (
               <TableRow key={position.id}>
                 <TableCell>
-                  <Typography fontSize="14px">
-                    {position.contract}
-                  </Typography>
+                  <Typography fontSize="14px">{position.contract.symbol} - {position.contract.name}</Typography>
+                  <Typography fontSize="12px">{position.contract.category}</Typography>
+                  <Typography fontSize="12px">{position.contract.blockchain}</Typography>
                 </TableCell>
                 <TableCell>
-                  <Box display="flex" alignItems="center">
+                  <Box display="flex">
                     <Box>
-                      <Typography fontSize="14px">
-                        {position.perf_daily}
-                      </Typography>
+                      <Typography fontSize="12px">{position.daily_price_delta}</Typography>
+                      <Typography fontSize="12px">{position.weekly_price_delta}</Typography>
+                      <Typography fontSize="12px">{position.monthly_price_delta}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell align="right">
                   <Box display="flex" alignItems="right">
                     <Box>
-                      <Typography fontSize="14px">{position.price}</Typography>
+                      <Typography fontSize="12px">{position.contract.price}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right">
-                  <Box display="flex" alignItems="right">
+                <TableCell>
+                  <Box display="flex">
                     <Box>
-                      <Typography fontSize="14px">{position.quantity}</Typography>
+                      <Typography fontSize="12px">{position.quantity}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right">
-                  <Box display="flex" alignItems="right">
+                <TableCell>
+                  <Box display="flex">
                     <Box>
-                      <Typography fontSize="14px">{position.amount}</Typography>
+                      <Typography fontSize="12px">{position.amount}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell align="right">
+                <TableCell>
                   <Chip
                     sx={{
                       pl: "4px",
@@ -140,7 +140,7 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
                     label={position.capital_gain}
                   ></Chip>
                 </TableCell>
-                <TableCell align="right">
+                <TableCell>
                   <Chip
                     sx={{
                       pl: "4px",

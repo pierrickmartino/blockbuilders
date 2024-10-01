@@ -1,27 +1,44 @@
 export type Wallet = {
   id: string;
+  user:string;
   name: string;
   address: string;
   description: string;
   balance: string;
-  positions: any[];
+};
+
+export type Contract = {
+  id: string;
+  name: string;
+  symbol: string;
+  relative_symbol: string;
+  address: string;
+  logo_uri: string;
+  decimals: string;
+  price: string;
+  previous_day_price: string;
+  previous_week_price: string;
+  previous_month_price: string;
+  previous_day: string;
+  previous_week: string;
+  previous_month: string;
+  category: string;
+  blockchain: string;
 };
 
 export type Position = {
   id: string;
-  perf_daily: string;
-  perf_weekly: string;
-  perf_monthly: string;
+  daily_price_delta: string;
+  weekly_price_delta: string;
+  monthly_price_delta: string;
   price: string;
   quantity: string;
   amount: string;
   capital_gain: string;
   unrealized_gain: string;
-  // contract: string;
   average_cost: string;
-  contract: any;
-  wallet: any;
-  // transactions: any[];
+  contract: Contract;
+  wallet: Wallet;
 };
 
 export type Transaction = {

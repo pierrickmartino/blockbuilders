@@ -46,8 +46,8 @@ class WalletSerializer(serializers.ModelSerializer):
 
 
 class PositionSerializer(serializers.ModelSerializer):
-    wallet_parent = WalletSerializer(read_only=True)
-    contract_parent = ContractSerializer(read_only=True)
+    wallet = WalletSerializer(read_only=True)
+    contract = ContractSerializer(read_only=True)
 
     class Meta:
         model = Position
@@ -64,6 +64,15 @@ class PositionSerializer(serializers.ModelSerializer):
             "weekly_price_delta",
             "monthly_price_delta",
             "progress_percentage",
-            "contract_parent",
-            "wallet_parent",
+            "contract",
+            "wallet",
         ]
+
+
+# class WalletPositionsSerializer(serializers.ModelSerializer):
+#     positions = PositionSerializer(read_only=True, many=True)
+
+#     class Meta:
+#         model = Wallet
+#         fields = ["id", "user", "address", "name", "balance", "description", "positions"]
+#         read_only_fields = ["user"]
