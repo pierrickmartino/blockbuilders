@@ -20,12 +20,6 @@ class ContractSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TransactionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Transaction
-        fields = "__all__"
-
-
 class MarketDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarketData
@@ -68,11 +62,27 @@ class PositionSerializer(serializers.ModelSerializer):
             "wallet",
         ]
 
-
-# class WalletPositionsSerializer(serializers.ModelSerializer):
-#     positions = PositionSerializer(read_only=True, many=True)
-
-#     class Meta:
-#         model = Wallet
-#         fields = ["id", "user", "address", "name", "balance", "description", "positions"]
-#         read_only_fields = ["user"]
+class TransactionSerializer(serializers.ModelSerializer):
+    position = PositionSerializer(read_only=True)
+    against_contract = ContractSerializer(read_only=True)
+    against_fiat = FiatSerializer(read_only=True)
+    
+    class Meta:
+        model = Transaction
+        fields = [
+            "id",
+            "type",
+            "quantity",
+            "date",
+            "comment",
+            "hash",
+            "price",
+            "running_quantity",
+            "buy_quantity",
+            "sell_quantity",
+            "total_cost",
+            "against_contract",
+            "against_fiat",
+            "position",
+        ]
+        

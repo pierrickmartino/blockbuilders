@@ -39,17 +39,20 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
     },
   ];
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedPositionId, setSelectedPositionId] = useState<string | null>(null); // Add state to track wallet ID
+  const [selectedPositionId, setSelectedPositionId] = useState<string | null>(null);
+  const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const open = Boolean(anchorEl);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    position_id: string
+    position_id: string,
+    wallet_id:string
   ) => {
     setAnchorEl(event.currentTarget);
     setSelectedPositionId(position_id);
+    setSelectedWalletId(wallet_id);
   };
 
   const handleChangePage = (
@@ -69,12 +72,13 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
   const handleClose = () => {
     setAnchorEl(null);
     setSelectedPositionId(null);
+    setSelectedWalletId(null);
   };
 
   // Handle navigation to wallet details
   const handleNavigateToDetails = () => {
     if (selectedPositionId !== null) {
-      window.location.href = `/dashboard/wallets/${selectedPositionId}/positions/${selectedPositionId}/transactions`;
+      window.location.href = `/dashboard/wallets/${selectedWalletId}/positions/${selectedPositionId}/transactions`;
     }
   };
 
@@ -207,7 +211,7 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
                       aria-controls={open ? "basic-menu" : undefined}
                       aria-haspopup="true"
                       aria-expanded={open ? "true" : undefined}
-                      onClick={(event) => handleClick(event, position.id)}
+                      onClick={(event) => handleClick(event, position.id, position.wallet.id)}
                       aria-label="Open to show more"
                       title="Open to show more"
                     >
