@@ -16,7 +16,7 @@ const Positions = () => {
 
   const fetchPositionData = async () => {
     if (wallet_id) {
-      await fetchPositions(Number(wallet_id), setPositions);
+      await fetchPositions(String(wallet_id), setPositions);
     }
   };
 

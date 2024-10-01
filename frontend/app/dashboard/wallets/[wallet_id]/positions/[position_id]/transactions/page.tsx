@@ -17,7 +17,7 @@ const Transactions = () => {
 
   const fetchTransactionData = async () => {
     if (position_id && wallet_id) {
-      await fetchTransactions(Number(position_id), Number(wallet_id), setTransactions);
+      await fetchTransactions(String(position_id), String(wallet_id), setTransactions);
     }
   };
 

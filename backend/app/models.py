@@ -47,6 +47,7 @@ class TimeStampModel(models.Model):
 
 # Model to represent fiat currencies
 class Fiat(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)  # Unique name of the fiat currency
     symbol = models.CharField(max_length=50, unique=True)  # Unique symbol of the fiat currency
     short_symbol = models.CharField(max_length=3, default="")  # Unique short symbol of the fiat currency ($, €, etc...)
@@ -64,6 +65,7 @@ class Fiat(models.Model):
 
 # Model to represent a cryptocurrency wallet
 class Wallet(TimeStampModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="wallets"
     )  # Reference to the user who owns the wallet
@@ -110,6 +112,7 @@ class WalletProcess(TimeStampModel):
 
 # Model to represent a blockchain
 class Blockchain(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(
         max_length=255,
         choices=BlockchainChoices.choices,
@@ -134,6 +137,7 @@ class Blockchain(models.Model):
 
 # Model to represent a smart contract
 class Contract(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     blockchain = models.ForeignKey(
         Blockchain, on_delete=models.CASCADE, related_name="contracts"
     )  # Reference to the blockchain
@@ -202,6 +206,7 @@ class ContractCalculator:
 
 # Model to represent a position in a wallet
 class Position(TimeStampModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name="positions")  # Reference to the wallet
     contract = models.ForeignKey(
         Contract, on_delete=models.CASCADE, related_name="positions"
@@ -265,6 +270,7 @@ class PositionCalculator:
 
 # Model to represent a transaction
 class Transaction(TimeStampModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     position = models.ForeignKey(
         Position, on_delete=models.CASCADE, related_name="transactions"
     )  # Reference to the position
@@ -398,6 +404,7 @@ class TransactionCalculator:
 
 # Model to store market data information
 class MarketData(TimeStampModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     symbol = models.CharField(max_length=50, db_index=True)  # Symbol of interest
     reference = models.CharField(max_length=50, db_index=True)  # The currency symbol to convert into
     time = models.DateTimeField(db_index=True)  # Date for the start of this data point
@@ -433,6 +440,7 @@ class MarketData(TimeStampModel):
 
 # Model to store user-specific settings
 class UserSetting(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name="settings"
     )  # One-to-one relationship with User

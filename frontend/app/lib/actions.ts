@@ -7,6 +7,8 @@ import axios from "axios";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 const webUrl = process.env.NEXT_PUBLIC_WEB_URL || "http://127.0.0.1";
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://backend:4000";
+const userToken = process.env.NEXT_PUBLIC_USER_TOKEN || "";
 
 const FormSchema = z.object({
   address: z.string(),
@@ -51,7 +53,7 @@ export async function createWallet(
   // Insert data into the database
   try {
     const response = await axios.post(
-      `${apiUrl}/api/wallets/`,
+      `${backendUrl}/api/wallets/`,
       {
         address, // Wallet address
         name, // Wallet name
@@ -59,7 +61,7 @@ export async function createWallet(
       },
       {
         headers: {
-          Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
+          Authorization: `Token ${userToken}`,
           "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
@@ -95,11 +97,13 @@ export async function createWallet(
 
 export async function downloadWallet(id: string) {
   // throw new Error('Failed to Delete Invoice');
-
+  console.log('Enter downloadWallet for :', id);
+  console.log(`${backendUrl}/api/wallets/${id}/download/`);
+  console.log(`Token ${userToken}`);
   try {
-    const response = await axios.post(`${apiUrl}/api/wallets/${id}/download/`, {
+    const response = await axios.post(`${backendUrl}/api/wallets/${id}/download/`, {
       headers: {
-        Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
+        Authorization: `Token ${userToken}`,
         "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
@@ -112,7 +116,7 @@ export async function downloadWallet(id: string) {
     console.log('Task triggered:', result);
     return result;
   } catch (error) {
-    return { message: 'Database Error: Failed to delete wallet.' };
+    return { message: 'Database Error: Failed to download wallet.' };
   }
 }
 
@@ -120,9 +124,9 @@ export async function deleteWallet(id: string) {
   // throw new Error('Failed to Delete Invoice');
 
   try {
-    const response = await axios.delete(`${apiUrl}/api/wallets/${id}/`, {
+    const response = await axios.delete(`${backendUrl}/api/wallets/${id}/`, {
       headers: {
-        Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
+        Authorization: `Token ${userToken}`,
       },
     });
     // revalidatePath(`${webUrl}/dashboard/wallets`);

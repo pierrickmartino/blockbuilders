@@ -2,14 +2,16 @@ import axios from "axios";
 import { Position, Wallet, Transaction } from "./definition";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
+const userToken = process.env.NEXT_PUBLIC_USER_TOKEN || "";
 
 export const fetchWallets = async (
   setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>
 ): Promise<void> => {
   try {
+    console.log("User Token:", process.env.NEXT_PUBLIC_USER_TOKEN);
     const response = await axios.get(`${apiUrl}/api/wallets/`, {
       headers: {
-        Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
+        Authorization: `Token ${userToken}`,
       },
     });
 
@@ -38,7 +40,7 @@ export const fetchWallets = async (
 // };
 
 export const fetchPositions = async (
-  wallet_id: number,
+  wallet_id: string,
   setPositions: React.Dispatch<React.SetStateAction<Position[]>>
 ): Promise<void> => {
   try {
@@ -46,7 +48,7 @@ export const fetchPositions = async (
       `${apiUrl}/api/wallets/${wallet_id}/positions`,
       {
         headers: {
-          Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
+          Authorization: `Token ${userToken}`,
         },
       }
     );
@@ -60,8 +62,8 @@ export const fetchPositions = async (
 };
 
 export const fetchTransactions = async (
-  position_id: number,
-  wallet_id: number,
+  position_id: string,
+  wallet_id: string,
   setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>
 ): Promise<void> => {
   try {
@@ -69,7 +71,7 @@ export const fetchTransactions = async (
       `${apiUrl}/api/wallets/${wallet_id}/positions/${position_id}/transactions`,
       {
         headers: {
-          Authorization: "Token 1e7a2000a983053315603fc546f9244c38c86b64",
+          Authorization: `Token ${userToken}`,
         },
       }
     );

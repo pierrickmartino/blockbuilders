@@ -1,5 +1,5 @@
 export type Wallet = {
-  id: number;
+  id: string;
   name: string;
   address: string;
   description: string;
@@ -8,22 +8,24 @@ export type Wallet = {
 };
 
 export type Position = {
-  id: number;
+  id: string;
   perf_daily: string;
   perf_weekly: string;
   perf_monthly: string;
   price: string;
   quantity: string;
   amount: string;
-  realized_gain: string;
+  capital_gain: string;
   unrealized_gain: string;
-  contract: string;
+  // contract: string;
   average_cost: string;
-  transactions: any[];
+  contract: any;
+  wallet: any;
+  // transactions: any[];
 };
 
 export type Transaction = {
-  id: number;
+  id: string;
   perf_daily: string;
   perf_weekly: string;
   perf_monthly: string;

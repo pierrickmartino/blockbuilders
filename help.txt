@@ -30,7 +30,6 @@ docker volume prune -a
 docker image prune -a
 docker network inspect blockbuilders_internal
 
-
 # DEV command
 docker-compose down -v --remove-orphans
 docker-compose -f docker-compose.prod.yml build --no-cache
@@ -44,6 +43,10 @@ docker volume prune -a
 docker image prune -a
 
 #Reset Procedure with STACK
+# modification du .env pour prendre localhost en DB_HOSTNAME
+python manage.py makemigrations app
+python manage.py migrate app
+# modification du .env pour prendre db en DB_HOSTNAME
 docker-compose -f docker-compose.stack.yml down -v --remove-orphans
 docker volume prune -a
 docker image prune -a

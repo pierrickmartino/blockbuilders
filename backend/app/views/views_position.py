@@ -1,4 +1,5 @@
 import logging
+import uuid
 
 from celery import chain, chord, group
 from django.http import JsonResponse
@@ -92,7 +93,7 @@ def wallet_positions_paginated(request, wallet_id, page):
     user_setting.save()
 
     position_filtered, total_realized_gain, total_unrealized_gain = calculate_wallet_positions(wallet)
-     
+
     sorted_positions_desc = sorted(position_filtered, key=lambda x: x["amount"], reverse=True)
 
     paginator = Paginator(sorted_positions_desc, per_page=10)
@@ -115,7 +116,7 @@ def delete_Position_by_id(request, position_id):
 
 
 @login_required
-def refresh_wallet_position_price(request, wallet_id: int):
+def refresh_wallet_position_price(request, wallet_id: uuid):
     """
     View to refresh position prices of a wallet by chaining several Celery tasks.
     """
@@ -142,7 +143,7 @@ def refresh_wallet_position_price(request, wallet_id: int):
 
 
 @login_required
-def refresh_full_historical_position_price(request, wallet_id: int):
+def refresh_full_historical_position_price(request, wallet_id: uuid):
     """
     View to refresh full position prices of a wallet by chaining several Celery tasks.
     """
@@ -162,10 +163,11 @@ def refresh_full_historical_position_price(request, wallet_id: int):
 
 # @login_required
 # @require_POST
-def download_wallet(request, wallet_id: int):
+def download_wallet(request, wallet_id: uuid):
     """
     View to sync wallet data by chaining several Celery tasks.
     """
+    logger.info(f"Enter in [download_wallet] for wallet with id {wallet_id}")
     wallet = get_object_or_404(Wallet, id=wallet_id)
 
     transactions_chord = chord(
@@ -198,4 +200,4 @@ def download_wallet(request, wallet_id: int):
     wallet_process.save()
     logger.info(f"Started syncing wallet with id {wallet_id}")
     # return redirect("dashboard")
-    return JsonResponse({'task_id': chain_result.id, 'status': 'Task triggered successfully'})
+    return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})

@@ -66,14 +66,14 @@ const WalletTable: React.FC<WalletTableProps> = ({
     },
   ];
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedWalletId, setSelectedWalletId] = useState<number | null>(null); // Add state to track wallet ID
+  const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null); // Add state to track wallet ID
   const open = Boolean(anchorEl);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
-    wallet_id: number
+    wallet_id: string
   ) => {
     setAnchorEl(event.currentTarget);
     setSelectedWalletId(wallet_id);
@@ -145,11 +145,11 @@ const WalletTable: React.FC<WalletTableProps> = ({
           >
             <TableHead>
               <TableRow>
-                <TableCell>
+                {/* <TableCell>
                   <Typography color="textSecondary" variant="h6">
                     Id
                   </Typography>
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   <Typography color="textSecondary" variant="h6">
                     Name
@@ -181,11 +181,11 @@ const WalletTable: React.FC<WalletTableProps> = ({
             <TableBody>
               {wallets.map((wallet: Wallet) => (
                 <TableRow key={wallet.id}>
-                  <TableCell>
+                  {/* <TableCell>
                     <Typography fontSize="14px" fontWeight={500}>
                       {wallet.id}
                     </Typography>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <Box>

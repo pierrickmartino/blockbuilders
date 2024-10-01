@@ -38,8 +38,16 @@ class UserSettingSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class WalletSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ["id", "user", "address", "name", "balance", "description"]
+        read_only_fields = ["user"]
+
+
 class PositionSerializer(serializers.ModelSerializer):
-    transactions = TransactionSerializer(many=True, read_only=True)
+    wallet_parent = WalletSerializer(read_only=True)
+    contract_parent = ContractSerializer(read_only=True)
 
     class Meta:
         model = Position
@@ -52,18 +60,10 @@ class PositionSerializer(serializers.ModelSerializer):
             "unrealized_gain",
             "capital_gain",
             "created_at",
-            "transactions",
             "daily_price_delta",
             "weekly_price_delta",
             "monthly_price_delta",
-            "progress_percentage"
+            "progress_percentage",
+            "contract_parent",
+            "wallet_parent",
         ]
-
-
-class WalletSerializer(serializers.ModelSerializer):
-    positions = PositionSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Wallet
-        fields = ["id", "user", "address", "name", "balance", "description", "positions"]
-        read_only_fields = ["user"]

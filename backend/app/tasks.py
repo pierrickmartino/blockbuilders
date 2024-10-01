@@ -1,5 +1,6 @@
 import logging
 import time
+import uuid
 
 from blockbuilders.settings.base import DEBUG
 
@@ -74,7 +75,7 @@ def delete_position_task(position_id, sleep_duration: float):
 
 
 @shared_task
-def create_transactions_from_bsc_bep20_task(wallet_id: int):
+def create_transactions_from_bsc_bep20_task(wallet_id: uuid):
     """
     Task to create transactions from BEP20 (BSC) data for a wallet.
     """
@@ -128,7 +129,7 @@ def create_transactions_from_bsc_bep20_task(wallet_id: int):
 
 
 @shared_task
-def create_transactions_from_polygon_erc20_task(wallet_id: int):
+def create_transactions_from_polygon_erc20_task(wallet_id: uuid):
     """
     Task to create transactions from ERC20 (Polygon) data for a wallet.
     """
@@ -182,7 +183,7 @@ def create_transactions_from_polygon_erc20_task(wallet_id: int):
 
 
 @shared_task
-def create_transactions_from_arbitrum_erc20_task(wallet_id: int):
+def create_transactions_from_arbitrum_erc20_task(wallet_id: uuid):
     """
     Task to create transactions from ERC20 (Arbitrum) data for a wallet.
     """
@@ -236,7 +237,7 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: int):
 
 
 @shared_task
-def create_transactions_from_optimism_erc20_task(wallet_id: int):
+def create_transactions_from_optimism_erc20_task(wallet_id: uuid):
     """
     Task to create transactions from ERC20 (Optimism) data for a wallet.
     """
@@ -290,7 +291,7 @@ def create_transactions_from_optimism_erc20_task(wallet_id: int):
 
 
 @shared_task
-def get_polygon_token_balance(wallet_id: int):
+def get_polygon_token_balance(wallet_id: uuid):
     """
     Task to get the MATIC (Polygon) balance for a wallet.
     """
@@ -328,7 +329,7 @@ def get_polygon_token_balance(wallet_id: int):
 
 
 @shared_task
-def get_bsc_token_balance(wallet_id: int):
+def get_bsc_token_balance(wallet_id: uuid):
     """
     Task to get the BNB (BSC) balance for a wallet.
     """
@@ -366,7 +367,7 @@ def get_bsc_token_balance(wallet_id: int):
 
 
 @shared_task
-def get_arbitrum_token_balance(wallet_id: int):
+def get_arbitrum_token_balance(wallet_id: uuid):
     """
     Task to get the ETH (Arbitrum) balance for a wallet.
     """
@@ -404,7 +405,7 @@ def get_arbitrum_token_balance(wallet_id: int):
 
 
 @shared_task
-def get_optimism_token_balance(wallet_id: int):
+def get_optimism_token_balance(wallet_id: uuid):
     """
     Task to get the ETH (Optimism) balance for a wallet.
     """
@@ -442,7 +443,7 @@ def get_optimism_token_balance(wallet_id: int):
 
 
 @shared_task
-def aggregate_transactions_task(previous_return: int, wallet_id: int):
+def aggregate_transactions_task(previous_return: int, wallet_id: uuid):
     """
     Task to aggregate transactions for a given wallet.
     """
@@ -488,7 +489,7 @@ def aggregate_transactions_task(previous_return: int, wallet_id: int):
 
 
 @shared_task
-def calculate_cost_transaction_task(wallet_id: int):
+def calculate_cost_transaction_task(wallet_id: uuid):
     """
     Task to calculate the cost of transactions for a given wallet.
     """
@@ -560,7 +561,10 @@ def calculate_cost_transaction_task(wallet_id: int):
                 transaction.against_fiat = fiat
                 transaction.save()
 
-                if DEBUG == True and transaction.hash == "0x9a59d837769a45950af2bb4dffa11c05dc6f76ae8b7ecb542bf80eca36c82e12": #"0xe9ca6a317ef1f07f7560d459368dc73ae354d6ae8224b9877e29bb0d6f6f04f3": 
+                if (
+                    DEBUG == True
+                    and transaction.hash == "0x9a59d837769a45950af2bb4dffa11c05dc6f76ae8b7ecb542bf80eca36c82e12"
+                ):  # "0xe9ca6a317ef1f07f7560d459368dc73ae354d6ae8224b9877e29bb0d6f6f04f3":
                     logger.info(f"transaction.position.contract.symbol : {transaction.position.contract.symbol}")
                     logger.info(f"transaction.quantity : {transaction.quantity}")
                     logger.info(f"transaction.date : {transaction.date}")
@@ -575,8 +579,8 @@ def calculate_cost_transaction_task(wallet_id: int):
                     logger.info(f"symbol : {symbol}")
 
             else:
-                
-                # TODO : Need to be investigated 
+
+                # TODO : Need to be investigated
                 symbol = transaction.position.contract.symbol.replace("WETH", "ETH")
 
                 if symbol.startswith("USDC."):
@@ -611,7 +615,10 @@ def calculate_cost_transaction_task(wallet_id: int):
                 transaction.save()
 
                 logger.info(f"Multi-part transaction for {transaction}")
-                if DEBUG == True and transaction.hash == "0xf9746d44db326689f36d6851f5fcda84109d518437f6fb6943231094ddbeb7ed": 
+                if (
+                    DEBUG == True
+                    and transaction.hash == "0xf9746d44db326689f36d6851f5fcda84109d518437f6fb6943231094ddbeb7ed"
+                ):
                     # 0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb
                     logger.info(f"transaction.position.contract.symbol : {transaction.position.contract.symbol}")
                     logger.info(f"transaction.quantity : {transaction.quantity}")
@@ -636,7 +643,7 @@ def calculate_cost_transaction_task(wallet_id: int):
 
 
 @shared_task
-def start_wallet_resync_task(wallet_id: int):
+def start_wallet_resync_task(wallet_id: uuid):
     """
     Task to update wallet process with STARTED sync status.
     """
@@ -648,8 +655,9 @@ def start_wallet_resync_task(wallet_id: int):
     logger.info(f"WalletProcess updated successfully.")
     return wallet_id
 
+
 @shared_task
-def start_wallet_download_task(wallet_id: int):
+def start_wallet_download_task(wallet_id: uuid):
     """
     Task to update wallet process with STARTED download status.
     """
@@ -661,8 +669,9 @@ def start_wallet_download_task(wallet_id: int):
     logger.info(f"WalletProcess updated successfully.")
     return wallet_id
 
+
 @shared_task
-def finish_wallet_resync_task(previous_return: list, wallet_id: int):
+def finish_wallet_resync_task(previous_return: list, wallet_id: uuid):
     """
     Task to update wallet process with FINISHED sync status.
     """
@@ -674,8 +683,9 @@ def finish_wallet_resync_task(previous_return: list, wallet_id: int):
     logger.info(f"WalletProcess updated successfully.")
     return wallet_id
 
+
 @shared_task
-def finish_wallet_download_task(previous_return: list, wallet_id: int):
+def finish_wallet_download_task(previous_return: list, wallet_id: uuid):
     """
     Task to update wallet process with FINISHED download status.
     """
@@ -687,8 +697,9 @@ def finish_wallet_download_task(previous_return: list, wallet_id: int):
     logger.info(f"WalletProcess updated successfully.")
     return wallet_id
 
+
 @shared_task
-def clean_contract_address_task(wallet_id: int):
+def clean_contract_address_task(wallet_id: uuid):
     """
     Task to clean contract addresses.
     """
@@ -702,7 +713,7 @@ def clean_contract_address_task(wallet_id: int):
 
 
 @shared_task
-def clean_transaction_task(wallet_id: int):
+def clean_transaction_task(wallet_id: uuid):
     """
     Task to clean existing transaction information for a given wallet.
     """
@@ -726,7 +737,7 @@ def clean_transaction_task(wallet_id: int):
 
 
 @shared_task
-def calculate_running_quantity_transaction_task(wallet_id: int):
+def calculate_running_quantity_transaction_task(wallet_id: uuid):
     """
     Task to calculate the running quantity of transactions in a wallet.
     """
@@ -1015,7 +1026,7 @@ def update_contract_information(previous_return: int, symbol: str):
 
 
 @shared_task
-def calculate_wallet_balance_task(previous_return: int, wallet_id: int):
+def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
     """
     Task to calculate the balance of a wallet.
     """

@@ -106,21 +106,21 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <Box display="flex" alignItems="right">
                     <Box>
                       <Typography fontSize="14px">{position.price}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <Box display="flex" alignItems="right">
                     <Box>
                       <Typography fontSize="14px">{position.quantity}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <Box display="flex" alignItems="right">
                     <Box>
                       <Typography fontSize="14px">{position.amount}</Typography>
@@ -137,7 +137,7 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
                       color: "#fff",
                     }}
                     size="small"
-                    label={position.realized_gain}
+                    label={position.capital_gain}
                   ></Chip>
                 </TableCell>
                 <TableCell align="right">
