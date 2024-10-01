@@ -39,7 +39,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
   onWalletDeleted,
   onWalletDownloaded,
 }) => {
-  const dummyMenuItems = [
+  const walletMenuItems = [
     {
       title: "See details",
       key: "wallet-details",
@@ -257,7 +257,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
                       open={open}
                       onClose={handleClose}
                     >
-                      {dummyMenuItems.map((item) => (
+                      {walletMenuItems.map((item) => (
                         <MenuItem
                           onClick={() => {
                             handleClose();

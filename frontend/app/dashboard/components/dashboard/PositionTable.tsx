@@ -11,12 +11,17 @@ import {
   Chip,
   TableContainer,
   IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  TablePagination,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 
 import { Position, Wallet } from "../../../lib/definition";
 // import { fetchWallets } from "../../../lib/data";
 import { IconDotsVertical } from "@tabler/icons-react";
+import { Visibility } from "@mui/icons-material";
 
 // Define the props type that will be passed into WalletTable
 interface PositionTableProps {
@@ -24,15 +29,58 @@ interface PositionTableProps {
 }
 
 const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
-  // const [wallets, setWallets] = useState<Wallet[]>([]);
-
-  // useEffect(() => {
-  //   // Call fetchWallets function when the component mounts
-  //   fetchWallets(setWallets);
-  // }, []);
   
+  const positionMenuItems = [
+    {
+      title: "See details",
+      key: "position-details",
+      value: "position-details",
+      button: <Visibility fontSize="small" />,
+    },
+  ];
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [selectedPositionId, setSelectedPositionId] = useState<string | null>(null); // Add state to track wallet ID
+  const open = Boolean(anchorEl);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    position_id: string
+  ) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedPositionId(position_id);
+  };
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setSelectedPositionId(null);
+  };
+
+  // Handle navigation to wallet details
+  const handleNavigateToDetails = () => {
+    if (selectedPositionId !== null) {
+      window.location.href = `/dashboard/wallets/${selectedPositionId}/positions/${selectedPositionId}/transactions`;
+    }
+  };
+
   return (
     <BaseCard title="Position Table">
+      <>
       <TableContainer
         sx={{
           width: {
@@ -154,15 +202,56 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
                   ></Chip>
                 </TableCell>
                 <TableCell>
-                <IconButton>
-                  <IconDotsVertical width={18} />
-                </IconButton>
+                <IconButton
+                      id="basic-button"
+                      aria-controls={open ? "basic-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? "true" : undefined}
+                      onClick={(event) => handleClick(event, position.id)}
+                      aria-label="Open to show more"
+                      title="Open to show more"
+                    >
+                      <IconDotsVertical width={18} />
+                    </IconButton>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      keepMounted
+                      open={open}
+                      onClose={handleClose}
+                    >
+                      {positionMenuItems.map((item) => (
+                        <MenuItem
+                          onClick={() => {
+                            handleClose();
+                            if (item.key === "position-details") {
+                              handleNavigateToDetails();
+                            }
+                            
+                          }}
+                          key={item.key}
+                          value={item.value}
+                        >
+                          <ListItemIcon>{item.button}</ListItemIcon>
+                          {item.title}
+                        </MenuItem>
+                      ))}
+                    </Menu>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+          component="div"
+          count={10}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+        </>
     </BaseCard>
   );
 
