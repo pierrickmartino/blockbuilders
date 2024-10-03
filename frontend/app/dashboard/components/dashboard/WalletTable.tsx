@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
   Typography,
@@ -14,8 +14,6 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
-  Pagination,
-  TableFooter,
   TablePagination,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
@@ -30,12 +28,22 @@ import { deleteWallet, downloadWallet } from "@/app/lib/actions";
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
   wallets: Wallet[];
+  page: number;
+  rowsPerPage: number;
+  totalCount: number;
+  onPageChange: (newPage: number) => void;
+  onRowsPerPageChange: (newRowsPerPage: number) => void;
   onWalletDeleted: () => void;
   onWalletDownloaded: (response: any) => void;
 }
 
 const WalletTable: React.FC<WalletTableProps> = ({
   wallets,
+  page,
+  rowsPerPage,
+  totalCount,
+  onPageChange,
+  onRowsPerPageChange,
   onWalletDeleted,
   onWalletDownloaded,
 }) => {
@@ -68,8 +76,6 @@ const WalletTable: React.FC<WalletTableProps> = ({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null); // Add state to track wallet ID
   const open = Boolean(anchorEl);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -83,14 +89,13 @@ const WalletTable: React.FC<WalletTableProps> = ({
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
-    setPage(newPage);
+    onPageChange(newPage);  // Call the passed prop to update the page state in the parent
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    onRowsPerPageChange(parseInt(event.target.value, 10));  // Call the passed prop to update the rows per page state
   };
 
   const handleClose = () => {
@@ -101,7 +106,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
   // Handle navigation to wallet details
   const handleNavigateToDetails = () => {
     if (selectedWalletId !== null) {
-      window.location.href = `/dashboard/wallets/${selectedWalletId}/positions?page=1&limit=10`;
+      window.location.href = `/dashboard/wallets/${selectedWalletId}/positions`;
     }
   };
 
@@ -287,8 +292,8 @@ const WalletTable: React.FC<WalletTableProps> = ({
         </TableContainer>
         <TablePagination
           component="div"
-          rowsPerPageOptions={[5, 10, 25]}
-          count={wallets.length}
+          rowsPerPageOptions={[5, 10]}
+          count={totalCount}
           page={page}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}

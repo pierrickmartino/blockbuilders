@@ -36,10 +36,6 @@ const Positions = () => {
     setPage(0);  // Reset page to 0 whenever rows per page changes
   };
 
-  const handlePositionCreated = () => {
-    fetchPositionData();
-  };
-
   return (
     <PageContainer title="Positions" description="this is Positions">
       <Box mt={3}>

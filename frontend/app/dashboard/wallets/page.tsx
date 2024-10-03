@@ -18,6 +18,9 @@ import { Close } from "@mui/icons-material";
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [open, setOpen] = useState(false);
+  const [page, setPage] = useState(0);  // State for current page
+  const [rowsPerPage, setRowsPerPage] = useState(10);  // State for rows per page
+  const [totalCount, setTotalCount] = useState(0);  // State for total number of items
 
   const handleClick = () => {
     setOpen(true);
@@ -36,13 +39,13 @@ const Wallets = () => {
 
   // Fetch wallets function
   const fetchWalletData = async () => {
-    await fetchWallets(setWallets);
+    await fetchWallets(setWallets, setTotalCount, page, rowsPerPage);
   };
 
   // Fetch wallets using the fetchWallets function from your data.ts file
   useEffect(() => {
     fetchWalletData(); // Pass setWallets directly to fetchWallets
-  }, []);
+  }, [page, rowsPerPage]);
 
   const handleWalletCreated = () => {
     fetchWalletData(); // Re-fetch wallet data after a new wallet is created
@@ -56,6 +59,15 @@ const Wallets = () => {
     // fetchWalletData(); // Re-fetch wallet data after a new wallet is created
     // console.log('show notif');
     handleClick();
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);  // Update page state
+  };
+
+  const handleRowsPerPageChange = (newRowsPerPage: number) => {
+    setRowsPerPage(newRowsPerPage);  // Update rows per page state
+    setPage(0);  // Reset page to 0 whenever rows per page changes
   };
 
   const action = (
@@ -96,6 +108,11 @@ const Wallets = () => {
           <Grid item xs={12} lg={12}>
             <WalletTable
               wallets={wallets}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              totalCount={totalCount}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
               onWalletDeleted={handleWalletDeleted}
               onWalletDownloaded={handleWalletDownloaded}
             />

@@ -10,6 +10,9 @@ import { useParams } from "next/navigation";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [page, setPage] = useState(0);  // State for current page
+  const [rowsPerPage, setRowsPerPage] = useState(10);  // State for rows per page
+  const [totalCount, setTotalCount] = useState(0);  // State for total number of items
 
   const params = useParams(); 
   const wallet_id = params.wallet_id;
@@ -17,16 +20,21 @@ const Transactions = () => {
 
   const fetchTransactionData = async () => {
     if (position_id && wallet_id) {
-      await fetchTransactions(String(position_id), String(wallet_id), setTransactions);
+      await fetchTransactions(String(position_id), String(wallet_id), setTransactions, setTotalCount, page, rowsPerPage);
     }
   };
 
   useEffect(() => {
     fetchTransactionData();
-  }, [position_id]);
+  }, [position_id, page, rowsPerPage]);
 
-  const handleTransactionCreated = () => {
-    fetchTransactionData();
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);  // Update page state
+  };
+
+  const handleRowsPerPageChange = (newRowsPerPage: number) => {
+    setRowsPerPage(newRowsPerPage);  // Update rows per page state
+    setPage(0);  // Reset page to 0 whenever rows per page changes
   };
 
   return (
@@ -34,7 +42,13 @@ const Transactions = () => {
       <Box mt={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={12}>
-            <TransactionTable transactions={transactions} />
+            <TransactionTable 
+              transactions={transactions} 
+              page={page}
+              rowsPerPage={rowsPerPage}
+              totalCount={totalCount}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange} />
           </Grid>
         </Grid>
       </Box>

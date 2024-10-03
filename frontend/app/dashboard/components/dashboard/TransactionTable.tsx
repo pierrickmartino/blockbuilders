@@ -20,25 +20,32 @@ import { Transaction } from "../../../lib/definition";
 // Define the props type that will be passed into WalletTable
 interface TransactionTableProps {
   transactions: Transaction[];
+  page: number;
+  rowsPerPage: number;
+  totalCount: number;
+  onPageChange: (newPage: number) => void;
+  onRowsPerPageChange: (newRowsPerPage: number) => void;
 }
 
-const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => {
+const TransactionTable: React.FC<TransactionTableProps> = ({ 
+  transactions,
+  page,
+  rowsPerPage,
+  totalCount,
+  onPageChange,
+  onRowsPerPageChange }) => {
   
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    setPage(newPage);
-  };
+    const handleChangePage = (
+      event: React.MouseEvent<HTMLButtonElement> | null,
+      newPage: number
+    ) => {
+      onPageChange(newPage);  // Call the passed prop to update the page state in the parent
+    };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    onRowsPerPageChange(parseInt(event.target.value, 10));  // Call the passed prop to update the rows per page state
   };
 
   return (
@@ -192,8 +199,8 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => 
       </TableContainer>
       <TablePagination
           component="div"
-          rowsPerPageOptions={[5, 10, 25]}
-          count={transactions.length}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+          count={totalCount}
           page={page}
           rowsPerPage={rowsPerPage}
           onPageChange={handleChangePage}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import {
   Typography,
@@ -19,7 +19,6 @@ import {
 import BaseCard from "../shared/DashboardCard";
 
 import { Position } from "../../../lib/definition";
-// import { fetchWallets } from "../../../lib/data";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { Visibility } from "@mui/icons-material";
 
@@ -53,8 +52,6 @@ const PositionTable: React.FC<PositionTableProps> = ({
   const [selectedPositionId, setSelectedPositionId] = useState<string | null>(null);
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const open = Boolean(anchorEl);
-  // const [page, setPage] = React.useState(0);
-  // const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -78,20 +75,6 @@ const PositionTable: React.FC<PositionTableProps> = ({
   ) => {
     onRowsPerPageChange(parseInt(event.target.value, 10));  // Call the passed prop to update the rows per page state
   };
-
-  // const handleChangePage = (
-  //   event: React.MouseEvent<HTMLButtonElement> | null,
-  //   newPage: number
-  // ) => {
-  //   setPage(newPage);
-  // };
-
-  // const handleChangeRowsPerPage = (
-  //   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   setRowsPerPage(parseInt(event.target.value, 10));
-  //   setPage(0);
-  // };
 
   const handleClose = () => {
     setAnchorEl(null);
