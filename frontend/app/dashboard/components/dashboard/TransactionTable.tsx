@@ -48,6 +48,10 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     onRowsPerPageChange(parseInt(event.target.value, 10));  // Call the passed prop to update the rows per page state
   };
 
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
   return (
     <BaseCard title="Transaction Table">
       <>

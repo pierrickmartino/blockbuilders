@@ -89,6 +89,10 @@ const PositionTable: React.FC<PositionTableProps> = ({
     }
   };
 
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
   return (
     <BaseCard title="Position Table">
       <>
@@ -152,7 +156,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
             {positions.map((position : Position) => (
               <TableRow key={position.id}>
                 <TableCell>
-                  <Typography fontSize="14px">{position.contract.symbol} - {position.contract.name}</Typography>
+                  <Typography fontSize="14px">{truncateText(position.contract.symbol, 8)} - {truncateText(position.contract.name, 20)}</Typography>
                   <Typography fontSize="12px">{position.contract.category}</Typography>
                   <Typography fontSize="12px">{position.contract.blockchain.name}</Typography>
                 </TableCell>
