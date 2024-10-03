@@ -192,10 +192,11 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => 
       </TableContainer>
       <TablePagination
           component="div"
-          count={10}
+          rowsPerPageOptions={[5, 10, 25]}
+          count={transactions.length}
           page={page}
-          onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
         </>

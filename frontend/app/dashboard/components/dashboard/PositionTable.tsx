@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 
-import { Position, Wallet } from "../../../lib/definition";
+import { Position } from "../../../lib/definition";
 // import { fetchWallets } from "../../../lib/data";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { Visibility } from "@mui/icons-material";
@@ -26,9 +26,20 @@ import { Visibility } from "@mui/icons-material";
 // Define the props type that will be passed into WalletTable
 interface PositionTableProps {
   positions: Position[];
+  page: number;
+  rowsPerPage: number;
+  totalCount: number;
+  onPageChange: (newPage: number) => void;
+  onRowsPerPageChange: (newRowsPerPage: number) => void;
 }
 
-const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
+const PositionTable: React.FC<PositionTableProps> = ({ 
+  positions, 
+  page,
+  rowsPerPage,
+  totalCount,
+  onPageChange,
+  onRowsPerPageChange }) => {
   
   const positionMenuItems = [
     {
@@ -42,8 +53,8 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
   const [selectedPositionId, setSelectedPositionId] = useState<string | null>(null);
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const open = Boolean(anchorEl);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  // const [page, setPage] = React.useState(0);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -59,15 +70,28 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
-    setPage(newPage);
+    onPageChange(newPage);  // Call the passed prop to update the page state in the parent
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    onRowsPerPageChange(parseInt(event.target.value, 10));  // Call the passed prop to update the rows per page state
   };
+
+  // const handleChangePage = (
+  //   event: React.MouseEvent<HTMLButtonElement> | null,
+  //   newPage: number
+  // ) => {
+  //   setPage(newPage);
+  // };
+
+  // const handleChangeRowsPerPage = (
+  //   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  // ) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -249,10 +273,11 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
       </TableContainer>
       <TablePagination
           component="div"
-          count={10}
+          rowsPerPageOptions={[5, 10, 25]}
+          count={totalCount}
           page={page}
-          onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
         </>

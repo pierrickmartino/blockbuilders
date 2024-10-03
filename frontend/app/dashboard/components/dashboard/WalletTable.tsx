@@ -101,7 +101,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
   // Handle navigation to wallet details
   const handleNavigateToDetails = () => {
     if (selectedWalletId !== null) {
-      window.location.href = `/dashboard/wallets/${selectedWalletId}/positions`;
+      window.location.href = `/dashboard/wallets/${selectedWalletId}/positions?page=1&limit=10`;
     }
   };
 
@@ -287,10 +287,11 @@ const WalletTable: React.FC<WalletTableProps> = ({
         </TableContainer>
         <TablePagination
           component="div"
-          count={10}
+          rowsPerPageOptions={[5, 10, 25]}
+          count={wallets.length}
           page={page}
-          onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
+          onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </>

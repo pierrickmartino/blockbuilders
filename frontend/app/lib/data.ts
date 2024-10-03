@@ -41,11 +41,14 @@ export const fetchWallets = async (
 
 export const fetchPositions = async (
   wallet_id: string,
-  setPositions: React.Dispatch<React.SetStateAction<Position[]>>
+  setPositions: React.Dispatch<React.SetStateAction<Position[]>>,
+  setTotalCount: React.Dispatch<React.SetStateAction<number>>,
+  page: number,
+  rowsPerPage: number,
 ): Promise<void> => {
   try {
     const response = await axios.get(
-      `${apiUrl}/api/wallets/${wallet_id}/positions`,
+      `${apiUrl}/api/wallets/${wallet_id}/positions?page=${page + 1}&limit=${rowsPerPage}`,
       {
         headers: {
           Authorization: `Token ${userToken}`,
@@ -55,6 +58,8 @@ export const fetchPositions = async (
 
     const positions: Position[] = response.data.results || [];
     setPositions(positions.reverse());
+    const count = response.data.count || 0;
+    setTotalCount(count); // Set the total count for pagination
   } catch (err) {
     console.error("Error fetching data from position API:", err);
     throw new Error("Failed to fetch all positions.");
