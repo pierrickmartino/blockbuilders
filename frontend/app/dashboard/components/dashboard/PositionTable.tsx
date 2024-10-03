@@ -147,7 +147,7 @@ const PositionTable: React.FC<PositionTableProps> = ({ positions }) => {
                 <TableCell>
                   <Typography fontSize="14px">{position.contract.symbol} - {position.contract.name}</Typography>
                   <Typography fontSize="12px">{position.contract.category}</Typography>
-                  <Typography fontSize="12px">{position.contract.blockchain}</Typography>
+                  <Typography fontSize="12px">{position.contract.blockchain.name}</Typography>
                 </TableCell>
                 <TableCell>
                   <Box display="flex">

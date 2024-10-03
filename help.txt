@@ -44,8 +44,8 @@ docker image prune -a
 
 #Reset Procedure with STACK
 # modification du .env pour prendre localhost en DB_HOSTNAME
-python manage.py makemigrations app
-python manage.py migrate app
+python backend/manage.py makemigrations app
+python backend/manage.py migrate app
 # modification du .env pour prendre db en DB_HOSTNAME
 docker-compose -f docker-compose.stack.yml down -v --remove-orphans
 docker volume prune -a
@@ -54,6 +54,10 @@ docker-compose -f docker-compose.stack.yml up --build --remove-orphans
 docker-compose -f docker-compose.stack.yml run --rm backend python manage.py createsuperuser
 docker-compose -f docker-compose.stack.yml run --rm backend python manage.py loaddata blockchains.json
 docker-compose -f docker-compose.stack.yml run --rm backend python manage.py loaddata fiats.json
+# creation du token pour le user
+# mise à jour des 2 fichiers .env avec le nouveau token
+# STOP
+docker-compose -f docker-compose.stack.yml up --build --remove-orphans
 
 # PREVIOUS
 docker-compose -f docker-compose.prod.yml up --build

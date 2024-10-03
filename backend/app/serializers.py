@@ -15,9 +15,28 @@ class BlockchainSerializer(serializers.ModelSerializer):
 
 
 class ContractSerializer(serializers.ModelSerializer):
+    blockchain = BlockchainSerializer(read_only=True)
+
     class Meta:
         model = Contract
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "symbol",
+            "relative_symbol",
+            "address",
+            "logo_uri",
+            "decimals",
+            "price",
+            "previous_day_price",
+            "previous_week_price",
+            "previous_month_price",
+            "previous_day",
+            "previous_week",
+            "previous_month",
+            "category",
+            "blockchain",
+        ]
 
 
 class MarketDataSerializer(serializers.ModelSerializer):
@@ -62,11 +81,12 @@ class PositionSerializer(serializers.ModelSerializer):
             "wallet",
         ]
 
+
 class TransactionSerializer(serializers.ModelSerializer):
     position = PositionSerializer(read_only=True)
     against_contract = ContractSerializer(read_only=True)
     against_fiat = FiatSerializer(read_only=True)
-    
+
     class Meta:
         model = Transaction
         fields = [
@@ -80,9 +100,11 @@ class TransactionSerializer(serializers.ModelSerializer):
             "running_quantity",
             "buy_quantity",
             "sell_quantity",
+            "cost",
+            "average_cost",
             "total_cost",
+            "capital_gain",
             "against_contract",
             "against_fiat",
             "position",
         ]
-        

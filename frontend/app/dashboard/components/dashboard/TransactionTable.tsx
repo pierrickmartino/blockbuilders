@@ -11,12 +11,11 @@ import {
   Chip,
   TableContainer,
   IconButton,
+  TablePagination,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 
 import { Transaction } from "../../../lib/definition";
-// import { fetchWallets } from "../../../lib/data";
-import { IconDotsVertical } from "@tabler/icons-react";
 
 // Define the props type that will be passed into WalletTable
 interface TransactionTableProps {
@@ -24,15 +23,27 @@ interface TransactionTableProps {
 }
 
 const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => {
-  // const [wallets, setWallets] = useState<Wallet[]>([]);
-
-  // useEffect(() => {
-  //   // Call fetchWallets function when the component mounts
-  //   fetchWallets(setWallets);
-  // }, []);
   
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
     <BaseCard title="Transaction Table">
+      <>
       <TableContainer
         sx={{
           width: {
@@ -52,78 +63,100 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => 
             <TableRow>
               <TableCell>
                 <Typography color="textSecondary" variant="h6">
-                  Token
+                  Position
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography color="textSecondary" variant="h6">
-                  Perf
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography color="textSecondary" variant="h6">
-                  Price
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
                   Quantity
                 </Typography>
               </TableCell>
-              <TableCell align="right">
+              <TableCell>
                 <Typography color="textSecondary" variant="h6">
-                  Amount
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography color="textSecondary" variant="h6">
-                  Realized
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography color="textSecondary" variant="h6">
-                  UnRealized
+                  Running Quantity
                 </Typography>
               </TableCell>
               <TableCell>
+                <Typography color="textSecondary" variant="h6">
+                  Price
+                </Typography>
               </TableCell>
+              <TableCell>
+                <Typography color="textSecondary" variant="h6">
+                  Cost
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography color="textSecondary" variant="h6">
+                  Total Cost
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography color="textSecondary" variant="h6">
+                  Average Cost
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography color="textSecondary" variant="h6">
+                  Cap.gain
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography color="textSecondary" variant="h6">
+                  Date
+                </Typography>
+              </TableCell>
+              {/* <TableCell>
+              </TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
             {transactions.map((transaction : Transaction) => (
               <TableRow key={transaction.id}>
                 <TableCell>
-                  <Typography fontSize="14px">
-                    {transaction.contract}
+                  <Typography fontSize="12px">
+                    {transaction.position.contract.symbol} {transaction.against_contract?.symbol || ''}
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Box display="flex" alignItems="center">
+                  <Box display="flex">
                     <Box>
-                      <Typography fontSize="14px">
-                        {transaction.perf_daily}
-                      </Typography>
+                      <Typography fontSize="12px">{transaction.quantity}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <Box display="flex" alignItems="right">
+                  <Box display="flex">
                     <Box>
-                      <Typography fontSize="14px">{transaction.price}</Typography>
+                      <Typography fontSize="12px">{transaction.running_quantity}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <Box display="flex" alignItems="right">
+                  <Box display="flex">
                     <Box>
-                      <Typography fontSize="14px">{transaction.quantity}</Typography>
+                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {transaction.price}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
-                  <Box display="flex" alignItems="right">
+                  <Box display="flex">
                     <Box>
-                      <Typography fontSize="14px">{transaction.amount}</Typography>
+                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {transaction.cost}</Typography>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box display="flex">
+                    <Box>
+                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {transaction.total_cost}</Typography>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Box display="flex">
+                    <Box>
+                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {transaction.average_cost}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
@@ -137,32 +170,35 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => 
                       color: "#fff",
                     }}
                     size="small"
-                    label={transaction.realized_gain}
-                  ></Chip>
-                </TableCell>
-                <TableCell align="right">
-                  <Chip
-                    sx={{
-                      pl: "4px",
-                      pr: "4px",
-                      backgroundColor: "",
-                      // backgroundColor: wallet.unrealized_color,
-                      color: "#fff",
-                    }}
-                    size="small"
-                    label={transaction.unrealized_gain}
+                    label={transaction.capital_gain}
                   ></Chip>
                 </TableCell>
                 <TableCell>
+                  <Box display="flex">
+                    <Box>
+                      <Typography fontSize="12px">{transaction.date}</Typography>
+                    </Box>
+                  </Box>
+                </TableCell>
+                {/* <TableCell>
                 <IconButton>
                   <IconDotsVertical width={18} />
                 </IconButton>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
+      <TablePagination
+          component="div"
+          count={10}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
+        </>
     </BaseCard>
   );
 
