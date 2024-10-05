@@ -15,12 +15,13 @@ import {
   Menu,
   MenuItem,
   TablePagination,
+  Checkbox,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 
 import { Position } from "../../../lib/definition";
 import { IconDotsVertical } from "@tabler/icons-react";
-import { Visibility } from "@mui/icons-material";
+import { CreditScore, Favorite, FavoriteBorder, Payment, ReportGmailerrorred, Visibility, Report } from "@mui/icons-material";
 
 // Define the props type that will be passed into WalletTable
 interface PositionTableProps {
@@ -217,6 +218,8 @@ const PositionTable: React.FC<PositionTableProps> = ({
                   ></Chip>
                 </TableCell>
                 <TableCell>
+                <Checkbox icon={<Payment />} checkedIcon={<CreditScore />} />
+                <Checkbox icon={<ReportGmailerrorred />} checkedIcon={<Report />} />
                 <IconButton
                       id="basic-button"
                       aria-controls={open ? "basic-menu" : undefined}
