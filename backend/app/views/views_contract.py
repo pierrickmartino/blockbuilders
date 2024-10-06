@@ -1,4 +1,5 @@
 import logging, os
+import uuid
 
 from django.http import JsonResponse
 
@@ -39,7 +40,28 @@ def get_Contract_by_address(contract_address):
     contract = Contract.objects.filter(address=contract_address).first()
     return contract
 
+def set_Contract_as_suspicious(request, contract_id:uuid):
+    logger.info(f"Enter in [set_Contract_as_suspicious] for contract with id {contract_id}")
+    contract = get_object_or_404(Contract, id=contract_id)
+    contract.category = CategoryContractChoices.SUSPICIOUS
+    contract.save()
+    return JsonResponse({"status": "Contract set as suspicious successfully"})
 
+def set_Contract_as_stable(request, contract_id:uuid):
+    logger.info(f"Enter in [set_Contract_as_stable] for contract with id {contract_id}")
+    contract = get_object_or_404(Contract, id=contract_id)
+    contract.category = CategoryContractChoices.STABLE
+    contract.save()
+    return JsonResponse({"status": "Contract set as stable successfully"})
+
+def set_Contract_as_standard(request, contract_id:uuid):
+    logger.info(f"Enter in [set_Contract_as_normal] for contract with id {contract_id}")
+    contract = get_object_or_404(Contract, id=contract_id)
+    contract.category = CategoryContractChoices.STANDARD
+    contract.save()
+    return JsonResponse({"status": "Contract set as standard successfully"})
+
+# OBSOLETE
 def blacklist_Contract_by_id(request, contract_id):
     if request.method == "POST":
         contract = get_object_or_404(Contract, id=contract_id)
@@ -48,7 +70,7 @@ def blacklist_Contract_by_id(request, contract_id):
         return JsonResponse({"status": "success"})
     return JsonResponse({"status": "error"}, status=400)
 
-
+# OBSOLETE
 def stable_Contract_by_id(request, contract_id):
     if request.method == "POST":
         contract = get_object_or_404(Contract, id=contract_id)

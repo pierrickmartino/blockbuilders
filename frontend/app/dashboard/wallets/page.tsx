@@ -73,7 +73,6 @@ const Wallets = () => {
   const action = (
     <Fragment>
       <Button color="secondary" size="small" onClick={handleClose}>
-        UNDO
       </Button>
       <IconButton
         size="small"

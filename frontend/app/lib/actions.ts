@@ -121,8 +121,6 @@ export async function downloadWallet(id: string) {
 }
 
 export async function deleteWallet(id: string) {
-  // throw new Error('Failed to Delete Invoice');
-
   try {
     const response = await axios.delete(`${backendUrl}/api/wallets/${id}/`, {
       headers: {
@@ -134,6 +132,45 @@ export async function deleteWallet(id: string) {
     return response.data;
   } catch (error) {
     return { message: 'Database Error: Failed to delete wallet.' };
+  }
+}
+
+export async function setContractAsSuspicious(id: string) {
+  try {
+    const response = await axios.post(`${backendUrl}/api/contracts/${id}/suspicious/`, {
+      headers: {
+        Authorization: `Token ${userToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return { message: 'Database Error: Failed to set contract as Suspicious.' };
+  }
+}
+
+export async function setContractAsStable(id: string) {
+  try {
+    const response = await axios.post(`${backendUrl}/api/contracts/${id}/stable/`, {
+      headers: {
+        Authorization: `Token ${userToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return { message: 'Database Error: Failed to set contract as Stable.' };
+  }
+}
+
+export async function setContractAsStandard(id: string) {
+  try {
+    const response = await axios.post(`${backendUrl}/api/contracts/${id}/standard/`, {
+      headers: {
+        Authorization: `Token ${userToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return { message: 'Database Error: Failed to set contract as Standard.' };
   }
 }
 

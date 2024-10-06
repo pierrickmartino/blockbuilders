@@ -36,6 +36,14 @@ const Positions = () => {
     setPage(0);  // Reset page to 0 whenever rows per page changes
   };
 
+  const handleContractSetAsSuspicious = () => {
+    fetchPositionData(); // Re-fetch wallet data after a new wallet is created
+  };
+
+  const handleContractSetAsStable = () => {
+    fetchPositionData(); // Re-fetch wallet data after a new wallet is created
+  };
+
   return (
     <PageContainer title="Positions" description="this is Positions">
       <Box mt={3}>
@@ -47,7 +55,10 @@ const Positions = () => {
               rowsPerPage={rowsPerPage}
               totalCount={totalCount}
               onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange} />
+              onRowsPerPageChange={handleRowsPerPageChange} 
+              onContractSetAsStable={handleContractSetAsStable}
+              onContractSetAsSuspicious={handleContractSetAsSuspicious}
+              />
           </Grid>
         </Grid>
       </Box>
