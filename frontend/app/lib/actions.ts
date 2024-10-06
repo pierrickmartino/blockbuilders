@@ -98,8 +98,8 @@ export async function createWallet(
 export async function downloadWallet(id: string) {
   // throw new Error('Failed to Delete Invoice');
   console.log('Enter downloadWallet for :', id);
-  console.log(`${backendUrl}/api/wallets/${id}/download/`);
-  console.log(`Token ${userToken}`);
+  // console.log(`${backendUrl}/api/wallets/${id}/download/`);
+  // console.log(`Token ${userToken}`);
   try {
     const response = await axios.post(`${backendUrl}/api/wallets/${id}/download/`, {
       headers: {
@@ -117,6 +117,28 @@ export async function downloadWallet(id: string) {
     return result;
   } catch (error) {
     return { message: 'Database Error: Failed to download wallet.' };
+  }
+}
+
+export async function refreshWallet(id: string) {
+  // throw new Error('Failed to Delete Invoice');
+  try {
+    const response = await axios.post(`${backendUrl}/api/wallets/${id}/refresh/`, {
+      headers: {
+        Authorization: `Token ${userToken}`,
+        "Content-Type": "application/json",
+          Accept: "*/*",
+          "Accept-Encoding": "gzip, deflate, br",
+          Connection: "keep-alive",
+      },
+    });
+    // revalidatePath(`${webUrl}/dashboard/wallets`);
+    // redirect(`${webUrl}/dashboard/wallets`);
+    const result = await response.data;
+    console.log('Task triggered:', result);
+    return result;
+  } catch (error) {
+    return { message: 'Database Error: Failed to refresh wallet.' };
   }
 }
 

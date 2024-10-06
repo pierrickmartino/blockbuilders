@@ -18,11 +18,13 @@ import { Close } from "@mui/icons-material";
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState(""); // New state for message
   const [page, setPage] = useState(0);  // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(10);  // State for rows per page
   const [totalCount, setTotalCount] = useState(0);  // State for total number of items
 
-  const handleClick = () => {
+  const handleClick = (message: string) => {
+    setSnackbarMessage(message); // Set the snackbar message
     setOpen(true);
   };
 
@@ -56,9 +58,11 @@ const Wallets = () => {
   };
 
   const handleWalletDownloaded = () => {
-    // fetchWalletData(); // Re-fetch wallet data after a new wallet is created
-    // console.log('show notif');
-    handleClick();
+    handleClick("Download in progress"); // Show download message
+  };
+
+  const handleWalletRefreshed = () => {
+    handleClick("Refresh in progress"); // Show refresh message
   };
 
   const handlePageChange = (newPage: number) => {
@@ -114,6 +118,7 @@ const Wallets = () => {
               onRowsPerPageChange={handleRowsPerPageChange}
               onWalletDeleted={handleWalletDeleted}
               onWalletDownloaded={handleWalletDownloaded}
+              onWalletRefreshed={handleWalletRefreshed}
             />
           </Grid>
           <Grid item xs={12} lg={4}>
@@ -135,7 +140,7 @@ const Wallets = () => {
         open={open}
         autoHideDuration={6000}
         onClose={handleClose}
-        message="Download in progress"
+        message={snackbarMessage}
         action={action}
       />
     </PageContainer>

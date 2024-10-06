@@ -1039,6 +1039,8 @@ def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
 
         for position in positions:
             position_calculator = PositionCalculator(position)
+            position.amount = position_calculator.calculate_amount()
+            position.save()
             balance += position_calculator.calculate_amount()
 
         wallet.balance = balance

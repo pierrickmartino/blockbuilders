@@ -23,7 +23,7 @@ import { Refresh } from "@mui/icons-material";
 import { Download } from "@mui/icons-material";
 import { Delete } from "@mui/icons-material";
 import { Visibility } from "@mui/icons-material";
-import { deleteWallet, downloadWallet } from "@/app/lib/actions";
+import { deleteWallet, downloadWallet, refreshWallet } from "@/app/lib/actions";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
@@ -35,6 +35,7 @@ interface WalletTableProps {
   onRowsPerPageChange: (newRowsPerPage: number) => void;
   onWalletDeleted: () => void;
   onWalletDownloaded: (response: any) => void;
+  onWalletRefreshed: (response: any) => void;
 }
 
 const WalletTable: React.FC<WalletTableProps> = ({
@@ -46,6 +47,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
   onRowsPerPageChange,
   onWalletDeleted,
   onWalletDownloaded,
+  onWalletRefreshed,
 }) => {
   const walletMenuItems = [
     {
@@ -120,12 +122,20 @@ const WalletTable: React.FC<WalletTableProps> = ({
     }
   };
 
-  // Handle navigation to wallet details
   const handleDownload = async () => {
     if (selectedWalletId !== null) {
       const response = await downloadWallet(selectedWalletId.toString());
       if (response.message !== "Database Error: Failed to download wallet.") {
         onWalletDownloaded(response); // Notify parent to refresh wallets
+      }
+    }
+  };
+
+  const handleRefresh = async () => {
+    if (selectedWalletId !== null) {
+      const response = await refreshWallet(selectedWalletId.toString());
+      if (response.message !== "Database Error: Failed to refresh wallet.") {
+        onWalletRefreshed(response); // Notify parent to refresh wallets
       }
     }
   };
@@ -274,6 +284,9 @@ const WalletTable: React.FC<WalletTableProps> = ({
                             }
                             if (item.key === "wallet-download") {
                               handleDownload();
+                            }
+                            if (item.key === "wallet-refresh") {
+                              handleRefresh();
                             }
                           }}
                           key={item.key}

@@ -115,11 +115,12 @@ def delete_Position_by_id(request, position_id):
     return redirect("dashboard")
 
 
-@login_required
+# @login_required
 def refresh_wallet_position_price(request, wallet_id: uuid):
     """
     View to refresh position prices of a wallet by chaining several Celery tasks.
     """
+    logger.info(f"Enter in [refresh_wallet_position_price] for wallet with id {wallet_id}")
     wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     symbol_set = {
@@ -139,10 +140,11 @@ def refresh_wallet_position_price(request, wallet_id: uuid):
     )()
 
     logger.info(f"Started getting position prices for wallet with id {wallet_id}")
-    return redirect("dashboard")
+    # return redirect("dashboard")
+    return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
 
 
-@login_required
+# @login_required
 def refresh_full_historical_position_price(request, wallet_id: uuid):
     """
     View to refresh full position prices of a wallet by chaining several Celery tasks.

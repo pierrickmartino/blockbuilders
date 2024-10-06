@@ -249,7 +249,7 @@ class Position(TimeStampModel):
     class Meta:
         verbose_name = "Position"
         verbose_name_plural = "Positions"
-        ordering = ['created_at']
+        ordering = ['amount']
         indexes = [
             models.Index(fields=["wallet", "contract"]),  # Index for frequent queries
         ]

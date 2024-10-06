@@ -225,6 +225,7 @@ urlpatterns = format_suffix_patterns(
         path("api/wallets/<uuid:pk>/", wallet_detail, name="wallet-detail"),
         path("api/wallets/<uuid:wallet_id>/positions/", wallet_position_list, name="wallet-position-list"),
         path("api/wallets/<uuid:wallet_id>/download/", views_position.download_wallet, name="wallet-download"),
+        path("api/wallets/<uuid:wallet_id>/refresh/", views_position.refresh_wallet_position_price, name="wallet-refresh"),
         path(
             "api/wallets/<uuid:wallet_id>/positions/<uuid:position_id>/",
             wallet_position_detail,
