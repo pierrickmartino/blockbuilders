@@ -1,0 +1,11 @@
+- formater les dates de la même manière
+- moteur de recherche sur les positions
+- top 5 positions
+- top 5 blockchain
+- lien vers la transaction
+- performance daily/weekly/monthly
+- capital-gain / unrealized gain
+- refresh all market data
+- alignement des chiffres dans les colonnes
+- utilisation des images pour les blockchains
+- navigation retour à partir des pages /positions  /transactions 

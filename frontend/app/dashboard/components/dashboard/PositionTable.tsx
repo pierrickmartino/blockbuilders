@@ -18,7 +18,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
-
+import formatNumber from "@/app/utils/formatNumber";
 import { Position } from "../../../lib/definition";
 import { IconDotsVertical } from "@tabler/icons-react";
 import {
@@ -216,13 +216,13 @@ const PositionTable: React.FC<PositionTableProps> = ({
                     <Box display="flex">
                       <Box>
                         <Typography fontSize="12px">
-                          {position.daily_price_delta}
+                          {formatNumber(position.daily_price_delta, "percentage")}
                         </Typography>
                         <Typography fontSize="12px">
-                          {position.weekly_price_delta}
+                          {formatNumber(position.weekly_price_delta, "percentage")}
                         </Typography>
                         <Typography fontSize="12px">
-                          {position.monthly_price_delta}
+                          {formatNumber(position.monthly_price_delta, "percentage")}
                         </Typography>
                       </Box>
                     </Box>
@@ -231,7 +231,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
                     <Box display="flex" alignItems="right">
                       <Box>
                         <Typography fontSize="12px">
-                          {position.contract.price}
+                          {formatNumber(position.contract.price, "quantity")}
                         </Typography>
                       </Box>
                     </Box>
@@ -240,7 +240,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
                     <Box display="flex">
                       <Box>
                         <Typography fontSize="12px">
-                          {position.quantity}
+                          {formatNumber(position.quantity, "quantity_precise")}
                         </Typography>
                       </Box>
                     </Box>
@@ -249,7 +249,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
                     <Box display="flex">
                       <Box>
                         <Typography fontSize="12px">
-                          {position.amount}
+                          {formatNumber(position.amount, "currency")}
                         </Typography>
                       </Box>
                     </Box>
@@ -264,7 +264,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
                         color: "#fff",
                       }}
                       size="small"
-                      label={position.capital_gain}
+                      label={formatNumber(position.capital_gain, "currency")}
                     ></Chip>
                   </TableCell>
                   <TableCell>
@@ -277,7 +277,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
                         color: "#fff",
                       }}
                       size="small"
-                      label={position.unrealized_gain}
+                      label={formatNumber(position.unrealized_gain, "percentage")}
                     ></Chip>
                   </TableCell>
                   <TableCell>

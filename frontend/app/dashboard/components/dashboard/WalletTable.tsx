@@ -17,6 +17,7 @@ import {
   TablePagination,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
+import formatNumber from "@/app/utils/formatNumber";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { Wallet } from "@/app/lib/definition";
 import { Refresh } from "@mui/icons-material";
@@ -223,7 +224,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
                     </Box>
                   </TableCell>
                   <TableCell align="right">
-                    <Typography fontSize="14px">${wallet.balance}</Typography>
+                    <Typography fontSize="14px">{formatNumber(wallet.balance, "currency")}</Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Chip
@@ -235,8 +236,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
                         color: "#fff",
                       }}
                       size="small"
-                      label="0"
-                      // label={wallet.realized}
+                      label={formatNumber(wallet.capital_gain, "currency")}
                     ></Chip>
                   </TableCell>
                   <TableCell align="right">
@@ -249,8 +249,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
                         color: "#fff",
                       }}
                       size="small"
-                      label="0"
-                      // label={wallet.unrealized}
+                      label={formatNumber(wallet.unrealized_gain, "percentage")}
                     ></Chip>
                   </TableCell>
                   <TableCell>

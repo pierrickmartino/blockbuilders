@@ -3,7 +3,7 @@ export type Fiat = {
   name:string;
   symbol: string;
   short_symbol: string;
-  exchange_rate: string;
+  exchange_rate: number;
 };
 
 export type Blockchain = {
@@ -19,7 +19,9 @@ export type Wallet = {
   name: string;
   address: string;
   description: string;
-  balance: string;
+  balance: number;
+  capital_gain: number;
+  unrealized_gain: number;
 };
 
 export type Contract = {
@@ -29,11 +31,11 @@ export type Contract = {
   relative_symbol: string;
   address: string;
   logo_uri: string;
-  decimals: string;
-  price: string;
-  previous_day_price: string;
-  previous_week_price: string;
-  previous_month_price: string;
+  decimals: number;
+  price: number;
+  previous_day_price: number;
+  previous_week_price: number;
+  previous_month_price: number;
   previous_day: string;
   previous_week: string;
   previous_month: string;
@@ -43,15 +45,15 @@ export type Contract = {
 
 export type Position = {
   id: string;
-  daily_price_delta: string;
-  weekly_price_delta: string;
-  monthly_price_delta: string;
-  price: string;
-  quantity: string;
-  amount: string;
-  capital_gain: string;
-  unrealized_gain: string;
-  average_cost: string;
+  daily_price_delta: number;
+  weekly_price_delta: number;
+  monthly_price_delta: number;
+  price: number;
+  quantity: number;
+  amount: number;
+  capital_gain: number;
+  unrealized_gain: number;
+  average_cost: number;
   contract: Contract;
   wallet: Wallet;
 };
@@ -60,18 +62,18 @@ export type Transaction = {
   id: string;
   position: Position;
   type: string;
-  quantity: string;
+  quantity: number;
   date: string;
   comment: string;
   hash: string;
-  price: string;
-  running_quantity: string;
-  buy_quantity: string;
-  sell_quantity: string;
-  cost: string;
-  average_cost: string;
-  total_cost: string;
-  capital_gain: string;
+  price: number;
+  running_quantity: number;
+  buy_quantity: number;
+  sell_quantity: number;
+  cost: number;
+  average_cost: number;
+  total_cost: number;
+  capital_gain: number;
   against_contract: Contract;
   against_fiat: Fiat;
 };

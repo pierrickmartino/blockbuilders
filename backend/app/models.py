@@ -50,7 +50,9 @@ class Fiat(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)  # Unique name of the fiat currency
     symbol = models.CharField(max_length=50, unique=True)  # Unique symbol of the fiat currency
-    short_symbol = models.CharField(max_length=3, default="")  # Unique short symbol of the fiat currency ($, €, etc...)
+    short_symbol = models.CharField(
+        max_length=3, default=""
+    )  # Unique short symbol of the fiat currency ($, €, etc...)
     exchange_rate = models.DecimalField(
         max_digits=15, decimal_places=8, default=1
     )  # Exchange rate of the fiat currency
@@ -73,11 +75,13 @@ class Wallet(TimeStampModel):
     name = models.CharField(max_length=255)  # Name of the wallet
     balance = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Balance of the wallet
     description = models.TextField(blank=True, default="")  # Description of the wallet
+    capital_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Balance of the wallet
+    unrealized_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Balance of the wallet
 
     class Meta:
         verbose_name = "Wallet"
         verbose_name_plural = "Wallets"
-        ordering = ['created_at']
+        ordering = ["created_at"]
         indexes = [
             models.Index(fields=["user", "address"]),  # Index for frequent queries
         ]
@@ -95,10 +99,14 @@ class WalletProcess(TimeStampModel):
     )  # One-to-one relationship with Wallet
     download_task = models.UUIDField(default=uuid.uuid4)  # UUID for download task
     download_task_date = models.DateTimeField(default=datetime.now)
-    download_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
+    download_task_status = models.CharField(
+        max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING
+    )
     resync_task = models.UUIDField(default=uuid.uuid4)  # UUID for resync task
     resync_task_date = models.DateTimeField(default=datetime.now)
-    resync_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
+    resync_task_status = models.CharField(
+        max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING
+    )
     delete_task = models.UUIDField(default=uuid.uuid4)  # UUID for delete task
     delete_task_date = models.DateTimeField(default=datetime.now)
 
@@ -125,7 +133,7 @@ class Blockchain(models.Model):
     gecko_name = models.CharField(max_length=255, default="")  # Gecko name
     gecko_shortname = models.CharField(max_length=255, default="")  # Gecko short name
     gecko_native_coin_id = models.CharField(max_length=255, default="")  # Gecko native coin id
-    transaction_link = models.URLField(max_length=255) # Url link of the transaction on the blockchain explorer
+    transaction_link = models.URLField(max_length=255)  # Url link of the transaction on the blockchain explorer
 
     class Meta:
         verbose_name = "Blockchain"
@@ -158,7 +166,9 @@ class Contract(models.Model):
     previous_week = models.DateTimeField(default=datetime.now)
     previous_month = models.DateTimeField(default=datetime.now)
 
-    category = models.CharField(max_length=20, choices=CategoryContractChoices.choices, default=CategoryContractChoices.STANDARD)
+    category = models.CharField(
+        max_length=20, choices=CategoryContractChoices.choices, default=CategoryContractChoices.STANDARD
+    )
 
     # market_cap = models.DecimalField(max_digits=20, decimal_places=2, default=0) # type: ignore
     # volume = models.DecimalField(max_digits=20, decimal_places=10, default=0) # type: ignore
@@ -213,7 +223,7 @@ class Position(TimeStampModel):
     )  # Reference to the contract
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)  # Quantity of the position
     avg_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Average cost of the position
-    amount = models.DecimalField(max_digits=15, decimal_places=2, default=0) # Amount of the position
+    amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Amount of the position
 
     daily_price_delta = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     weekly_price_delta = models.DecimalField(max_digits=15, decimal_places=2, default=0)
@@ -249,7 +259,7 @@ class Position(TimeStampModel):
     class Meta:
         verbose_name = "Position"
         verbose_name_plural = "Positions"
-        ordering = ['amount']
+        ordering = ["amount"]
         indexes = [
             models.Index(fields=["wallet", "contract"]),  # Index for frequent queries
         ]
@@ -297,7 +307,7 @@ class Transaction(TimeStampModel):
     total_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     total_cost_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     total_cost_fiat_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    
+
     average_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     average_cost_contract_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     average_cost_fiat_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
@@ -355,14 +365,15 @@ class TransactionCalculator:
         # Calculate the average cost of the position based on price
         return (
             self.transaction.total_cost / self.transaction.buy_quantity
-            if self.transaction.buy_quantity != 0 and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
+            if self.transaction.buy_quantity != 0
+            and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
             else 0
         )
 
     def calculate_amount(self, current_price):
         # Calculate the amount of a transaction
         return self.transaction.running_quantity * current_price
-    
+
     def calculate_cost(self):
         # Calculate the cost of the transaction
         return self.transaction.quantity * self.transaction.price
@@ -370,7 +381,7 @@ class TransactionCalculator:
     def calculate_cost_contract_based(self):
         # Calculate the cost of the transaction based on contract price
         return self.transaction.quantity * self.transaction.price_contract_based
-    
+
     def calculate_cost_fiat_based(self):
         # Calculate the cost of the transaction based on fiat price
         return self.transaction.quantity * self.transaction.price_fiat_based
@@ -392,7 +403,10 @@ class TransactionCalculator:
         cost = self.calculate_cost_contract_based()
         avg_cost = self.calculate_avg_cost_contract_based()
         return (
-            cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT and self.transaction.position.contract.category == CategoryContractChoices.STANDARD else 0
+            cost - self.transaction.quantity * avg_cost
+            if self.transaction.type == TypeTransactionChoices.OUT
+            and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
+            else 0
         )
 
     def calculate_capital_gain_fiat_based(self):
@@ -400,15 +414,21 @@ class TransactionCalculator:
         cost = self.calculate_cost_contract_based()
         avg_cost = self.calculate_avg_cost_fiat_based()
         return (
-            cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT and self.transaction.position.contract.category == CategoryContractChoices.STANDARD else 0
+            cost - self.transaction.quantity * avg_cost
+            if self.transaction.type == TypeTransactionChoices.OUT
+            and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
+            else 0
         )
-    
+
     def calculate_capital_gain(self):
         # Calculate the capital gain of the transaction based on price
         cost = self.calculate_cost()
         avg_cost = self.calculate_avg_cost()
         return (
-            cost - self.transaction.quantity * avg_cost if self.transaction.type == TypeTransactionChoices.OUT and self.transaction.position.contract.category == CategoryContractChoices.STANDARD else 0
+            cost - self.transaction.quantity * avg_cost
+            if self.transaction.type == TypeTransactionChoices.OUT
+            and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
+            else 0
         )
 
 

@@ -14,7 +14,7 @@ import {
   TablePagination,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
-
+import formatNumber from "@/app/utils/formatNumber";
 import { Transaction } from "../../../lib/definition";
 
 // Define the props type that will be passed into WalletTable
@@ -132,42 +132,42 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                 <TableCell>
                   <Box display="flex">
                     <Box>
-                      <Typography fontSize="12px">{transaction.quantity}</Typography>
+                      <Typography fontSize="12px">{formatNumber(transaction.quantity, "quantity_precise")}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box display="flex">
                     <Box>
-                      <Typography fontSize="12px">{transaction.running_quantity}</Typography>
+                      <Typography fontSize="12px">{formatNumber(transaction.running_quantity, "quantity_precise")}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box display="flex">
                     <Box>
-                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {transaction.price}</Typography>
+                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {formatNumber(transaction.price, "quantity")}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box display="flex">
                     <Box>
-                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {transaction.cost}</Typography>
+                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {formatNumber(transaction.cost, "quantity")}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box display="flex">
                     <Box>
-                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {transaction.total_cost}</Typography>
+                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {formatNumber(transaction.total_cost, "quantity")}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
                 <TableCell>
                   <Box display="flex">
                     <Box>
-                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {transaction.average_cost}</Typography>
+                      <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {formatNumber(transaction.average_cost, "quantity")}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
@@ -181,7 +181,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                       color: "#fff",
                     }}
                     size="small"
-                    label={transaction.capital_gain}
+                    label={formatNumber(transaction.capital_gain, "currency")}
                   ></Chip>
                 </TableCell>
                 <TableCell>
