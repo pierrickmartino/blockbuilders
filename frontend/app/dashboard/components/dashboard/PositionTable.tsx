@@ -16,6 +16,7 @@ import {
   MenuItem,
   TablePagination,
   Checkbox,
+  Avatar,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
@@ -204,15 +205,22 @@ const PositionTable: React.FC<PositionTableProps> = ({
                 <TableRow key={position.id}>
                   <TableCell>
                     <Typography fontSize="14px">
-                      {truncateText(position.contract.symbol, 8)} -{" "}
-                      {truncateText(position.contract.name, 20)}
+                      {truncateText(position.contract.symbol, 8)}
                     </Typography>
                     <Typography fontSize="12px">
+                      {truncateText(position.contract.name, 18)}
+                    </Typography>
+                    {/* <Typography fontSize="12px">
                       {position.contract.category}
-                    </Typography>
-                    <Typography fontSize="12px">
+                    </Typography> */}
+                    <Avatar
+                      alt={position.contract.blockchain.name}
+                      sx={{ width: 24, height: 24 }}
+                      src={"/static/img/" + position.contract.blockchain.icon}
+                    />
+                    {/* <Typography fontSize="12px">
                       {position.contract.blockchain.name}
-                    </Typography>
+                    </Typography> */}
                   </TableCell>
                   <TableCell>
                     <Box display="flex" flexDirection="column">
