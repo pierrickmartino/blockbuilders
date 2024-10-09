@@ -65,6 +65,10 @@ const Wallets = () => {
     handleClick("Refresh in progress"); // Show refresh message
   };
 
+  const handleWalletFullRefreshed = () => {
+    handleClick("Full refresh in progress"); // Show refresh message
+  };
+
   const handlePageChange = (newPage: number) => {
     setPage(newPage);  // Update page state
   };
@@ -119,6 +123,7 @@ const Wallets = () => {
               onWalletDeleted={handleWalletDeleted}
               onWalletDownloaded={handleWalletDownloaded}
               onWalletRefreshed={handleWalletRefreshed}
+              onWalletFullRefreshed={handleWalletFullRefreshed}
             />
           </Grid>
           <Grid item xs={12} lg={4}>

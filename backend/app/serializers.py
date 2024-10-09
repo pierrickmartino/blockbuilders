@@ -54,7 +54,16 @@ class UserSettingSerializer(serializers.ModelSerializer):
 class WalletSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wallet
-        fields = ["id", "user", "address", "name", "balance", "description"]
+        fields = [
+            "id",
+            "user",
+            "address",
+            "name",
+            "balance",
+            "description",
+            "capital_gain",
+            "unrealized_gain",
+        ]
         read_only_fields = ["user"]
 
 
@@ -68,7 +77,7 @@ class PositionSerializer(serializers.ModelSerializer):
             "id",
             "quantity",
             "amount",
-            "avg_cost",
+            "average_cost",
             "total_cost",
             "unrealized_gain",
             "capital_gain",

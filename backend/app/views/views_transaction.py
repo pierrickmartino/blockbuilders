@@ -226,7 +226,7 @@ def position_transactions_paginated(request, position_id, page):
     total_realized_gain = 0
     for transaction in transactions:
         calculator = TransactionCalculator(transaction)
-        avg_cost = calculator.calculate_avg_cost()
+        average_cost = calculator.calculate_average_cost()
         cost = calculator.calculate_cost()
         cost_fiat_based = calculator.calculate_cost_fiat_based()
         capital_gain = calculator.calculate_capital_gain()
@@ -248,7 +248,7 @@ def position_transactions_paginated(request, position_id, page):
                 "total_cost": transaction.total_cost,
                 "capital_gain": capital_gain,
                 "date": transaction.date,
-                "avg_cost": avg_cost,
+                "avg_cost": average_cost,
                 "link": transaction_link,
             }
         )
@@ -257,11 +257,11 @@ def position_transactions_paginated(request, position_id, page):
     page_transactions = paginator.get_page(page)
     page_transactions.adjusted_elided_pages = paginator.get_elided_page_range(page)
 
-    reference_avg_cost = TransactionCalculator(transactions.first()).calculate_avg_cost() if transactions else 0
+    reference_average_cost = TransactionCalculator(transactions.first()).calculate_average_cost() if transactions else 0
     total_unrealized_gain = (
         (
-            (contract.price - reference_avg_cost) / reference_avg_cost * 100
-            if round(contract.price * transactions.first().running_quantity, 2) > 0 and reference_avg_cost != 0
+            (contract.price - reference_average_cost) / reference_average_cost * 100
+            if round(contract.price * transactions.first().running_quantity, 2) > 0 and reference_average_cost != 0
             else 0
         )
         if transactions

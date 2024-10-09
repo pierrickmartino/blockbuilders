@@ -31,6 +31,7 @@ from app.models import (
     Blockchain,
     CategoryContractChoices,
     Contract,
+    ContractCalculator,
     Fiat,
     MarketData,
     Position,
@@ -551,11 +552,6 @@ def calculate_cost_transaction_task(wallet_id: uuid):
                     )
 
                 transaction.price_fiat_based = transaction.price_contract_based * data.close if data else 0
-                # transaction.price = (
-                #     transaction.price_contract_based
-                #     if transaction.price_contract_based != 0
-                #     else transaction.price_fiat_based
-                # )
                 transaction.price = transaction.price_fiat_based
                 transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
                 transaction.against_fiat = fiat
@@ -604,11 +600,6 @@ def calculate_cost_transaction_task(wallet_id: uuid):
                     )
 
                 transaction.price_fiat_based = data.close if data else 0
-                # transaction.price = (
-                #     transaction.price_contract_based
-                #     if transaction.price_contract_based != 0
-                #     else transaction.price_fiat_based
-                # )
                 transaction.price = transaction.price_fiat_based
                 transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
                 transaction.against_fiat = fiat
@@ -813,6 +804,13 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
                 transaction.buy_quantity = buy_quantity
                 transaction.sell_quantity = sell_quantity
                 transaction.total_cost = total_cost
+                transaction.save()
+
+                calculator = TransactionCalculator(transaction)
+                transaction.average_cost = calculator.calculate_average_cost()
+                transaction.cost = calculator.calculate_cost()
+                transaction.cost_fiat_based = calculator.calculate_cost_fiat_based()
+                transaction.capital_gain = calculator.calculate_capital_gain()
                 transaction.save()
 
             position.quantity = running_quantity
@@ -1036,14 +1034,52 @@ def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
         wallet = Wallet.objects.get(id=wallet_id)
         positions = Position.objects.filter(wallet=wallet)
         balance = 0
+        total_capital_gain = 0
+        total_unrealized_gain = 0
 
         for position in positions:
             position_calculator = PositionCalculator(position)
-            position.amount = position_calculator.calculate_amount()
+            contract_calculator = ContractCalculator(position.contract)
+            
+            position_amount = position_calculator.calculate_amount()
+
+            position.amount = position_amount
+            position.daily_price_delta = contract_calculator.calculate_daily_price_delta()
+            position.weekly_price_delta = contract_calculator.calculate_weekly_price_delta()
+            position.monthly_price_delta = contract_calculator.calculate_monthly_price_delta()
+
+            last_transaction = Transaction.objects.filter(position=position).order_by("-date").first()
+            reference_average_cost = (
+                TransactionCalculator(last_transaction).calculate_average_cost()
+                if last_transaction and last_transaction.running_quantity != 0
+                else 0
+            )
+
+            position.progress_percentage = position_amount / position.wallet.balance * 100 if position.wallet.balance != 0 else 0
+
+            unrealized_gain = (
+                (position.contract.price - reference_average_cost) / reference_average_cost * 100
+                if round(position_amount, 2) > 0 and reference_average_cost != 0
+                else 0
+            )
+            total_unrealized_gain += unrealized_gain
+            position.unrealized_gain = unrealized_gain
+
+            # Calculate realized gain for the position
+            capital_gain = sum(
+                TransactionCalculator(transaction).calculate_capital_gain()
+                for transaction in Transaction.objects.filter(position=position)
+            )
+            total_capital_gain += capital_gain
+            position.capital_gain = capital_gain
+
             position.save()
-            balance += position_calculator.calculate_amount()
+            balance += position_amount
+
 
         wallet.balance = balance
+        wallet.capital_gain = total_capital_gain
+        wallet.unrealized_gain = total_unrealized_gain
         wallet.save()
 
     except Wallet.DoesNotExist:

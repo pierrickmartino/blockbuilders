@@ -47,7 +47,7 @@ class Position_Admin(admin.ModelAdmin):
         "wallet",
         "contract",
         "quantity",
-        "avg_cost",
+        "average_cost",
         "total_cost",
         "unrealized_gain",
         "unrealized_gain_percentage",

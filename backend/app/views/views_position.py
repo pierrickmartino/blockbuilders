@@ -149,6 +149,7 @@ def refresh_full_historical_position_price(request, wallet_id: uuid):
     """
     View to refresh full position prices of a wallet by chaining several Celery tasks.
     """
+    logger.info(f"Enter in [refresh_full_historical_position_price] for wallet with id {wallet_id}")
     wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     symbol_set = {
@@ -160,7 +161,8 @@ def refresh_full_historical_position_price(request, wallet_id: uuid):
         chain(get_full_init_historical_price_from_market_task.s(symbol))()
 
     logger.info(f"Started getting full position prices for wallet with id {wallet_id}")
-    return redirect("dashboard")
+    # return redirect("dashboard")
+    return JsonResponse({"status": "Task triggered successfully"})
 
 
 # @login_required

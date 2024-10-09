@@ -20,11 +20,16 @@ import BaseCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { Wallet } from "@/app/lib/definition";
-import { Refresh } from "@mui/icons-material";
+import { EventRepeat, Refresh } from "@mui/icons-material";
 import { Download } from "@mui/icons-material";
 import { Delete } from "@mui/icons-material";
 import { Visibility } from "@mui/icons-material";
-import { deleteWallet, downloadWallet, refreshWallet } from "@/app/lib/actions";
+import {
+  deleteWallet,
+  downloadWallet,
+  refreshWallet,
+  refreshFullWallet,
+} from "@/app/lib/actions";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
@@ -37,6 +42,7 @@ interface WalletTableProps {
   onWalletDeleted: () => void;
   onWalletDownloaded: (response: any) => void;
   onWalletRefreshed: (response: any) => void;
+  onWalletFullRefreshed: (response: any) => void;
 }
 
 const WalletTable: React.FC<WalletTableProps> = ({
@@ -49,6 +55,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
   onWalletDeleted,
   onWalletDownloaded,
   onWalletRefreshed,
+  onWalletFullRefreshed,
 }) => {
   const walletMenuItems = [
     {
@@ -68,6 +75,12 @@ const WalletTable: React.FC<WalletTableProps> = ({
       key: "wallet-refresh",
       value: "wallet-refresh",
       button: <Refresh fontSize="small" />,
+    },
+    {
+      title: "Full refresh",
+      key: "wallet-refresh-full",
+      value: "wallet-refresh-full",
+      button: <EventRepeat fontSize="small" />,
     },
     {
       title: "Delete wallet",
@@ -92,13 +105,13 @@ const WalletTable: React.FC<WalletTableProps> = ({
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
-    onPageChange(newPage);  // Call the passed prop to update the page state in the parent
+    onPageChange(newPage); // Call the passed prop to update the page state in the parent
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    onRowsPerPageChange(parseInt(event.target.value, 10));  // Call the passed prop to update the rows per page state
+    onRowsPerPageChange(parseInt(event.target.value, 10)); // Call the passed prop to update the rows per page state
   };
 
   const handleClose = () => {
@@ -137,6 +150,17 @@ const WalletTable: React.FC<WalletTableProps> = ({
       const response = await refreshWallet(selectedWalletId.toString());
       if (response.message !== "Database Error: Failed to refresh wallet.") {
         onWalletRefreshed(response); // Notify parent to refresh wallets
+      }
+    }
+  };
+
+  const handleRefreshFull = async () => {
+    if (selectedWalletId !== null) {
+      const response = await refreshFullWallet(selectedWalletId.toString());
+      if (
+        response.message !== "Database Error: Failed to refresh full wallet."
+      ) {
+        onWalletFullRefreshed(response); // Notify parent to refresh wallets
       }
     }
   };
@@ -224,15 +248,21 @@ const WalletTable: React.FC<WalletTableProps> = ({
                     </Box>
                   </TableCell>
                   <TableCell align="right">
-                    <Typography fontSize="14px">{formatNumber(wallet.balance, "currency")}</Typography>
+                    <Typography fontSize="14px">
+                      {formatNumber(wallet.balance, "currency")}
+                    </Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Chip
                       sx={{
                         pl: "4px",
                         pr: "4px",
-                        backgroundColor: "",
-                        // wallet.realized_color,
+                        backgroundColor:
+                          wallet.capital_gain < 0
+                            ? "error.main"
+                            : wallet.capital_gain > 0
+                            ? "success.main"
+                            : "", // No background color if the capital gain is 0
                         color: "#fff",
                       }}
                       size="small"
@@ -244,8 +274,12 @@ const WalletTable: React.FC<WalletTableProps> = ({
                       sx={{
                         pl: "4px",
                         pr: "4px",
-                        backgroundColor: "",
-                        // backgroundColor: wallet.unrealized_color,
+                        backgroundColor:
+                          wallet.unrealized_gain < 0
+                            ? "error.main"
+                            : wallet.unrealized_gain > 0
+                            ? "success.main"
+                            : "", // No background color if the capital gain is 0
                         color: "#fff",
                       }}
                       size="small"
@@ -286,6 +320,9 @@ const WalletTable: React.FC<WalletTableProps> = ({
                             }
                             if (item.key === "wallet-refresh") {
                               handleRefresh();
+                            }
+                            if (item.key === "wallet-refresh-full") {
+                              handleRefreshFull();
                             }
                           }}
                           key={item.key}

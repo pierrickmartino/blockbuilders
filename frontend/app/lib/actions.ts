@@ -142,6 +142,28 @@ export async function refreshWallet(id: string) {
   }
 }
 
+export async function refreshFullWallet(id: string) {
+  // throw new Error('Failed to Delete Invoice');
+  try {
+    const response = await axios.post(`${backendUrl}/api/wallets/${id}/refresh-full/`, {
+      headers: {
+        Authorization: `Token ${userToken}`,
+        "Content-Type": "application/json",
+          Accept: "*/*",
+          "Accept-Encoding": "gzip, deflate, br",
+          Connection: "keep-alive",
+      },
+    });
+    // revalidatePath(`${webUrl}/dashboard/wallets`);
+    // redirect(`${webUrl}/dashboard/wallets`);
+    const result = await response.data;
+    console.log('Task triggered:', result);
+    return result;
+  } catch (error) {
+    return { message: 'Database Error: Failed to refresh full wallet.' };
+  }
+}
+
 export async function deleteWallet(id: string) {
   try {
     const response = await axios.delete(`${backendUrl}/api/wallets/${id}/`, {

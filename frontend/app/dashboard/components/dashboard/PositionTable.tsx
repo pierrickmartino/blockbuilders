@@ -27,6 +27,8 @@ import {
   ReportGmailerrorred,
   Visibility,
   Report,
+  ArrowDropDown,
+  ArrowDropUp,
 } from "@mui/icons-material";
 import {
   setContractAsStable,
@@ -169,17 +171,17 @@ const PositionTable: React.FC<PositionTableProps> = ({
                     Perf
                   </Typography>
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <Typography color="textSecondary" variant="h6">
                     Price
                   </Typography>
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <Typography color="textSecondary" variant="h6">
                     Quantity
                   </Typography>
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <Typography color="textSecondary" variant="h6">
                     Amount
                   </Typography>
@@ -213,71 +215,163 @@ const PositionTable: React.FC<PositionTableProps> = ({
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Box display="flex">
-                      <Box>
-                        <Typography fontSize="12px">
-                          {formatNumber(position.daily_price_delta, "percentage")}
-                        </Typography>
-                        <Typography fontSize="12px">
-                          {formatNumber(position.weekly_price_delta, "percentage")}
-                        </Typography>
-                        <Typography fontSize="12px">
-                          {formatNumber(position.monthly_price_delta, "percentage")}
-                        </Typography>
+                    <Box display="flex" flexDirection="column">
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        sx={{ gap: "8px" }}
+                      >
+                        Daily
+                        <Chip
+                          icon={
+                            position.daily_price_delta < 0 ? (
+                              <ArrowDropDown />
+                            ) : position.daily_price_delta > 0 ? (
+                              <ArrowDropUp />
+                            ) : (
+                              <></>
+                            )
+                          }
+                          sx={{
+                            pl: "4px",
+                            pr: "4px",
+                            backgroundColor:
+                              position.daily_price_delta < 0
+                                ? "error.main"
+                                : position.daily_price_delta > 0
+                                ? "success.main"
+                                : "", // No background color if the capital gain is 0
+                            color: "#fff",
+                            mb: "4px",
+                          }}
+                          size="small"
+                          label={formatNumber(
+                            position.daily_price_delta,
+                            "currency"
+                          )}
+                        ></Chip>
+                      </Box>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        sx={{ gap: "8px" }}
+                      >
+                        Weekly
+                        <Chip
+                          icon={
+                            position.weekly_price_delta < 0 ? (
+                              <ArrowDropDown />
+                            ) : position.weekly_price_delta > 0 ? (
+                              <ArrowDropUp />
+                            ) : (
+                              <></>
+                            )
+                          }
+                          sx={{
+                            pl: "4px",
+                            pr: "4px",
+                            backgroundColor:
+                              position.weekly_price_delta < 0
+                                ? "error.main"
+                                : position.weekly_price_delta > 0
+                                ? "success.main"
+                                : "", // No background color if the capital gain is 0
+                            color: "#fff",
+                            mb: "4px",
+                          }}
+                          size="small"
+                          label={formatNumber(
+                            position.weekly_price_delta,
+                            "currency"
+                          )}
+                        ></Chip>
+                      </Box>
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        sx={{ gap: "8px" }}
+                      >
+                        Monthly
+                        <Chip
+                          icon={
+                            position.monthly_price_delta < 0 ? (
+                              <ArrowDropDown />
+                            ) : position.monthly_price_delta > 0 ? (
+                              <ArrowDropUp />
+                            ) : (
+                              <></>
+                            )
+                          }
+                          sx={{
+                            pl: "4px",
+                            pr: "4px",
+                            backgroundColor:
+                              position.monthly_price_delta < 0
+                                ? "error.main"
+                                : position.monthly_price_delta > 0
+                                ? "success.main"
+                                : "", // No background color if the capital gain is 0
+                            color: "#fff",
+                          }}
+                          size="small"
+                          label={formatNumber(
+                            position.monthly_price_delta,
+                            "currency"
+                          )}
+                        ></Chip>
                       </Box>
                     </Box>
                   </TableCell>
                   <TableCell align="right">
-                    <Box display="flex" alignItems="right">
-                      <Box>
-                        <Typography fontSize="12px">
-                          {formatNumber(position.contract.price, "quantity")}
-                        </Typography>
-                      </Box>
-                    </Box>
+                    <Typography fontSize="12px">
+                      {formatNumber(position.contract.price, "quantity")}
+                    </Typography>
                   </TableCell>
-                  <TableCell>
-                    <Box display="flex">
-                      <Box>
-                        <Typography fontSize="12px">
-                          {formatNumber(position.quantity, "quantity_precise")}
-                        </Typography>
-                      </Box>
-                    </Box>
+                  <TableCell align="right">
+                    <Typography fontSize="12px">
+                      {formatNumber(position.quantity, "quantity_precise")}
+                    </Typography>
                   </TableCell>
-                  <TableCell>
-                    <Box display="flex">
-                      <Box>
-                        <Typography fontSize="12px">
-                          {formatNumber(position.amount, "currency")}
-                        </Typography>
-                      </Box>
-                    </Box>
+                  <TableCell align="right">
+                    <Typography fontSize="12px">
+                      {formatNumber(position.amount, "currency")}
+                    </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell align="right">
                     <Chip
                       sx={{
                         pl: "4px",
                         pr: "4px",
-                        backgroundColor: "",
-                        // wallet.realized_color,
+                        backgroundColor:
+                          position.capital_gain < 0
+                            ? "error.main"
+                            : position.capital_gain > 0
+                            ? "success.main"
+                            : "", // No background color if the capital gain is 0
                         color: "#fff",
                       }}
                       size="small"
                       label={formatNumber(position.capital_gain, "currency")}
                     ></Chip>
                   </TableCell>
-                  <TableCell>
+                  <TableCell align="right">
                     <Chip
                       sx={{
                         pl: "4px",
                         pr: "4px",
-                        backgroundColor: "",
-                        // backgroundColor: wallet.unrealized_color,
+                        backgroundColor:
+                          position.unrealized_gain < 0
+                            ? "error.main"
+                            : position.unrealized_gain > 0
+                            ? "success.main"
+                            : "", // No background color if the capital gain is 0
                         color: "#fff",
                       }}
                       size="small"
-                      label={formatNumber(position.unrealized_gain, "percentage")}
+                      label={formatNumber(
+                        position.unrealized_gain,
+                        "percentage"
+                      )}
                     ></Chip>
                   </TableCell>
                   <TableCell>

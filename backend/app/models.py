@@ -222,7 +222,7 @@ class Position(TimeStampModel):
         Contract, on_delete=models.CASCADE, related_name="positions"
     )  # Reference to the contract
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)  # Quantity of the position
-    avg_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Average cost of the position
+    average_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Average cost of the position
     amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Amount of the position
 
     daily_price_delta = models.DecimalField(max_digits=15, decimal_places=2, default=0)
@@ -232,9 +232,9 @@ class Position(TimeStampModel):
     progress_percentage = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     # Performance calculation
-    # avg_cost_prev_day = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    # avg_cost_prev_week = models.DecimalField(max_digits=15, decimal_places=2, default=0)
-    # avg_cost_prev_month = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    # average_cost_prev_day = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    # average_cost_prev_week = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    # average_cost_prev_month = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     total_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)
     # total_cost_prev_day = models.DecimalField(max_digits=15, decimal_places=2, default=0)
@@ -332,6 +332,7 @@ class Transaction(TimeStampModel):
     class Meta:
         verbose_name = "Transaction"
         verbose_name_plural = "Transactions"
+        ordering = ["date"]
         indexes = [
             models.Index(fields=["position"]),  # Index for frequent queries
         ]
@@ -345,7 +346,7 @@ class TransactionCalculator:
     def __init__(self, transaction):
         self.transaction = transaction
 
-    def calculate_avg_cost_fiat_based(self):
+    def calculate_average_cost_fiat_based(self):
         # Calculate the average cost of the position based on fiat price
         return (
             self.transaction.total_cost_fiat_based / self.transaction.buy_quantity
@@ -353,7 +354,7 @@ class TransactionCalculator:
             else 0
         )
 
-    def calculate_avg_cost_contract_based(self):
+    def calculate_average_cost_contract_based(self):
         # Calculate the average cost of the position based on contract price
         return (
             self.transaction.total_cost_contract_based / self.transaction.buy_quantity
@@ -361,7 +362,7 @@ class TransactionCalculator:
             else 0
         )
 
-    def calculate_avg_cost(self):
+    def calculate_average_cost(self):
         # Calculate the average cost of the position based on price
         return (
             self.transaction.total_cost / self.transaction.buy_quantity
@@ -401,9 +402,9 @@ class TransactionCalculator:
     def calculate_capital_gain_contract_based(self):
         # Calculate the capital gain of the transaction based on contract price
         cost = self.calculate_cost_contract_based()
-        avg_cost = self.calculate_avg_cost_contract_based()
+        average_cost = self.calculate_average_cost_contract_based()
         return (
-            cost - self.transaction.quantity * avg_cost
+            cost - self.transaction.quantity * average_cost
             if self.transaction.type == TypeTransactionChoices.OUT
             and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
             else 0
@@ -412,9 +413,9 @@ class TransactionCalculator:
     def calculate_capital_gain_fiat_based(self):
         # Calculate the capital gain of the transaction based on fiat price
         cost = self.calculate_cost_contract_based()
-        avg_cost = self.calculate_avg_cost_fiat_based()
+        average_cost = self.calculate_average_cost_fiat_based()
         return (
-            cost - self.transaction.quantity * avg_cost
+            cost - self.transaction.quantity * average_cost
             if self.transaction.type == TypeTransactionChoices.OUT
             and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
             else 0
@@ -423,9 +424,9 @@ class TransactionCalculator:
     def calculate_capital_gain(self):
         # Calculate the capital gain of the transaction based on price
         cost = self.calculate_cost()
-        avg_cost = self.calculate_avg_cost()
+        average_cost = self.calculate_average_cost()
         return (
-            cost - self.transaction.quantity * avg_cost
+            cost - self.transaction.quantity * average_cost
             if self.transaction.type == TypeTransactionChoices.OUT
             and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
             else 0

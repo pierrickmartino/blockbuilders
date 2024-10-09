@@ -180,7 +180,7 @@ def dashboard(request: HttpRequest, page):
 
         for transaction in transactions:
             calculator = TransactionCalculator(transaction)
-            avg_cost = calculator.calculate_avg_cost()
+            average_cost = calculator.calculate_average_cost()
             cost = calculator.calculate_cost()
             cost_fiat_based = calculator.calculate_cost_fiat_based()
             capital_gain = calculator.calculate_capital_gain()
@@ -200,7 +200,7 @@ def dashboard(request: HttpRequest, page):
                     "total_cost": transaction.total_cost,
                     "capital_gain": capital_gain,
                     "date": transaction.date,
-                    "avg_cost": avg_cost,
+                    "avg_cost": average_cost,
                     "link": transaction_link,
                     "position": transaction.position,
                 }

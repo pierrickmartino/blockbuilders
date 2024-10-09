@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
+import formatDate from "@/app/utils/formatDate";
 import { Transaction } from "../../../lib/definition";
 
 // Define the props type that will be passed into WalletTable
@@ -77,37 +78,37 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                   Position
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
                   Quantity
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
-                  Running Quantity
+                  Running Qty.
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
                   Price
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
                   Cost
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
                   Total Cost
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
-                  Average Cost
+                  Avg.Cost
                 </Typography>
               </TableCell>
-              <TableCell>
+              <TableCell align="right">
                 <Typography color="textSecondary" variant="h6">
                   Cap.gain
                 </Typography>
@@ -125,59 +126,41 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
             {transactions.map((transaction : Transaction) => (
               <TableRow key={transaction.id}>
                 <TableCell>
-                  <Typography fontSize="12px">
-                    {transaction.position.contract.symbol} {transaction.against_contract?.symbol || ''}
+                  <Typography fontSize="14px">
+                    {transaction.position.contract.symbol}
+                  </Typography><Typography fontSize="12px">
+                    {transaction.against_contract?.symbol || ''}
                   </Typography>
                 </TableCell>
-                <TableCell>
-                  <Box display="flex">
-                    <Box>
-                      <Typography fontSize="12px">{formatNumber(transaction.quantity, "quantity_precise")}</Typography>
-                    </Box>
-                  </Box>
+                <TableCell align="right">
+                      <Typography fontSize="12px" color={transaction.type == "OUT" ? "error.main" : "success.main"}>{formatNumber(transaction.quantity, "quantity_precise")}</Typography>
                 </TableCell>
-                <TableCell>
-                  <Box display="flex">
-                    <Box>
+                <TableCell align="right">
                       <Typography fontSize="12px">{formatNumber(transaction.running_quantity, "quantity_precise")}</Typography>
-                    </Box>
-                  </Box>
                 </TableCell>
-                <TableCell>
-                  <Box display="flex">
-                    <Box>
+                <TableCell align="right">
                       <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {formatNumber(transaction.price, "quantity")}</Typography>
-                    </Box>
-                  </Box>
                 </TableCell>
-                <TableCell>
-                  <Box display="flex">
-                    <Box>
+                <TableCell align="right">
                       <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {formatNumber(transaction.cost, "quantity")}</Typography>
-                    </Box>
-                  </Box>
                 </TableCell>
-                <TableCell>
-                  <Box display="flex">
-                    <Box>
+                <TableCell align="right">
                       <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {formatNumber(transaction.total_cost, "quantity")}</Typography>
-                    </Box>
-                  </Box>
                 </TableCell>
-                <TableCell>
-                  <Box display="flex">
-                    <Box>
+                <TableCell align="right">
                       <Typography fontSize="12px">{transaction.against_fiat.short_symbol} {formatNumber(transaction.average_cost, "quantity")}</Typography>
-                    </Box>
-                  </Box>
                 </TableCell>
                 <TableCell align="right">
                   <Chip
                     sx={{
                       pl: "4px",
                       pr: "4px",
-                      backgroundColor: "", 
-                      // wallet.realized_color,
+                      backgroundColor:
+                        transaction.capital_gain < 0
+                          ? "error.main"
+                          : transaction.capital_gain > 0
+                          ? "success.main"
+                          : "", // No background color if the capital gain is 0
                       color: "#fff",
                     }}
                     size="small"
@@ -187,7 +170,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                 <TableCell>
                   <Box display="flex">
                     <Box>
-                      <Typography fontSize="12px">{transaction.date}</Typography>
+                      <Typography fontSize="12px">{formatDate(transaction.date)}</Typography>
                     </Box>
                   </Box>
                 </TableCell>
