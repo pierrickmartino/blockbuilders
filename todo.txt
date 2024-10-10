@@ -1,8 +1,6 @@
 - moteur de recherche sur les positions
-- top 5 positions
 - top 5 blockchain
 - lien vers la transaction
-- utilisation des images pour les blockchains
 - navigation retour à partir des pages /positions  /transactions 
 - dark mode
-- automatiquement détecter certains pattern de Suspicious contract
+- récupérer les vrai data pour les 5 dernières transactions

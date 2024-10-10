@@ -54,7 +54,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   };
 
   return (
-    <BaseCard title="Transaction Table">
+    <BaseCard title="Transaction History" subtitle="A detailed log of all recent transactions and movements">
       <>
       <TableContainer
         sx={{

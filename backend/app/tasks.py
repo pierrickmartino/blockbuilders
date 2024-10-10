@@ -8,6 +8,7 @@ from celery import shared_task
 from django.shortcuts import get_object_or_404
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
+from django.db.models import F, Q, Value, Case, When, Sum, DecimalField
 from datetime import timezone as dt_timezone
 from app.utils.cryptocompare.view_cryptocompare import get_daily_pair_ohlcv, get_multiple_symbols_price
 from app.utils.polygon.view_polygon import (
@@ -101,6 +102,73 @@ def create_transactions_from_bsc_bep20_task(wallet_id: uuid):
                     "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
                 },
             )
+
+            if contract.symbol.startswith("$"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("claim "):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("(e"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("http"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("use just"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("visit "):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("www."):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".com"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".net"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".xyz"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".org"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("reward"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("rewards"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".app)"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".vip]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("airdrop"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".xyz]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".com ]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".co"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("events]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+
+            if contract.name.lower().endswith(".com"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".online"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".net"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".io"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".app"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".org"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".fi"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".gg"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("@"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("!"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("#"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+
+            contract.save()
+
             if contract.category != CategoryContractChoices.SUSPICIOUS:
                 position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
                 transaction_type = (
@@ -155,6 +223,73 @@ def create_transactions_from_polygon_erc20_task(wallet_id: uuid):
                     "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
                 },
             )
+
+            if contract.symbol.startswith("$"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("claim "):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("(e"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("http"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("use just"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("visit "):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("www."):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".com"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".net"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".xyz"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".org"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("reward"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("rewards"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".app)"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".vip]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("airdrop"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".xyz]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".com ]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".co"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("events]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+
+            if contract.name.lower().endswith(".com"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".online"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".net"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".io"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".app"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".org"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".fi"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".gg"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("@"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("!"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("#"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+
+            contract.save()
+
             if contract.category != CategoryContractChoices.SUSPICIOUS:
                 position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
                 transaction_type = (
@@ -209,6 +344,73 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: uuid):
                     "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
                 },
             )
+
+            if contract.symbol.startswith("$"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("claim "):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("(e"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("http"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("use just"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("visit "):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("www."):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".com"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".net"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".xyz"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".org"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("reward"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("rewards"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".app)"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".vip]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("airdrop"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".xyz]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".com ]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".co"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("events]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+
+            if contract.name.lower().endswith(".com"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".online"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".net"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".io"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".app"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".org"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".fi"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".gg"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("@"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("!"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("#"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+
+            contract.save()
+
             if contract.category != CategoryContractChoices.SUSPICIOUS:
                 position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
                 transaction_type = (
@@ -263,6 +465,73 @@ def create_transactions_from_optimism_erc20_task(wallet_id: uuid):
                     "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
                 },
             )
+
+            if contract.symbol.startswith("$"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("claim "):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("(e"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("http"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("use just"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("visit "):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().startswith("www."):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".com"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".net"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".xyz"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".org"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("reward"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("rewards"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".app)"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".vip]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("airdrop"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".xyz]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".com ]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith(".co"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.symbol.lower().endswith("events]"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+
+            if contract.name.lower().endswith(".com"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".online"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".net"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".io"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".app"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".org"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".fi"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.lower().endswith(".gg"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("@"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("!"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+            if contract.name.startswith("#"):
+                contract.category = CategoryContractChoices.SUSPICIOUS
+
+            contract.save()
+
             if contract.category != CategoryContractChoices.SUSPICIOUS:
                 position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
                 transaction_type = (
@@ -1024,6 +1293,47 @@ def update_contract_information(previous_return: int, symbol: str):
 
 
 @shared_task
+def calculate_blockchain_balance_task(previous_return: int, wallet_id: uuid):
+    """
+    Task to calculate the balance of a blockchain.
+    """
+    logger.info(f"Calculating balance for wallet id {wallet_id}.")
+    try:
+        
+        blockchains = Blockchain.objects.all()
+
+        # Calculate the total balance of all positions
+        total_balance = (
+            Position.objects.aggregate(total_balance=Sum(F("quantity") * F("contract__price")))["total_balance"] or 0
+        )
+
+        # Calculate the total balance for each blockchain
+        blockchain_totals = (
+            Position.objects.values(
+                blockchain_id=F("contract__blockchain__id"),
+                blockchain_name=F("contract__blockchain__name"),
+                blockchain_icon=F("contract__blockchain__icon"),
+            )
+            .annotate(total_amount=Sum(F("quantity") * F("contract__price")))
+            .order_by("-total_amount")
+        )
+
+        for blockchain in blockchains :
+            for blockchain_calcul in blockchain_totals:
+                if blockchain.id == blockchain_calcul["blockchain_id"]:
+                    blockchain.balance = blockchain_calcul["total_amount"]
+                    blockchain.progress_percentage = (blockchain_calcul["total_amount"] / total_balance * 100) if total_balance != 0 else 0
+                    blockchain.save()  
+            
+    except Wallet.DoesNotExist:
+        logger.error(f"Wallet with id {wallet_id} does not exist")
+    except Exception as e:
+        logger.error(f"An error occurred while calculating blockchain balance for wallet id {wallet_id}: {str(e)}")
+
+    return wallet_id
+
+
+@shared_task
 def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
     """
     Task to calculate the balance of a wallet.
@@ -1040,7 +1350,7 @@ def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
         for position in positions:
             position_calculator = PositionCalculator(position)
             contract_calculator = ContractCalculator(position.contract)
-            
+
             position_amount = position_calculator.calculate_amount()
 
             position.amount = position_amount
@@ -1055,7 +1365,9 @@ def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
                 else 0
             )
 
-            position.progress_percentage = position_amount / position.wallet.balance * 100 if position.wallet.balance != 0 else 0
+            position.progress_percentage = (
+                position_amount / position.wallet.balance * 100 if position.wallet.balance != 0 else 0
+            )
 
             unrealized_gain = (
                 (position.contract.price - reference_average_cost) / reference_average_cost * 100
@@ -1075,7 +1387,6 @@ def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
 
             position.save()
             balance += position_amount
-
 
         wallet.balance = balance
         wallet.capital_gain = total_capital_gain

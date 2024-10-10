@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Typography,
@@ -17,6 +17,7 @@ import {
   TablePagination,
   Checkbox,
   Avatar,
+  Stack,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
@@ -58,6 +59,10 @@ const PositionTable: React.FC<PositionTableProps> = ({
   onContractSetAsSuspicious,
   onContractSetAsStable,
 }) => {
+  // useEffect(() => {
+  //   console.log("Positions in PositionTable:", positions); // Log positions inside PositionTable
+  // }, [positions]);
+
   const positionMenuItems = [
     {
       title: "See details",
@@ -143,7 +148,10 @@ const PositionTable: React.FC<PositionTableProps> = ({
   };
 
   return (
-    <BaseCard title="Position Table">
+    <BaseCard
+      title="Wallet Positions"
+      subtitle="Detailed view of asset quantities and performance"
+    >
       <>
         <TableContainer
           sx={{
@@ -224,10 +232,12 @@ const PositionTable: React.FC<PositionTableProps> = ({
                   </TableCell>
                   <TableCell>
                     <Box display="flex" flexDirection="column">
-                      <Box
-                        display="flex"
+                      <Stack
+                        direction="row"
                         alignItems="center"
-                        sx={{ gap: "8px" }}
+                        spacing={2}
+                        justifyContent="space-between"
+                        mb={1}
                       >
                         Daily
                         <Chip
@@ -255,14 +265,17 @@ const PositionTable: React.FC<PositionTableProps> = ({
                           size="small"
                           label={formatNumber(
                             position.daily_price_delta,
-                            "currency"
+                            "percentage"
                           )}
                         ></Chip>
-                      </Box>
-                      <Box
-                        display="flex"
+                      </Stack>
+
+                      <Stack
+                        direction="row"
                         alignItems="center"
-                        sx={{ gap: "8px" }}
+                        spacing={2}
+                        justifyContent="space-between"
+                        mb={1}
                       >
                         Weekly
                         <Chip
@@ -290,14 +303,16 @@ const PositionTable: React.FC<PositionTableProps> = ({
                           size="small"
                           label={formatNumber(
                             position.weekly_price_delta,
-                            "currency"
+                            "percentage"
                           )}
                         ></Chip>
-                      </Box>
-                      <Box
-                        display="flex"
+                      </Stack>
+                      <Stack
+                        direction="row"
                         alignItems="center"
-                        sx={{ gap: "8px" }}
+                        spacing={2}
+                        justifyContent="space-between"
+                        mb={0}
                       >
                         Monthly
                         <Chip
@@ -324,10 +339,10 @@ const PositionTable: React.FC<PositionTableProps> = ({
                           size="small"
                           label={formatNumber(
                             position.monthly_price_delta,
-                            "currency"
+                            "percentage"
                           )}
                         ></Chip>
-                      </Box>
+                      </Stack>
                     </Box>
                   </TableCell>
                   <TableCell align="right">

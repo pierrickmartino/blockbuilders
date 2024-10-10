@@ -1,20 +1,20 @@
-import { Position } from "@/app/lib/definition";
+import { Blockchain } from "@/app/lib/definition";
 import { Box, Card, Typography, Stack, Avatar } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 
 // Define the props type that will be passed into WalletTable
-interface Top5PositionsProps {
-  positions: Position[];
+interface Top5BlockchainsProps {
+  blockchains: Blockchain[];
 }
 
-const Top5Positions: React.FC<Top5PositionsProps> = ({ positions }) => {
+const Top5Blockchains: React.FC<Top5BlockchainsProps> = ({ blockchains }) => {
   return (
     <Card variant="outlined" sx={{ p: 0 }}>
       <Box px={3} py={2} mb="-15px">
-        <Typography variant="h5">Top 5 positions</Typography>
+        <Typography variant="h5">Top 5 blockchains</Typography>
       </Box>
       <Box px={3} py={2} mt={2}>
-        {positions.map((position: Position) => (
+        {blockchains.map((blockchain: Blockchain) => (
           <Stack
             direction="row"
             alignItems="center"
@@ -24,17 +24,13 @@ const Top5Positions: React.FC<Top5PositionsProps> = ({ positions }) => {
           >
             <Stack direction="row" spacing={2}>
               <Avatar
-                alt={position.contract.blockchain.name}
+                alt={blockchain.name}
                 sx={{ width: 24, height: 24 }}
-                src={"/static/img/" + position.contract.blockchain.icon}
+                src={"/static/img/" + blockchain.icon}
               />
               <Stack direction="column" alignItems="flex-start" spacing={0}>
                 <Typography variant="h6" fontSize="14px">
-                  {position.contract.name}
-                </Typography>
-                <Typography color="subtitle1" fontSize="12px">
-                  {formatNumber(position.quantity, "quantity_precise")}{" "}
-                  {position.contract.symbol}
+                  {blockchain.name}
                 </Typography>
               </Stack>
             </Stack>
@@ -44,10 +40,10 @@ const Top5Positions: React.FC<Top5PositionsProps> = ({ positions }) => {
                     </Typography> */}
             <Stack direction="column" alignItems="flex-end" spacing={0}>
               <Typography variant="h6" fontSize="14px">
-                {formatNumber(position.amount, "currency")}
+                {formatNumber(blockchain.balance, "currency")}
               </Typography>
               <Typography variant="subtitle1" fontSize="12px">
-                {formatNumber(position.progress_percentage, "percentage")}
+                {formatNumber(blockchain.progress_percentage, "percentage")}
               </Typography>
             </Stack>
           </Stack>
@@ -57,4 +53,4 @@ const Top5Positions: React.FC<Top5PositionsProps> = ({ positions }) => {
   );
 };
 
-export default Top5Positions;
+export default Top5Blockchains;

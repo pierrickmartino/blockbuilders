@@ -77,6 +77,7 @@ class Wallet(TimeStampModel):
     description = models.TextField(blank=True, default="")  # Description of the wallet
     capital_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Balance of the wallet
     unrealized_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Balance of the wallet
+    progress_percentage = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     class Meta:
         verbose_name = "Wallet"
@@ -134,6 +135,11 @@ class Blockchain(models.Model):
     gecko_shortname = models.CharField(max_length=255, default="")  # Gecko short name
     gecko_native_coin_id = models.CharField(max_length=255, default="")  # Gecko native coin id
     transaction_link = models.URLField(max_length=255)  # Url link of the transaction on the blockchain explorer
+    
+    balance = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Balance of the wallet
+    capital_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Balance of the wallet
+    unrealized_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Balance of the wallet
+    progress_percentage = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     class Meta:
         verbose_name = "Blockchain"
@@ -332,7 +338,7 @@ class Transaction(TimeStampModel):
     class Meta:
         verbose_name = "Transaction"
         verbose_name_plural = "Transactions"
-        ordering = ["date"]
+        ordering = ["-date"]
         indexes = [
             models.Index(fields=["position"]),  # Index for frequent queries
         ]

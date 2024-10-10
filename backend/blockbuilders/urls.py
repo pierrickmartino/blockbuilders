@@ -25,6 +25,8 @@ from app.utils.optimism import view_optimism
 from app.utils.bsc import view_bsc
 from app.views.views_api import (
     FiatViewSet,
+    PositionTopView,
+    BlockchainTopView,
     WalletPositionDetailView,
     WalletPositionTransactionDetailView,
     WalletPositionTransactionView,
@@ -77,6 +79,8 @@ transaction_detail = TransactionViewSet.as_view(
     {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
 )
 position_list = PositionViewSet.as_view({"get": "list", "post": "create"})
+position_top_list = PositionTopView.as_view()
+blockchain_top_list = BlockchainTopView.as_view()
 position_detail = PositionViewSet.as_view(
     {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
 )
@@ -248,6 +252,7 @@ urlpatterns = format_suffix_patterns(
         # FROM BLOCKCHAIN OBJECT #
         path("api/blockchains/", blockchain_list, name="blockchain-list"),
         path("api/blockchains/<uuid:pk>/", blockchain_detail, name="blockchain-detail"),
+        path("api/blockchains/top/<int:max>", blockchain_top_list, name="blockchain-top-list"),
         # FROM CONTRACT OBJECT #
         path("api/contracts/", contract_list, name="contract-list"),
         path("api/contracts/<uuid:pk>/", contract_detail, name="contract-detail"),
@@ -265,6 +270,6 @@ urlpatterns = format_suffix_patterns(
         path("api/transactions/<uuid:pk>/", transaction_detail, name="transaction-detail"),
         # FROM POSITION OBJECT #
         path("api/positions/", position_list, name="position-list"),
-        path("api/positions/<uuid:pk>/", position_detail, name="position-detail"),
+        path("api/positions/top/<int:max>", position_top_list, name="position-top-list"),
     ]
 )

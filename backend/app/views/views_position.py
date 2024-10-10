@@ -21,6 +21,7 @@ from app.tasks import (
     aggregate_transactions_task,
     calculate_cost_transaction_task,
     calculate_running_quantity_transaction_task,
+    calculate_blockchain_balance_task,
     clean_contract_address_task,
     clean_transaction_task,
     create_transactions_from_arbitrum_erc20_task,
@@ -136,6 +137,7 @@ def refresh_wallet_position_price(request, wallet_id: uuid):
     chain_result = chain(
         get_price_from_market_task.s(symbol_list),
         calculate_wallet_balance_task.s(wallet_id),
+        calculate_blockchain_balance_task.s(wallet_id),
         finish_wallet_resync_task.s(wallet_id),
     )()
 
@@ -205,3 +207,4 @@ def download_wallet(request, wallet_id: uuid):
     logger.info(f"Started syncing wallet with id {wallet_id}")
     # return redirect("dashboard")
     return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
+

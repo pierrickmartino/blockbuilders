@@ -11,12 +11,15 @@ import WalletTable from "../components/dashboard/WalletTable";
 import Top5Positions from "../components/dashboard/TheTop5Positions";
 import WalletWizard from "../components/dashboard/WalletWizard";
 import { Fragment, useEffect, useState } from "react";
-import { Wallet } from "@/app/lib/definition";
-import { fetchWallets } from "@/app/lib/data";
+import { Wallet, Position, Blockchain } from "@/app/lib/definition";
+import { fetchWallets, fetchTopPositions, fetchTopBlockchains } from "@/app/lib/data";
 import { Close } from "@mui/icons-material";
+import Top5Blockchains from "../components/dashboard/TheTop5Blockchains";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
+  const [top5_positions, setTop5Positions] = useState<Position[]>([]);
+  const [top5_blockchains, setTop5Blockchains] = useState<Blockchain[]>([]);
   const [open, setOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(""); // New state for message
   const [page, setPage] = useState(0);  // State for current page
@@ -44,10 +47,28 @@ const Wallets = () => {
     await fetchWallets(setWallets, setTotalCount, page, rowsPerPage);
   };
 
+  // Fetch top5 positions function
+  const fetchTop5PositionData = async () => {
+    await fetchTopPositions(5, setTop5Positions);
+  };
+
+    // Fetch top5 blockchain function
+    const fetchTop5BlockchainData = async () => {
+      await fetchTopBlockchains(5, setTop5Blockchains);
+    };
+
   // Fetch wallets using the fetchWallets function from your data.ts file
   useEffect(() => {
     fetchWalletData(); // Pass setWallets directly to fetchWallets
   }, [page, rowsPerPage]);
+
+  useEffect(() => {
+    fetchTop5PositionData();
+  }, []);
+
+  useEffect(() => {
+    fetchTop5BlockchainData();
+  }, []);
 
   const handleWalletCreated = () => {
     fetchWalletData(); // Re-fetch wallet data after a new wallet is created
@@ -98,10 +119,10 @@ const Wallets = () => {
       <Box mt={3}>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={4}>
-            <Top5Positions />
+            <Top5Positions positions={top5_positions} />
           </Grid>
           <Grid item xs={12} lg={4}>
-            <Top5Positions />
+            <Top5Blockchains blockchains={top5_blockchains} />
           </Grid>
           <Grid item xs={12} lg={4}>
             <WalletWizard onWalletCreated={handleWalletCreated} />

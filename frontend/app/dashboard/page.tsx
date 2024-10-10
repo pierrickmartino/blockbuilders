@@ -7,7 +7,6 @@ import Blogcard from './components/dashboard/TheBlogCard';
 import ProfileCard from "./components/dashboard/TheProfileCard";
 import MyContacts from "./components/dashboard/TheMyContacts";
 import ActivityTimeline from "./components/dashboard/TheActivityTimeline";
-import Top5Positions from './components/dashboard/TheTop5Positions';
 import ProductPerformance from './components/dashboard/ProductPerformance';
 
 const Dashboard = () => {
@@ -15,15 +14,6 @@ const Dashboard = () => {
     <PageContainer title="Dashboard" description="this is Dashboard">
       <Box mt={3}>
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={4}>
-            <Top5Positions />
-          </Grid>
-          <Grid item xs={12} lg={4}>
-            <Top5Positions />
-          </Grid>
-          <Grid item xs={12} lg={4}>
-            <Top5Positions />
-          </Grid>
           <Grid item xs={12} lg={8}>
             <SalesOverview />
           </Grid>

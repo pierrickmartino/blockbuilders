@@ -29,7 +29,29 @@ class WalletPositionView(generics.ListAPIView):
         wallet_id = self.kwargs["wallet_id"]
 
         try:
-            return Position.objects.filter(wallet_id=wallet_id)
+            return Position.objects.filter(wallet_id=wallet_id).order_by('-amount')
+        except Wallet.DoesNotExist:
+            raise NotFound("Wallet does not exist")
+
+class PositionTopView(generics.ListAPIView):
+    serializer_class = PositionSerializer
+
+    def get_queryset(self):
+        max = self.kwargs["max"]
+
+        try:
+            return Position.objects.order_by('-amount')[:max]
+        except Wallet.DoesNotExist:
+            raise NotFound("Wallet does not exist")
+
+class BlockchainTopView(generics.ListAPIView):
+    serializer_class = BlockchainSerializer
+
+    def get_queryset(self):
+        max = self.kwargs["max"]
+
+        try:
+            return Blockchain.objects.order_by('-balance')[:max]
         except Wallet.DoesNotExist:
             raise NotFound("Wallet does not exist")
 

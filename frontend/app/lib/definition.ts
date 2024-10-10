@@ -11,6 +11,10 @@ export type Blockchain = {
   name: string;
   icon: string;
   transaction_link: string;
+  balance: number;
+  capital_gain: number;
+  unrealized_gain: number;
+  progress_percentage: number;
 };
 
 export type Wallet = {
@@ -22,6 +26,7 @@ export type Wallet = {
   balance: number;
   capital_gain: number;
   unrealized_gain: number;
+  progress_percentage: number;
 };
 
 export type Contract = {
@@ -56,6 +61,7 @@ export type Position = {
   average_cost: number;
   contract: Contract;
   wallet: Wallet;
+  progress_percentage: number;
 };
 
 export type Transaction = {

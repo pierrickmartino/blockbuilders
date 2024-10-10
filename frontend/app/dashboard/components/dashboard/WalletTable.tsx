@@ -166,7 +166,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
   };
 
   return (
-    <BaseCard title="Wallet Table">
+    <BaseCard title="Wallet Overview" subtitle="Track balances, performance, and key metrics across your wallets">
       <>
         <TableContainer
           sx={{
