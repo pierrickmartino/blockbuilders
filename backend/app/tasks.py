@@ -50,6 +50,47 @@ from datetime import datetime, timedelta
 logger = logging.getLogger("blockbuilders")
 
 
+def is_contract_suspicious(contract_name, contract_symbol):
+    suspicious_startswith_keywords = ["$", "claim ", "(e", "http", "use just", "visit ", "www.", "@", "!", "#"]
+
+    suspicious_endswith_keywords = [
+        ".com",
+        ".net",
+        ".xyz",
+        ".org",
+        "reward",
+        "rewards",
+        ".app)",
+        ".vip]",
+        "airdrop",
+        ".xyz]",
+        ".com ]",
+        ".co",
+        "events]",
+        ".online",
+        ".io",
+        ".fi",
+        ".gg",
+    ]
+
+    # Check if contract symbol starts with any suspicious keywords
+    for keyword in suspicious_startswith_keywords:
+        if contract_symbol.lower().startswith(keyword):
+            return True
+
+    # Check if contract symbol ends with any suspicious keywords
+    for keyword in suspicious_endswith_keywords:
+        if contract_symbol.lower().endswith(keyword):
+            return True
+
+    # Check if contract name ends with any suspicious keywords
+    for keyword in suspicious_endswith_keywords:
+        if contract_name.lower().endswith(keyword):
+            return True
+
+    return False
+
+
 @shared_task
 def delete_wallet_task(wallet_id, sleep_duration: float):
     """
@@ -76,6 +117,46 @@ def delete_position_task(position_id, sleep_duration: float):
     return result
 
 
+def create_transactions(wallet, transactions, blockchain_name):
+    blockchain = Blockchain.objects.filter(name=blockchain_name).first()
+
+    for tx in transactions:
+        contract_address = tx["contractAddress"]
+        contract_name = tx["tokenName"]
+        contract_symbol = tx["tokenSymbol"]
+
+        contract, created = Contract.objects.get_or_create(
+            blockchain_id=blockchain.id,
+            address=contract_address,
+            name=contract_name,
+            symbol=contract_symbol,
+            defaults={
+                "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
+            },
+        )
+
+        # Mark as suspicious if criteria are met
+        if is_contract_suspicious(contract_name, contract_symbol):
+            contract.category = CategoryContractChoices.SUSPICIOUS
+
+        contract.save()
+
+        if contract.category != CategoryContractChoices.SUSPICIOUS:
+            position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
+            transaction_type = (
+                TypeTransactionChoices.IN if tx["to"].upper() == wallet.address.upper() else TypeTransactionChoices.OUT
+            )
+            Transaction.objects.create(
+                position=position,
+                type=transaction_type,
+                quantity=int(tx["value"]) / (10 ** int(tx["tokenDecimal"])),
+                date=timezone.make_aware(datetime.fromtimestamp(int(tx["timeStamp"])), dt_timezone.utc),
+                hash=tx["hash"],
+            ).save()
+
+
 @shared_task
 def create_transactions_from_bsc_bep20_task(wallet_id: uuid):
     """
@@ -85,108 +166,9 @@ def create_transactions_from_bsc_bep20_task(wallet_id: uuid):
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
         transactions = bep20_transactions_by_wallet(wallet.address)
-        blockchain = Blockchain.objects.filter(name="BSC").first()
-        for bep20 in transactions:
-            contract_address = bep20["contractAddress"]
-            contract_name = bep20["tokenName"]
-            contract_symbol = bep20["tokenSymbol"]
-            # contract = Contract.objects.filter(address=contract_address).first()
-            contract, created = Contract.objects.get_or_create(
-                blockchain_id=blockchain.id,
-                address=contract_address,
-                name=contract_name,
-                symbol=contract_symbol,
-                defaults={
-                    "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                    "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                    "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                },
-            )
-
-            if contract.symbol.startswith("$"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("claim "):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("(e"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("http"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("use just"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("visit "):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("www."):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".com"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".net"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".xyz"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".org"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("reward"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("rewards"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".app)"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".vip]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("airdrop"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".xyz]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".com ]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".co"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("events]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-
-            if contract.name.lower().endswith(".com"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".online"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".net"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".io"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".app"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".org"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".fi"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".gg"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("@"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("!"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("#"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-
-            contract.save()
-
-            if contract.category != CategoryContractChoices.SUSPICIOUS:
-                position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
-                transaction_type = (
-                    TypeTransactionChoices.IN
-                    if bep20["to"].upper() == wallet.address.upper()
-                    else TypeTransactionChoices.OUT
-                )
-                Transaction.objects.create(
-                    position=position,
-                    type=transaction_type,
-                    quantity=int(bep20["value"]) / (10 ** int(bep20["tokenDecimal"])),
-                    date=timezone.make_aware(datetime.fromtimestamp(int(bep20["timeStamp"])), dt_timezone.utc),
-                    hash=bep20["hash"],
-                ).save()
+        create_transactions(wallet, transactions, "BSC")
         logger.info(f"Created transactions from BEP20 (BSC) for wallet id {wallet_id} successfully.")
 
-    except Contract.DoesNotExist:
-        logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
@@ -206,108 +188,9 @@ def create_transactions_from_polygon_erc20_task(wallet_id: uuid):
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
         transactions = polygon_erc20_transactions_by_wallet(wallet.address)
-        blockchain = Blockchain.objects.filter(name="Polygon").first()
-        for erc20 in transactions:
-            contract_address = erc20["contractAddress"]
-            contract_name = erc20["tokenName"]
-            contract_symbol = erc20["tokenSymbol"]
-            # contract = Contract.objects.filter(address=contract_address).first()
-            contract, created = Contract.objects.get_or_create(
-                blockchain_id=blockchain.id,
-                address=contract_address,
-                name=contract_name,
-                symbol=contract_symbol,
-                defaults={
-                    "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                    "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                    "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                },
-            )
-
-            if contract.symbol.startswith("$"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("claim "):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("(e"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("http"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("use just"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("visit "):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("www."):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".com"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".net"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".xyz"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".org"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("reward"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("rewards"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".app)"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".vip]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("airdrop"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".xyz]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".com ]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".co"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("events]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-
-            if contract.name.lower().endswith(".com"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".online"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".net"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".io"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".app"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".org"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".fi"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".gg"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("@"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("!"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("#"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-
-            contract.save()
-
-            if contract.category != CategoryContractChoices.SUSPICIOUS:
-                position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
-                transaction_type = (
-                    TypeTransactionChoices.IN
-                    if erc20["to"].upper() == wallet.address.upper()
-                    else TypeTransactionChoices.OUT
-                )
-                Transaction.objects.create(
-                    position=position,
-                    type=transaction_type,
-                    quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
-                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), dt_timezone.utc),
-                    hash=erc20["hash"],
-                ).save()
+        create_transactions(wallet, transactions, "Polygon")
         logger.info(f"Created transactions from ERC20 (Polygon) for wallet id {wallet_id} successfully.")
 
-    except Contract.DoesNotExist:
-        logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
@@ -327,108 +210,9 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: uuid):
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
         transactions = arbitrum_erc20_transactions_by_wallet(wallet.address)
-        blockchain = Blockchain.objects.filter(name="Arbitrum").first()
-        for erc20 in transactions:
-            contract_address = erc20["contractAddress"]
-            contract_name = erc20["tokenName"]
-            contract_symbol = erc20["tokenSymbol"]
-            # contract = Contract.objects.filter(address=contract_address).first()
-            contract, created = Contract.objects.get_or_create(
-                blockchain_id=blockchain.id,
-                address=contract_address,
-                name=contract_name,
-                symbol=contract_symbol,
-                defaults={
-                    "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                    "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                    "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                },
-            )
-
-            if contract.symbol.startswith("$"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("claim "):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("(e"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("http"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("use just"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("visit "):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("www."):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".com"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".net"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".xyz"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".org"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("reward"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("rewards"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".app)"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".vip]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("airdrop"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".xyz]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".com ]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".co"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("events]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-
-            if contract.name.lower().endswith(".com"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".online"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".net"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".io"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".app"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".org"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".fi"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".gg"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("@"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("!"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("#"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-
-            contract.save()
-
-            if contract.category != CategoryContractChoices.SUSPICIOUS:
-                position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
-                transaction_type = (
-                    TypeTransactionChoices.IN
-                    if erc20["to"].upper() == wallet.address.upper()
-                    else TypeTransactionChoices.OUT
-                )
-                Transaction.objects.create(
-                    position=position,
-                    type=transaction_type,
-                    quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
-                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), dt_timezone.utc),
-                    hash=erc20["hash"],
-                ).save()
+        create_transactions(wallet, transactions, "Polygon")
         logger.info(f"Created transactions from ERC20 (Arbitrum) for wallet id {wallet_id} successfully.")
 
-    except Contract.DoesNotExist:
-        logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
@@ -1299,7 +1083,7 @@ def calculate_blockchain_balance_task(previous_return: int, wallet_id: uuid):
     """
     logger.info(f"Calculating balance for wallet id {wallet_id}.")
     try:
-        
+
         blockchains = Blockchain.objects.all()
 
         # Calculate the total balance of all positions
@@ -1318,13 +1102,15 @@ def calculate_blockchain_balance_task(previous_return: int, wallet_id: uuid):
             .order_by("-total_amount")
         )
 
-        for blockchain in blockchains :
+        for blockchain in blockchains:
             for blockchain_calcul in blockchain_totals:
                 if blockchain.id == blockchain_calcul["blockchain_id"]:
                     blockchain.balance = blockchain_calcul["total_amount"]
-                    blockchain.progress_percentage = (blockchain_calcul["total_amount"] / total_balance * 100) if total_balance != 0 else 0
-                    blockchain.save()  
-            
+                    blockchain.progress_percentage = (
+                        (blockchain_calcul["total_amount"] / total_balance * 100) if total_balance != 0 else 0
+                    )
+                    blockchain.save()
+
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
