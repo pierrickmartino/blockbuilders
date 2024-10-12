@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     # "rest_framework_api_key",
+    "django_filters",
     "channels",
     "corsheaders",
 ]
@@ -222,6 +223,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.TokenAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "app.pagination.CustomStandardPagination",
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     "PAGE_SIZE": 10,
 }
 

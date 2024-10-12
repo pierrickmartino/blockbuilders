@@ -3,10 +3,11 @@ import { Grid, Box, TextField, Stack, Card, Typography, Switch, FormGroup, FormC
 // components
 import { useEffect, useState } from "react";
 import { Position } from "@/app/lib/definition";
-import { fetchPositions } from "@/app/lib/data";
+import { fetchPositions, fetchPositionsWithSearch } from "@/app/lib/data";
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
+import { SearchForm } from "@/app/ui/positions/SearchForm";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -21,6 +22,19 @@ const Positions = () => {
     if (wallet_id) {
       await fetchPositions(
         String(wallet_id),
+        setPositions,
+        setTotalCount,
+        page,
+        rowsPerPage
+      );
+    }
+  };
+
+  const fetchPositionDataWithSearch = async (searchTerm: string) => {
+    if (wallet_id) {
+      await fetchPositionsWithSearch(
+        String(wallet_id),
+        String(searchTerm),
         setPositions,
         setTotalCount,
         page,
@@ -51,8 +65,10 @@ const Positions = () => {
     fetchPositionData(); // Re-fetch wallet data after a new wallet is created
   };
 
-  const handleSearch = (term: string) => {
-    console.log(term);
+  const handleSearch = (searchTerm: string) => {
+    // Implement your search logic here, such as making API calls
+    console.log("Search term:", searchTerm);
+    fetchPositionDataWithSearch(searchTerm);
   };
 
   return (
@@ -72,17 +88,7 @@ const Positions = () => {
                   justifyContent="space-between"
                   mb={0}
                 >
-                  <TextField
-                    id="search"
-                    label="Search"
-                    variant="standard"
-                    // value={formData.address}
-                    onChange={(e) => {
-                      handleSearch(e.target.value);
-                    }}
-                    // error={!!state.errors?.address}
-                    // helperText={state.errors?.address?.[0]}
-                  />
+                  <SearchForm onSearch={handleSearch} />
                   <FormGroup>
                     <FormControlLabel control={<Switch />} label="Only relevant positions" />
                   </FormGroup>

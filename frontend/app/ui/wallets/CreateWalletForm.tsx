@@ -10,7 +10,7 @@ interface WalletWizardProps {
   onWalletCreated: (e: React.FormEvent) => Promise<void>;
 }
 
-const Form: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
+const CreateWalletForm: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
   const [formData, setFormData] = useState({
     address: "",
     name: "",
@@ -97,4 +97,4 @@ const Form: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
     </Box>
   );
 };
-export default Form;
+export default CreateWalletForm;

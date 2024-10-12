@@ -20,6 +20,7 @@ django-prometheus
 channels
 djangorestframework
 django-cors-headers
+django-filter
 
 # djangorestframework-simplejwt
 # djangorestframework-api-key==2.*

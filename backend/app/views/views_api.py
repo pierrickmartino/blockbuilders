@@ -1,4 +1,4 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets, generics, filters
 from rest_framework.exceptions import NotFound
 
 from app.serializers import (
@@ -17,19 +17,22 @@ from app.models import Blockchain, Contract, Fiat, MarketData, Position, Transac
 class WalletViewSet(viewsets.ModelViewSet):
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
-
+    
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
 class WalletPositionView(generics.ListAPIView):
     serializer_class = PositionSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['contract__name', 'contract__symbol']
 
     def get_queryset(self):
         wallet_id = self.kwargs["wallet_id"]
 
         try:
             return Position.objects.filter(wallet_id=wallet_id).order_by('-amount')
+            
         except Wallet.DoesNotExist:
             raise NotFound("Wallet does not exist")
 
