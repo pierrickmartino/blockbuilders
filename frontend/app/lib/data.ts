@@ -186,3 +186,38 @@ export const fetchTransactions = async (
   }
 };
 
+export const fetchTransactionsWithSearch = async (
+  position_id: string,
+  wallet_id: string,
+  searchTerm: string,
+  setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>,
+  setTotalCount: React.Dispatch<React.SetStateAction<number>>,
+  page: number,
+  rowsPerPage: number,
+): Promise<void> => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/api/wallets/${wallet_id}/positions/${position_id}/transactions`,
+      {
+        headers: {
+          Authorization: `Token ${userToken}`,
+        },
+        params: {
+          search: searchTerm,
+          page: page + 1, // Convert 0-based page index to 1-based if needed by API
+          limit: rowsPerPage,
+        },
+      }
+    );
+
+    if (response.data.results) {
+      setTransactions(response.data.results); // Ensure the transactions are correctly set
+      setTotalCount(response.data.count);  // Update total count if pagination is enabled
+    }
+
+  } catch (err) {
+    console.error("Error fetching data from transaction API:", err);
+    setTransactions([]); // Set empty transactions if fetching fails
+    throw new Error("Failed to fetch all transactions.");
+  }
+};

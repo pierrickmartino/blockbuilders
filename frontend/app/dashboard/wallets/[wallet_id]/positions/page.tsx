@@ -1,5 +1,5 @@
 "use client";
-import { Grid, Box, TextField, Stack, Card, Typography, Switch, FormGroup, FormControlLabel } from "@mui/material";
+import { Grid, Box, Stack, Card, Typography, Switch, FormGroup, FormControlLabel } from "@mui/material";
 // components
 import { useEffect, useState } from "react";
 import { Position } from "@/app/lib/definition";
@@ -7,7 +7,7 @@ import { fetchPositions, fetchPositionsWithSearch } from "@/app/lib/data";
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
-import { SearchForm } from "@/app/ui/positions/SearchForm";
+import { SearchForm } from "@/app/ui/shared/SearchForm";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -67,7 +67,6 @@ const Positions = () => {
 
   const handleSearch = (searchTerm: string) => {
     // Implement your search logic here, such as making API calls
-    console.log("Search term:", searchTerm);
     fetchPositionDataWithSearch(searchTerm);
   };
 

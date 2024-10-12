@@ -78,6 +78,8 @@ class WalletPositionDetailView(generics.RetrieveAPIView):
 
 class WalletPositionTransactionView(generics.ListAPIView):
     serializer_class = TransactionSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['against_contract__name', 'against_contract__symbol']
 
     def get_queryset(self):
         wallet_id = self.kwargs["wallet_id"]
