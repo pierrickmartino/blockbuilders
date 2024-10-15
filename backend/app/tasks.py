@@ -895,6 +895,8 @@ def get_price_from_market_task(symbol_list: list[str]):
             try:
                 if symbol == "USDC":
                     contracts = Contract.objects.filter(symbol__startswith=symbol)
+                elif symbol == "ETH":
+                    contracts = Contract.objects.filter(symbol__endswith=symbol)
                 else:
                     contracts = Contract.objects.filter(symbol=symbol)
 

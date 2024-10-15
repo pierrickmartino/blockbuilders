@@ -125,8 +125,11 @@ def refresh_wallet_position_price(request, wallet_id: uuid):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     symbol_set = {
-        position.contract.symbol for position in positions if not position.contract.symbol[0].islower()
-    }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
+        position.contract.symbol 
+        for position in positions 
+        if not position.contract.symbol[0].islower() and '-' not in position.contract.symbol and '.' not in position.contract.symbol
+    }   # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
+        # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)
 
     chain(start_wallet_resync_task.s(wallet_id))()
@@ -155,8 +158,11 @@ def refresh_full_historical_position_price(request, wallet_id: uuid):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     symbol_set = {
-        position.contract.symbol for position in positions if not position.contract.symbol[0].islower()
-    }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
+        position.contract.symbol 
+        for position in positions 
+        if not position.contract.symbol[0].islower() and '-' not in position.contract.symbol and '.' not in position.contract.symbol
+    }   # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
+        # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)
 
     for symbol in symbol_list:

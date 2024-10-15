@@ -8,6 +8,8 @@ import PageContainer from "@/app/dashboard/components/container/PageContainer";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
+import BlankCard from "@/app/dashboard/components/shared/BlankCard";
+import BaseCard from "@/app/dashboard/components/shared/BaseCard";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -74,6 +76,16 @@ const Positions = () => {
     <PageContainer title="Positions" description="this is Positions">
       <Box mt={3}>
         <Grid container spacing={3}>
+          <Grid item xs={12} lg={12}><Typography color="textSecondary" variant="h4">Positions</Typography></Grid>
+          <Grid item xs={12} lg={4}>
+            <BaseCard title="Total Amount" subtitle="Sous titre0"></BaseCard>
+          </Grid>
+          <Grid item xs={12} lg={4}>
+            <BaseCard title="Total Realized Performance" subtitle="Sous titre3"></BaseCard>
+          </Grid>
+          <Grid item xs={12} lg={4}>
+            <BaseCard title="Total Unrealized Performance" subtitle="Sous titre2"></BaseCard>
+          </Grid>
           <Grid item xs={12} lg={12}>
             <Card variant="outlined" sx={{ p: 3 }}>
               <Box px={0} py={0} mb="-15px">
