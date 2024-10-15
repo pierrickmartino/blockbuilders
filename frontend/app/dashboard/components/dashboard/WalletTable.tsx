@@ -207,12 +207,12 @@ const WalletTable: React.FC<WalletTableProps> = ({
                 </TableCell>
                 <TableCell align="right">
                   <Typography color="textSecondary" variant="h6">
-                    Realized Perf
+                    Capital Gain
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
                   <Typography color="textSecondary" variant="h6">
-                    UnRealized Perf
+                    UnRealized
                   </Typography>
                 </TableCell>
                 <TableCell></TableCell>

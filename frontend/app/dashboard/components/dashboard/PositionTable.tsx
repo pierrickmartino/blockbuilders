@@ -175,9 +175,9 @@ const PositionTable: React.FC<PositionTableProps> = ({
                     Token
                   </Typography>
                 </TableCell>
-                <TableCell>
+                <TableCell align="right">
                   <Typography color="textSecondary" variant="h6">
-                    Perf
+                    Perf Daily
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
@@ -197,7 +197,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
                 </TableCell>
                 <TableCell align="right">
                   <Typography color="textSecondary" variant="h6">
-                    Realized
+                    Capital Gain
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
@@ -212,138 +212,51 @@ const PositionTable: React.FC<PositionTableProps> = ({
               {positions.map((position: Position) => (
                 <TableRow key={position.id}>
                   <TableCell>
-                    <Typography fontSize="14px">
-                      {truncateText(position.contract.symbol, 8)}
-                    </Typography>
-                    <Typography fontSize="12px">
-                      {truncateText(position.contract.name, 18)}
-                    </Typography>
-                    {/* <Typography fontSize="12px">
-                      {position.contract.category}
-                    </Typography> */}
-                    <Avatar
-                      alt={position.contract.blockchain.name}
-                      sx={{ width: 24, height: 24 }}
-                      src={"/static/img/" + position.contract.blockchain.icon}
-                    />
-                    {/* <Typography fontSize="12px">
-                      {position.contract.blockchain.name}
-                    </Typography> */}
+                    <Stack direction="row" spacing={2}>
+                      <Avatar
+                        alt={position.contract.blockchain.name}
+                        sx={{ width: 24, height: 24 }}
+                        src={"/static/img/" + position.contract.blockchain.icon}
+                      />
+                      <Stack>
+                        <Typography variant="body1">
+                          {truncateText(position.contract.symbol, 8)}
+                        </Typography>
+                        <Typography variant="body2">
+                          {truncateText(position.contract.name, 18)}
+                        </Typography>
+                      </Stack>
+                    </Stack>
                   </TableCell>
-                  <TableCell>
-                    <Box display="flex" flexDirection="column">
-                      <Stack
-                        direction="row"
-                        alignItems="center"
-                        spacing={2}
-                        justifyContent="space-between"
-                        mb={1}
-                      >
-                        Daily
-                        <Chip
-                          icon={
-                            position.daily_price_delta < 0 ? (
-                              <ArrowDropDown />
-                            ) : position.daily_price_delta > 0 ? (
-                              <ArrowDropUp />
-                            ) : (
-                              <></>
-                            )
-                          }
-                          sx={{
-                            pl: "4px",
-                            pr: "4px",
-                            backgroundColor:
-                              position.daily_price_delta < 0
-                                ? "error.main"
-                                : position.daily_price_delta > 0
-                                ? "success.main"
-                                : "", // No background color if the capital gain is 0
-                            color: "#fff",
-                            mb: "4px",
-                          }}
-                          size="small"
-                          label={formatNumber(
-                            position.daily_price_delta,
-                            "percentage"
-                          )}
-                        ></Chip>
-                      </Stack>
-
-                      <Stack
-                        direction="row"
-                        alignItems="center"
-                        spacing={2}
-                        justifyContent="space-between"
-                        mb={1}
-                      >
-                        Weekly
-                        <Chip
-                          icon={
-                            position.weekly_price_delta < 0 ? (
-                              <ArrowDropDown />
-                            ) : position.weekly_price_delta > 0 ? (
-                              <ArrowDropUp />
-                            ) : (
-                              <></>
-                            )
-                          }
-                          sx={{
-                            pl: "4px",
-                            pr: "4px",
-                            backgroundColor:
-                              position.weekly_price_delta < 0
-                                ? "error.main"
-                                : position.weekly_price_delta > 0
-                                ? "success.main"
-                                : "", // No background color if the capital gain is 0
-                            color: "#fff",
-                            mb: "4px",
-                          }}
-                          size="small"
-                          label={formatNumber(
-                            position.weekly_price_delta,
-                            "percentage"
-                          )}
-                        ></Chip>
-                      </Stack>
-                      <Stack
-                        direction="row"
-                        alignItems="center"
-                        spacing={2}
-                        justifyContent="space-between"
-                        mb={0}
-                      >
-                        Monthly
-                        <Chip
-                          icon={
-                            position.monthly_price_delta < 0 ? (
-                              <ArrowDropDown />
-                            ) : position.monthly_price_delta > 0 ? (
-                              <ArrowDropUp />
-                            ) : (
-                              <></>
-                            )
-                          }
-                          sx={{
-                            pl: "4px",
-                            pr: "4px",
-                            backgroundColor:
-                              position.monthly_price_delta < 0
-                                ? "error.main"
-                                : position.monthly_price_delta > 0
-                                ? "success.main"
-                                : "", // No background color if the capital gain is 0
-                            color: "#fff",
-                          }}
-                          size="small"
-                          label={formatNumber(
-                            position.monthly_price_delta,
-                            "percentage"
-                          )}
-                        ></Chip>
-                      </Stack>
-                    </Box>
+                  <TableCell align="right">
+                    <Chip
+                      icon={
+                        position.daily_price_delta < 0 ? (
+                          <ArrowDropDown />
+                        ) : position.daily_price_delta > 0 ? (
+                          <ArrowDropUp />
+                        ) : (
+                          <></>
+                        )
+                      }
+                      sx={{
+                        pl: "4px",
+                        pr: "4px",
+                        backgroundColor:
+                          position.daily_price_delta < 0
+                            ? "error.main"
+                            : position.daily_price_delta > 0
+                            ? "success.main"
+                            : "", // No background color if the capital gain is 0
+                        color: "#fff",
+                        mb: "4px",
+                      }}
+                      size="small"
+                      label={formatNumber(
+                        position.daily_price_delta,
+                        "percentage"
+                      )}
+                    ></Chip>
                   </TableCell>
                   <TableCell align="right">
                     <Typography fontSize="12px">
