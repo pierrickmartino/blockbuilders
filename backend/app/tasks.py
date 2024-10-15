@@ -880,7 +880,7 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
 
 
 @shared_task
-def get_price_from_market_task(symbol_list: list[str]):
+def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
     """
     Task to get the market price of a list of symbols.
     """
@@ -916,7 +916,7 @@ def get_price_from_market_task(symbol_list: list[str]):
 
 
 @shared_task
-def get_historical_price_from_market_task(symbol: str):
+def get_historical_price_from_market_task(previous_return: list, symbol: str):
     """
     Task to get the historical market price of a symbol.
     """
@@ -1033,7 +1033,7 @@ def update_contract_information(previous_return: int, symbol: str):
     logger.info(f"Updating contract information based on market data for {symbol}.")
     try:
 
-        contracts = Contract.objects.filter(symbol=symbol)
+        contracts = Contract.objects.filter(Q(symbol=symbol) | Q(relative_symbol=symbol))
 
         # Get the current time
         now = timezone.now()

@@ -132,12 +132,10 @@ def refresh_wallet_position_price(request, wallet_id: uuid):
         # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)
 
-    chain(start_wallet_resync_task.s(wallet_id))()
-
-    for symbol in symbol_list:
-        chain(get_historical_price_from_market_task.s(symbol), update_contract_information.s(symbol))()
-
     chain_result = chain(
+        start_wallet_resync_task.s(wallet_id),
+        group(get_historical_price_from_market_task.s(symbol) for symbol in symbol_list),
+        group(update_contract_information.s(symbol) for symbol in symbol_list),
         get_price_from_market_task.s(symbol_list),
         calculate_wallet_balance_task.s(wallet_id),
         calculate_blockchain_balance_task.s(wallet_id),
@@ -166,7 +164,7 @@ def refresh_full_historical_position_price(request, wallet_id: uuid):
     symbol_list = list(symbol_set)
 
     for symbol in symbol_list:
-        chain(get_full_init_historical_price_from_market_task.s(symbol))()
+        group(get_full_init_historical_price_from_market_task.s(symbol))()
 
     logger.info(f"Started getting full position prices for wallet with id {wallet_id}")
     # return redirect("dashboard")
