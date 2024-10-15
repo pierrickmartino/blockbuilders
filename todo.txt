@@ -1,7 +1,6 @@
 - lien vers la transaction
 - navigation retour à partir des pages /positions  /transactions 
 - dark mode
-- récupérer les vrai data pour les 5 dernières transactions
 - afficher une notification quand download/refresh est terminé
 - pouvoir switcher entre la fullpage en largeur et la vue serrée
 - remener le filtrage dans le widget du tableau

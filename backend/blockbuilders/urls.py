@@ -26,6 +26,7 @@ from app.utils.bsc import view_bsc
 from app.views.views_api import (
     FiatViewSet,
     PositionTopView,
+    TransactionLastView,
     BlockchainTopView,
     WalletPositionDetailView,
     WalletPositionTransactionDetailView,
@@ -75,6 +76,7 @@ user_setting_detail = UserSettingViewSet.as_view(
     {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
 )
 transaction_list = TransactionViewSet.as_view({"get": "list", "post": "create"})
+transaction_last_list = TransactionLastView.as_view()
 transaction_detail = TransactionViewSet.as_view(
     {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
 )
@@ -267,6 +269,7 @@ urlpatterns = format_suffix_patterns(
         path("api/usersettings/<uuid:pk>/", user_setting_detail, name="usersetting-detail"),
         # FROM TRANSACTION OBJECT #
         path("api/transactions/", transaction_list, name="transaction-list"),
+        path("api/transactions/last/<int:max>", transaction_last_list, name="transaction-last-list"),
         path("api/transactions/<uuid:pk>/", transaction_detail, name="transaction-detail"),
         # FROM POSITION OBJECT #
         path("api/positions/", position_list, name="position-list"),

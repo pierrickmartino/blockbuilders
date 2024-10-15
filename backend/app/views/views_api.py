@@ -11,13 +11,23 @@ from app.serializers import (
     UserSettingSerializer,
     WalletSerializer,
 )
-from app.models import Blockchain, Contract, Fiat, MarketData, Position, Transaction, UserSetting, Wallet
+from app.models import (
+    Blockchain,
+    CategoryContractChoices,
+    Contract,
+    Fiat,
+    MarketData,
+    Position,
+    Transaction,
+    UserSetting,
+    Wallet,
+)
 
 
 class WalletViewSet(viewsets.ModelViewSet):
     queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
-    
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
@@ -25,38 +35,44 @@ class WalletViewSet(viewsets.ModelViewSet):
 class WalletPositionView(generics.ListAPIView):
     serializer_class = PositionSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['contract__name', 'contract__symbol']
+    search_fields = ["contract__name", "contract__symbol"]
 
     def get_queryset(self):
         wallet_id = self.kwargs["wallet_id"]
 
         try:
-            return Position.objects.filter(wallet_id=wallet_id).order_by('-amount')
-            
+            return Position.objects.filter(wallet_id=wallet_id).order_by("-amount")
+
         except Wallet.DoesNotExist:
             raise NotFound("Wallet does not exist")
+
+
+class TransactionLastView(generics.ListAPIView):
+    serializer_class = TransactionSerializer
+
+    def get_queryset(self):
+        max = self.kwargs["max"]
+        return (
+            Transaction.objects.exclude(position__contract__category=CategoryContractChoices.STABLE)
+            .exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS)
+            .order_by("-date")[:max]
+        )
+
 
 class PositionTopView(generics.ListAPIView):
     serializer_class = PositionSerializer
 
     def get_queryset(self):
         max = self.kwargs["max"]
+        return Position.objects.order_by("-amount")[:max]
 
-        try:
-            return Position.objects.order_by('-amount')[:max]
-        except Wallet.DoesNotExist:
-            raise NotFound("Wallet does not exist")
 
 class BlockchainTopView(generics.ListAPIView):
     serializer_class = BlockchainSerializer
 
     def get_queryset(self):
         max = self.kwargs["max"]
-
-        try:
-            return Blockchain.objects.order_by('-balance')[:max]
-        except Wallet.DoesNotExist:
-            raise NotFound("Wallet does not exist")
+        return Blockchain.objects.order_by("-balance")[:max]
 
 
 class WalletPositionDetailView(generics.RetrieveAPIView):
@@ -79,7 +95,7 @@ class WalletPositionDetailView(generics.RetrieveAPIView):
 class WalletPositionTransactionView(generics.ListAPIView):
     serializer_class = TransactionSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['against_contract__name', 'against_contract__symbol']
+    search_fields = ["against_contract__name", "against_contract__symbol"]
 
     def get_queryset(self):
         wallet_id = self.kwargs["wallet_id"]

@@ -1,5 +1,12 @@
 "use client";
-import { Grid, Box, Snackbar, Button, IconButton, SnackbarCloseReason } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Snackbar,
+  Button,
+  IconButton,
+  SnackbarCloseReason,
+} from "@mui/material";
 import PageContainer from "../components/container/PageContainer";
 // components
 import SalesOverview from "../components/dashboard/TheSalesOverview";
@@ -8,23 +15,30 @@ import ProfileCard from "../components/dashboard/TheProfileCard";
 import MyContacts from "../components/dashboard/TheMyContacts";
 import ActivityTimeline from "../components/dashboard/TheActivityTimeline";
 import WalletTable from "../components/dashboard/WalletTable";
-import Top5Positions from "../components/dashboard/TheTop5Positions";
+import Top5Positions from "../components/dashboard/Top5Positions";
 import WalletWizard from "../components/dashboard/WalletWizard";
 import { Fragment, useEffect, useState } from "react";
-import { Wallet, Position, Blockchain } from "@/app/lib/definition";
-import { fetchWallets, fetchTopPositions, fetchTopBlockchains } from "@/app/lib/data";
+import { Wallet, Position, Blockchain, Transaction } from "@/app/lib/definition";
+import {
+  fetchWallets,
+  fetchTopPositions,
+  fetchTopBlockchains,
+  fetchLastTransactions,
+} from "@/app/lib/data";
 import { Close } from "@mui/icons-material";
-import Top5Blockchains from "../components/dashboard/TheTop5Blockchains";
+import Top5Blockchains from "../components/dashboard/Top5Blockchains";
+import LastTransactions from "../components/dashboard/LastTransactions";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [top5_positions, setTop5Positions] = useState<Position[]>([]);
   const [top5_blockchains, setTop5Blockchains] = useState<Blockchain[]>([]);
+  const [last_transactions, setLastTransactions] = useState<Transaction[]>([]);
   const [open, setOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(""); // New state for message
-  const [page, setPage] = useState(0);  // State for current page
-  const [rowsPerPage, setRowsPerPage] = useState(10);  // State for rows per page
-  const [totalCount, setTotalCount] = useState(0);  // State for total number of items
+  const [page, setPage] = useState(0); // State for current page
+  const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
+  const [totalCount, setTotalCount] = useState(0); // State for total number of items
 
   const handleClick = (message: string) => {
     setSnackbarMessage(message); // Set the snackbar message
@@ -33,9 +47,9 @@ const Wallets = () => {
 
   const handleClose = (
     event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason,
+    reason?: SnackbarCloseReason
   ) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
@@ -52,10 +66,15 @@ const Wallets = () => {
     await fetchTopPositions(5, setTop5Positions);
   };
 
-    // Fetch top5 blockchain function
-    const fetchTop5BlockchainData = async () => {
-      await fetchTopBlockchains(5, setTop5Blockchains);
-    };
+  // Fetch top5 blockchain function
+  const fetchTop5BlockchainData = async () => {
+    await fetchTopBlockchains(5, setTop5Blockchains);
+  };
+
+  // Fetch last transaction function
+  const fetchLastTransactionData = async () => {
+    await fetchLastTransactions(5, setLastTransactions);
+  };
 
   // Fetch wallets using the fetchWallets function from your data.ts file
   useEffect(() => {
@@ -68,6 +87,10 @@ const Wallets = () => {
 
   useEffect(() => {
     fetchTop5BlockchainData();
+  }, []);
+
+  useEffect(() => {
+    fetchLastTransactionData();
   }, []);
 
   const handleWalletCreated = () => {
@@ -91,18 +114,17 @@ const Wallets = () => {
   };
 
   const handlePageChange = (newPage: number) => {
-    setPage(newPage);  // Update page state
+    setPage(newPage); // Update page state
   };
 
   const handleRowsPerPageChange = (newRowsPerPage: number) => {
-    setRowsPerPage(newRowsPerPage);  // Update rows per page state
-    setPage(0);  // Reset page to 0 whenever rows per page changes
+    setRowsPerPage(newRowsPerPage); // Update rows per page state
+    setPage(0); // Reset page to 0 whenever rows per page changes
   };
 
   const action = (
     <Fragment>
-      <Button color="secondary" size="small" onClick={handleClose}>
-      </Button>
+      <Button color="secondary" size="small" onClick={handleClose}></Button>
       <IconButton
         size="small"
         aria-label="close"
@@ -158,7 +180,7 @@ const Wallets = () => {
             </Grid>
           </Grid>
           <Grid item xs={12} lg={8}>
-            <ActivityTimeline />
+            <LastTransactions transactions={last_transactions} />
           </Grid>
         </Grid>
       </Box>

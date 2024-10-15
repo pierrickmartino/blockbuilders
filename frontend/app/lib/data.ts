@@ -152,6 +152,31 @@ export const fetchTopBlockchains = async (
   }
 };
 
+export const fetchLastTransactions = async (
+  max: number,
+  setLastTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>,
+): Promise<void> => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/api/transactions/last/${max}`,
+      {
+        headers: {
+          Authorization: `Token ${userToken}`,
+        },
+      }
+    );
+
+    if (response.data.results) {
+      setLastTransactions(response.data.results); // Ensure the transactions are correctly set
+    }
+
+  } catch (err) {
+    console.error("Error fetching data from last transactions API:", err);
+    setLastTransactions([]); // Set empty transactions if fetching fails
+    throw new Error("Failed to fetch all transactions.");
+  }
+};
+
 export const fetchTransactions = async (
   position_id: string,
   wallet_id: string,
