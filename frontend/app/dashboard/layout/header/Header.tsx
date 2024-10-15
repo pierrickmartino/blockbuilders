@@ -48,7 +48,7 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         '& + .MuiSwitch-track': {
           opacity: 1,
           backgroundColor: '#aab4be',
-          // ...mytheme.applyStyles('dark', {
+          // ...theme.applyStyles('dark', {
           //   backgroundColor: '#8796A5',
           // }),
         },

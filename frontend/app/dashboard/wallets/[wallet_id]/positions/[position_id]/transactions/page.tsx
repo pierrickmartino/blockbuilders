@@ -79,7 +79,7 @@ const Transactions = () => {
 
   return (
     <PageContainer title="Transactions" description="this is Transactions">
-      <Box mt={3}>
+      <Box mt={0}>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={12}>
             <Typography color="textSecondary" variant="h4">

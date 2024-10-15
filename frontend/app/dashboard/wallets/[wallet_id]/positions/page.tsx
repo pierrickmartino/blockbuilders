@@ -84,7 +84,7 @@ const Positions = () => {
 
   return (
     <PageContainer title="Positions" description="this is Positions">
-      <Box mt={3}>
+      <Box mt={1}>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={12}>
             <Typography color="textSecondary" variant="h4">

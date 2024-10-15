@@ -48,7 +48,7 @@ export default function RootLayout({
       {/* ------------------------------------------- */}
       <PageWrapper className="page-wrapper"
           sx={{
-              [theme.breakpoints.up("lg")]: {
+              [theme.breakpoints.up("xl")]: {
                 ml: `270px`,
               },
           }}
@@ -75,7 +75,7 @@ export default function RootLayout({
           {/* ------------------------------------------- */}
           {/* Page Route */}
           {/* ------------------------------------------- */}
-          <Box mt={4} sx={{ minHeight: "calc(100vh - 170px)" }}>{children}</Box>
+          <Box mt={2} sx={{ minHeight: "calc(100vh - 170px)" }}>{children}</Box>
           {/* ------------------------------------------- */}
           {/* End Page */}
           {/* ------------------------------------------- */}
