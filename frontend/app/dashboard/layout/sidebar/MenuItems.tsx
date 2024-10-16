@@ -9,7 +9,7 @@ const Menuitems = [
     id: uniqueId(),
     title: "Dashboard",
     icon: IconHome,
-    href: "/dashboard",
+    href: "/dashboard/wallets",
   },
   {
     id: uniqueId(),

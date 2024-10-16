@@ -8,6 +8,7 @@ import {
   Switch,
   FormGroup,
   FormControlLabel,
+  Button,
 } from "@mui/material";
 // components
 import { useEffect, useState } from "react";
@@ -17,9 +18,9 @@ import PageContainer from "@/app/dashboard/components/container/PageContainer";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
-import BaseCard from "@/app/dashboard/components/shared/BaseCard";
 import formatNumber from "@/app/utils/formatNumber";
 import CustomCard from "@/app/dashboard/components/shared/CustomCard";
+import { NavigateBefore } from "@mui/icons-material";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -87,9 +88,12 @@ const Positions = () => {
       <Box mt={1}>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={12}>
-            <Typography color="textSecondary" variant="h4">
-              Positions
-            </Typography>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography color="textSecondary" variant="h4">
+                Positions
+              </Typography>
+              <Button variant="outlined" startIcon={<NavigateBefore />} href="/dashboard/wallets/"> Back</Button>
+            </Stack>
           </Grid>
           <Grid item xs={12} lg={4}>
             <CustomCard title="Total Amount">

@@ -1,5 +1,4 @@
 - lien vers la transaction
-- navigation retour à partir des pages /positions  /transactions 
 - dark mode
 - afficher une notification quand download/refresh est terminé
 - pouvoir switcher entre la fullpage en largeur et la vue serrée

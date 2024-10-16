@@ -3,12 +3,10 @@ import {
   Grid,
   Box,
   Card,
-  FormControlLabel,
-  FormGroup,
   Stack,
-  Switch,
   Typography,
   Chip,
+  Button,
 } from "@mui/material";
 // components
 import { useEffect, useState } from "react";
@@ -20,7 +18,11 @@ import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
 import CustomCard from "@/app/dashboard/components/shared/CustomCard";
 import formatNumber from "@/app/utils/formatNumber";
-import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
+import {
+  ArrowDropDown,
+  ArrowDropUp,
+  NavigateBefore,
+} from "@mui/icons-material";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -82,9 +84,19 @@ const Transactions = () => {
       <Box mt={0}>
         <Grid container spacing={3}>
           <Grid item xs={12} lg={12}>
-            <Typography color="textSecondary" variant="h4">
-              Transactions
-            </Typography>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography color="textSecondary" variant="h4">
+                Transactions
+              </Typography>
+              <Button
+                variant="outlined"
+                startIcon={<NavigateBefore />}
+                href={`/dashboard/wallets/${wallet_id}/positions`}
+              >
+                {" "}
+                Back
+              </Button>
+            </Stack>
           </Grid>
           <Grid item xs={12} lg={4}>
             <CustomCard title="Total Amount">
