@@ -30,7 +30,6 @@ docker volume prune -a
 docker image prune -a
 docker network inspect blockbuilders_internal
 
-
 # DEV command
 docker-compose down -v --remove-orphans
 docker-compose -f docker-compose.prod.yml build --no-cache
@@ -38,8 +37,28 @@ docker-compose run --rm web python manage.py createsuperuser
 docker-compose run --rm web python manage.py loaddata blockchains.json
 docker-compose run --rm web python manage.py loaddata fiats.json
 docker-compose -f docker-compose.prod.yml up --build --remove-orphans
+docker-compose -f docker-compose.stack.yml up --build --remove-orphans
+docker-compose -f docker-compose.stack.yml run --rm backend python manage.py makemigrations
 docker volume prune -a
 docker image prune -a
+
+#Reset Procedure with STACK
+# modification du .env pour prendre localhost en DB_HOSTNAME
+python backend/manage.py makemigrations app
+python backend/manage.py migrate app
+python backend/manage.py collectstatic
+# modification du .env pour prendre db en DB_HOSTNAME
+docker-compose -f docker-compose.stack.yml down -v --remove-orphans
+docker volume prune -a
+docker image prune -a
+docker-compose -f docker-compose.stack.yml up --build --remove-orphans
+docker-compose -f docker-compose.stack.yml run --rm backend python manage.py createsuperuser
+docker-compose -f docker-compose.stack.yml run --rm backend python manage.py loaddata blockchains.json
+docker-compose -f docker-compose.stack.yml run --rm backend python manage.py loaddata fiats.json
+# creation du token pour le user
+# mise à jour des 2 fichiers .env avec le nouveau token
+# STOP
+docker-compose -f docker-compose.stack.yml up --build --remove-orphans
 
 # PREVIOUS
 docker-compose -f docker-compose.prod.yml up --build

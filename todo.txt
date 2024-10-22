@@ -1,0 +1,6 @@
+- lien vers la transaction
+- dark mode
+- afficher une notification quand download/refresh est terminé
+- pouvoir switcher entre la fullpage en largeur et la vue serrée
+- remener le filtrage dans le widget du tableau
+- afficher un calendrier avec le nombre de trade à chaque journée

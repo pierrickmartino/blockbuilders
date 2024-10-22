@@ -95,9 +95,7 @@ services:
       - '--web.enable-lifecycle'
     ports:
       - 9090:9090
-    depends_on:
-      - web
-
+    
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
@@ -106,8 +104,7 @@ services:
     volumes:
       - grafana-data:/var/lib/grafana
     restart: unless-stopped
-    depends_on:
-      - web
+   
 
 volumes:
   postgres_data:
