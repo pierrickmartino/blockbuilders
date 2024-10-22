@@ -9,6 +9,8 @@ import {
   FormGroup,
   FormControlLabel,
   Button,
+  Link,
+  Breadcrumbs,
 } from "@mui/material";
 // components
 import { useEffect, useState } from "react";
@@ -20,7 +22,7 @@ import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
 import formatNumber from "@/app/utils/formatNumber";
 import CustomCard from "@/app/dashboard/components/shared/CustomCard";
-import { NavigateBefore } from "@mui/icons-material";
+import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -83,6 +85,22 @@ const Positions = () => {
     fetchPositionDataWithSearch(searchTerm);
   };
 
+  const breadcrumbs = [
+    <Link underline="hover" key="1" color="inherit" href="/dashboard/wallets/">
+      Dashboard
+    </Link>,
+
+    positions.length > 0 ? (
+      <Typography key="2" sx={{ color: "text.primary" }}>
+        Positions in wallet {positions[0].wallet.name}
+      </Typography>
+    ) : (
+      <Typography key="2" sx={{ color: "text.primary" }}>
+        Loading Positions...
+      </Typography>
+    ),
+  ];
+
   return (
     <PageContainer title="Positions" description="this is Positions">
       <Box mt={1}>
@@ -92,8 +110,21 @@ const Positions = () => {
               <Typography color="textSecondary" variant="h4">
                 Positions
               </Typography>
-              <Button variant="outlined" startIcon={<NavigateBefore />} href="/dashboard/wallets/"> Back</Button>
+              <Button
+                variant="outlined"
+                startIcon={<NavigateBefore />}
+                href="/dashboard/wallets/"
+              >
+                {" "}
+                Back
+              </Button>
             </Stack>
+            <Breadcrumbs
+              separator={<NavigateNext fontSize="small" />}
+              aria-label="breadcrumb"
+            >
+              {breadcrumbs}
+            </Breadcrumbs>
           </Grid>
           <Grid item xs={12} lg={4}>
             <CustomCard title="Total Amount">

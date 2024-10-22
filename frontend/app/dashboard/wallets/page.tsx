@@ -6,6 +6,8 @@ import {
   Button,
   IconButton,
   SnackbarCloseReason,
+  Stack,
+  Typography,
 } from "@mui/material";
 import PageContainer from "../components/container/PageContainer";
 // components
@@ -13,12 +15,16 @@ import SalesOverview from "../components/dashboard/TheSalesOverview";
 import Blogcard from "../components/dashboard/TheBlogCard";
 import ProfileCard from "../components/dashboard/TheProfileCard";
 import MyContacts from "../components/dashboard/TheMyContacts";
-import ActivityTimeline from "../components/dashboard/TheActivityTimeline";
 import WalletTable from "../components/dashboard/WalletTable";
 import Top5Positions from "../components/dashboard/Top5Positions";
 import WalletWizard from "../components/dashboard/WalletWizard";
 import { Fragment, useEffect, useState } from "react";
-import { Wallet, Position, Blockchain, Transaction } from "@/app/lib/definition";
+import {
+  Wallet,
+  Position,
+  Blockchain,
+  Transaction,
+} from "@/app/lib/definition";
 import {
   fetchWallets,
   fetchTopPositions,
@@ -138,8 +144,15 @@ const Wallets = () => {
 
   return (
     <PageContainer title="Wallets" description="this is Wallets">
-      <Box mt={3}>
+      <Box mt={0}>
         <Grid container spacing={3}>
+          <Grid item xs={12} lg={12}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography color="textSecondary" variant="h4">
+                Dashboard
+              </Typography>
+            </Stack>
+          </Grid>
           <Grid item xs={12} lg={4}>
             <Top5Positions positions={top5_positions} />
           </Grid>

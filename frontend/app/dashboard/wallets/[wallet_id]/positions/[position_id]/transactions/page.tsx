@@ -7,6 +7,8 @@ import {
   Typography,
   Chip,
   Button,
+  Link,
+  Breadcrumbs,
 } from "@mui/material";
 // components
 import { useEffect, useState } from "react";
@@ -22,6 +24,7 @@ import {
   ArrowDropDown,
   ArrowDropUp,
   NavigateBefore,
+  NavigateNext,
 } from "@mui/icons-material";
 
 const Transactions = () => {
@@ -79,6 +82,30 @@ const Transactions = () => {
     fetchTransactionDataWithSearch(searchTerm);
   };
 
+  const breadcrumbs = [
+    <Link underline="hover" key="1" color="inherit" href="/dashboard/wallets/">
+      Dashboard
+    </Link>,
+
+    <Link
+      underline="hover"
+      key="2"
+      color="inherit"
+      href={`/dashboard/wallets/${wallet_id}/positions`}
+    >
+      Positions
+    </Link>,
+    transactions.length > 0 ? (
+      <Typography key="3" sx={{ color: "text.primary" }}>
+        Transactions related to {transactions[0].position.contract.name}
+      </Typography>
+    ) : (
+      <Typography key="3" sx={{ color: "text.primary" }}>
+        Loading Transactions...
+      </Typography>
+    ),
+  ];
+
   return (
     <PageContainer title="Transactions" description="this is Transactions">
       <Box mt={0}>
@@ -97,6 +124,12 @@ const Transactions = () => {
                 Back
               </Button>
             </Stack>
+            <Breadcrumbs
+              separator={<NavigateNext fontSize="small" />}
+              aria-label="breadcrumb"
+            >
+              {breadcrumbs}
+            </Breadcrumbs>
           </Grid>
           <Grid item xs={12} lg={4}>
             <CustomCard title="Total Amount">
