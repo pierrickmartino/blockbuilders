@@ -26,7 +26,7 @@ const Top5Positions: React.FC<Top5PositionsProps> = ({ positions }) => {
               <Avatar
                 alt={position.contract.blockchain.name}
                 sx={{ width: 24, height: 24 }}
-                src={"/static/img/" + position.contract.blockchain.icon}
+                src={"/images/logos/" + position.contract.blockchain.icon}
               />
               <Stack direction="column" alignItems="flex-start" spacing={0}>
                 <Typography variant="h6" fontSize="14px">

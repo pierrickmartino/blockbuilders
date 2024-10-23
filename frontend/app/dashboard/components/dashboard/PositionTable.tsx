@@ -216,7 +216,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
                       <Avatar
                         alt={position.contract.blockchain.name}
                         sx={{ width: 24, height: 24 }}
-                        src={"/static/img/" + position.contract.blockchain.icon}
+                        src={"/images/logos/" + position.contract.blockchain.icon}
                       />
                       <Stack>
                         <Typography variant="body1">

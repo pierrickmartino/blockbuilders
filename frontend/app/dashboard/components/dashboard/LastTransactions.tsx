@@ -89,7 +89,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions }) => {
                         <Avatar
                           alt={transaction.position.contract.blockchain.name}
                           src={
-                            "/static/img/" +
+                            "/images/logos/" +
                             transaction.position.contract.blockchain.icon
                           }
                         />
