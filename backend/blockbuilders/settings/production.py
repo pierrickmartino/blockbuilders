@@ -24,8 +24,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "../", "staticfiles")
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://app.blockbuilders.tech',
-    'http://app.blockbuilders.tech',
+    'https://api.blockbuilders.tech',
+    'http://api.blockbuilders.tech',
 ]
 
 CSRF_COOKIE_SECURE = True  # Ensure this matches your use of HTTPS
