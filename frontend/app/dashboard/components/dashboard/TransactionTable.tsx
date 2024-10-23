@@ -13,12 +13,14 @@ import {
   IconButton,
   TablePagination,
   Button,
+  Stack,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
 import formatDate from "@/app/utils/formatDate";
 import { Transaction } from "../../../lib/definition";
-import { Link } from "@mui/icons-material";
+import Link from "next/link";
+import { Link as LinkIcon } from "@mui/icons-material";
 
 // Define the props type that will be passed into WalletTable
 interface TransactionTableProps {
@@ -78,7 +80,6 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
           >
             <TableHead>
               <TableRow>
-                <TableCell></TableCell>
                 <TableCell>
                   <Typography color="textSecondary" variant="h6">
                     Position
@@ -132,23 +133,24 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
               {transactions.map((transaction: Transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell>
-                    <IconButton>
-                      <Link
-                        fontSize="small"
-                        href={
-                          transaction.position.contract.blockchain
-                            .transaction_link + transaction.hash
+                    <Stack direction="row" spacing={2}>
+                      <Link href={
+                          transaction.position.contract.blockchain.transaction_link + transaction.hash
                         }
-                      />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell>
-                    <Typography fontSize="14px">
-                      {transaction.position.contract.symbol}
-                    </Typography>
-                    <Typography fontSize="12px">
-                      {transaction.against_contract?.symbol || ""}
-                    </Typography>
+                        passHref>
+                          <IconButton component="a" target="_blank" rel="noopener noreferrer">
+                          <LinkIcon fontSize="small" color="primary" />
+                        </IconButton>
+                      </Link>
+                      <Stack>
+                        <Typography fontSize="14px">
+                          {transaction.position.contract.symbol}
+                        </Typography>
+                        <Typography fontSize="12px">
+                          {transaction.against_contract?.symbol || ""}
+                        </Typography>
+                      </Stack>
+                    </Stack>
                   </TableCell>
                   <TableCell align="right">
                     <Typography

@@ -1,4 +1,3 @@
-- lien vers la transaction
 - dark mode
 - afficher une notification quand download/refresh est terminé
 - pouvoir switcher entre la fullpage en largeur et la vue serrée
@@ -6,3 +5,4 @@
 - afficher un calendrier avec le nombre de trade à chaque journée
 - ne pas montrer l'adresse complète du wallet
 - fix : recherche de position en production
+- fix : problème dans la pagination sur les positions
