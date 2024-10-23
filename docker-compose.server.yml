@@ -98,6 +98,37 @@ services:
       - redis
       - backend
 
+  flower:
+    container_name: flower
+    image: flower:1.0.0
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+    command: celery -A blockbuilders flower
+    volumes:
+      - .:/code
+    ports:
+      - 5555:5555
+    networks:
+      - internal
+      - web
+    env_file:
+      - ./.env
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.rule=Host(`flower.blockbuilders.tech`)
+      - traefik.http.routers.backend.entrypoints=websecure
+      - traefik.http.routers.backend.tls=true
+      - traefik.http.routers.backend.tls.certresolver=lets-encrypt
+      - traefik.http.services.backend.loadbalancer.server.port=5555
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${REDIS_BACKEND}
+    depends_on:
+      - backend
+      - redis
+      - celery  
+
 volumes:
   postgres_data:
   static_volume:
