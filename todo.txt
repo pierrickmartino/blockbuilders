@@ -4,3 +4,5 @@
 - pouvoir switcher entre la fullpage en largeur et la vue serrée
 - remener le filtrage dans le widget du tableau
 - afficher un calendrier avec le nombre de trade à chaque journée
+- ne pas montrer l'adresse complète du wallet
+- fix : recherche de position en production
