@@ -87,3 +87,17 @@ Icon : https://cdn.jsdelivr.net/npm/@mdi/font@4.9.95/css/materialdesignicons.min
 GitHub - Clone private repo
 https://stackoverflow.com/questions/2505096/clone-a-private-repository-github
 git clone https://<pat>@github.com/<your account or organization>/<repo>.git
+
+Traefik
+# List Docker Compose instances
+docker ps -a
+# Stop apache after reboot
+sudo /etc/init.d/apache2 stop
+# Remove then recreate acme.json
+rm -r acme.json
+touch acme.json
+chmod 600 acme.json
+# Stop traefik docker instance
+docker rm traefik
+# Start docker Traefik
+docker run -d   -v /var/run/docker.sock:/var/run/docker.sock   -v $PWD/traefik.toml:/traefik.toml   -v $PWD/traefik_dynamic.toml:/traefik_dynamic.toml   -v $PWD/acme.json:/acme.json   -p 80:80   -p 443:443   --network web   --name traefik   traefik:v2.2
