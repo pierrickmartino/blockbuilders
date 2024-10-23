@@ -20,15 +20,16 @@ docker-compose run --rm web python manage.py migrate
 docker-compose up --build
 
 # SERVER command
-docker-compose down -v --remove-orphans
-docker-compose -f docker-compose.server.yml build --no-cache
-docker-compose run --rm web python manage.py createsuperuser
-docker-compose run --rm web python manage.py loaddata blockchains.json
-docker-compose run --rm web python manage.py loaddata fiats.json
-docker-compose -f docker-compose.server.yml up --build --remove-orphans
+docker-compose -f docker-compose.server.yml down -v --remove-orphans
 docker volume prune -a
 docker image prune -a
+docker-compose -f docker-compose.server.yml build --no-cache
+docker-compose -f docker-compose.server.yml run --rm backend python manage.py createsuperuser
+docker-compose -f docker-compose.server.yml run --rm backend python manage.py loaddata blockchains.json
+docker-compose -f docker-compose.server.yml run --rm backend python manage.py loaddata fiats.json
+docker-compose -f docker-compose.server.yml up --build --remove-orphans
 docker network inspect blockbuilders_internal
+docker-compose -f docker-compose.server.yml ps
 
 #Reset Procedure with STACK
 # modification du .env pour prendre localhost en DB_HOSTNAME
@@ -48,14 +49,9 @@ docker-compose -f docker-compose.stack.yml run --rm backend python manage.py loa
 # STOP
 docker-compose -f docker-compose.stack.yml up --build --remove-orphans
 
-# PREVIOUS
-docker-compose -f docker-compose.prod.yml up --build
-docker-compose run --rm web python manage.py createsuperuser
-docker-compose run --rm web python manage.py loaddata blockchains.json
-docker-compose run --rm web python manage.py loaddata fiats.json
-docker-compose run --rm web python manage.py loaddata contracts_polygon.json
-docker-compose run --rm web python manage.py makemigrations
-docker-compose run --rm web python manage.py migrate --run-syncdb
+
+KeyError: 'ContainerConfig'
+docker-compose -f docker-compose.server.yml rm
 
 docker ps
 docker exec -it XXXXXXXX bash

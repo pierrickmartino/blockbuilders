@@ -1,30 +1,61 @@
 version: '3.9'
 
 services:
-  web:
-    container_name: web
-    build: .
-    restart: always
-    command: gunicorn blockbuilders.wsgi:application --bind 0.0.0.0:8000
+
+  frontend:
+    container_name: frontend
+    image: frontend:1.0.0
+    build:
+      context: ./frontend
+      dockerfile: next.dockerfile
+    ports:
+      - 3030:3030
     networks:
       - internal
       - web
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+    env_file:
+      - ./.env
+    depends_on:
+      - backend
     labels:
-      - traefik.http.routers.web.rule=Host(`app.blockbuilders.tech`)
-      - traefik.http.routers.web.tls=true
-      - traefik.http.routers.web.tls.certresolver=lets-encrypt
-      - traefik.http.services.web.loadbalancer.server.port=8000
+      - traefik.enable=true
+      - traefik.http.routers.frontend.rule=Host(`app.blockbuilders.tech`)
+      - traefik.http.routers.frontend.tls=true
+      - traefik.http.routers.frontend.tls.certresolver=lets-encrypt
+      - traefik.http.services.frontend.loadbalancer.server.port=3030
       - traefik.port=80
+
+  backend:
+    container_name: backend
+    image: backend:1.0.0
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
+    restart: always
+    command: gunicorn blockbuilders.wsgi:application --bind 0.0.0.0:4000
     volumes:
       - static_volume:/code/staticfiles
       - media_volume:/code/mediafiles
     ports:
-      - "8080:8080"
+      - 4000:4000
+    networks:
+      - internal
+      - web
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.backend.rule=Host(`api.blockbuilders.tech`)
+      - traefik.http.routers.backend.entrypoints=websecure
+      - traefik.http.routers.backend.tls=true
+      - traefik.http.routers.backend.tls.certresolver=lets-encrypt
+      - traefik.http.services.backend.loadbalancer.server.port=4000
     depends_on:
       - db
       - redis
     env_file:
       - ./.env
+
   db:
     container_name: db
     image: postgres:16
@@ -41,14 +72,19 @@ services:
       - 5433:5432
     env_file:
       - ./.env
+
   redis:
     container_name: redis
     image: redis:7
     networks:
       - internal
+
   celery:
     container_name: celery
-    build: .
+    image: celery:1.0.0
+    build:
+      context: ./backend
+      dockerfile: backend.dockerfile
     restart: always
     command: celery -A blockbuilders worker -l info
     networks:
@@ -60,11 +96,15 @@ services:
     depends_on:
       - db
       - redis
-      - web
+      - backend
+
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+  prometheus_data:
+  grafana-data:
+
 networks:
   internal:
     driver: bridge
