@@ -116,11 +116,11 @@ services:
       - ./.env
     labels:
       - traefik.enable=true
-      - traefik.http.routers.backend.rule=Host(`flower.blockbuilders.tech`)
-      - traefik.http.routers.backend.entrypoints=websecure
-      - traefik.http.routers.backend.tls=true
-      - traefik.http.routers.backend.tls.certresolver=lets-encrypt
-      - traefik.http.services.backend.loadbalancer.server.port=5555
+      - traefik.http.routers.flower.rule=Host(`flower.blockbuilders.tech`)
+      - traefik.http.routers.flower.entrypoints=websecure
+      - traefik.http.routers.flower.tls=true
+      - traefik.http.routers.flower.tls.certresolver=lets-encrypt
+      - traefik.http.services.flower.loadbalancer.server.port=5555
     environment:
       CELERY_BROKER_URL: ${CELERY_BROKER_URL}
       CELERY_RESULT_BACKEND: ${REDIS_BACKEND}
