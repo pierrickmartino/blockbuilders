@@ -206,9 +206,9 @@ def download_wallet(request, wallet_id: uuid):
         finish_wallet_download_task.s(wallet_id),
     )()
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
-    wallet_process.resync_task = chain_result.id
+    wallet_process.download_task = chain_result.id
     wallet_process.save()
-    logger.info(f"Started syncing wallet with id {wallet_id}")
+    logger.info(f"Started downloading wallet with id {wallet_id}")
     # return redirect("dashboard")
     return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
 

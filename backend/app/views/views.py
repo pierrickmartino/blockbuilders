@@ -6,7 +6,6 @@ from django.db.models.functions import Coalesce
 
 from app.forms import WalletForm
 from app.views.calculators.calculators_position import calculate_wallet_positions
-from app.views.views_wallet import get_download_wallet_task_status
 
 logger = logging.getLogger("blockbuilders")
 
