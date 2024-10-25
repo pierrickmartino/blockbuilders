@@ -26,8 +26,10 @@ from app.utils.bsc import view_bsc
 from app.views.views_api import (
     FiatViewSet,
     PositionTopView,
+    PositionView,
     TransactionLastView,
     BlockchainTopView,
+    TransactionView,
     WalletPositionDetailView,
     WalletPositionTransactionDetailView,
     WalletPositionTransactionView,
@@ -75,12 +77,12 @@ user_setting_list = UserSettingViewSet.as_view({"get": "list", "post": "create"}
 user_setting_detail = UserSettingViewSet.as_view(
     {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
 )
-transaction_list = TransactionViewSet.as_view({"get": "list", "post": "create"})
+transaction_list = TransactionView.as_view()
 transaction_last_list = TransactionLastView.as_view()
 transaction_detail = TransactionViewSet.as_view(
     {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
 )
-position_list = PositionViewSet.as_view({"get": "list", "post": "create"})
+position_list = PositionView.as_view()
 position_top_list = PositionTopView.as_view()
 blockchain_top_list = BlockchainTopView.as_view()
 position_detail = PositionViewSet.as_view(
@@ -217,22 +219,27 @@ urlpatterns = format_suffix_patterns(
         path("arbitrum/ethereum/", view_arbitrum.ethereum_price, name="arbitrum_ethereum_price"),
         path("optimism/ethereum/", view_optimism.ethereum_price, name="optimism_ethereum_price"),
         path("bsc/bnb/", view_bsc.bnb_price, name="bsc_bnb_price"),
-
         ######################
         # API DEDICATED URLS #
         ######################
-        
         # path("api/auth/", include("rest_framework.urls")),
         # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
         # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-        
         # FROM WALLET OBJECT #
         path("api/wallets/", wallet_list, name="wallet-list"),
         path("api/wallets/<uuid:pk>/", wallet_detail, name="wallet-detail"),
         path("api/wallets/<uuid:wallet_id>/positions/", wallet_position_list, name="wallet-position-list"),
         path("api/wallets/<uuid:wallet_id>/download/", views_position.download_wallet, name="wallet-download"),
-        path("api/wallets/<uuid:wallet_id>/refresh/", views_position.refresh_wallet_position_price, name="wallet-refresh"),
-        path("api/wallets/<uuid:wallet_id>/refresh-full/", views_position.refresh_full_historical_position_price, name="wallet-refresh-full"),
+        path(
+            "api/wallets/<uuid:wallet_id>/refresh/",
+            views_position.refresh_wallet_position_price,
+            name="wallet-refresh",
+        ),
+        path(
+            "api/wallets/<uuid:wallet_id>/refresh-full/",
+            views_position.refresh_full_historical_position_price,
+            name="wallet-refresh-full",
+        ),
         path(
             "api/wallets/<uuid:wallet_id>/positions/<uuid:position_id>/",
             wallet_position_detail,
@@ -258,9 +265,21 @@ urlpatterns = format_suffix_patterns(
         # FROM CONTRACT OBJECT #
         path("api/contracts/", contract_list, name="contract-list"),
         path("api/contracts/<uuid:pk>/", contract_detail, name="contract-detail"),
-        path("api/contracts/<uuid:contract_id>/suspicious/", views_contract.set_Contract_as_suspicious, name="contract-is-suspicious"),
-        path("api/contracts/<uuid:contract_id>/stable/", views_contract.set_Contract_as_stable, name="contract-is-stable"),
-        path("api/contracts/<uuid:contract_id>/standard/", views_contract.set_Contract_as_standard, name="contract-is-standard"),
+        path(
+            "api/contracts/<uuid:contract_id>/suspicious/",
+            views_contract.set_Contract_as_suspicious,
+            name="contract-is-suspicious",
+        ),
+        path(
+            "api/contracts/<uuid:contract_id>/stable/",
+            views_contract.set_Contract_as_stable,
+            name="contract-is-stable",
+        ),
+        path(
+            "api/contracts/<uuid:contract_id>/standard/",
+            views_contract.set_Contract_as_standard,
+            name="contract-is-standard",
+        ),
         # FROM MARKETDATA OBJECT #
         path("api/marketdatas/", market_data_list, name="marketdata-list"),
         path("api/marketdatas/<uuid:pk>/", market_data_detail, name="marketdata-detail"),
@@ -270,6 +289,7 @@ urlpatterns = format_suffix_patterns(
         # FROM TRANSACTION OBJECT #
         path("api/transactions/", transaction_list, name="transaction-list"),
         path("api/transactions/last/<int:max>", transaction_last_list, name="transaction-last-list"),
+        path("api/transactions/count", views_transaction.count_transactions, name="transaction-count"),
         path("api/transactions/<uuid:pk>/", transaction_detail, name="transaction-detail"),
         # FROM POSITION OBJECT #
         path("api/positions/", position_list, name="position-list"),

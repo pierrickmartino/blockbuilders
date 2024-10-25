@@ -1,5 +1,5 @@
 import {
-  IconBoxMultiple, IconCircleDot, IconHome, IconInfoCircle, IconLayout, IconLayoutGrid, IconPhoto, IconPoint, IconStar, IconTable, IconUser
+  IconBoxMultiple, IconCircleDot, IconFile, IconHome, IconInfoCircle, IconLayout, IconLayoutGrid, IconPhoto, IconPoint, IconStar, IconTable, IconTimeline, IconUser
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";
@@ -11,6 +11,25 @@ const Menuitems = [
     icon: IconHome,
     href: "/dashboard/wallets",
   },
+  {
+    id: uniqueId(),
+    title: "Positions",
+    icon: IconTable,
+    href: "/dashboard/positions",
+  },
+  {
+    id: uniqueId(),
+    title: "Transactions",
+    icon: IconTimeline,
+    href: "/dashboard/transactions",
+  },
+  {
+    id: uniqueId(),
+    title: "Contracts",
+    icon: IconFile,
+    href: "/dashboard/contracts",
+  },
+
   {
     id: uniqueId(),
     title: "Buttons",
@@ -46,12 +65,6 @@ const Menuitems = [
     title: "Pagination",
     icon: IconUser,
     href: "/dashboard/ui-components/pagination",
-  },
-  {
-    id: uniqueId(),
-    title: "Tables",
-    icon: IconLayoutGrid,
-    href: "/dashboard/ui-components/table",
   },
 ];
 

@@ -1,6 +1,7 @@
 from rest_framework import viewsets, generics, filters
 from rest_framework.exceptions import NotFound
 
+
 from app.serializers import (
     BlockchainSerializer,
     ContractSerializer,
@@ -23,6 +24,10 @@ from app.models import (
     Wallet,
 )
 
+################
+# ModelViewSet #
+################
+
 
 class WalletViewSet(viewsets.ModelViewSet):
     queryset = Wallet.objects.all()
@@ -32,19 +37,71 @@ class WalletViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
 
-class WalletPositionView(generics.ListAPIView):
+class FiatViewSet(viewsets.ModelViewSet):
+    queryset = Fiat.objects.all()
+    serializer_class = FiatSerializer
+
+
+class BlockchainViewSet(viewsets.ModelViewSet):
+    queryset = Blockchain.objects.all()
+    serializer_class = BlockchainSerializer
+
+
+class ContractViewSet(viewsets.ModelViewSet):
+    queryset = Contract.objects.all()
+    serializer_class = ContractSerializer
+
+
+class PositionViewSet(viewsets.ModelViewSet):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+
+
+class MarketDataViewSet(viewsets.ModelViewSet):
+    queryset = MarketData.objects.all()
+    serializer_class = MarketDataSerializer
+
+
+class UserSettingViewSet(viewsets.ModelViewSet):
+    queryset = UserSetting.objects.all()
+    serializer_class = UserSettingSerializer
+
+
+###############
+# ListAPIView #
+###############
+
+
+class TransactionView(generics.ListAPIView):
+    serializer_class = TransactionSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["against_contract__name", "against_contract__symbol"]
+
+    def get_queryset(self):
+        return Transaction.objects.all()
+
+
+class PositionView(generics.ListAPIView):
     serializer_class = PositionSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ["contract__name", "contract__symbol"]
 
     def get_queryset(self):
-        wallet_id = self.kwargs["wallet_id"]
+        return Position.objects.all().order_by("-amount")
 
-        try:
-            return Position.objects.filter(wallet_id=wallet_id).order_by("-amount")
 
-        except Wallet.DoesNotExist:
-            raise NotFound("Wallet does not exist")
+class ContractView(generics.ListAPIView):
+    serializer_class = ContractSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["name", "symbol"]
+
+    def get_queryset(self):
+        return Contract.objects.all()
 
 
 class TransactionLastView(generics.ListAPIView):
@@ -73,6 +130,21 @@ class BlockchainTopView(generics.ListAPIView):
     def get_queryset(self):
         max = self.kwargs["max"]
         return Blockchain.objects.order_by("-balance")[:max]
+
+
+class WalletPositionView(generics.ListAPIView):
+    serializer_class = PositionSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["contract__name", "contract__symbol"]
+
+    def get_queryset(self):
+        wallet_id = self.kwargs["wallet_id"]
+
+        try:
+            return Position.objects.filter(wallet_id=wallet_id).order_by("-amount")
+
+        except Wallet.DoesNotExist:
+            raise NotFound("Wallet does not exist")
 
 
 class WalletPositionDetailView(generics.RetrieveAPIView):
@@ -129,38 +201,3 @@ class WalletPositionTransactionDetailView(generics.RetrieveAPIView):
             raise NotFound("Position not found for this wallet")
         except Wallet.DoesNotExist:
             raise NotFound("Wallet does not exist")
-
-
-class FiatViewSet(viewsets.ModelViewSet):
-    queryset = Fiat.objects.all()
-    serializer_class = FiatSerializer
-
-
-class BlockchainViewSet(viewsets.ModelViewSet):
-    queryset = Blockchain.objects.all()
-    serializer_class = BlockchainSerializer
-
-
-class ContractViewSet(viewsets.ModelViewSet):
-    queryset = Contract.objects.all()
-    serializer_class = ContractSerializer
-
-
-class PositionViewSet(viewsets.ModelViewSet):
-    queryset = Position.objects.all()
-    serializer_class = PositionSerializer
-
-
-class TransactionViewSet(viewsets.ModelViewSet):
-    queryset = Transaction.objects.all()
-    serializer_class = TransactionSerializer
-
-
-class MarketDataViewSet(viewsets.ModelViewSet):
-    queryset = MarketData.objects.all()
-    serializer_class = MarketDataSerializer
-
-
-class UserSettingViewSet(viewsets.ModelViewSet):
-    queryset = UserSetting.objects.all()
-    serializer_class = UserSettingSerializer

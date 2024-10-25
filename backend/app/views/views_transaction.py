@@ -17,6 +17,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from datetime import datetime, timedelta
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from app.models import (
     Contract,
     ContractCalculator,
@@ -52,7 +55,7 @@ def transactions_paginated(request, page):
 
 # @login_required
 def export_transactions_csv(request, position_id):
-    
+
     # Generate the current timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"transactions_{timestamp}.csv"
@@ -144,7 +147,7 @@ def position_transactions_paginated(request, position_id, page):
     # Create the candlestick chart
     df = pd.DataFrame(stock_data)
     # df.set_index("timestamp", inplace=True)
-    
+
     if not df.empty:
         # Calculate Moving Averages
         df["EMA20"] = ta.ema(df["close"], length=20)
@@ -258,7 +261,9 @@ def position_transactions_paginated(request, position_id, page):
     page_transactions = paginator.get_page(page)
     page_transactions.adjusted_elided_pages = paginator.get_elided_page_range(page)
 
-    reference_average_cost = TransactionCalculator(transactions.first()).calculate_average_cost() if transactions else 0
+    reference_average_cost = (
+        TransactionCalculator(transactions.first()).calculate_average_cost() if transactions else 0
+    )
     total_unrealized_gain = (
         (
             (contract.price - reference_average_cost) / reference_average_cost * 100
@@ -299,3 +304,9 @@ def get_Transactions_by_Position(position):
     for transaction in transactions:
         transaction_result.append(transaction)
     return transaction_result
+
+
+@api_view()
+def count_transactions(request):
+    counter = Transaction.objects.all().count()
+    return Response({"counter": counter})

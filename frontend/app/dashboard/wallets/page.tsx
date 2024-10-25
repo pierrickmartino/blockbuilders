@@ -30,6 +30,7 @@ import {
   fetchTopPositions,
   fetchTopBlockchains,
   fetchLastTransactions,
+  fetchCountTransactions,
 } from "@/app/lib/data";
 import { Close } from "@mui/icons-material";
 import Top5Blockchains from "../components/dashboard/Top5Blockchains";
@@ -40,6 +41,7 @@ const Wallets = () => {
   const [top5_positions, setTop5Positions] = useState<Position[]>([]);
   const [top5_blockchains, setTop5Blockchains] = useState<Blockchain[]>([]);
   const [last_transactions, setLastTransactions] = useState<Transaction[]>([]);
+  const [count_transactions, setCountTransactions] = useState(0);
   const [open, setOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState(""); // New state for message
   const [page, setPage] = useState(0); // State for current page
@@ -82,6 +84,11 @@ const Wallets = () => {
     await fetchLastTransactions(5, setLastTransactions);
   };
 
+  // Fetch last transaction function
+  const fetchCountTransactionData = async () => {
+    await fetchCountTransactions(setCountTransactions);
+  };
+
   // Fetch wallets using the fetchWallets function from your data.ts file
   useEffect(() => {
     fetchWalletData(); // Pass setWallets directly to fetchWallets
@@ -97,6 +104,10 @@ const Wallets = () => {
 
   useEffect(() => {
     fetchLastTransactionData();
+  }, []);
+
+  useEffect(() => {
+    fetchCountTransactionData();
   }, []);
 
   const handleWalletCreated = () => {
@@ -193,7 +204,7 @@ const Wallets = () => {
             </Grid>
           </Grid>
           <Grid item xs={12} lg={8}>
-            <LastTransactions transactions={last_transactions} />
+            <LastTransactions transactions={last_transactions} count={count_transactions} />
           </Grid>
         </Grid>
       </Box>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 
 import {
   Card,
@@ -34,11 +34,12 @@ import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 // Define the props type that will be passed into WalletTable
 interface LastTransactionsProps {
   transactions: Transaction[];
+  count: number;
 }
 
-const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions }) => {
+const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count }) => {
   const [value, setValue] = React.useState("1");
-
+  
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
@@ -119,7 +120,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions }) => {
                             ) : transaction.type == "OUT" ? (
                               <ArrowDropDown />
                             ) : (
-                              <></>
+                              <Fragment></Fragment>
                             )
                           }
                           sx={{
@@ -208,6 +209,13 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions }) => {
                   </TimelineItem>
                 ))}
               </Timeline>
+              <Stack sx={{pl: 2,
+                            pr: 2}} direction="row" justifyContent="space-between">
+                <Button variant="outlined" href="/dashboard/transactions">
+                  See all transactions
+                </Button>
+                <Typography variant="subtitle1">{count} Transaction(s)</Typography>
+              </Stack>
             </TabPanel>
             <TabPanel value="2">
               <Grid container spacing={3}>
