@@ -3,8 +3,6 @@ import {
   Grid,
   Box,
   Snackbar,
-  Button,
-  IconButton,
   SnackbarCloseReason,
   Stack,
   Typography,
@@ -20,7 +18,7 @@ import MyContacts from "../components/dashboard/TheMyContacts";
 import WalletTable from "../components/dashboard/WalletTable";
 import Top5Positions from "../components/dashboard/Top5Positions";
 import WalletWizard from "../components/dashboard/WalletWizard";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Wallet,
   Position,
@@ -34,9 +32,10 @@ import {
   fetchLastTransactions,
   fetchCountTransactions,
 } from "@/app/lib/data";
-import { Close } from "@mui/icons-material";
 import Top5Blockchains from "../components/dashboard/Top5Blockchains";
 import LastTransactions from "../components/dashboard/LastTransactions";
+import Top5BlockchainsGraph from "../components/dashboard/Top5BlockchainsGraph";
+import Top5PositionsGraph from "../components/dashboard/Top5PositionsGraph";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -196,6 +195,12 @@ const Wallets = () => {
               transactions={last_transactions}
               count={count_transactions}
             />
+          </Grid>
+          <Grid item xs={12} lg={4}>
+            <Top5BlockchainsGraph blockchains={top5_blockchains} />
+          </Grid>
+          <Grid item xs={12} lg={4}>
+            <Top5PositionsGraph positions={top5_positions} />
           </Grid>
         </Grid>
       </Box>
