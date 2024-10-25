@@ -8,6 +8,8 @@ import {
   SnackbarCloseReason,
   Stack,
   Typography,
+  Alert,
+  AlertTitle,
 } from "@mui/material";
 import PageContainer from "../components/container/PageContainer";
 // components
@@ -139,20 +141,6 @@ const Wallets = () => {
     setPage(0); // Reset page to 0 whenever rows per page changes
   };
 
-  const action = (
-    <Fragment>
-      <Button color="secondary" size="small" onClick={handleClose}></Button>
-      <IconButton
-        size="small"
-        aria-label="close"
-        color="inherit"
-        onClick={handleClose}
-      >
-        <Close fontSize="small" />
-      </IconButton>
-    </Fragment>
-  );
-
   return (
     <PageContainer title="Wallets" description="this is Wallets">
       <Box mt={0}>
@@ -204,17 +192,19 @@ const Wallets = () => {
             </Grid>
           </Grid>
           <Grid item xs={12} lg={8}>
-            <LastTransactions transactions={last_transactions} count={count_transactions} />
+            <LastTransactions
+              transactions={last_transactions}
+              count={count_transactions}
+            />
           </Grid>
         </Grid>
       </Box>
-      <Snackbar
-        open={open}
-        autoHideDuration={6000}
-        onClose={handleClose}
-        message={snackbarMessage}
-        action={action}
-      />
+      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
+        <Alert severity="info" onClose={handleClose} sx={{ width: "100%" }}>
+          <AlertTitle>Info</AlertTitle>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </PageContainer>
   );
 };

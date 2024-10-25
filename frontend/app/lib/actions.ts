@@ -96,8 +96,7 @@ export async function createWallet(
 }
 
 export async function downloadWallet(id: string) {
-  // throw new Error('Failed to Delete Invoice');
-  console.log("Enter downloadWallet for :", id);
+  // console.log("Enter downloadWallet for :", id);
   // console.log(`${backendUrl}/api/wallets/${id}/download/`);
   // console.log(`Token ${userToken}`);
   try {
@@ -113,8 +112,6 @@ export async function downloadWallet(id: string) {
         },
       }
     );
-    // revalidatePath(`${webUrl}/dashboard/wallets`);
-    // redirect(`${webUrl}/dashboard/wallets`);
     const result = await response.data;
     console.log("Task triggered:", result);
     return result;
@@ -124,7 +121,9 @@ export async function downloadWallet(id: string) {
 }
 
 export async function refreshWallet(id: string) {
-  // throw new Error('Failed to Delete Invoice');
+  // console.log("Enter refreshWallet for :", id);
+  // console.log(`${backendUrl}/api/wallets/${id}/refresh/`);
+  // console.log(`Token ${userToken}`);
   try {
     const response = await axios.post(
       `${backendUrl}/api/wallets/${id}/refresh/`,
@@ -138,8 +137,6 @@ export async function refreshWallet(id: string) {
         },
       }
     );
-    // revalidatePath(`${webUrl}/dashboard/wallets`);
-    // redirect(`${webUrl}/dashboard/wallets`);
     const result = await response.data;
     console.log("Task triggered:", result);
     return result;
@@ -149,7 +146,6 @@ export async function refreshWallet(id: string) {
 }
 
 export async function refreshFullWallet(id: string) {
-  // throw new Error('Failed to Delete Invoice');
   try {
     const response = await axios.post(
       `${backendUrl}/api/wallets/${id}/refresh-full/`,
@@ -163,8 +159,6 @@ export async function refreshFullWallet(id: string) {
         },
       }
     );
-    // revalidatePath(`${webUrl}/dashboard/wallets`);
-    // redirect(`${webUrl}/dashboard/wallets`);
     const result = await response.data;
     console.log("Task triggered:", result);
     return result;
@@ -180,8 +174,6 @@ export async function deleteWallet(id: string) {
         Authorization: `Token ${userToken}`,
       },
     });
-    // revalidatePath(`${webUrl}/dashboard/wallets`);
-    // redirect(`${webUrl}/dashboard/wallets`);
     return response.data;
   } catch (error) {
     return { message: "Database Error: Failed to delete wallet." };

@@ -1,11 +1,12 @@
 import axios from "axios";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://backend:4000";
 const userToken = process.env.NEXT_PUBLIC_USER_TOKEN || "";
 
 export async function exportTransactions(id: string) {
     try {
       const response = await axios.get(
-        `${backendUrl}/api/positions/${id}/export/csv/`,
+        `${apiUrl}/api/positions/${id}/export/csv/`,
         {
           headers: {
             Authorization: `Token ${userToken}`,
