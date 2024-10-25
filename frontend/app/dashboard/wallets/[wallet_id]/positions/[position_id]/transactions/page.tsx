@@ -11,7 +11,7 @@ import {
   Breadcrumbs,
 } from "@mui/material";
 // components
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Transaction } from "@/app/lib/definition";
 import { fetchTransactions, fetchTransactionsWithSearch } from "@/app/lib/data";
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
@@ -179,7 +179,7 @@ const Transactions = () => {
                         ) : transactions[0].position.capital_gain > 0 ? (
                           <ArrowDropUp />
                         ) : (
-                          <></>
+                          <Fragment></Fragment>
                         )
                       }
                       sx={{
@@ -216,7 +216,7 @@ const Transactions = () => {
                         ) : transactions[0].position.unrealized_gain > 0 ? (
                           <ArrowDropUp />
                         ) : (
-                          <></>
+                          <Fragment></Fragment>
                         )
                       }
                       sx={{
@@ -253,7 +253,7 @@ const Transactions = () => {
                         ) : transactions[0].position.daily_price_delta > 0 ? (
                           <ArrowDropUp />
                         ) : (
-                          <></>
+                          <Fragment></Fragment>
                         )
                       }
                       sx={{
@@ -291,7 +291,7 @@ const Transactions = () => {
                         ) : transactions[0].position.weekly_price_delta > 0 ? (
                           <ArrowDropUp />
                         ) : (
-                          <></>
+                          <Fragment></Fragment>
                         )
                       }
                       sx={{
@@ -328,7 +328,7 @@ const Transactions = () => {
                         ) : transactions[0].position.monthly_price_delta > 0 ? (
                           <ArrowDropUp />
                         ) : (
-                          <></>
+                          <Fragment></Fragment>
                         )
                       }
                       sx={{

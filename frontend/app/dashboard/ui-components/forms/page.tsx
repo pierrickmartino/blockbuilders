@@ -14,13 +14,14 @@ import {
     Button,
 } from '@mui/material'
 import BaseCard from '../../components/shared/BaseCard';
+import { Fragment } from 'react';
 
 const Forms = () => {
     return (
       <Grid container spacing={3}>
         <Grid item xs={12} lg={12}>
           <BaseCard title="Form Layout">
-            <>
+            <Fragment>
             <Stack spacing={3}>
               <TextField
                 id="name-basic"
@@ -89,7 +90,7 @@ const Forms = () => {
             <Button>
               Submit
             </Button>
-            </>
+            </Fragment>
           </BaseCard>
         </Grid>
   

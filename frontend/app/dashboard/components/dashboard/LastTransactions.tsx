@@ -52,7 +52,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
   };
 
   return (
-    <>
+    <Fragment>
       <Card variant="outlined" sx={{ p: 0 }}>
         <Box sx={{ width: "100%", typography: "body1" }}>
           <TabContext value={value}>
@@ -403,7 +403,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
           </TabContext>
         </Box>
       </Card>
-    </>
+    </Fragment>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 import {
   Typography,
@@ -152,7 +152,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       title="Wallet Positions"
       subtitle="Detailed view of asset quantities and performance"
     >
-      <>
+      <Fragment>
         <TableContainer
           sx={{
             width: {
@@ -236,7 +236,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
                         ) : position.daily_price_delta > 0 ? (
                           <ArrowDropUp />
                         ) : (
-                          <></>
+                          <Fragment></Fragment>
                         )
                       }
                       sx={{
@@ -378,7 +378,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </>
+      </Fragment>
     </BaseCard>
   );
 };

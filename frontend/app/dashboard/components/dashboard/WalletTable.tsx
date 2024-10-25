@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 
 import {
   Typography,
@@ -165,9 +165,13 @@ const WalletTable: React.FC<WalletTableProps> = ({
     }
   };
 
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
   return (
     <BaseCard title="Wallet Overview" subtitle="Track balances, performance, and key metrics across your wallets">
-      <>
+      <Fragment>
         <TableContainer
           sx={{
             width: {
@@ -242,7 +246,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
                     <Box display="flex" alignItems="center">
                       <Box>
                         <Typography fontSize="14px">
-                          {wallet.address}
+                        {truncateText(wallet.address, 25)} 
                         </Typography>
                       </Box>
                     </Box>
@@ -348,7 +352,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </>
+      </Fragment>
     </BaseCard>
   );
 };
