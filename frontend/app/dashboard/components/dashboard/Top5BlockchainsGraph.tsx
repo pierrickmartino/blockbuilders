@@ -26,7 +26,7 @@ const Top5BlockchainsGraph: React.FC<Top5BlockchainsGraphProps> = ({
     .filter((blockchain) => blockchain.progress_percentage > 0) // Keep only items with progress_percentage > 0
     .map((blockchain) => Math.round(blockchain.progress_percentage));
 
-    const labelsdoughnutchart = blockchains
+  const labelsdoughnutchart = blockchains
     .filter((blockchain) => blockchain.progress_percentage > 0) // Keep only items with progress_percentage > 0
     .map((blockchain) => blockchain.name);
 
@@ -61,31 +61,21 @@ const Top5BlockchainsGraph: React.FC<Top5BlockchainsGraphProps> = ({
   };
 
   return blockchains.length > 0 ? (
-    <Card variant="outlined" sx={{ p: 0 }}>
-      <Box px={3} py={2} mb="-15px">
-        <Typography variant="h5">Top 5 blockchains</Typography>
-      </Box>
-      <Box px={3} py={2} mt={2}>
-        <Chart
-          options={optionsdoughnutchart}
-          series={seriesdoughnutchart}
-          type="donut"
-          height="300px"
-          width={"100%"}
-        />
-      </Box>
-    </Card>
+    <Box px={3} py={2} mt={2}>
+      <Chart
+        options={optionsdoughnutchart}
+        series={seriesdoughnutchart}
+        type="donut"
+        height="300px"
+        width={"100%"}
+      />
+    </Box>
   ) : (
-    <Card variant="outlined" sx={{ p: 0 }}>
-      <Box px={3} py={2} mb="-15px">
-        <Typography variant="h5">Top 5 blockchains</Typography>
-      </Box>
-      <Box px={3} py={2} mt={2}>
-        <Typography key="2" sx={{ color: "text.primary" }}>
-          Loading Positions...
-        </Typography>
-      </Box>
-    </Card>
+    <Box px={3} py={2} mt={2}>
+      <Typography key="2" sx={{ color: "text.primary" }}>
+        Loading Positions...
+      </Typography>
+    </Box>
   );
 };
 

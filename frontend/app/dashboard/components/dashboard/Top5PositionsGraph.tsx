@@ -26,7 +26,7 @@ const Top5PositionsGraph: React.FC<Top5PositionsGraphProps> = ({
     .filter((position) => position.progress_percentage > 0) // Keep only items with progress_percentage > 0
     .map((position) => Math.round(position.progress_percentage));
 
-    const labelsdoughnutchart = positions
+  const labelsdoughnutchart = positions
     .filter((position) => position.progress_percentage > 0) // Keep only items with progress_percentage > 0
     .map((position) => position.contract.symbol);
 
@@ -61,31 +61,21 @@ const Top5PositionsGraph: React.FC<Top5PositionsGraphProps> = ({
   };
 
   return positions.length > 0 ? (
-    <Card variant="outlined" sx={{ p: 0 }}>
-      <Box px={3} py={2} mb="-15px">
-        <Typography variant="h5">Top 5 positions</Typography>
-      </Box>
-      <Box px={3} py={2} mt={2}>
-        <Chart
-          options={optionsdoughnutchart}
-          series={seriesdoughnutchart}
-          type="donut"
-          height="300px"
-          width={"100%"}
-        />
-      </Box>
-    </Card>
+    <Box px={3} py={2} mt={2}>
+      <Chart
+        options={optionsdoughnutchart}
+        series={seriesdoughnutchart}
+        type="donut"
+        height="300px"
+        width={"100%"}
+      />
+    </Box>
   ) : (
-    <Card variant="outlined" sx={{ p: 0 }}>
-      <Box px={3} py={2} mb="-15px">
-        <Typography variant="h5">Top 5 positions</Typography>
-      </Box>
-      <Box px={3} py={2} mt={2}>
-        <Typography key="2" sx={{ color: "text.primary" }}>
-          Loading Positions...
-        </Typography>
-      </Box>
-    </Card>
+    <Box px={3} py={2} mt={2}>
+      <Typography key="2" sx={{ color: "text.primary" }}>
+        Loading Positions...
+      </Typography>
+    </Box>
   );
 };
 

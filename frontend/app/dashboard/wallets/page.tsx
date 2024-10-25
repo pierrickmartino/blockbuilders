@@ -16,7 +16,6 @@ import Blogcard from "../components/dashboard/TheBlogCard";
 import ProfileCard from "../components/dashboard/TheProfileCard";
 import MyContacts from "../components/dashboard/TheMyContacts";
 import WalletTable from "../components/dashboard/WalletTable";
-import Top5Positions from "../components/dashboard/Top5Positions";
 import WalletWizard from "../components/dashboard/WalletWizard";
 import { useEffect, useState } from "react";
 import {
@@ -32,10 +31,8 @@ import {
   fetchLastTransactions,
   fetchCountTransactions,
 } from "@/app/lib/data";
-import Top5Blockchains from "../components/dashboard/Top5Blockchains";
 import LastTransactions from "../components/dashboard/LastTransactions";
-import Top5BlockchainsGraph from "../components/dashboard/Top5BlockchainsGraph";
-import Top5PositionsGraph from "../components/dashboard/Top5PositionsGraph";
+import Top5Repartition from "../components/dashboard/Top5Repartition";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -151,11 +148,8 @@ const Wallets = () => {
               </Typography>
             </Stack>
           </Grid>
-          <Grid item xs={12} lg={4}>
-            <Top5Positions positions={top5_positions} />
-          </Grid>
-          <Grid item xs={12} lg={4}>
-            <Top5Blockchains blockchains={top5_blockchains} />
+          <Grid item xs={12} lg={8}>
+            <Top5Repartition blockchains={top5_blockchains} positions={top5_positions} />
           </Grid>
           <Grid item xs={12} lg={4}>
             <WalletWizard onWalletCreated={handleWalletCreated} />
@@ -195,12 +189,6 @@ const Wallets = () => {
               transactions={last_transactions}
               count={count_transactions}
             />
-          </Grid>
-          <Grid item xs={12} lg={4}>
-            <Top5BlockchainsGraph blockchains={top5_blockchains} />
-          </Grid>
-          <Grid item xs={12} lg={4}>
-            <Top5PositionsGraph positions={top5_positions} />
           </Grid>
         </Grid>
       </Box>
