@@ -4,7 +4,6 @@
 - dashboard - pouvoir switcher entre la fullpage en largeur et la vue serrée
 - dashboard - ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois 
 - dashboard - ajouter un calendrier du mois avec le nombre de trade sur chaque journée
-- dashboard - ne pas montrer l'adresse complète du wallet
 - transaction - utiliser les tabs sur un widget avec Info / Performance
 - transaction - ajouter un widget avec les informations du contract 
 - transaction - déplacer le MarketPrice sur un widget graphique montrant l'évolution du prix 
