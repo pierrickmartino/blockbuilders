@@ -97,70 +97,79 @@ export async function createWallet(
 
 export async function downloadWallet(id: string) {
   // throw new Error('Failed to Delete Invoice');
-  console.log('Enter downloadWallet for :', id);
+  console.log("Enter downloadWallet for :", id);
   // console.log(`${backendUrl}/api/wallets/${id}/download/`);
   // console.log(`Token ${userToken}`);
   try {
-    const response = await axios.post(`${backendUrl}/api/wallets/${id}/download/`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-        "Content-Type": "application/json",
+    const response = await axios.post(
+      `${backendUrl}/api/wallets/${id}/download/`,
+      {
+        headers: {
+          Authorization: `Token ${userToken}`,
+          "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
           Connection: "keep-alive",
-      },
-    });
+        },
+      }
+    );
     // revalidatePath(`${webUrl}/dashboard/wallets`);
     // redirect(`${webUrl}/dashboard/wallets`);
     const result = await response.data;
-    console.log('Task triggered:', result);
+    console.log("Task triggered:", result);
     return result;
   } catch (error) {
-    return { message: 'Database Error: Failed to download wallet.' };
+    return { message: "Database Error: Failed to download wallet." };
   }
 }
 
 export async function refreshWallet(id: string) {
   // throw new Error('Failed to Delete Invoice');
   try {
-    const response = await axios.post(`${backendUrl}/api/wallets/${id}/refresh/`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-        "Content-Type": "application/json",
+    const response = await axios.post(
+      `${backendUrl}/api/wallets/${id}/refresh/`,
+      {
+        headers: {
+          Authorization: `Token ${userToken}`,
+          "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
           Connection: "keep-alive",
-      },
-    });
+        },
+      }
+    );
     // revalidatePath(`${webUrl}/dashboard/wallets`);
     // redirect(`${webUrl}/dashboard/wallets`);
     const result = await response.data;
-    console.log('Task triggered:', result);
+    console.log("Task triggered:", result);
     return result;
   } catch (error) {
-    return { message: 'Database Error: Failed to refresh wallet.' };
+    return { message: "Database Error: Failed to refresh wallet." };
   }
 }
 
 export async function refreshFullWallet(id: string) {
   // throw new Error('Failed to Delete Invoice');
   try {
-    const response = await axios.post(`${backendUrl}/api/wallets/${id}/refresh-full/`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-        "Content-Type": "application/json",
+    const response = await axios.post(
+      `${backendUrl}/api/wallets/${id}/refresh-full/`,
+      {
+        headers: {
+          Authorization: `Token ${userToken}`,
+          "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
           Connection: "keep-alive",
-      },
-    });
+        },
+      }
+    );
     // revalidatePath(`${webUrl}/dashboard/wallets`);
     // redirect(`${webUrl}/dashboard/wallets`);
     const result = await response.data;
-    console.log('Task triggered:', result);
+    console.log("Task triggered:", result);
     return result;
   } catch (error) {
-    return { message: 'Database Error: Failed to refresh full wallet.' };
+    return { message: "Database Error: Failed to refresh full wallet." };
   }
 }
 
@@ -175,46 +184,55 @@ export async function deleteWallet(id: string) {
     // redirect(`${webUrl}/dashboard/wallets`);
     return response.data;
   } catch (error) {
-    return { message: 'Database Error: Failed to delete wallet.' };
+    return { message: "Database Error: Failed to delete wallet." };
   }
 }
 
 export async function setContractAsSuspicious(id: string) {
   try {
-    const response = await axios.post(`${backendUrl}/api/contracts/${id}/suspicious/`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-    });
+    const response = await axios.post(
+      `${backendUrl}/api/contracts/${id}/suspicious/`,
+      {
+        headers: {
+          Authorization: `Token ${userToken}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    return { message: 'Database Error: Failed to set contract as Suspicious.' };
+    return { message: "Database Error: Failed to set contract as Suspicious." };
   }
 }
 
 export async function setContractAsStable(id: string) {
   try {
-    const response = await axios.post(`${backendUrl}/api/contracts/${id}/stable/`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-    });
+    const response = await axios.post(
+      `${backendUrl}/api/contracts/${id}/stable/`,
+      {
+        headers: {
+          Authorization: `Token ${userToken}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    return { message: 'Database Error: Failed to set contract as Stable.' };
+    return { message: "Database Error: Failed to set contract as Stable." };
   }
 }
 
 export async function setContractAsStandard(id: string) {
   try {
-    const response = await axios.post(`${backendUrl}/api/contracts/${id}/standard/`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-    });
+    const response = await axios.post(
+      `${backendUrl}/api/contracts/${id}/standard/`,
+      {
+        headers: {
+          Authorization: `Token ${userToken}`,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    return { message: 'Database Error: Failed to set contract as Standard.' };
+    return { message: "Database Error: Failed to set contract as Standard." };
   }
 }
 
@@ -252,8 +270,6 @@ export async function setContractAsStandard(id: string) {
 //   revalidatePath('/dashboard/invoices');
 //   redirect('/dashboard/invoices');
 // }
-
-
 
 // export async function authenticate(
 //   prevState: string | undefined,

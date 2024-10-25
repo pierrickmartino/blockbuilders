@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 import {
   Typography,
@@ -14,13 +14,19 @@ import {
   TablePagination,
   Button,
   Stack,
+  ListItemIcon,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
 import formatDate from "@/app/utils/formatDate";
 import { Transaction } from "../../../lib/definition";
 import Link from "next/link";
-import { Link as LinkIcon } from "@mui/icons-material";
+import { Download, Link as LinkIcon } from "@mui/icons-material";
+import { IconDotsVertical } from "@tabler/icons-react";
+import { exportTransactions } from "@/app/lib/export-transaction";
+import { saveAs } from "file-saver";
 
 // Define the props type that will be passed into WalletTable
 interface TransactionTableProps {
@@ -47,22 +53,132 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     onPageChange(newPage); // Call the passed prop to update the page state in the parent
   };
 
+  const transactionMenuItems = [
+    {
+      title: "Export",
+      key: "transaction-export",
+      value: "transaction-export",
+      button: <Download fontSize="small" />,
+    },
+  ];
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const [selectedPositionId, setSelectedPositionId] = useState<string | null>(
+    null
+  );
+
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     onRowsPerPageChange(parseInt(event.target.value, 10)); // Call the passed prop to update the rows per page state
   };
 
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    position_id: string
+  ) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedPositionId(position_id);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    setSelectedPositionId(null);
+  };
+
+  const handleExportTransactions = async () => {
+    console.log("Export function called");  // Debug log
+
+    if (selectedPositionId !== null) {
+      try {
+        
+        console.log("Attempting to export transactions with ID:", selectedPositionId);
+
+        const response = await exportTransactions(
+          selectedPositionId.toString()
+        );
+        
+        // Log response to check if we got it successfully
+        console.log("Export API response received:", response);
+
+        // Check if response is OK and contains data
+        if (response.status === 200) {
+          console.log("Response status is 200. Proceeding to download.");
+
+          // Create a Blob from the response data
+          const blob = new Blob([response.data], {
+            type: "text/csv;charset=utf-8;",
+          });
+          saveAs(
+            blob,
+            `transactions_${new Date().toISOString().replace(/[:.-]/g, "")}.csv`
+          );
+        } else {
+          console.error(
+            "Failed to export transactions, unexpected response status:",
+            response.status
+          );
+        }
+      } catch (error) {
+        console.error("An error occurred while exporting transactions:", error);
+      }
+    } else {
+      console.error("No position ID provided to export transactions");
+    }
+  };
+
   const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
+
+  const action = (
+    <Fragment>
+      <IconButton
+        id="basic-button"
+        aria-controls={open ? "basic-menu" : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? "true" : undefined}
+        onClick={(event) => handleClick(event, transactions[0].position.id)}
+        aria-label="Open to show more"
+        title="Open to show more"
+      >
+        <IconDotsVertical width={18} />
+      </IconButton>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={open}
+        onClose={handleClose}
+      >
+        {transactionMenuItems.map((item) => (
+          <MenuItem
+            onClick={() => {
+              console.log(`Clicked on menu item: ${item.key}`);
+              handleClose();
+              if (item.key === "transaction-export") {
+                handleExportTransactions();
+              }
+            }}
+            key={item.key}
+            value={item.value}
+          >
+            <ListItemIcon>{item.button}</ListItemIcon>
+            {item.title}
+          </MenuItem>
+        ))}
+      </Menu>
+    </Fragment>
+  );
 
   return (
     <BaseCard
       title="Transaction History"
       subtitle="A detailed log of all recent transactions and movements"
+      action={action}
     >
-      <>
+      <Fragment>
         <TableContainer
           sx={{
             width: {
@@ -134,11 +250,18 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                 <TableRow key={transaction.id}>
                   <TableCell>
                     <Stack direction="row" spacing={2}>
-                      <Link href={
-                          transaction.position.contract.blockchain.transaction_link + transaction.hash
+                      <Link
+                        href={
+                          transaction.position.contract.blockchain
+                            .transaction_link + transaction.hash
                         }
-                        passHref>
-                          <IconButton component="a" target="_blank" rel="noopener noreferrer">
+                        passHref
+                      >
+                        <IconButton
+                          component="a"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           <LinkIcon fontSize="small" color="primary" />
                         </IconButton>
                       </Link>
@@ -241,7 +364,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </>
+      </Fragment>
     </BaseCard>
   );
 };

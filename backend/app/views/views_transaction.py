@@ -50,8 +50,9 @@ def transactions_paginated(request, page):
     return render(request, "transactions.html", context)
 
 
-@login_required
+# @login_required
 def export_transactions_csv(request, position_id):
+    
     # Generate the current timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"transactions_{timestamp}.csv"

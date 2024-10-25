@@ -197,11 +197,11 @@ urlpatterns = format_suffix_patterns(
             views_transaction.position_transactions_paginated,
             name="position-transactions-by-page",
         ),
-        path(
-            "position/<int:position_id>/transactions/export/csv/",
-            views_transaction.export_transactions_csv,
-            name="export_transactions_csv",
-        ),
+        # path(
+        #     "position/<int:position_id>/transactions/export/csv/",
+        #     views_transaction.export_transactions_csv,
+        #     name="export_transactions_csv",
+        # ),
         # SCAN
         path(
             "polygon/balance/<str:address>/",
@@ -274,5 +274,10 @@ urlpatterns = format_suffix_patterns(
         # FROM POSITION OBJECT #
         path("api/positions/", position_list, name="position-list"),
         path("api/positions/top/<int:max>", position_top_list, name="position-top-list"),
+        path(
+            "api/positions/<uuid:position_id>/export/csv/",
+            views_transaction.export_transactions_csv,
+            name="export_transactions_csv",
+        ),
     ]
 )
