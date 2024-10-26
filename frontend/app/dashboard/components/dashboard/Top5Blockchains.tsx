@@ -9,7 +9,7 @@ interface Top5BlockchainsProps {
 
 const Top5Blockchains: React.FC<Top5BlockchainsProps> = ({ blockchains }) => {
   return (
-    <Box px={3} py={2} mt={2}>
+    <Box px={2} width="60%">
       {blockchains.map((blockchain: Blockchain) => (
         <Stack
           direction="row"

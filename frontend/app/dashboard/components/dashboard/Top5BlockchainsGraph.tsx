@@ -61,7 +61,7 @@ const Top5BlockchainsGraph: React.FC<Top5BlockchainsGraphProps> = ({
   };
 
   return blockchains.length > 0 ? (
-    <Box px={3} py={2} mt={2}>
+    <Box px={3}>
       <Chart
         options={optionsdoughnutchart}
         series={seriesdoughnutchart}

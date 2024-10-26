@@ -9,7 +9,7 @@ interface Top5PositionsProps {
 
 const Top5Positions: React.FC<Top5PositionsProps> = ({ positions }) => {
   return (
-    <Box px={3} py={2} mt={2}>
+    <Box px={2} width="60%">
       {positions.map((position: Position) => (
         <Stack
           direction="row"

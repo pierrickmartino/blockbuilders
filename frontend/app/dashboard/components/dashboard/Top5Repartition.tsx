@@ -74,25 +74,24 @@ const Top5Repartition: React.FC<Top5RepartitionProps> = ({
               <Stack
                 direction="row"
                 alignItems="center"
-                spacing={2}
+                spacing={0}
                 justifyContent="space-between"
               >
                 <Top5PositionsGraph positions={positions}></Top5PositionsGraph>
                 <Top5Positions positions={positions}></Top5Positions>
-
               </Stack>
             </TabPanel>
             <TabPanel value="2">
               <Stack
                 direction="row"
                 alignItems="center"
-                spacing={2}
+                spacing={0}
                 justifyContent="space-between"
               >
-
-                <Top5BlockchainsGraph blockchains={blockchains}></Top5BlockchainsGraph>
+                <Top5BlockchainsGraph
+                  blockchains={blockchains}
+                ></Top5BlockchainsGraph>
                 <Top5Blockchains blockchains={blockchains}></Top5Blockchains>
-
               </Stack>
             </TabPanel>
           </TabContext>

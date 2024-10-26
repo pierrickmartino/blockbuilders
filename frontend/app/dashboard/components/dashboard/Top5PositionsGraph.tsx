@@ -61,7 +61,7 @@ const Top5PositionsGraph: React.FC<Top5PositionsGraphProps> = ({
   };
 
   return positions.length > 0 ? (
-    <Box px={3} py={2} mt={2}>
+    <Box px={3}>
       <Chart
         options={optionsdoughnutchart}
         series={seriesdoughnutchart}
