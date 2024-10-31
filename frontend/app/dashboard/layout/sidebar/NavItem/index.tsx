@@ -12,29 +12,30 @@ import {
 import Link from "next/link";
 
 type NavGroup = {
-  [x: string]: any;
   id?: string;
   navlabel?: boolean;
   subheader?: string;
   title?: string;
   icon?: any;
-  href?: any;
-  onClick?: React.MouseEvent<HTMLButtonElement, MouseEvent>;
+  href?: string;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  external?: boolean;
+  disabled?: boolean;
 };
 
 interface ItemType {
   item: NavGroup;
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
-  hideMenu?: any;
-  level?: number | any;
+  hideMenu?: () => void;
+  level?: number;
   pathDirect: string;
 }
 
-const NavItem = ({ item, level, pathDirect, onClick }: ItemType) => {
+const NavItem = ({ item, level = 0, pathDirect, onClick }: ItemType) => {
   const Icon = item.icon;
   const theme = useTheme();
 
-  const itemIcon = <Icon stroke={1.5} size="1.3rem" />;
+  const itemIcon = Icon ? <Icon stroke={1.5} fontSize="small" /> : null;
 
   const ListItemStyled = styled(ListItem)(() => ({
     padding: 0,
@@ -66,21 +67,23 @@ const NavItem = ({ item, level, pathDirect, onClick }: ItemType) => {
       <ListItemStyled>
         <ListItemButton
           component={Link}
-          href={item.href}
+          href={item.href || "#"}
           disabled={item.disabled}
           selected={pathDirect === item.href}
           target={item.external ? "_blank" : ""}
           onClick={onClick}
         >
-          <ListItemIcon
-            sx={{
-              minWidth: "36px",
-              p: "3px 0",
-              color: "inherit",
-            }}
-          >
-            {itemIcon}
-          </ListItemIcon>
+          {itemIcon && (
+            <ListItemIcon
+              sx={{
+                minWidth: "36px",
+                p: "3px 0",
+                color: "inherit",
+              }}
+            >
+              {itemIcon}
+            </ListItemIcon>
+          )}
           <ListItemText>
             <>{item.title}</>
           </ListItemText>

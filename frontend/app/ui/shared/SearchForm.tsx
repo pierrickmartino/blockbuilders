@@ -1,4 +1,6 @@
-import { ChangeEvent, useCallback } from "react";
+import { ChangeEvent
+    // , useCallback 
+} from "react";
 import { useForm } from "react-hook-form";
 import { debounce } from "lodash";
 import { TextField } from "@mui/material";
@@ -11,16 +13,21 @@ interface SearchFormProps {
 export const SearchForm = ({ onSearch }: SearchFormProps) => {
     const { register } = useForm();
 
-    const handleSearch = useCallback(
-        debounce((searchTerm: string) => {
-            onSearch(searchTerm);
-        }, 300), // Debounce for 300 milliseconds
-        [onSearch]
-    );
+    // const handleSearch = useCallback(
+    //     debounce((searchTerm: string) => {
+    //         onSearch(searchTerm);
+    //     }, 300), // Debounce for 300 milliseconds
+    //     [onSearch]
+    // );
+
+    // Create a debounced version of the onSearch function
+    const debouncedOnSearch = debounce((searchTerm: string) => {
+        onSearch(searchTerm);
+    }, 300);
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const searchTerm = event.target.value;
-        handleSearch(searchTerm);
+        debouncedOnSearch(searchTerm);
     };
 
     return (

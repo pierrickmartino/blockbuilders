@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import axios from "axios";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
+// const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 const webUrl = process.env.NEXT_PUBLIC_WEB_URL || "http://127.0.0.1";
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://backend:4000";
 const userToken = process.env.NEXT_PUBLIC_USER_TOKEN || "";
@@ -78,12 +78,19 @@ export async function createWallet(
       revalidatePath(`${webUrl}/dashboard/wallets`);
       redirect(`${webUrl}/dashboard/wallets`);
     }
-  } catch (error: any) {
-    // Log the error for debugging
-    console.error(
-      "Error creating wallet:",
-      error.response ? error.response.data : error.message
-    );
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      // Log the error for debugging
+      console.error(
+        "Error creating wallet:",
+        error.response ? error.response.data : error.message
+      );
+    } else if (error instanceof Error) {
+      console.error("Error creating wallet:", error.message);
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+
     // If a database error occurs, return a more specific error.
     return {
       message: "Database Error: Failed to Create Wallet.",
@@ -115,7 +122,7 @@ export async function downloadWallet(id: string) {
     const result = await response.data;
     console.log("Task triggered:", result);
     return result;
-  } catch (error) {
+  } catch {
     return { message: "Database Error: Failed to download wallet." };
   }
 }
@@ -140,7 +147,7 @@ export async function refreshWallet(id: string) {
     const result = await response.data;
     console.log("Task triggered:", result);
     return result;
-  } catch (error) {
+  } catch {
     return { message: "Database Error: Failed to refresh wallet." };
   }
 }
@@ -162,7 +169,7 @@ export async function refreshFullWallet(id: string) {
     const result = await response.data;
     console.log("Task triggered:", result);
     return result;
-  } catch (error) {
+  } catch {
     return { message: "Database Error: Failed to refresh full wallet." };
   }
 }
@@ -175,7 +182,7 @@ export async function deleteWallet(id: string) {
       },
     });
     return response.data;
-  } catch (error) {
+  } catch {
     return { message: "Database Error: Failed to delete wallet." };
   }
 }
@@ -191,7 +198,7 @@ export async function setContractAsSuspicious(id: string) {
       }
     );
     return response.data;
-  } catch (error) {
+  } catch {
     return { message: "Database Error: Failed to set contract as Suspicious." };
   }
 }
@@ -207,7 +214,7 @@ export async function setContractAsStable(id: string) {
       }
     );
     return response.data;
-  } catch (error) {
+  } catch {
     return { message: "Database Error: Failed to set contract as Stable." };
   }
 }
@@ -223,7 +230,7 @@ export async function setContractAsStandard(id: string) {
       }
     );
     return response.data;
-  } catch (error) {
+  } catch {
     return { message: "Database Error: Failed to set contract as Standard." };
   }
 }

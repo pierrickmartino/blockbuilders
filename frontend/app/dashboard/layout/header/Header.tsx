@@ -1,5 +1,7 @@
 import React from 'react';
-import { Box, AppBar, Toolbar, styled, Stack, IconButton, Badge, Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
+import { Box, AppBar, Toolbar, styled, Stack, IconButton,
+  // , Badge, Button, 
+  FormControlLabel, FormGroup, Switch } from '@mui/material';
 import PropTypes from 'prop-types';
 import Logo from "../shared/logo/Logo";
 // components

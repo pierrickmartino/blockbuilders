@@ -4,7 +4,7 @@ const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import { useTheme } from "@mui/material/styles";
 import React from "react";
 import { Position } from "@/app/lib/definition";
-import { Card, Box, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 // Define the props type that will be passed into WalletTable
 interface Top5PositionsGraphProps {

@@ -19,6 +19,10 @@ const Sidebar = ({
 
   const sidebarWidth = "270px";
 
+  const handleToggleSidebar = () => {
+    // logic to toggle the sidebar
+  };
+
   if (lgUp) {
     return (
       <Box
@@ -62,7 +66,7 @@ const Sidebar = ({
               {/* Sidebar Items */}
               {/* ------------------------------------------- */}
               <SidebarProfile />
-              <Box mt={3}><SidebarItems /></Box>
+              <Box mt={3}><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
               {/* <Upgrade /> */}
             </Box>
           </Box>
@@ -94,7 +98,7 @@ const Sidebar = ({
       {/* Sidebar For Mobile */}
       {/* ------------------------------------------- */}
       <SidebarProfile />
-      <Box mt={3}><SidebarItems /></Box>
+      <Box mt={3}><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
       <Upgrade />
     </Drawer>
   );

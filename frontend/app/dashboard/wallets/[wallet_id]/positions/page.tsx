@@ -13,7 +13,7 @@ import {
   Breadcrumbs,
 } from "@mui/material";
 // components
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Position } from "@/app/lib/definition";
 import { fetchPositions, fetchPositionsWithSearch } from "@/app/lib/data";
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
@@ -33,7 +33,7 @@ const Positions = () => {
   const params = useParams();
   const wallet_id = params.wallet_id;
 
-  const fetchPositionData = async () => {
+  const fetchPositionData = useCallback(async () => {
     if (wallet_id) {
       await fetchPositions(
         String(wallet_id),
@@ -43,7 +43,11 @@ const Positions = () => {
         rowsPerPage
       );
     }
-  };
+  }, [wallet_id, page, rowsPerPage]);
+
+  useEffect(() => {
+    fetchPositionData();
+  }, [fetchPositionData]);
 
   const fetchPositionDataWithSearch = async (searchTerm: string) => {
     if (wallet_id) {
@@ -57,11 +61,6 @@ const Positions = () => {
       );
     }
   };
-
-  useEffect(() => {
-    fetchPositionData();
-    // console.log("Positions after fetching:", positions); // Log positions
-  }, [wallet_id, page, rowsPerPage]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage); // Update page state

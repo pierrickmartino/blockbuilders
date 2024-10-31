@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 
 import {
   Typography,
@@ -12,7 +12,6 @@ import {
   TableContainer,
   IconButton,
   TablePagination,
-  Button,
   Stack,
   ListItemIcon,
   Menu,
@@ -128,9 +127,9 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     }
   };
 
-  const truncateText = (text: string, maxLength: number) => {
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  };
+  // const truncateText = (text: string, maxLength: number) => {
+  //   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  // };
 
   const action = (
     <Fragment>

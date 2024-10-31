@@ -13,14 +13,12 @@ import {
   Breadcrumbs,
 } from "@mui/material";
 // components
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Position } from "@/app/lib/definition";
 import { fetchPositionsAll, fetchPositionsAllWithSearch } from "@/app/lib/data";
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
-import formatNumber from "@/app/utils/formatNumber";
-import CustomCard from "@/app/dashboard/components/shared/CustomCard";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
 
 const Positions = () => {
@@ -29,9 +27,16 @@ const Positions = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
 
-  const fetchPositionData = async () => {
+  // Memoize fetchPositionData using useCallback
+  const fetchPositionData = useCallback(async () => {
     await fetchPositionsAll(setPositions, setTotalCount, page, rowsPerPage);
-  };
+  }, [page, rowsPerPage]); // Dependencies include page and rowsPerPage
+
+  // Use useEffect to call fetchPositionData
+  useEffect(() => {
+    fetchPositionData();
+    // console.log("Positions after fetching:", positions); // Log positions
+  }, [fetchPositionData]); // Include fetchPositionData as a dependency
 
   const fetchPositionDataWithSearch = async (searchTerm: string) => {
     await fetchPositionsAllWithSearch(
@@ -42,11 +47,6 @@ const Positions = () => {
       rowsPerPage
     );
   };
-
-  useEffect(() => {
-    fetchPositionData();
-    // console.log("Positions after fetching:", positions); // Log positions
-  }, [page, rowsPerPage]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage); // Update page state

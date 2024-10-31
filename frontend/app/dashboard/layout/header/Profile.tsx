@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { useTheme } from "@mui/material/styles";
-import Link from "next/link";
+// import { useTheme } from "@mui/material/styles";
 import {
   Box,
   Menu,
   Avatar,
-  Typography,
   Divider,
   Button,
   IconButton,
@@ -14,14 +12,14 @@ import {
   ListItemText,
 } from "@mui/material";
 
-import { Stack } from "@mui/system";
-import {
-  IconChevronDown,
-  IconCreditCard,
-  IconCurrencyDollar,
-  IconMail,
-  IconShield,
-} from "@tabler/icons-react";
+// import { Stack } from "@mui/system";
+// import {
+//   IconChevronDown,
+//   IconCreditCard,
+//   IconCurrencyDollar,
+//   IconMail,
+//   IconShield,
+// } from "@tabler/icons-react";
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -32,13 +30,13 @@ const Profile = () => {
     setAnchorEl2(null);
   };
 
-  const theme = useTheme();
-  const primary = theme.palette.primary.main;
-  const primarylight = theme.palette.primary.light;
-  const error = theme.palette.error.main;
-  const errorlight = theme.palette.error.light;
-  const success = theme.palette.success.main;
-  const successlight = theme.palette.success.light;
+  // const theme = useTheme();
+  // const primary = theme.palette.primary.main;
+  // const primarylight = theme.palette.primary.light;
+  // const error = theme.palette.error.main;
+  // const errorlight = theme.palette.error.light;
+  // const success = theme.palette.success.main;
+  // const successlight = theme.palette.success.light;
   return (
     <Box>
       <IconButton

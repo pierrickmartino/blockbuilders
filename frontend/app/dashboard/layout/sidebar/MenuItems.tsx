@@ -1,5 +1,13 @@
 import {
-  IconBoxMultiple, IconCircleDot, IconFile, IconHome, IconInfoCircle, IconLayout, IconLayoutGrid, IconPhoto, IconPoint, IconStar, IconTable, IconTimeline, IconUser
+  IconCircleDot,
+  IconFile,
+  IconHome,
+  IconInfoCircle,
+  IconPhoto,
+  IconStar,
+  IconTable,
+  IconTimeline,
+  IconUser,
 } from "@tabler/icons-react";
 
 import { uniqueId } from "lodash";

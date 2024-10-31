@@ -78,7 +78,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
                 }}
               >
                 {transactions.map((transaction: Transaction, index: number) => (
-                  <TimelineItem>
+                  <TimelineItem key={transaction.id}>
                     <TimelineSeparator>
                       <TimelineDot
                         sx={{

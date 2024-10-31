@@ -17,7 +17,7 @@ import ProfileCard from "../components/dashboard/TheProfileCard";
 import MyContacts from "../components/dashboard/TheMyContacts";
 import WalletTable from "../components/dashboard/WalletTable";
 import WalletWizard from "../components/dashboard/WalletWizard";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Wallet,
   Position,
@@ -62,10 +62,15 @@ const Wallets = () => {
     setOpen(false);
   };
 
-  // Fetch wallets function
-  const fetchWalletData = async () => {
+  // Memoize fetchWalletData using useCallback
+  const fetchWalletData = useCallback(async () => {
     await fetchWallets(setWallets, setTotalCount, page, rowsPerPage);
-  };
+  }, [page, rowsPerPage]); // Dependencies include page and rowsPerPage
+
+  // Use useEffect to call fetchWalletData
+  useEffect(() => {
+    fetchWalletData();
+  }, [fetchWalletData]); // Include fetchWalletData as a dependency
 
   // Fetch top5 positions function
   const fetchTop5PositionData = async () => {
@@ -86,11 +91,6 @@ const Wallets = () => {
   const fetchCountTransactionData = async () => {
     await fetchCountTransactions(setCountTransactions);
   };
-
-  // Fetch wallets using the fetchWallets function from your data.ts file
-  useEffect(() => {
-    fetchWalletData(); // Pass setWallets directly to fetchWallets
-  }, [page, rowsPerPage]);
 
   useEffect(() => {
     fetchTop5PositionData();
@@ -149,7 +149,10 @@ const Wallets = () => {
             </Stack>
           </Grid>
           <Grid item xs={12} lg={8}>
-            <Top5Repartition blockchains={top5_blockchains} positions={top5_positions} />
+            <Top5Repartition
+              blockchains={top5_blockchains}
+              positions={top5_positions}
+            />
           </Grid>
           <Grid item xs={12} lg={4}>
             <WalletWizard onWalletCreated={handleWalletCreated} />

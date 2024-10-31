@@ -1,4 +1,6 @@
 - core - update node version to uprade npm
+- core - fix lint issues (npm run lint)
+- core - migrate to etherscan API V2
 - dashboard - dark mode
 - dashboard - afficher une notification quand download/refresh est terminé
 - dashboard - pouvoir switcher entre la fullpage en largeur et la vue serrée

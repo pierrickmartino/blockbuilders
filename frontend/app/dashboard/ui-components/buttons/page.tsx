@@ -1,6 +1,7 @@
 'use client';
 import {
-  Paper, Grid,
+  // Paper, 
+  Grid,
   Button,
   Box,
   Stack,
@@ -10,19 +11,19 @@ import {
 } from '@mui/material';
 import PageContainer from '../../components/container/PageContainer';
 import BaseCard from '../../components/shared/BaseCard';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+// import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { IconHome, IconTrash, IconUser } from '@tabler/icons-react';
 
 
-const Item = styled(Paper)(({ theme }) => ({
-  ...theme.typography.body1,
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-  height: 60,
-  lineHeight: '60px',
-}));
-const darkTheme = createTheme({ palette: { mode: 'dark' } });
-const lightTheme = createTheme({ palette: { mode: 'light' } });
+// const Item = styled(Paper)(({ theme }) => ({
+//   ...theme.typography.body1,
+//   textAlign: 'center',
+//   color: theme.palette.text.secondary,
+//   height: 60,
+//   lineHeight: '60px',
+// }));
+// const darkTheme = createTheme({ palette: { mode: 'dark' } });
+// const lightTheme = createTheme({ palette: { mode: 'light' } });
 
 const Buttons = () => {
   return (

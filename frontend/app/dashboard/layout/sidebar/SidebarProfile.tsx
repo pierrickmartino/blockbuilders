@@ -1,4 +1,6 @@
-import { Box, Avatar, Typography, useMediaQuery,Tooltip, IconButton } from "@mui/material";
+import { Box, Avatar, Typography
+  // , useMediaQuery,Tooltip, IconButton 
+} from "@mui/material";
 export const SidebarProfile = () => {
   return (
     <Box

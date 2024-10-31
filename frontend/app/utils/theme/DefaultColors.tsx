@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { TimelineConnector } from '@mui/lab';
+// import { TimelineConnector } from '@mui/lab';
 import { Poppins } from "next/font/google";
 import theme from "../theme";
 

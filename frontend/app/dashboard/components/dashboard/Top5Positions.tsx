@@ -1,5 +1,5 @@
 import { Position } from "@/app/lib/definition";
-import { Box, Card, Typography, Stack, Avatar } from "@mui/material";
+import { Box, Typography, Stack, Avatar } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 
 // Define the props type that will be passed into WalletTable
@@ -12,6 +12,7 @@ const Top5Positions: React.FC<Top5PositionsProps> = ({ positions }) => {
     <Box px={2} width="60%">
       {positions.map((position: Position) => (
         <Stack
+          key={position.id}
           direction="row"
           alignItems="center"
           spacing={2}

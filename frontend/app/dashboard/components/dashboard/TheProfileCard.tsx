@@ -6,10 +6,8 @@ import {
   Typography,
   Stack,
   Avatar,
-  IconButton,
   Button,
 } from "@mui/material";
-import { IconClock, IconMessageCircle2 } from "@tabler/icons-react";
 
 const ProfileCard = () => {
   return (

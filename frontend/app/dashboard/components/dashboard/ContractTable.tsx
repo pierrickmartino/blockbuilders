@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment } from "react";
 
 import {
   Typography,
@@ -8,24 +8,12 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Chip,
   TableContainer,
-  IconButton,
   TablePagination,
-  Button,
   Stack,
-  ListItemIcon,
-  Menu,
-  MenuItem,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
-import formatNumber from "@/app/utils/formatNumber";
-import formatDate from "@/app/utils/formatDate";
 import { Contract } from "../../../lib/definition";
-import Link from "next/link";
-import { Download, Link as LinkIcon } from "@mui/icons-material";
-import { IconDotsVertical } from "@tabler/icons-react";
-import { saveAs } from "file-saver";
 
 // Define the props type that will be passed into WalletTable
 interface ContractTableProps {

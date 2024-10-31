@@ -1,5 +1,5 @@
 import { Blockchain } from "@/app/lib/definition";
-import { Box, Card, Typography, Stack, Avatar } from "@mui/material";
+import { Box, Typography, Stack, Avatar } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 
 // Define the props type that will be passed into WalletTable
@@ -12,6 +12,7 @@ const Top5Blockchains: React.FC<Top5BlockchainsProps> = ({ blockchains }) => {
     <Box px={2} width="60%">
       {blockchains.map((blockchain: Blockchain) => (
         <Stack
+          key={blockchain.id}
           direction="row"
           alignItems="center"
           spacing={2}

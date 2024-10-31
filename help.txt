@@ -49,6 +49,20 @@ docker-compose -f docker-compose.stack.yml run --rm backend python manage.py loa
 # STOP
 docker-compose -f docker-compose.stack.yml up --build --remove-orphans
 
+#CleanUp Node/React/Nextjs install
+cd .\frontend\
+nvm install lts
+nvm use lts
+nvm current
+npm install -g npm@10.9.0
+npm cache clean --force
+rm -r node_modules
+rm -r package-lock.json
+npm install
+npm update
+
+#HowTo find frontend component to update
+npm outdated
 
 KeyError: 'ContainerConfig'
 docker-compose -f docker-compose.server.yml rm
@@ -62,6 +76,7 @@ chmod +x entrypoint.sh
 sudo lsof -i :5432
 sudo kill 604
 
+#Error Docker on MacOS
 cd .docker
 nano config.json
 "credStore" au lieu de "credsStore"

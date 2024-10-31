@@ -5,23 +5,17 @@ import {
   Card,
   Stack,
   Typography,
-  Chip,
   Button,
   Link,
   Breadcrumbs,
 } from "@mui/material";
 // components
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Contract } from "@/app/lib/definition";
 import { fetchContractsAll, fetchContractsAllWithSearch } from "@/app/lib/data";
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
-import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
-import CustomCard from "@/app/dashboard/components/shared/CustomCard";
-import formatNumber from "@/app/utils/formatNumber";
 import {
-  ArrowDropDown,
-  ArrowDropUp,
   NavigateBefore,
   NavigateNext,
 } from "@mui/icons-material";
@@ -37,28 +31,25 @@ const Contracts = () => {
   // const wallet_id = params.wallet_id;
   // const position_id = params.position_id;
 
-  const fetchContractData = async () => {    
-      await fetchContractsAll(
-        setContracts,
-        setTotalCount,
-        page,
-        rowsPerPage
-      );
-  };
+  // Memoize fetchContractData using useCallback
+  const fetchContractData = useCallback(async () => {
+    await fetchContractsAll(setContracts, setTotalCount, page, rowsPerPage);
+  }, [page, rowsPerPage]); // Dependencies include page and rowsPerPage
 
-  const fetchContractDataWithSearch = async (searchTerm: string) => {
-      await fetchContractsAllWithSearch(
-        String(searchTerm),
-        setContracts,
-        setTotalCount,
-        page,
-        rowsPerPage
-      );
-  };
-
+  // Use useEffect to call fetchContractData
   useEffect(() => {
     fetchContractData();
-  }, [page, rowsPerPage]);
+  }, [fetchContractData]); // Include fetchContractData as a dependency
+
+  const fetchContractDataWithSearch = async (searchTerm: string) => {
+    await fetchContractsAllWithSearch(
+      String(searchTerm),
+      setContracts,
+      setTotalCount,
+      page,
+      rowsPerPage
+    );
+};
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage); // Update page state

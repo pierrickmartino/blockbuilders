@@ -10,7 +10,7 @@ import {
   Breadcrumbs,
 } from "@mui/material";
 // components
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Transaction } from "@/app/lib/definition";
 import {
   fetchTransactionsAll,
@@ -27,14 +27,20 @@ const Transactions = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
 
-  const fetchTransactionData = async () => {
+  // Memoize fetchTransactionData using useCallback
+  const fetchTransactionData = useCallback(async () => {
     await fetchTransactionsAll(
       setTransactions,
       setTotalCount,
       page,
       rowsPerPage
     );
-  };
+  }, [page, rowsPerPage]); // Dependencies include page and rowsPerPage
+
+  // Use useEffect to call fetchTransactionData
+  useEffect(() => {
+    fetchTransactionData();
+  }, [fetchTransactionData]); // Include fetchTransactionData as a dependency
 
   const fetchTransactionDataWithSearch = async (searchTerm: string) => {
     await fetchTransactionsAllWithSearch(
@@ -45,10 +51,6 @@ const Transactions = () => {
       rowsPerPage
     );
   };
-
-  useEffect(() => {
-    fetchTransactionData();
-  }, [page, rowsPerPage]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage); // Update page state

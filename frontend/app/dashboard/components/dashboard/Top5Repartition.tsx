@@ -3,30 +3,14 @@ import React, { Fragment } from "react";
 import {
   Card,
   Box,
-  Avatar,
   Stack,
-  Typography,
-  Grid,
-  Button,
-  MenuItem,
-  Chip,
-  LinearProgress,
 } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import Timeline from "@mui/lab/Timeline";
-import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
-import TimelineDot from "@mui/lab/TimelineDot";
 
-import { Blockchain, Position, Transaction } from "@/app/lib/definition";
-import formatNumber from "@/app/utils/formatNumber";
-import formatDate from "@/app/utils/formatDate";
-import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
+import { Blockchain, Position } from "@/app/lib/definition";
 import Top5Positions from "./Top5Positions";
 import Top5PositionsGraph from "./Top5PositionsGraph";
 import Top5BlockchainsGraph from "./Top5BlockchainsGraph";
@@ -49,11 +33,11 @@ const Top5Repartition: React.FC<Top5RepartitionProps> = ({
   };
 
   // select
-  const [number, setNumber] = React.useState("");
+  // const [number, setNumber] = React.useState("");
 
-  const handleChange3 = (event: any) => {
-    setNumber(event.target.value);
-  };
+  // const handleChange3 = (event: any) => {
+  //   setNumber(event.target.value);
+  // };
 
   return (
     <Fragment>

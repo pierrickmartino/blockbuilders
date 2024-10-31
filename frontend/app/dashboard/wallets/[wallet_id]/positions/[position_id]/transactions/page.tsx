@@ -11,7 +11,7 @@ import {
   Breadcrumbs,
 } from "@mui/material";
 // components
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useCallback } from "react";
 import { Transaction } from "@/app/lib/definition";
 import { fetchTransactions, fetchTransactionsWithSearch } from "@/app/lib/data";
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
@@ -37,7 +37,8 @@ const Transactions = () => {
   const wallet_id = params.wallet_id;
   const position_id = params.position_id;
 
-  const fetchTransactionData = async () => {
+  // Wrap fetchTransactionData with useCallback to avoid unnecessary re-creations
+  const fetchTransactionData = useCallback(async () => {
     if (position_id && wallet_id) {
       await fetchTransactions(
         String(position_id),
@@ -48,7 +49,11 @@ const Transactions = () => {
         rowsPerPage
       );
     }
-  };
+  }, [position_id, wallet_id, page, rowsPerPage]); // Add dependencies used within the function
+
+  useEffect(() => {
+    fetchTransactionData();
+  }, [fetchTransactionData]); // Include fetchTransactionData as a dependency
 
   const fetchTransactionDataWithSearch = async (searchTerm: string) => {
     if (position_id && wallet_id) {
@@ -63,10 +68,6 @@ const Transactions = () => {
       );
     }
   };
-
-  useEffect(() => {
-    fetchTransactionData();
-  }, [position_id, page, rowsPerPage]);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage); // Update page state
