@@ -18,6 +18,9 @@ from app.models import (
     WalletProcess,
 )
 
+def get_task_status(request, task_id):
+    task_result = AsyncResult(str(task_id))
+    return JsonResponse({"task_id": task_id, "status": task_result.status})
 
 @csrf_exempt
 def download_wallet_task_status(request, task_id):

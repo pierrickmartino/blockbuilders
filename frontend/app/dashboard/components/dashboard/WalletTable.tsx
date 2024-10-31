@@ -40,9 +40,9 @@ interface WalletTableProps {
   onPageChange: (newPage: number) => void;
   onRowsPerPageChange: (newRowsPerPage: number) => void;
   onWalletDeleted: () => void;
-  onWalletDownloaded: (response: unknown) => void;
-  onWalletRefreshed: (response: unknown) => void;
-  onWalletFullRefreshed: (response: unknown) => void;
+  onWalletDownloaded: (response: string) => void;
+  onWalletRefreshed: (response: string) => void;
+  onWalletFullRefreshed: (response: string) => void;
 }
 
 const WalletTable: React.FC<WalletTableProps> = ({
@@ -139,29 +139,45 @@ const WalletTable: React.FC<WalletTableProps> = ({
   const handleDownload = async () => {
     if (selectedWalletId !== null) {
       const response = await downloadWallet(selectedWalletId.toString());
-      if (response.message !== "Database Error: Failed to download wallet.") {
-        onWalletDownloaded(response); // Notify parent to refresh wallets
+      if (response.task_id) {
+        // console.log("Task triggered in handleDownload:", response.task_id);
+        onWalletDownloaded(response.task_id); // Notify the parent component with the task ID
+      } else {
+        console.error("Error: Task ID not found in the response.");
       }
+      // if (response.message !== "Database Error: Failed to download wallet.") {
+      //   onWalletDownloaded(response); // Notify parent to refresh wallets
+      // }
     }
   };
 
   const handleRefresh = async () => {
     if (selectedWalletId !== null) {
       const response = await refreshWallet(selectedWalletId.toString());
-      if (response.message !== "Database Error: Failed to refresh wallet.") {
-        onWalletRefreshed(response); // Notify parent to refresh wallets
+      if (response.task_id) {
+        onWalletRefreshed(response.task_id); // Notify the parent component with the task ID
+      } else {
+        console.error("Error: Task ID not found in the response.");
       }
+      // if (response.message !== "Database Error: Failed to refresh wallet.") {
+      //   onWalletRefreshed(response); // Notify parent to refresh wallets
+      // }
     }
   };
 
   const handleRefreshFull = async () => {
     if (selectedWalletId !== null) {
       const response = await refreshFullWallet(selectedWalletId.toString());
-      if (
-        response.message !== "Database Error: Failed to refresh full wallet."
-      ) {
-        onWalletFullRefreshed(response); // Notify parent to refresh wallets
+      if (response.task_id) {
+        onWalletFullRefreshed(response.task_id); // Notify the parent component with the task ID
+      } else {
+        console.error("Error: Task ID not found in the response.");
       }
+      // if (
+      //   response.message !== "Database Error: Failed to refresh full wallet."
+      // ) {
+      //   onWalletFullRefreshed(response); // Notify parent to refresh wallets
+      // }
     }
   };
 

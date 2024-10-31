@@ -1,6 +1,5 @@
 "use client";
 import {
-  Grid,
   Box,
   Snackbar,
   SnackbarCloseReason,
@@ -8,7 +7,9 @@ import {
   Typography,
   Alert,
   AlertTitle,
+  AlertColor,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import PageContainer from "../components/container/PageContainer";
 // components
 import SalesOverview from "../components/dashboard/TheSalesOverview";
@@ -30,6 +31,7 @@ import {
   fetchTopBlockchains,
   fetchLastTransactions,
   fetchCountTransactions,
+  fetchTaskStatus,
 } from "@/app/lib/data";
 import LastTransactions from "../components/dashboard/LastTransactions";
 import Top5Repartition from "../components/dashboard/Top5Repartition";
@@ -41,13 +43,20 @@ const Wallets = () => {
   const [last_transactions, setLastTransactions] = useState<Transaction[]>([]);
   const [count_transactions, setCountTransactions] = useState(0);
   const [open, setOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState(""); // New state for message
+  const [snackbarMessage, setSnackbarMessage] = useState(""); 
+  const [snackbarTitle, setSnackbarTitle] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("info"); 
   const [page, setPage] = useState(0); // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
+  const [taskPolling, setTaskPolling] = useState<{
+    [taskId: string]: NodeJS.Timeout;
+  }>({}); // New state for task polling
 
-  const handleClick = (message: string) => {
-    setSnackbarMessage(message); // Set the snackbar message
+  const handleClick = (message: string, title: string, severity: AlertColor) => {
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+    setSnackbarTitle(title);
     setOpen(true);
   };
 
@@ -60,6 +69,39 @@ const Wallets = () => {
     }
 
     setOpen(false);
+  };
+
+  // New function to poll task status
+  const pollTaskStatus = (taskId: string) => {
+    const intervalId = setInterval(async () => {
+      try {
+        const status = await fetchTaskStatus(taskId);
+        console.log("Task result in pollTaskStatus:", status);
+        if (status === "SUCCESS") {
+          setSnackbarMessage(`Task ${taskId} finished successfully.`);
+          setSnackbarTitle('Great News !');
+          setSnackbarSeverity('success');
+          setOpen(true);
+          clearInterval(taskPolling[taskId]);
+          setTaskPolling((prev) => {
+            const { [taskId]: _, ...remainingPolling } = prev; // Remove the completed task
+            return remainingPolling;
+          });
+        }
+      } catch (error) {
+        console.error("Error polling task status:", error);
+        clearInterval(intervalId);
+        setTaskPolling((prev) => {
+          const { [taskId]: _, ...remainingPolling } = prev; // Remove the errored task
+          return remainingPolling;
+        });
+      }
+    }, 3000); // Poll every 3 seconds
+
+    setTaskPolling((prev) => ({
+      ...prev,
+      [taskId]: intervalId,
+    }));
   };
 
   // Memoize fetchWalletData using useCallback
@@ -116,16 +158,20 @@ const Wallets = () => {
     fetchWalletData(); // Re-fetch wallet data after a new wallet is created
   };
 
-  const handleWalletDownloaded = () => {
-    handleClick("Download in progress"); // Show download message
+  const handleWalletDownloaded = (taskId: string) => {
+    // console.log("Task triggered in handleWalletDownloaded:", taskId);
+    handleClick("Download in progress for " + taskId, "Info", "info");
+    pollTaskStatus(taskId); // Start polling task status
   };
 
-  const handleWalletRefreshed = () => {
-    handleClick("Refresh in progress"); // Show refresh message
+  const handleWalletRefreshed = (taskId: string) => {
+    handleClick("Refresh in progress for" + taskId, "Info", "info");
+    pollTaskStatus(taskId); // Start polling task status
   };
 
-  const handleWalletFullRefreshed = () => {
-    handleClick("Full refresh in progress"); // Show refresh message
+  const handleWalletFullRefreshed = (taskId: string) => {
+    handleClick("Full refresh in progress for " + taskId, "Info", "info");
+    pollTaskStatus(taskId); // Start polling task status
   };
 
   const handlePageChange = (newPage: number) => {
@@ -137,33 +183,43 @@ const Wallets = () => {
     setPage(0); // Reset page to 0 whenever rows per page changes
   };
 
+  // Handle cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      // Clear all intervals
+      Object.values(taskPolling).forEach((intervalId) =>
+        clearInterval(intervalId)
+      );
+    };
+  }, [taskPolling]);
+
   return (
     <PageContainer title="Wallets" description="this is Wallets">
       <Box mt={0}>
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <Stack direction="row" justifyContent="space-between">
               <Typography color="textSecondary" variant="h4">
                 Dashboard
               </Typography>
             </Stack>
           </Grid>
-          <Grid item xs={12} lg={8}>
+          <Grid size={{ xs: 12, lg: 8 }}>
             <Top5Repartition
               blockchains={top5_blockchains}
               positions={top5_positions}
             />
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <WalletWizard onWalletCreated={handleWalletCreated} />
           </Grid>
-          <Grid item xs={12} lg={8}>
+          <Grid size={{ xs: 12, lg: 8 }}>
             <SalesOverview />
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <Blogcard />
           </Grid>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <WalletTable
               wallets={wallets}
               page={page}
@@ -177,17 +233,17 @@ const Wallets = () => {
               onWalletFullRefreshed={handleWalletFullRefreshed}
             />
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <ProfileCard />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <MyContacts />
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} lg={8}>
+          <Grid size={{ xs: 12, lg: 8 }}>
             <LastTransactions
               transactions={last_transactions}
               count={count_transactions}
@@ -195,9 +251,9 @@ const Wallets = () => {
           </Grid>
         </Grid>
       </Box>
-      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-        <Alert severity="info" onClose={handleClose} sx={{ width: "100%" }}>
-          <AlertTitle>Info</AlertTitle>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+        <Alert severity={snackbarSeverity} onClose={handleClose} sx={{ width: "100%" }}>
+          <AlertTitle>{snackbarTitle}</AlertTitle>
           {snackbarMessage}
         </Alert>
       </Snackbar>

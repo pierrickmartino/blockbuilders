@@ -120,7 +120,7 @@ export async function downloadWallet(id: string) {
       }
     );
     const result = await response.data;
-    console.log("Task triggered:", result);
+    console.log("Task triggered in downloadWallet:", result);
     return result;
   } catch {
     return { message: "Database Error: Failed to download wallet." };

@@ -1,5 +1,11 @@
 import axios from "axios";
-import { Position, Wallet, Transaction, Blockchain, Contract } from "./definition";
+import {
+  Position,
+  Wallet,
+  Transaction,
+  Blockchain,
+  Contract,
+} from "./definition";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 const userToken = process.env.NEXT_PUBLIC_USER_TOKEN || "";
@@ -421,5 +427,24 @@ export const fetchContractsAllWithSearch = async (
     console.error("Error fetching data from transaction API:", err);
     setContracts([]); // Set empty transactions if fetching fails
     throw new Error("Failed to fetch all transactions.");
+  }
+};
+
+export const fetchTaskStatus = async (task_id: string): Promise<string> => {
+  try {
+    const response = await axios.get(`${apiUrl}/api/tasks/${task_id}/status`, {
+      headers: {
+        Authorization: `Token ${userToken}`,
+      },
+    });
+
+    if (response.data) {
+      return response.data.status;
+    } else {
+      throw new Error("Task status not found in response.");
+    }
+  } catch (err) {
+    console.error("Error fetching task status:", err);
+    throw new Error("Failed to fetch task status.");
   }
 };

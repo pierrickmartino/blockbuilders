@@ -40,7 +40,7 @@ from app.views.views_api import (
     MarketDataViewSet,
     UserSettingViewSet,
     TransactionViewSet,
-    PositionViewSet,
+    PositionViewSet
 )
 
 # from rest_framework_simplejwt.views import (
@@ -298,6 +298,12 @@ urlpatterns = format_suffix_patterns(
             "api/positions/<uuid:position_id>/export/csv/",
             views_transaction.export_transactions_csv,
             name="export_transactions_csv",
+        ),
+        # FOR CELERY PROCESS
+        path(
+            "api/tasks/<uuid:task_id>/status/",
+            views_wallet.get_task_status,
+            name="task_id",
         ),
     ]
 )

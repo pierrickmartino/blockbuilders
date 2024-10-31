@@ -1,8 +1,6 @@
-- core - update node version to uprade npm
 - core - fix lint issues (npm run lint)
 - core - migrate to etherscan API V2
 - dashboard - dark mode
-- dashboard - afficher une notification quand download/refresh est terminé
 - dashboard - pouvoir switcher entre la fullpage en largeur et la vue serrée
 - dashboard - ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois 
 - dashboard - ajouter un calendrier du mois avec le nombre de trade sur chaque journée

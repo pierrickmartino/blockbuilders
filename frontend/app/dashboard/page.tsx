@@ -1,5 +1,6 @@
 'use client'
-import { Grid, Box } from '@mui/material';
+import { Box } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import PageContainer from './components/container/PageContainer';
 // components
 import SalesOverview from './components/dashboard/TheSalesOverview';
@@ -14,26 +15,26 @@ const Dashboard = () => {
     <PageContainer title="Dashboard" description="this is Dashboard">
       <Box mt={3}>
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={8}>
+          <Grid size={{ xs:12, lg:8 }}>
             <SalesOverview />
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs:12, lg:4 }}>
             <Blogcard />
           </Grid>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs:12, lg:12 }}>
             <ProductPerformance />
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs:12, lg:4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+              <Grid size={{ xs:12 }}>
                 <ProfileCard />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs:12 }}>
                 <MyContacts />
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={12} lg={8}>
+          <Grid size={{ xs:12, lg:8 }}>
             <ActivityTimeline />
           </Grid>
         </Grid>
