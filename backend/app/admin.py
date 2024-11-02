@@ -8,7 +8,7 @@ class Wallet_Admin(admin.ModelAdmin):
 
 
 class Wallet_Process_Admin(admin.ModelAdmin):
-    list_display = ("wallet", "download_task", "resync_task", "delete_task")
+    list_display = ("wallet", "download_task", "full_download_task", "resync_task", "delete_task")
 
 
 class Fiat_Admin(admin.ModelAdmin):

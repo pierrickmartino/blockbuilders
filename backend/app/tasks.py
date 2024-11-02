@@ -727,6 +727,31 @@ def finish_wallet_resync_task(previous_return: list, wallet_id: uuid):
     logger.info(f"WalletProcess updated successfully.")
     return wallet_id
 
+@shared_task
+def start_wallet_fulldownload_task(wallet_id: uuid):
+    """
+    Task to update wallet process with STARTED full download status.
+    """
+    logger.info(f"Updating wallet process (full download) to STARTED.")
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+    wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
+    wallet_process.full_download_task_status = TaskStatusChoices.STARTED
+    wallet_process.save()
+    logger.info(f"WalletProcess updated successfully.")
+    return wallet_id
+
+@shared_task
+def finish_wallet_fulldownload_task(previous_return: list, wallet_id: uuid):
+    """
+    Task to update wallet process with FINISHED full download status.
+    """
+    logger.info(f"Updating wallet process (full download) to FINISHED.")
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+    wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
+    wallet_process.full_download_task_status = TaskStatusChoices.FINISHED
+    wallet_process.save()
+    logger.info(f"WalletProcess updated successfully.")
+    return wallet_id
 
 @shared_task
 def finish_wallet_download_task(previous_return: list, wallet_id: uuid):
@@ -975,54 +1000,54 @@ def get_historical_price_from_market_task(previous_return: list, symbol: str):
 
 
 @shared_task
-def get_full_init_historical_price_from_market_task(symbol: str):
+def get_full_init_historical_price_from_market_task(previous_return: list, symbol_list: list[str]):
     """
     Task to get the full init historical market price of a symbol.
     """
-    logger.info(f"Get full init market historical price for {symbol}.")
-    try:
+    for symbol in symbol_list:
+        logger.info(f"Get full init market historical price for {symbol}.")
+        try:
+            delta = 1000
 
-        delta = 1000
+            # Get today's date
+            days_ago = timezone.now().date() - timedelta(days=delta)
 
-        # Get today's date
-        days_ago = timezone.now().date() - timedelta(days=delta)
+            # Test if the data is already there
+            data = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=days_ago)
+            data.delete()
+            logger.info(f"Historical prices are cleaned up for symbol {symbol}.")
 
-        # Test if the data is already there
-        data = MarketData.objects.filter(symbol=symbol, reference="USD", time__gte=days_ago)
-        data.delete()
-        logger.info(f"Historical prices are cleaned up for symbol {symbol}.")
+            # Get the historical prices for the symbol
+            prices = get_daily_pair_ohlcv(symbol, delta)
 
-        # Get the historical prices for the symbol
-        prices = get_daily_pair_ohlcv(symbol, delta)
+            # Iterate over each data point
+            for record in prices["Data"]["Data"]:
+                time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), dt_timezone.utc)
+                high = record["high"]
+                low = record["low"]
+                open_price = record["open"]
+                close = record["close"]
+                volume_from = record["volumefrom"]
+                volume_to = record["volumeto"]
 
-        # Iterate over each data point
-        for record in prices["Data"]["Data"]:
-            time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), dt_timezone.utc)
-            high = record["high"]
-            low = record["low"]
-            open_price = record["open"]
-            close = record["close"]
-            volume_from = record["volumefrom"]
-            volume_to = record["volumeto"]
+                # Create and save the MarketData object
+                market_data = MarketData(
+                    symbol=symbol,
+                    reference="USD",
+                    time=time,
+                    high=high,
+                    low=low,
+                    open=open_price,
+                    close=close,
+                    volume_from=volume_from,
+                    volume_to=volume_to,
+                )
+                market_data.save()
 
-            # Create and save the MarketData object
-            market_data = MarketData(
-                symbol=symbol,
-                reference="USD",
-                time=time,
-                high=high,
-                low=low,
-                open=open_price,
-                close=close,
-                volume_from=volume_from,
-                volume_to=volume_to,
-            )
-            market_data.save()
+        except Exception as e:
+            logger.error(f"An error occurred while getting the historical market price of a symbol {symbol}: {str(e)}")
 
-    except Exception as e:
-        logger.error(f"An error occurred while getting the historical market price of a symbol {symbol}: {str(e)}")
-
-    return symbol
+    return symbol_list
 
 
 @shared_task

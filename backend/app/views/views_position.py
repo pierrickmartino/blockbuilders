@@ -8,11 +8,13 @@ from app.tasks import (
     calculate_wallet_balance_task,
     delete_position_task,
     finish_wallet_download_task,
+    finish_wallet_fulldownload_task,
     finish_wallet_resync_task,
     get_full_init_historical_price_from_market_task,
     get_historical_price_from_market_task,
     get_price_from_market_task,
     start_wallet_download_task,
+    start_wallet_fulldownload_task,
     start_wallet_resync_task,
     update_contract_information,
 )
@@ -43,11 +45,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 
 from app.models import (
-    ContractCalculator,
     Position,
-    PositionCalculator,
-    Transaction,
-    TransactionCalculator,
     UserSetting,
     Wallet,
     WalletProcess,
@@ -125,11 +123,13 @@ def refresh_wallet_position_price(request, wallet_id: uuid):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     symbol_set = {
-        position.contract.symbol 
-        for position in positions 
-        if not position.contract.symbol[0].islower() and '-' not in position.contract.symbol and '.' not in position.contract.symbol
-    }   # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
-        # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
+        position.contract.symbol
+        for position in positions
+        if not position.contract.symbol[0].islower()
+        and "-" not in position.contract.symbol
+        and "." not in position.contract.symbol
+    }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
+    # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)
 
     chain_result = chain(
@@ -156,19 +156,26 @@ def refresh_full_historical_position_price(request, wallet_id: uuid):
     wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     symbol_set = {
-        position.contract.symbol 
-        for position in positions 
-        if not position.contract.symbol[0].islower() and '-' not in position.contract.symbol and '.' not in position.contract.symbol
-    }   # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
-        # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
+        position.contract.symbol
+        for position in positions
+        if not position.contract.symbol[0].islower()
+        and "-" not in position.contract.symbol
+        and "." not in position.contract.symbol
+    }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
+    # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)
 
-    for symbol in symbol_list:
-        group(get_full_init_historical_price_from_market_task.s(symbol))()
-
+    chain_result = chain(
+        start_wallet_fulldownload_task.s(wallet_id),
+        group(get_full_init_historical_price_from_market_task.s(symbol_list)),
+        finish_wallet_fulldownload_task.s(wallet_id),
+    )()
+    wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
+    wallet_process.full_download_task = chain_result.id
+    wallet_process.save()
     logger.info(f"Started getting full position prices for wallet with id {wallet_id}")
-    # return redirect("dashboard")
-    return JsonResponse({"status": "Task triggered successfully"})
+
+    return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
 
 
 # @login_required
@@ -211,4 +218,3 @@ def download_wallet(request, wallet_id: uuid):
     logger.info(f"Started downloading wallet with id {wallet_id}")
     # return redirect("dashboard")
     return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
-

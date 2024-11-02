@@ -17,7 +17,7 @@ export const fetchWallets = async (
   rowsPerPage: number
 ): Promise<void> => {
   try {
-    console.log("User Token:", process.env.NEXT_PUBLIC_USER_TOKEN);
+    // console.log("User Token:", process.env.NEXT_PUBLIC_USER_TOKEN);
     const response = await axios.get(`${apiUrl}/api/wallets`, {
       headers: {
         Authorization: `Token ${userToken}`,

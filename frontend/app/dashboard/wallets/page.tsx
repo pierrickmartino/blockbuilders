@@ -34,12 +34,12 @@ import {
   fetchTaskStatus,
 } from "@/app/lib/data";
 import LastTransactions from "../components/dashboard/LastTransactions";
-import Top5Repartition from "../components/dashboard/Top5Repartition";
+import TopRepartition from "../components/dashboard/TopRepartition";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
-  const [top5_positions, setTop5Positions] = useState<Position[]>([]);
-  const [top5_blockchains, setTop5Blockchains] = useState<Blockchain[]>([]);
+  const [top_positions, setTopPositions] = useState<Position[]>([]);
+  const [top_blockchains, setTopBlockchains] = useState<Blockchain[]>([]);
   const [last_transactions, setLastTransactions] = useState<Transaction[]>([]);
   const [count_transactions, setCountTransactions] = useState(0);
   const [open, setOpen] = useState(false);
@@ -114,14 +114,14 @@ const Wallets = () => {
     fetchWalletData();
   }, [fetchWalletData]); // Include fetchWalletData as a dependency
 
-  // Fetch top5 positions function
-  const fetchTop5PositionData = async () => {
-    await fetchTopPositions(5, setTop5Positions);
+  // Fetch top positions function
+  const fetchTopPositionData = async () => {
+    await fetchTopPositions(4, setTopPositions);
   };
 
-  // Fetch top5 blockchain function
-  const fetchTop5BlockchainData = async () => {
-    await fetchTopBlockchains(5, setTop5Blockchains);
+  // Fetch top blockchain function
+  const fetchTopBlockchainData = async () => {
+    await fetchTopBlockchains(4, setTopBlockchains);
   };
 
   // Fetch last transaction function
@@ -135,11 +135,11 @@ const Wallets = () => {
   };
 
   useEffect(() => {
-    fetchTop5PositionData();
+    fetchTopPositionData();
   }, []);
 
   useEffect(() => {
-    fetchTop5BlockchainData();
+    fetchTopBlockchainData();
   }, []);
 
   useEffect(() => {
@@ -205,9 +205,9 @@ const Wallets = () => {
             </Stack>
           </Grid>
           <Grid size={{ xs: 12, lg: 8 }}>
-            <Top5Repartition
-              blockchains={top5_blockchains}
-              positions={top5_positions}
+            <TopRepartition
+              blockchains={top_blockchains}
+              positions={top_positions}
             />
           </Grid>
           <Grid size={{ xs: 12, lg: 4 }}>

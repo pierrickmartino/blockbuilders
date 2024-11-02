@@ -11,18 +11,18 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 
 import { Blockchain, Position } from "@/app/lib/definition";
-import Top5Positions from "./Top5Positions";
-import Top5PositionsGraph from "./Top5PositionsGraph";
-import Top5BlockchainsGraph from "./Top5BlockchainsGraph";
-import Top5Blockchains from "./Top5Blockchains";
+import TopPositions from "./TopPositions";
+import TopPositionsGraph from "./TopPositionsGraph";
+import TopBlockchainsGraph from "./TopBlockchainsGraph";
+import TopBlockchains from "./TopBlockchains";
 
 // Define the props type that will be passed into WalletTable
-interface Top5RepartitionProps {
+interface TopRepartitionProps {
   blockchains: Blockchain[];
   positions: Position[];
 }
 
-const Top5Repartition: React.FC<Top5RepartitionProps> = ({
+const TopRepartition: React.FC<TopRepartitionProps> = ({
   blockchains,
   positions,
 }) => {
@@ -61,8 +61,8 @@ const Top5Repartition: React.FC<Top5RepartitionProps> = ({
                 spacing={0}
                 justifyContent="space-between"
               >
-                <Top5PositionsGraph positions={positions}></Top5PositionsGraph>
-                <Top5Positions positions={positions}></Top5Positions>
+                <TopPositionsGraph positions={positions}></TopPositionsGraph>
+                <TopPositions positions={positions}></TopPositions>
               </Stack>
             </TabPanel>
             <TabPanel value="2">
@@ -72,10 +72,10 @@ const Top5Repartition: React.FC<Top5RepartitionProps> = ({
                 spacing={0}
                 justifyContent="space-between"
               >
-                <Top5BlockchainsGraph
+                <TopBlockchainsGraph
                   blockchains={blockchains}
-                ></Top5BlockchainsGraph>
-                <Top5Blockchains blockchains={blockchains}></Top5Blockchains>
+                ></TopBlockchainsGraph>
+                <TopBlockchains blockchains={blockchains}></TopBlockchains>
               </Stack>
             </TabPanel>
           </TabContext>
@@ -85,4 +85,4 @@ const Top5Repartition: React.FC<Top5RepartitionProps> = ({
   );
 };
 
-export default Top5Repartition;
+export default TopRepartition;

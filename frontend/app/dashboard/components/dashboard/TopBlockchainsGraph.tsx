@@ -3,16 +3,16 @@ import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import { useTheme } from "@mui/material/styles";
 import React from "react";
-import { Position } from "@/app/lib/definition";
-import { Box, Typography } from "@mui/material";
+import { Blockchain } from "@/app/lib/definition";
+import { Box, Skeleton, Typography } from "@mui/material";
 
 // Define the props type that will be passed into WalletTable
-interface Top5PositionsGraphProps {
-  positions: Position[];
+interface TopBlockchainsGraphProps {
+  blockchains: Blockchain[];
 }
 
-const Top5PositionsGraph: React.FC<Top5PositionsGraphProps> = ({
-  positions,
+const TopBlockchainsGraph: React.FC<TopBlockchainsGraphProps> = ({
+  blockchains,
 }) => {
   // chart color
   const theme = useTheme();
@@ -22,13 +22,13 @@ const Top5PositionsGraph: React.FC<Top5PositionsGraphProps> = ({
   const secondarylight = theme.palette.secondary.light;
   const warning = theme.palette.warning.main;
 
-  const seriesdoughnutchart = positions
-    .filter((position) => position.progress_percentage > 0) // Keep only items with progress_percentage > 0
-    .map((position) => Math.round(position.progress_percentage));
+  const seriesdoughnutchart = blockchains
+    .filter((blockchain) => blockchain.progress_percentage > 0) // Keep only items with progress_percentage > 0
+    .map((blockchain) => Math.round(blockchain.progress_percentage));
 
-  const labelsdoughnutchart = positions
-    .filter((position) => position.progress_percentage > 0) // Keep only items with progress_percentage > 0
-    .map((position) => position.contract.symbol);
+  const labelsdoughnutchart = blockchains
+    .filter((blockchain) => blockchain.progress_percentage > 0) // Keep only items with progress_percentage > 0
+    .map((blockchain) => blockchain.name);
 
   // 1
   const optionsdoughnutchart: any = {
@@ -60,23 +60,21 @@ const Top5PositionsGraph: React.FC<Top5PositionsGraphProps> = ({
     },
   };
 
-  return positions.length > 0 ? (
+  return blockchains.length > 0 ? (
     <Box px={3}>
       <Chart
         options={optionsdoughnutchart}
         series={seriesdoughnutchart}
         type="donut"
-        height="300px"
+        height="250px"
         width={"100%"}
       />
     </Box>
   ) : (
     <Box px={3} py={2} mt={2}>
-      <Typography key="2" sx={{ color: "text.primary" }}>
-        Loading Positions...
-      </Typography>
+      <Skeleton variant="circular" width={200} height={200} />
     </Box>
   );
 };
 
-export default Top5PositionsGraph;
+export default TopBlockchainsGraph;

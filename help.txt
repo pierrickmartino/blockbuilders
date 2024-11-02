@@ -33,23 +33,23 @@ docker-compose -f docker-compose.server.yml ps
 
 #Reset Procedure with STACK
 # modification du .env pour prendre localhost en DB_HOSTNAME
-python backend/manage.py makemigrations appdocker
-python backend/manage.py migrate app
+python backend/manage.py makemigrations
+python backend/manage.py migrate
 python backend/manage.py collectstatic
 # modification du .env pour prendre db en DB_HOSTNAME
 docker-compose -f docker-compose.stack.yml down -v --remove-orphans
 docker volume prune -a
 docker image prune -a
-docker-compose -f docker-compose.stack.yml up --build --remove-orphans
+docker-compose -f docker-compose.stack.yml up --build --remove-orphans -d
 docker-compose -f docker-compose.stack.yml run --rm backend python manage.py createsuperuser
 docker-compose -f docker-compose.stack.yml run --rm backend python manage.py loaddata blockchains.json
 docker-compose -f docker-compose.stack.yml run --rm backend python manage.py loaddata fiats.json
 # creation du token pour le user
 # mise à jour des 2 fichiers .env avec le nouveau token
 # STOP
-docker-compose -f docker-compose.stack.yml up --build --remove-orphans
+docker-compose -f docker-compose.stack.yml up --build --remove-orphans -d
 
-#CleanUp Node/React/Nextjs install
+#HowTo cleanUp Node/React/Nextjs install
 cd .\frontend\
 nvm install lts
 nvm use lts
@@ -63,6 +63,16 @@ npm update
 
 #HowTo find frontend component to update
 npm outdated
+
+#HowTo cleanUp Ubuntu
+journalctl --disk-usage
+sudo journalctl --vacuum-time=3d
+du -sh /var/cache/apt/archives
+sudo apt-get remove --purge -y software-properties-common
+sudo apt-get clean
+rm -rf /home/*/.local/share/Trash/*/**
+rm -rf /root/.local/share/Trash/*/**
+docker system prune
 
 KeyError: 'ContainerConfig'
 docker-compose -f docker-compose.server.yml rm

@@ -47,7 +47,7 @@ const CreateWalletForm: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit}>
+    <Box component="form" onSubmit={handleSubmit} height="264px">
       <Stack spacing={3}>
         <TextField
           id="address"
