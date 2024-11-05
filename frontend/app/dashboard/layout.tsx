@@ -1,9 +1,9 @@
 "use client";
-import { styled, Container, Box,useTheme } from "@mui/material";
-import React, { useState } from "react";
-import Header from "./layout/header/Header";
+import { styled, Container, Box, PaletteMode } from "@mui/material";
+import React, { useMemo, useState } from "react";
 import Sidebar from "./layout/sidebar/Sidebar";
 import Footer from "./layout/footer/page";
+import { basedarkTheme, baselightTheme } from "../utils/theme/DefaultColors";
 
 const MainWrapper = styled("div")(() => ({
   // display: "flex",
@@ -34,15 +34,18 @@ export default function RootLayout({
   // const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const theme = useTheme();
+
+  // State to manage light or dark mode
+  const [mode, setMode] = useState<PaletteMode>("light");
+
+  // Create theme based on mode
+  const theme = useMemo(() => {
+    return mode === "light" ? baselightTheme : basedarkTheme;
+  }, [mode]);
+
+
   return (
     <MainWrapper className="mainwrapper">
-
-      {/* ------------------------------------------- */}
-      {/* Header */}
-      {/* ------------------------------------------- */}
-      <Header toggleMobileSidebar={() => setMobileSidebarOpen(true)} />
-
 
       {/* ------------------------------------------- */}
       {/* page Wrapper */}

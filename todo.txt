@@ -1,5 +1,6 @@
 - core - fix lint issues (npm run lint)
-- core - migrate to etherscan API V2
+- core - migrer vers etherscan API V2
+- core - implémenter une authentification
 - dashboard - dark mode
 - dashboard - pouvoir switcher entre la fullpage en largeur et la vue serrée
 - dashboard - ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois 

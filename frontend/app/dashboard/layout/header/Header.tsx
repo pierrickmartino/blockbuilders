@@ -12,9 +12,11 @@ import { IconMenu2 } from '@tabler/icons-react';
 
 interface ItemType {
   toggleMobileSidebar: (event: React.MouseEvent<HTMLElement>) => void;
+  mode: "light" | "dark";
+  onThemeChange: () => void;
 }
 
-const Header = ({ toggleMobileSidebar }: ItemType) => {
+const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow:
@@ -121,7 +123,11 @@ const Header = ({ toggleMobileSidebar }: ItemType) => {
         <Stack spacing={1} direction="row" alignItems="center">
         <FormGroup>
           <FormControlLabel
-            control={<MaterialUISwitch sx={{ m: 1 }} defaultChecked />}
+            control={
+              <MaterialUISwitch
+                sx={{ m: 1 }}
+                checked={mode === "dark"}
+                onChange={onThemeChange} />}
             label=""
           />
         </FormGroup>
