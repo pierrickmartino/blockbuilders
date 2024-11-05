@@ -35,6 +35,7 @@ import {
 } from "@/app/lib/data";
 import LastTransactions from "../components/dashboard/LastTransactions";
 import TopRepartition from "../components/dashboard/TopRepartition";
+import TradingCalendar from "../components/dashboard/TradingCalendar";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -248,6 +249,9 @@ const Wallets = () => {
               transactions={last_transactions}
               count={count_transactions}
             />
+          </Grid>
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <TradingCalendar />
           </Grid>
         </Grid>
       </Box>
