@@ -11,6 +11,7 @@ type Props = {
   headsubtitle?: string | JSX.Element;
   children?: JSX.Element;
   middlecontent?: string | JSX.Element;
+  isNarrow?: boolean;
 };
 
 const DashboardCard = ({
@@ -23,9 +24,10 @@ const DashboardCard = ({
   headtitle,
   headsubtitle,
   middlecontent,
+  isNarrow = false,
 }: Props) => {
   return (
-    <Card sx={{ padding: 0 }} elevation={9} variant={undefined}>
+    <Card sx={{ p:0 }} elevation={0}>
       {cardheading ? (
         <CardContent>
           <Typography variant="h5">{headtitle}</Typography>
@@ -34,7 +36,7 @@ const DashboardCard = ({
           </Typography>
         </CardContent>
       ) : (
-        <CardContent sx={{ p: "30px" }}>
+        <CardContent sx={{ p: isNarrow ? 0 : 4 }}>
           {title ? (
             <Stack
               direction="row"

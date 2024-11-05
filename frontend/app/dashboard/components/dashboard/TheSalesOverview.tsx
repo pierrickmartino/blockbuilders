@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import { useTheme } from "@mui/material/styles";
@@ -74,7 +74,7 @@ const SalesOverview = () => {
   ];
 
   return (
-    <>
+    <Fragment>
 
       <DashboardCard
         title="Sales Overview"
@@ -118,7 +118,7 @@ const SalesOverview = () => {
           </Stack>
         }
       >
-        <Box height="355px">
+        <Box height="355px" >
           <Chart
             options={optionscolumnchart}
             series={seriescolumnchart}
@@ -128,7 +128,7 @@ const SalesOverview = () => {
           />
         </Box>
       </DashboardCard>
-    </>
+    </Fragment>
   );
 };
 

@@ -30,6 +30,7 @@ import { Transaction } from "@/app/lib/definition";
 import formatNumber from "@/app/utils/formatNumber";
 import formatDate from "@/app/utils/formatDate";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
+import DashboardCard from "../shared/DashboardCard";
 
 // Define the props type that will be passed into WalletTable
 interface LastTransactionsProps {
@@ -52,9 +53,8 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
   };
 
   return (
-    <Fragment>
-      <Card variant="outlined" sx={{ p: 0 }}>
-        <Box sx={{ width: "100%", typography: "body1" }}>
+    <DashboardCard isNarrow={true}>
+      <Box sx={{ width: "100%", typography: "body1" }}>
           <TabContext value={value}>
             <Box>
               <TabList
@@ -402,8 +402,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
             </TabPanel>
           </TabContext>
         </Box>
-      </Card>
-    </Fragment>
+    </DashboardCard>
   );
 };
 

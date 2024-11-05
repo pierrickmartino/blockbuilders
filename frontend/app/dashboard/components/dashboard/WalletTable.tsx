@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 
 import {
   Typography,
@@ -16,7 +16,7 @@ import {
   ListItemIcon,
   TablePagination,
 } from "@mui/material";
-import BaseCard from "../shared/DashboardCard";
+import DashboardCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { Wallet } from "@/app/lib/definition";
@@ -145,9 +145,6 @@ const WalletTable: React.FC<WalletTableProps> = ({
       } else {
         console.error("Error: Task ID not found in the response.");
       }
-      // if (response.message !== "Database Error: Failed to download wallet.") {
-      //   onWalletDownloaded(response); // Notify parent to refresh wallets
-      // }
     }
   };
 
@@ -159,9 +156,6 @@ const WalletTable: React.FC<WalletTableProps> = ({
       } else {
         console.error("Error: Task ID not found in the response.");
       }
-      // if (response.message !== "Database Error: Failed to refresh wallet.") {
-      //   onWalletRefreshed(response); // Notify parent to refresh wallets
-      // }
     }
   };
 
@@ -173,11 +167,6 @@ const WalletTable: React.FC<WalletTableProps> = ({
       } else {
         console.error("Error: Task ID not found in the response.");
       }
-      // if (
-      //   response.message !== "Database Error: Failed to refresh full wallet."
-      // ) {
-      //   onWalletFullRefreshed(response); // Notify parent to refresh wallets
-      // }
     }
   };
 
@@ -186,8 +175,8 @@ const WalletTable: React.FC<WalletTableProps> = ({
   };
 
   return (
-    <BaseCard title="Wallet Overview" subtitle="Track balances, performance, and key metrics across your wallets">
-      <Fragment>
+    <DashboardCard title="Wallet Overview" subtitle="Track balances, performance, and key metrics across your wallets">
+      <Box>
         <TableContainer
           sx={{
             width: {
@@ -368,8 +357,8 @@ const WalletTable: React.FC<WalletTableProps> = ({
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </Fragment>
-    </BaseCard>
+      </Box>
+    </DashboardCard>
   );
 };
 

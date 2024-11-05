@@ -439,7 +439,7 @@ const basedarkTheme = createTheme({
         },
         ".MuiTimelineConnector-root": {
           width: "1px !important",
-          backgroundColor: "rgba(0, 0, 0, 0.12) !important"
+          backgroundColor: "rgba(244, 249, 248, 0.12) !important"
         },
       },
     },

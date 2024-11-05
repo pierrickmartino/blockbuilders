@@ -200,7 +200,7 @@ const Wallets = () => {
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, lg: 12 }}>
             <Stack direction="row" justifyContent="space-between">
-              <Typography color="textSecondary" variant="h4">
+              <Typography color="textPrimary" variant="h4">
                 Dashboard
               </Typography>
             </Stack>

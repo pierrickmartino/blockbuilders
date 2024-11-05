@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import CreateWalletForm from "../../../ui/wallets/CreateWalletForm";
-import { Box, Card, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import DashboardCard from "../shared/DashboardCard";
+import { Fragment } from "react";
 
 export const metadata: Metadata = {
   title: "Create Wallet",
@@ -19,14 +21,16 @@ const WalletWizard: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
   };
 
   return (
-    <Card variant="outlined" sx={{ p: 0 }}>
-      <Box px={3} py={2} mb="-15px">
-        <Typography variant="h5">Form</Typography>
-      </Box>
-      <Box px={3} py={2} mt={1}>
-        <CreateWalletForm onWalletCreated={handleSubmit} />
-      </Box>
-    </Card>
+    <DashboardCard isNarrow={true}>
+      <Fragment>
+        <Box px={3} py={2} mb="-15px">
+          <Typography variant="h5">Form</Typography>
+        </Box>
+        <Box px={3} py={2} mt={1}>
+          <CreateWalletForm onWalletCreated={handleSubmit} />
+        </Box>
+      </Fragment>
+    </DashboardCard>
   );
 };
 
