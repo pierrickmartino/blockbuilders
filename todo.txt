@@ -1,12 +1,5 @@
 - core - fix lint issues (npm run lint)
-- core - download METIS information
-- core - migrer vers etherscan API V2
 - core - implémenter une authentification
-- core - revoir les logs tasks pour trouver la source de lenteur
-- core - optimiser les traitements
-    - Task completed [create_transactions_from_polygon_erc20_task] in 3.7247724533081055 seconds
-    - Task completed [calculate_cost_transaction_task] in 7.057481527328491 seconds
-    - Task completed [calculate_running_quantity_transaction_task] in 5.284175634384155 seconds
 - dashboard - dark mode
 - dashboard - pouvoir switcher entre la fullpage en largeur et la vue serrée
 - dashboard - ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois 
@@ -18,4 +11,12 @@
 - transaction - fix - pagination et dernier item de la page qui reste
 - position - déplacer le filtrage pour mieux l'intégrer au reste de la page
 - position - fix - pagination et dernier item de la page qui reste
+- contract - adapter la page au niveau du tableau
 - backend - mettre en suspicious une position doit supprimer les transactions associées au contract
+- backend - revoir les logs tasks pour trouver la source de lenteur
+- backend - optimiser les traitements
+    - Task completed [create_transactions_from_polygon_erc20_task] in 3.7247724533081055 seconds
+    - Task completed [calculate_cost_transaction_task] in 7.057481527328491 seconds
+    - Task completed [calculate_running_quantity_transaction_task] in 5.284175634384155 seconds
+- backend - récupérer les informations de METIS
+- backend - migrer vers etherscan API V2
