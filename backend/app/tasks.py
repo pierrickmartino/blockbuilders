@@ -96,11 +96,15 @@ def delete_wallet_task(wallet_id, sleep_duration: float):
     """
     Task to delete a wallet with a given id after a sleep duration.
     """
-    logger.info(f"Deleting wallet with id {wallet_id} after sleeping for {sleep_duration} seconds.")
+    start_time = time.time()
+    logger.info(f"Task started [delete_wallet_task] with ({wallet_id}, {sleep_duration})")
     wallet = get_object_or_404(Wallet, id=wallet_id)
     result = wallet.delete()
     time.sleep(sleep_duration)
-    logger.info(f"Deleted wallet with id {wallet_id}.")
+    end_time = time.time()
+    logger.info(
+        f"Task completed [delete_wallet_task] in {(end_time - start_time)} seconds ({wallet_id}, {sleep_duration})"
+    )
     return result
 
 
@@ -109,11 +113,15 @@ def delete_position_task(position_id, sleep_duration: float):
     """
     Task to delete a position with a given id after a sleep duration.
     """
-    logger.info(f"Deleting position with id {position_id} after sleeping for {sleep_duration} seconds.")
+    start_time = time.time()
+    logger.info(f"Task started [delete_position_task] with ({position_id}, {sleep_duration})")
     position = get_object_or_404(Position, id=position_id)
     result = position.delete()
     time.sleep(sleep_duration)
-    logger.info(f"Deleted position with id {position_id}.")
+    end_time = time.time()
+    logger.info(
+        f"Task completed [delete_position_task] in {(end_time - start_time)} seconds ({position_id}, {sleep_duration})"
+    )
     return result
 
 
@@ -162,12 +170,18 @@ def create_transactions_from_bsc_bep20_task(wallet_id: uuid):
     """
     Task to create transactions from BEP20 (BSC) data for a wallet.
     """
-    logger.info(f"Creating transactions from BEP20 (BSC) data for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [create_transactions_from_bsc_bep20_task] with ({wallet_id})")
+
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
         transactions = bep20_transactions_by_wallet(wallet.address)
         create_transactions(wallet, transactions, "BSC")
-        logger.info(f"Created transactions from BEP20 (BSC) for wallet id {wallet_id} successfully.")
+
+        end_time = time.time()
+        logger.info(
+            f"Task completed [create_transactions_from_bsc_bep20_task] in {(end_time - start_time)} ({wallet_id})"
+        )
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
@@ -184,12 +198,18 @@ def create_transactions_from_polygon_erc20_task(wallet_id: uuid):
     """
     Task to create transactions from ERC20 (Polygon) data for a wallet.
     """
-    logger.info(f"Creating transactions from ERC20 (Polygon) data for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [create_transactions_from_polygon_erc20_task] with ({wallet_id})")
+
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
         transactions = polygon_erc20_transactions_by_wallet(wallet.address)
         create_transactions(wallet, transactions, "Polygon")
-        logger.info(f"Created transactions from ERC20 (Polygon) for wallet id {wallet_id} successfully.")
+
+        end_time = time.time()
+        logger.info(
+            f"Task completed [create_transactions_from_polygon_erc20_task] in {(end_time - start_time)} ({wallet_id})"
+        )
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
@@ -206,12 +226,18 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: uuid):
     """
     Task to create transactions from ERC20 (Arbitrum) data for a wallet.
     """
-    logger.info(f"Creating transactions from ERC20 (Arbitrum) data for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [create_transactions_from_arbitrum_erc20_task] with ({wallet_id})")
+
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
         transactions = arbitrum_erc20_transactions_by_wallet(wallet.address)
-        create_transactions(wallet, transactions, "Polygon")
-        logger.info(f"Created transactions from ERC20 (Arbitrum) for wallet id {wallet_id} successfully.")
+        create_transactions(wallet, transactions, "Arbitrum")
+
+        end_time = time.time()
+        logger.info(
+            f"Task completed [create_transactions_from_arbitrum_erc20_task] in {(end_time - start_time)} ({wallet_id})"
+        )
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
@@ -228,112 +254,19 @@ def create_transactions_from_optimism_erc20_task(wallet_id: uuid):
     """
     Task to create transactions from ERC20 (Optimism) data for a wallet.
     """
-    logger.info(f"Creating transactions from ERC20 (Optimism) data for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [create_transactions_from_optimism_erc20_task] with ({wallet_id})")
+
     try:
         wallet = get_object_or_404(Wallet, id=wallet_id)
         transactions = optimism_erc20_transactions_by_wallet(wallet.address)
-        blockchain = Blockchain.objects.filter(name="Optimism").first()
-        for erc20 in transactions:
-            contract_address = erc20["contractAddress"]
-            contract_name = erc20["tokenName"]
-            contract_symbol = erc20["tokenSymbol"]
-            # contract = Contract.objects.filter(address=contract_address).first()
-            contract, created = Contract.objects.get_or_create(
-                blockchain_id=blockchain.id,
-                address=contract_address,
-                name=contract_name,
-                symbol=contract_symbol,
-                defaults={
-                    "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                    "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                    "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
-                },
-            )
+        create_transactions(wallet, transactions, "Optimism")
 
-            if contract.symbol.startswith("$"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("claim "):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("(e"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("http"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("use just"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("visit "):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().startswith("www."):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".com"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".net"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".xyz"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".org"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("reward"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("rewards"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".app)"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".vip]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("airdrop"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".xyz]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".com ]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith(".co"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.symbol.lower().endswith("events]"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
+        end_time = time.time()
+        logger.info(
+            f"Task completed [create_transactions_from_optimism_erc20_task] in {(end_time - start_time)} ({wallet_id})"
+        )
 
-            if contract.name.lower().endswith(".com"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".online"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".net"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".io"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".app"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".org"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".fi"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.lower().endswith(".gg"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("@"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("!"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-            if contract.name.startswith("#"):
-                contract.category = CategoryContractChoices.SUSPICIOUS
-
-            contract.save()
-
-            if contract.category != CategoryContractChoices.SUSPICIOUS:
-                position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
-                transaction_type = (
-                    TypeTransactionChoices.IN
-                    if erc20["to"].upper() == wallet.address.upper()
-                    else TypeTransactionChoices.OUT
-                )
-                Transaction.objects.create(
-                    position=position,
-                    type=transaction_type,
-                    quantity=int(erc20["value"]) / (10 ** int(erc20["tokenDecimal"])),
-                    date=timezone.make_aware(datetime.fromtimestamp(int(erc20["timeStamp"])), dt_timezone.utc),
-                    hash=erc20["hash"],
-                ).save()
-        logger.info(f"Created transactions from ERC20 (Optimism) for wallet id {wallet_id} successfully.")
-
-    except Contract.DoesNotExist:
-        logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
@@ -349,7 +282,9 @@ def get_polygon_token_balance(wallet_id: uuid):
     """
     Task to get the MATIC (Polygon) balance for a wallet.
     """
-    logger.info(f"Get MATIC (Polygon) balance for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [get_polygon_token_balance] with ({wallet_id})")
+
     try:
         blockchain = Blockchain.objects.filter(name="Polygon").first()
         wallet = get_object_or_404(Wallet, id=wallet_id)
@@ -372,6 +307,10 @@ def get_polygon_token_balance(wallet_id: uuid):
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
         position.save()
+
+        end_time = time.time()
+        logger.info(f"Task completed [get_polygon_token_balance] in {(end_time - start_time)} seconds ({wallet_id})")
+
     except Contract.DoesNotExist:
         logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
@@ -387,7 +326,9 @@ def get_bsc_token_balance(wallet_id: uuid):
     """
     Task to get the BNB (BSC) balance for a wallet.
     """
-    logger.info(f"Get BNB (BSC) balance for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [get_bsc_token_balance] with ({wallet_id})")
+
     try:
         blockchain = Blockchain.objects.filter(name="BSC").first()
         wallet = get_object_or_404(Wallet, id=wallet_id)
@@ -410,6 +351,10 @@ def get_bsc_token_balance(wallet_id: uuid):
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
         position.save()
+
+        end_time = time.time()
+        logger.info(f"Task completed [get_bsc_token_balance] in {(end_time - start_time)} seconds ({wallet_id})")
+
     except Contract.DoesNotExist:
         logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
@@ -425,7 +370,9 @@ def get_arbitrum_token_balance(wallet_id: uuid):
     """
     Task to get the ETH (Arbitrum) balance for a wallet.
     """
-    logger.info(f"Get ETH (Arbitrum) balance for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [get_arbitrum_token_balance] with ({wallet_id})")
+
     try:
         blockchain = Blockchain.objects.filter(name="Arbitrum").first()
         wallet = get_object_or_404(Wallet, id=wallet_id)
@@ -448,6 +395,10 @@ def get_arbitrum_token_balance(wallet_id: uuid):
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
         position.save()
+
+        end_time = time.time()
+        logger.info(f"Task completed [get_arbitrum_token_balance] in {(end_time - start_time)} seconds ({wallet_id})")
+
     except Contract.DoesNotExist:
         logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
@@ -463,7 +414,9 @@ def get_optimism_token_balance(wallet_id: uuid):
     """
     Task to get the ETH (Optimism) balance for a wallet.
     """
-    logger.info(f"Get ETH (Optimism) balance for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [get_optimism_token_balance] with ({wallet_id})")
+
     try:
         blockchain = Blockchain.objects.filter(name="Optimism").first()
         wallet = get_object_or_404(Wallet, id=wallet_id)
@@ -486,6 +439,10 @@ def get_optimism_token_balance(wallet_id: uuid):
         position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
         position.quantity = int(balance) / int(1000000000000000000)
         position.save()
+
+        end_time = time.time()
+        logger.info(f"Task completed [get_optimism_token_balance] in {(end_time - start_time)} seconds ({wallet_id})")
+
     except Contract.DoesNotExist:
         logger.error(f"Contract with address {contract_address} does not exist")
     except Wallet.DoesNotExist:
@@ -501,7 +458,9 @@ def aggregate_transactions_task(previous_return: int, wallet_id: uuid):
     """
     Task to aggregate transactions for a given wallet.
     """
-    logger.info(f"Aggregating transactions for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [aggregate_transactions_task] with ({wallet_id})")
+
     wallet = get_object_or_404(Wallet, id=wallet_id)
     positions = Position.objects.filter(wallet=wallet)
     transactions_by_wallet_to_aggregate = []
@@ -538,7 +497,8 @@ def aggregate_transactions_task(previous_return: int, wallet_id: uuid):
             logger.info(f"Transaction with hash {transaction_agg.hash} has been aggregated")
             transaction_agg.save()
 
-    logger.info(f"Aggregated transactions for wallet id {wallet_id} successfully.")
+    end_time = time.time()
+    logger.info(f"Task completed [aggregate_transactions_task] in {(end_time - start_time)} seconds ({wallet_id})")
     return wallet_id
 
 
@@ -547,7 +507,9 @@ def calculate_cost_transaction_task(wallet_id: uuid):
     """
     Task to calculate the cost of transactions for a given wallet.
     """
-    logger.info(f"Calculating transaction costs for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [aggregate_transactions_task] with ({wallet_id})")
+
     try:
         wallet = Wallet.objects.get(id=wallet_id)
         positions = Position.objects.filter(wallet=wallet)
@@ -676,8 +638,11 @@ def calculate_cost_transaction_task(wallet_id: uuid):
                     logger.info(f"transaction.type : {transaction.type}")
                     logger.info(f"transaction.position : {transaction.position}")
                     logger.info(f"symbol : {symbol}")
-
-        logger.info(f"Calculated transaction costs for wallet id {wallet_id} successfully.")
+        
+        end_time = time.time()
+        logger.info(
+            f"Task completed [calculate_cost_transaction_task] in {(end_time - start_time)} seconds ({wallet_id})"
+        )
         return wallet_id
 
     except Wallet.DoesNotExist:
@@ -691,12 +656,17 @@ def start_wallet_resync_task(wallet_id: uuid):
     """
     Task to update wallet process with STARTED sync status.
     """
-    logger.info(f"Updating wallet process (sync) to STARTED.")
+    start_time = time.time()
+    logger.info(f"Task started [start_wallet_resync_task] with ({wallet_id})")
+
     wallet = get_object_or_404(Wallet, id=wallet_id)
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.resync_task_status = TaskStatusChoices.STARTED
     wallet_process.save()
-    logger.info(f"WalletProcess updated successfully.")
+
+    end_time = time.time()
+    logger.info(f"Task completed [start_wallet_resync_task] in {(end_time - start_time)} seconds ({wallet_id})")
+
     return wallet_id
 
 
@@ -705,12 +675,17 @@ def start_wallet_download_task(wallet_id: uuid):
     """
     Task to update wallet process with STARTED download status.
     """
-    logger.info(f"Updating wallet process (download) to STARTED.")
+    start_time = time.time()
+    logger.info(f"Task started [start_wallet_download_task] with ({wallet_id})")
+
     wallet = get_object_or_404(Wallet, id=wallet_id)
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.download_task_status = TaskStatusChoices.STARTED
     wallet_process.save()
-    logger.info(f"WalletProcess updated successfully.")
+
+    end_time = time.time()
+    logger.info(f"Task completed [start_wallet_download_task] in {(end_time - start_time)} seconds ({wallet_id})")
+
     return wallet_id
 
 
@@ -719,51 +694,74 @@ def finish_wallet_resync_task(previous_return: list, wallet_id: uuid):
     """
     Task to update wallet process with FINISHED sync status.
     """
-    logger.info(f"Updating wallet process (sync) to FINISHED.")
+    start_time = time.time()
+    logger.info(f"Task started [finish_wallet_resync_task] with ({wallet_id})")
+
     wallet = get_object_or_404(Wallet, id=wallet_id)
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.resync_task_status = TaskStatusChoices.FINISHED
     wallet_process.save()
-    logger.info(f"WalletProcess updated successfully.")
+
+    end_time = time.time()
+    logger.info(f"Task completed [finish_wallet_resync_task] in {(end_time - start_time)} seconds ({wallet_id})")
+
     return wallet_id
+
 
 @shared_task
 def start_wallet_fulldownload_task(wallet_id: uuid):
     """
     Task to update wallet process with STARTED full download status.
     """
-    logger.info(f"Updating wallet process (full download) to STARTED.")
+    start_time = time.time()
+    logger.info(f"Task started [start_wallet_fulldownload_task] with ({wallet_id})")
+
     wallet = get_object_or_404(Wallet, id=wallet_id)
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.full_download_task_status = TaskStatusChoices.STARTED
     wallet_process.save()
-    logger.info(f"WalletProcess updated successfully.")
+
+    end_time = time.time()
+    logger.info(f"Task completed [start_wallet_fulldownload_task] in {(end_time - start_time)} seconds ({wallet_id})")
+
     return wallet_id
+
 
 @shared_task
 def finish_wallet_fulldownload_task(previous_return: list, wallet_id: uuid):
     """
     Task to update wallet process with FINISHED full download status.
     """
-    logger.info(f"Updating wallet process (full download) to FINISHED.")
+    start_time = time.time()
+    logger.info(f"Task started [finish_wallet_fulldownload_task] with ({wallet_id})")
+
     wallet = get_object_or_404(Wallet, id=wallet_id)
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.full_download_task_status = TaskStatusChoices.FINISHED
     wallet_process.save()
-    logger.info(f"WalletProcess updated successfully.")
+
+    end_time = time.time()
+    logger.info(f"Task completed [finish_wallet_fulldownload_task] in {(end_time - start_time)} seconds ({wallet_id})")
+
     return wallet_id
+
 
 @shared_task
 def finish_wallet_download_task(previous_return: list, wallet_id: uuid):
     """
     Task to update wallet process with FINISHED download status.
     """
-    logger.info(f"Updating wallet process (download) to FINISHED.")
+    start_time = time.time()
+    logger.info(f"Task started [finish_wallet_download_task] with ({wallet_id})")
+
     wallet = get_object_or_404(Wallet, id=wallet_id)
     wallet_process, created = WalletProcess.objects.get_or_create(wallet=wallet)
     wallet_process.download_task_status = TaskStatusChoices.FINISHED
     wallet_process.save()
-    logger.info(f"WalletProcess updated successfully.")
+
+    end_time = time.time()
+    logger.info(f"Task completed [finish_wallet_download_task] in {(end_time - start_time)} seconds ({wallet_id})")
+
     return wallet_id
 
 
@@ -772,12 +770,17 @@ def clean_contract_address_task(wallet_id: uuid):
     """
     Task to clean contract addresses.
     """
-    logger.info(f"Cleaning contract addresses.")
+    start_time = time.time()
+    logger.info(f"Task started [clean_contract_address_task] with ({wallet_id})")
+
     contracts = Contract.objects.all()
     for contract in contracts:
         contract.address = contract.address.lower()
         contract.save()
-    logger.info(f"Cleaned contract addresses successfully.")
+
+    end_time = time.time()
+    logger.info(f"Task completed [clean_contract_address_task] in {(end_time - start_time)} seconds ({wallet_id})")
+
     return wallet_id
 
 
@@ -786,7 +789,9 @@ def clean_transaction_task(wallet_id: uuid):
     """
     Task to clean existing transaction information for a given wallet.
     """
-    logger.info(f"Cleaning transactions for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [clean_transaction_task] with ({wallet_id})")
+
     wallet = get_object_or_404(Wallet, id=wallet_id)
     try:
         positions = Position.objects.filter(wallet=wallet)
@@ -795,12 +800,16 @@ def clean_transaction_task(wallet_id: uuid):
             position_id = position.id
             result = position.delete()
             logger.info(f"Position with id {position_id} has been deleted")
+
     except Position.DoesNotExist:
         logger.info(f"Position does not exist for wallet id {wallet_id}.")
     except Exception as error:
         logger.error(
             f"An error occurred while cleaning transactions for wallet id {wallet_id}: {type(error).__name__}"
         )
+
+    end_time = time.time()
+    logger.info(f"Task completed [clean_transaction_task] in {(end_time - start_time)} seconds ({wallet_id})")
 
     return wallet_id
 
@@ -810,7 +819,9 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
     """
     Task to calculate the running quantity of transactions in a wallet.
     """
-    logger.info(f"Calculating running quantities for transactions in wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [calculate_running_quantity_transaction_task] with ({wallet_id})")
+
     try:
         wallet = Wallet.objects.get(id=wallet_id)
         positions = Position.objects.filter(wallet=wallet)
@@ -894,12 +905,15 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
             position.quantity = running_quantity
             position.save()
 
-        logger.info(f"Calculated running quantities for all positions in wallet id {wallet_id}")
-
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
         logger.error(f"An error occurred while calculating running quantities for wallet id {wallet_id}: {str(e)}")
+
+    end_time = time.time()
+    logger.info(
+        f"Task completed [calculate_running_quantity_transaction_task] in {(end_time - start_time)} seconds ({wallet_id})"
+    )
 
     return wallet_id
 
@@ -909,7 +923,9 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
     """
     Task to get the market price of a list of symbols.
     """
-    logger.info(f"Get market price for {','.join(symbol_list)}.")
+    start_time = time.time()
+    logger.info(f"Task started [get_price_from_market_task] with ({','.join(symbol_list)})")
+
     try:
 
         # Get the price for each of the symbols in the list
@@ -937,6 +953,11 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
             f"An error occurred while getting the market price of a list of symbols {','.join(symbol_list)}: {str(e)}"
         )
 
+    end_time = time.time()
+    logger.info(
+        f"Task completed [get_price_from_market_task] in {(end_time - start_time)} seconds ({','.join(symbol_list)})"
+    )
+
     return symbol_list
 
 
@@ -945,7 +966,9 @@ def get_historical_price_from_market_task(previous_return: list, symbol: str):
     """
     Task to get the historical market price of a symbol.
     """
-    logger.info(f"Get market historical price for {symbol}.")
+    start_time = time.time()
+    logger.info(f"Task started [get_historical_price_from_market_task] with ({symbol})")
+
     try:
 
         delta = 30
@@ -996,6 +1019,11 @@ def get_historical_price_from_market_task(previous_return: list, symbol: str):
     except Exception as e:
         logger.error(f"An error occurred while getting the historical market price of a symbol {symbol}: {str(e)}")
 
+    end_time = time.time()
+    logger.info(
+        f"Task completed [get_historical_price_from_market_task] in {(end_time - start_time)} seconds ({symbol})"
+    )
+
     return symbol
 
 
@@ -1004,6 +1032,9 @@ def get_full_init_historical_price_from_market_task(previous_return: list, symbo
     """
     Task to get the full init historical market price of a symbol.
     """
+    start_time = time.time()
+    logger.info(f"Task started [get_full_init_historical_price_from_market_task] with ({','.join(symbol_list)})")
+
     for symbol in symbol_list:
         logger.info(f"Get full init market historical price for {symbol}.")
         try:
@@ -1047,6 +1078,11 @@ def get_full_init_historical_price_from_market_task(previous_return: list, symbo
         except Exception as e:
             logger.error(f"An error occurred while getting the historical market price of a symbol {symbol}: {str(e)}")
 
+    end_time = time.time()
+    logger.info(
+        f"Task completed [get_full_init_historical_price_from_market_task] in {(end_time - start_time)} seconds ({','.join(symbol_list)})"
+    )
+
     return symbol_list
 
 
@@ -1055,7 +1091,9 @@ def update_contract_information(previous_return: int, symbol: str):
     """
     Task to update contract information based on market data.
     """
-    logger.info(f"Updating contract information based on market data for {symbol}.")
+    start_time = time.time()
+    logger.info(f"Task started [update_contract_information] with ({symbol})")
+
     try:
 
         contracts = Contract.objects.filter(Q(symbol=symbol) | Q(relative_symbol=symbol))
@@ -1100,6 +1138,9 @@ def update_contract_information(previous_return: int, symbol: str):
             f"An error occurred while updating contract information based on market data for {symbol}: {str(e)}"
         )
 
+    end_time = time.time()
+    logger.info(f"Task completed [update_contract_information] in {(end_time - start_time)} seconds ({symbol})")
+
     return symbol
 
 
@@ -1108,7 +1149,9 @@ def calculate_blockchain_balance_task(previous_return: int, wallet_id: uuid):
     """
     Task to calculate the balance of a blockchain.
     """
-    logger.info(f"Calculating balance for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [calculate_blockchain_balance_task] with ({wallet_id})")
+
     try:
 
         blockchains = Blockchain.objects.all()
@@ -1143,6 +1186,11 @@ def calculate_blockchain_balance_task(previous_return: int, wallet_id: uuid):
     except Exception as e:
         logger.error(f"An error occurred while calculating blockchain balance for wallet id {wallet_id}: {str(e)}")
 
+    end_time = time.time()
+    logger.info(
+        f"Task completed [calculate_blockchain_balance_task] in {(end_time - start_time)} seconds ({wallet_id})"
+    )
+
     return wallet_id
 
 
@@ -1151,7 +1199,9 @@ def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
     """
     Task to calculate the balance of a wallet.
     """
-    logger.info(f"Calculating balance for wallet id {wallet_id}.")
+    start_time = time.time()
+    logger.info(f"Task started [calculate_wallet_balance_task] with ({wallet_id})")
+
     try:
 
         wallet = Wallet.objects.get(id=wallet_id)
@@ -1210,5 +1260,8 @@ def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
         logger.error(f"An error occurred while calculating balance for wallet id {wallet_id}: {str(e)}")
+
+    end_time = time.time()
+    logger.info(f"Task completed [calculate_wallet_balance_task] in {(end_time - start_time)} seconds ({wallet_id})")
 
     return wallet_id
