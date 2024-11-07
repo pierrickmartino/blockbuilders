@@ -87,17 +87,19 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   };
 
   const handleExportTransactions = async () => {
-    console.log("Export function called");  // Debug log
+    console.log("Export function called"); // Debug log
 
     if (selectedPositionId !== null) {
       try {
-        
-        console.log("Attempting to export transactions with ID:", selectedPositionId);
+        console.log(
+          "Attempting to export transactions with ID:",
+          selectedPositionId
+        );
 
         const response = await exportTransactions(
           selectedPositionId.toString()
         );
-        
+
         // Log response to check if we got it successfully
         console.log("Export API response received:", response);
 
@@ -325,11 +327,16 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                         pr: "4px",
                         backgroundColor:
                           transaction.capital_gain < 0
+                            ? "error.light"
+                            : transaction.capital_gain > 0
+                            ? "success.light"
+                            : "", // No background color if the capital gain is 0
+                        color:
+                          transaction.capital_gain < 0
                             ? "error.main"
                             : transaction.capital_gain > 0
                             ? "success.main"
-                            : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                            : "",
                       }}
                       size="small"
                       label={formatNumber(transaction.capital_gain, "currency")}

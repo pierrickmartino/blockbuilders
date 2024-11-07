@@ -188,11 +188,15 @@ const Transactions = () => {
                         pr: "4px",
                         backgroundColor:
                           transactions[0].position.capital_gain < 0
-                            ? "error.main"
+                            ? "error.light"
                             : transactions[0].position.capital_gain > 0
-                            ? "success.main"
+                            ? "success.light"
                             : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                        color: transactions[0].position.capital_gain < 0
+                        ? "error.main"
+                        : transactions[0].position.capital_gain > 0
+                        ? "success.main"
+                        : "",
                         mb: "4px",
                       }}
                       size="small"
@@ -225,11 +229,15 @@ const Transactions = () => {
                         pr: "4px",
                         backgroundColor:
                           transactions[0].position.unrealized_gain < 0
-                            ? "error.main"
+                            ? "error.light"
                             : transactions[0].position.unrealized_gain > 0
-                            ? "success.main"
+                            ? "success.light"
                             : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                        color: transactions[0].position.unrealized_gain < 0
+                        ? "error.main"
+                        : transactions[0].position.unrealized_gain > 0
+                        ? "success.main"
+                        : "",
                         mb: "4px",
                       }}
                       size="small"
@@ -262,11 +270,15 @@ const Transactions = () => {
                         pr: "4px",
                         backgroundColor:
                           transactions[0].position.daily_price_delta < 0
-                            ? "error.main"
+                            ? "error.light"
                             : transactions[0].position.daily_price_delta > 0
-                            ? "success.main"
+                            ? "success.light"
                             : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                        color: transactions[0].position.daily_price_delta < 0
+                        ? "error.main"
+                        : transactions[0].position.daily_price_delta > 0
+                        ? "success.main"
+                        : "",
                         mb: "4px",
                       }}
                       size="small"
@@ -300,11 +312,15 @@ const Transactions = () => {
                         pr: "4px",
                         backgroundColor:
                           transactions[0].position.weekly_price_delta < 0
-                            ? "error.main"
+                            ? "error.light"
                             : transactions[0].position.weekly_price_delta > 0
-                            ? "success.main"
+                            ? "success.light"
                             : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                        color: transactions[0].position.weekly_price_delta < 0
+                        ? "error.main"
+                        : transactions[0].position.weekly_price_delta > 0
+                        ? "success.main"
+                        : "",
                         mb: "4px",
                       }}
                       size="small"
@@ -337,11 +353,15 @@ const Transactions = () => {
                         pr: "4px",
                         backgroundColor:
                           transactions[0].position.monthly_price_delta < 0
-                            ? "error.main"
+                            ? "error.light"
                             : transactions[0].position.monthly_price_delta > 0
-                            ? "success.main"
+                            ? "success.light"
                             : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                        color: transactions[0].position.monthly_price_delta < 0
+                        ? "error.main"
+                        : transactions[0].position.monthly_price_delta > 0
+                        ? "success.main"
+                        : "",
                       }}
                       size="small"
                       label={formatNumber(

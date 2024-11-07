@@ -175,7 +175,10 @@ const WalletTable: React.FC<WalletTableProps> = ({
   };
 
   return (
-    <DashboardCard title="Wallet Overview" subtitle="Track balances, performance, and key metrics across your wallets">
+    <DashboardCard
+      title="Wallet Overview"
+      subtitle="Track balances, performance, and key metrics across your wallets"
+    >
       <Box>
         <TableContainer
           sx={{
@@ -251,7 +254,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
                     <Box display="flex" alignItems="center">
                       <Box>
                         <Typography fontSize="14px">
-                        {truncateText(wallet.address, 25)} 
+                          {truncateText(wallet.address, 25)}
                         </Typography>
                       </Box>
                     </Box>
@@ -272,7 +275,8 @@ const WalletTable: React.FC<WalletTableProps> = ({
                             : wallet.capital_gain > 0
                             ? "success.light"
                             : "", // No background color if the capital gain is 0
-                            color: wallet.capital_gain < 0
+                        color:
+                          wallet.capital_gain < 0
                             ? "error.main"
                             : wallet.capital_gain > 0
                             ? "success.main"
@@ -293,11 +297,12 @@ const WalletTable: React.FC<WalletTableProps> = ({
                             : wallet.unrealized_gain > 0
                             ? "success.light"
                             : "", // No background color if the unrealized gain is 0
-                        color: wallet.unrealized_gain < 0
-                        ? "error.main"
-                        : wallet.unrealized_gain > 0
-                        ? "success.main"
-                        : "", // No color if the unrealized gain is 0
+                        color:
+                          wallet.unrealized_gain < 0
+                            ? "error.main"
+                            : wallet.unrealized_gain > 0
+                            ? "success.main"
+                            : "", // No color if the unrealized gain is 0
                       }}
                       size="small"
                       label={formatNumber(wallet.unrealized_gain, "percentage")}

@@ -215,7 +215,9 @@ const PositionTable: React.FC<PositionTableProps> = ({
                       <Avatar
                         alt={position.contract.blockchain.name}
                         sx={{ width: 24, height: 24 }}
-                        src={"/images/logos/" + position.contract.blockchain.icon}
+                        src={
+                          "/images/logos/" + position.contract.blockchain.icon
+                        }
                       />
                       <Stack>
                         <Typography variant="body1">
@@ -243,11 +245,16 @@ const PositionTable: React.FC<PositionTableProps> = ({
                         pr: "4px",
                         backgroundColor:
                           position.daily_price_delta < 0
+                            ? "error.light"
+                            : position.daily_price_delta > 0
+                            ? "success.light"
+                            : "", // No background color if the capital gain is 0
+                        color:
+                          position.daily_price_delta < 0
                             ? "error.main"
                             : position.daily_price_delta > 0
                             ? "success.main"
-                            : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                            : "",
                         mb: "4px",
                       }}
                       size="small"
@@ -279,11 +286,16 @@ const PositionTable: React.FC<PositionTableProps> = ({
                         pr: "4px",
                         backgroundColor:
                           position.capital_gain < 0
+                            ? "error.light"
+                            : position.capital_gain > 0
+                            ? "success.light"
+                            : "", // No background color if the capital gain is 0
+                        color:
+                          position.capital_gain < 0
                             ? "error.main"
                             : position.capital_gain > 0
                             ? "success.main"
-                            : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                            : "",
                       }}
                       size="small"
                       label={formatNumber(position.capital_gain, "currency")}
@@ -296,11 +308,16 @@ const PositionTable: React.FC<PositionTableProps> = ({
                         pr: "4px",
                         backgroundColor:
                           position.unrealized_gain < 0
+                            ? "error.light"
+                            : position.unrealized_gain > 0
+                            ? "success.light"
+                            : "", // No background color if the capital gain is 0
+                        color:
+                          position.unrealized_gain < 0
                             ? "error.main"
                             : position.unrealized_gain > 0
                             ? "success.main"
-                            : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                            : "",
                       }}
                       size="small"
                       label={formatNumber(
