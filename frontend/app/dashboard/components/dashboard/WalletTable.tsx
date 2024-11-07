@@ -268,11 +268,15 @@ const WalletTable: React.FC<WalletTableProps> = ({
                         pr: "4px",
                         backgroundColor:
                           wallet.capital_gain < 0
+                            ? "error.light"
+                            : wallet.capital_gain > 0
+                            ? "success.light"
+                            : "", // No background color if the capital gain is 0
+                            color: wallet.capital_gain < 0
                             ? "error.main"
                             : wallet.capital_gain > 0
                             ? "success.main"
-                            : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                            : "", // No color if the unrealized gain is 0
                       }}
                       size="small"
                       label={formatNumber(wallet.capital_gain, "currency")}
@@ -285,11 +289,15 @@ const WalletTable: React.FC<WalletTableProps> = ({
                         pr: "4px",
                         backgroundColor:
                           wallet.unrealized_gain < 0
-                            ? "error.main"
+                            ? "error.light"
                             : wallet.unrealized_gain > 0
-                            ? "success.main"
-                            : "", // No background color if the capital gain is 0
-                        color: "#fff",
+                            ? "success.light"
+                            : "", // No background color if the unrealized gain is 0
+                        color: wallet.unrealized_gain < 0
+                        ? "error.main"
+                        : wallet.unrealized_gain > 0
+                        ? "success.main"
+                        : "", // No color if the unrealized gain is 0
                       }}
                       size="small"
                       label={formatNumber(wallet.unrealized_gain, "percentage")}

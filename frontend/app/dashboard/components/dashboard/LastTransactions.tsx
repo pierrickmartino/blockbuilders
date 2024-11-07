@@ -128,11 +128,15 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
                             pr: "4px",
                             backgroundColor:
                               transaction.type == "OUT"
-                                ? "error.main"
+                                ? "error.light"
                                 : transaction.type == "IN"
-                                ? "success.main"
+                                ? "success.light"
                                 : "",
-                            color: "#fff",
+                            color: transaction.type == "OUT"
+                            ? "error.main"
+                            : transaction.type == "IN"
+                            ? "success.main"
+                            : "",
                           }}
                           size="small"
                           label={formatNumber(
