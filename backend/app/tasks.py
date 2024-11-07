@@ -164,6 +164,8 @@ def delete_position_task(position_id, sleep_duration: float):
 def create_transactions(wallet, transactions, blockchain_name):
     blockchain = Blockchain.objects.filter(name=blockchain_name).first()
 
+    transactions_to_create = []
+
     for tx in transactions:
         contract_address = tx["contractAddress"]
         contract_name = tx["tokenName"]
@@ -184,21 +186,27 @@ def create_transactions(wallet, transactions, blockchain_name):
         # Mark as suspicious if criteria are met
         if is_contract_suspicious(contract_name, contract_symbol):
             contract.category = CategoryContractChoices.SUSPICIOUS
-
-        contract.save()
+            contract.save() # Save immediately if suspicious, to ensure it's marked
+        
 
         if contract.category != CategoryContractChoices.SUSPICIOUS:
             position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
+
             transaction_type = (
                 TypeTransactionChoices.IN if tx["to"].upper() == wallet.address.upper() else TypeTransactionChoices.OUT
             )
-            Transaction.objects.create(
+            transactions_to_create.append(
+            Transaction(
                 position=position,
                 type=transaction_type,
                 quantity=int(tx["value"]) / (10 ** int(tx["tokenDecimal"])),
                 date=timezone.make_aware(datetime.fromtimestamp(int(tx["timeStamp"])), dt_timezone.utc),
                 hash=tx["hash"],
-            ).save()
+                )
+            )
+
+    # Bulk create transactions
+    Transaction.objects.bulk_create(transactions_to_create)
 
 
 @shared_task
@@ -216,7 +224,7 @@ def create_transactions_from_bsc_bep20_task(wallet_id: uuid):
 
         end_time = time.time()
         logger.info(
-            f"Task completed [create_transactions_from_bsc_bep20_task] in {(end_time - start_time)} ({wallet_id})"
+            f"Task completed [create_transactions_from_bsc_bep20_task] in {(end_time - start_time)} seconds ({wallet_id})"
         )
 
     except Wallet.DoesNotExist:
@@ -244,7 +252,7 @@ def create_transactions_from_polygon_erc20_task(wallet_id: uuid):
 
         end_time = time.time()
         logger.info(
-            f"Task completed [create_transactions_from_polygon_erc20_task] in {(end_time - start_time)} ({wallet_id})"
+            f"Task completed [create_transactions_from_polygon_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})"
         )
 
     except Wallet.DoesNotExist:
@@ -272,7 +280,7 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: uuid):
 
         end_time = time.time()
         logger.info(
-            f"Task completed [create_transactions_from_arbitrum_erc20_task] in {(end_time - start_time)} ({wallet_id})"
+            f"Task completed [create_transactions_from_arbitrum_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})"
         )
 
     except Wallet.DoesNotExist:
@@ -300,7 +308,7 @@ def create_transactions_from_optimism_erc20_task(wallet_id: uuid):
 
         end_time = time.time()
         logger.info(
-            f"Task completed [create_transactions_from_optimism_erc20_task] in {(end_time - start_time)} ({wallet_id})"
+            f"Task completed [create_transactions_from_optimism_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})"
         )
 
     except Wallet.DoesNotExist:
@@ -513,7 +521,7 @@ def aggregate_transactions_task(previous_return: int, wallet_id: uuid):
 
         if transactions_to_aggregate.count() >= 2:
 
-            if transaction.hash == "0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb":
+            if DEBUG == True and transaction.hash == "0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb":
                 logger.info(f"Transaction : {transactions_to_aggregate}")
 
             transaction_agg = Transaction.objects.create(
@@ -530,7 +538,7 @@ def aggregate_transactions_task(previous_return: int, wallet_id: uuid):
 
             transaction_agg.type = TypeTransactionChoices.IN if quantity_agg > 0 else TypeTransactionChoices.OUT
             transaction_agg.quantity = abs(quantity_agg)
-            logger.info(f"Transaction with hash {transaction_agg.hash} has been aggregated")
+            if DEBUG == True : logger.info(f"Transaction with hash {transaction_agg.hash} has been aggregated")
             transaction_agg.save()
 
     end_time = time.time()
@@ -631,7 +639,7 @@ def calculate_cost_transaction_task(wallet_id: uuid):
                 transactions_to_update.append(transaction)
 
                 # Debug logging for a specific transaction hash
-                logger.info(f"Multi-part transaction for {transaction}")
+                # logger.info(f"Multi-part transaction for {transaction}")
                 if (
                     DEBUG == True
                     and transaction.hash == "0xf9746d44db326689f36d6851f5fcda84109d518437f6fb6943231094ddbeb7ed"
@@ -844,7 +852,7 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
 
         for position in positions:
             # Get all transactions associated with the current position, ordered by date
-            transactions = Transaction.objects.filter(position=position).order_by("date")
+            transactions = position.transactions.all().order_by("date")
 
             # DEBUG_LINK = True if position.contract.address == "0x53e0bca35ec356bd5dddfebbd1fc0fd03fabad39" else False
 
@@ -856,7 +864,7 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
             price_fiat_based = 0
             price = 0
 
-            logger.info(f"Calculating running quantities for position id {position.id}.")
+            if DEBUG == True : logger.info(f"Calculating running quantities for position id {position.id}.")
 
             for transaction in transactions:
 
