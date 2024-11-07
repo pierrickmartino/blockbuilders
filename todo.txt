@@ -5,7 +5,7 @@
 - core - revoir les logs tasks pour trouver la source de lenteur
 - core - optimiser les traitements
     - Task completed [create_transactions_from_polygon_erc20_task] in 11.061200380325317
-    - Task completed [calculate_cost_transaction_task] in 10.214097261428833 seconds
+    - Task completed [calculate_cost_transaction_task] in 7.5614013671875 seconds
     - Task completed [calculate_running_quantity_transaction_task] in 7.037968873977661 seconds
 - dashboard - dark mode
 - dashboard - pouvoir switcher entre la fullpage en largeur et la vue serrée

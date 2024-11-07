@@ -8,7 +8,7 @@ from celery import shared_task
 from django.shortcuts import get_object_or_404
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
-from django.db.models import F, Q, Value, Case, When, Sum, DecimalField
+from django.db.models import F, Q, Sum, Count
 from datetime import timezone as dt_timezone
 from app.utils.cryptocompare.view_cryptocompare import get_daily_pair_ohlcv, get_multiple_symbols_price
 from app.utils.polygon.view_polygon import (
@@ -89,6 +89,42 @@ def is_contract_suspicious(contract_name, contract_symbol):
             return True
 
     return False
+
+
+def get_market_data(symbol, transaction_date):
+    # Define a mapping of prefixes to their transformations
+    prefix_map = {"USDC.e": "USDC", "aPol": "", "am": ""}
+
+    # Determine the new symbol based on the prefix
+    new_symbol = symbol
+    for prefix, replacement in prefix_map.items():
+        if symbol.startswith(prefix):
+            new_symbol = symbol.replace(prefix, replacement)
+            break
+
+    # Retrieve market data
+    data = (
+        MarketData.objects.filter(symbol=new_symbol, reference="USD", time__lte=transaction_date)
+        .order_by("-time")
+        .first()
+    )
+
+    return data
+
+
+def calculate_cost_transaction_task_debug(transaction, symbol):
+    logger.info(f"transaction.position.contract.symbol : {transaction.position.contract.symbol}")
+    logger.info(f"transaction.quantity : {transaction.quantity}")
+    logger.info(f"transaction.date : {transaction.date}")
+    logger.info(f"transaction.price : {transaction.price}")
+    logger.info(f"transaction.against_contract : {transaction.against_contract}")
+    logger.info(f"transaction.price_contract_based : {transaction.price_contract_based}")
+    logger.info(f"transaction.against_fiat : {transaction.against_fiat}")
+    logger.info(f"transaction.price_fiat_based : {transaction.price_fiat_based}")
+    logger.info(f"transaction.cost_fiat_based : {transaction.cost_fiat_based}")
+    logger.info(f"transaction.type : {transaction.type}")
+    logger.info(f"transaction.position : {transaction.position}")
+    logger.info(f"symbol : {symbol}")
 
 
 @shared_task
@@ -511,134 +547,112 @@ def calculate_cost_transaction_task(wallet_id: uuid):
     logger.info(f"Task started [aggregate_transactions_task] with ({wallet_id})")
 
     try:
+        # Retrieve the wallet associated with the given wallet_id
         wallet = Wallet.objects.get(id=wallet_id)
-        positions = Position.objects.filter(wallet=wallet)
-        transactions_by_wallet = []
-        for position in positions:
-            transactions = Transaction.objects.filter(position=position).order_by("-date")
-            for transaction in transactions:
-                transactions_by_wallet.append(transaction)
 
+        # Get all positions associated with the wallet
+        positions = Position.objects.filter(wallet=wallet)
+        transactions_by_wallet = []  # List to hold transactions related to the wallet
+
+        # Loop through each position to collect transactions
+        for position in positions:
+            # Retrieve transactions for the current position, ordered by date (most recent first)
+            transactions = position.transactions.all().order_by("-date")
+            # Access the pre-fetched transactions
+            transactions_by_wallet.extend(transactions)  # Extend the list with transactions
+
+        # Get the fiat currency object for USD
         fiat = Fiat.objects.get(symbol="USD")
 
+        # Filter Transaction objects by hashes from transactions_by_wallet and count occurrences of each hash.
+        transaction_hashes = (
+            Transaction.objects.filter(hash__in=[t.hash for t in transactions_by_wallet])
+            .values("hash")  # Select only the 'hash' field.
+            .annotate(count=Count("id"))  # Count how many times each hash appears.
+        )
+        # Create a dictionary mapping each hash to its count.
+        hash_count_map = {item["hash"]: item["count"] for item in transaction_hashes}
+
+        transactions_to_update = []  # List to hold transactions to update
+
+        # Process each transaction collected
         for transaction in transactions_by_wallet:
-            condition = Transaction.objects.filter(hash=transaction.hash)
+            # Check if there are two transactions with the same hash (indicating a multi-part transaction)
 
-            # symbol = transaction.position.contract.symbol.replace("WETH", "ETH")
-
-            if condition.count() == 2:
+            # Vanilla case
+            if hash_count_map.get(transaction.hash, 0) == 2:
+                # If two transactions exist, find the reference transaction
                 transaction_ref = Transaction.objects.filter(hash=transaction.hash).exclude(id=transaction.id)
-                position = Position.objects.filter(id=transaction_ref[0].position.id).first()
-                transaction.against_contract = position.contract
+                # Get the position of the reference transaction
+                position_ref = Position.objects.filter(id=transaction_ref[0].position.id).first()
+                # Set the against_contract and cost_contract_based fields for the transaction
+                transaction.against_contract = position_ref.contract
                 transaction.cost_contract_based = transaction_ref[0].quantity
 
-                symbol = position.contract.symbol.replace("WETH", "ETH")
+                # Normalize the symbol for the contract
+                symbol = position_ref.contract.symbol.replace("WETH", "ETH")
 
+                # Calculate the price based on the quantity
                 if transaction.quantity == 0:
                     transaction.price_contract_based = 0
                 else:
                     transaction.price_contract_based = transaction_ref[0].quantity / transaction.quantity
 
-                if symbol.startswith("USDC."):
-                    data = (
-                        MarketData.objects.filter(symbol="USDC", reference="USD", time__lte=transaction.date)
-                        .order_by("-time")
-                        .first()
-                    )
-                elif symbol.startswith("aPol"):
-                    new_symbol = symbol.replace("aPol", "")
-                    data = (
-                        MarketData.objects.filter(symbol=new_symbol, reference="USD", time__lte=transaction.date)
-                        .order_by("-time")
-                        .first()
-                    )
-                elif symbol.startswith("am"):
-                    new_symbol = symbol.replace("am", "")
-                    data = (
-                        MarketData.objects.filter(symbol=new_symbol, reference="USD", time__lte=transaction.date)
-                        .order_by("-time")
-                        .first()
-                    )
-                else:
-                    data = (
-                        MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=transaction.date)
-                        .order_by("-time")
-                        .first()
-                    )
+                # Retrieve the market data for the specified symbol and transaction date
+                data = get_market_data(symbol, transaction.date)
 
+                # Calculate the price and cost in fiat based on the market data
                 transaction.price_fiat_based = transaction.price_contract_based * data.close if data else 0
                 transaction.price = transaction.price_fiat_based
                 transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
-                transaction.against_fiat = fiat
-                transaction.save()
+                transaction.against_fiat = fiat  # Set the fiat currency for the transaction
+                transactions_to_update.append(transaction)
 
+                # Debug logging for a specific transaction hash
                 if (
                     DEBUG == True
                     and transaction.hash == "0x9a59d837769a45950af2bb4dffa11c05dc6f76ae8b7ecb542bf80eca36c82e12"
                 ):  # "0xe9ca6a317ef1f07f7560d459368dc73ae354d6ae8224b9877e29bb0d6f6f04f3":
-                    logger.info(f"transaction.position.contract.symbol : {transaction.position.contract.symbol}")
-                    logger.info(f"transaction.quantity : {transaction.quantity}")
-                    logger.info(f"transaction.date : {transaction.date}")
-                    logger.info(f"transaction.price : {transaction.price}")
-                    logger.info(f"transaction.against_contract : {transaction.against_contract}")
-                    logger.info(f"transaction.price_contract_based : {transaction.price_contract_based}")
-                    logger.info(f"transaction.against_fiat : {transaction.against_fiat}")
-                    logger.info(f"transaction.price_fiat_based : {transaction.price_fiat_based}")
-                    logger.info(f"transaction.cost_fiat_based : {transaction.cost_fiat_based}")
-                    logger.info(f"transaction.type : {transaction.type}")
-                    logger.info(f"transaction.position : {transaction.position}")
-                    logger.info(f"symbol : {symbol}")
+                    calculate_cost_transaction_task_debug(transaction, symbol)
 
             else:
 
                 # TODO : Need to be investigated
                 symbol = transaction.position.contract.symbol.replace("WETH", "ETH")
 
-                if symbol.startswith("USDC."):
-                    data = (
-                        MarketData.objects.filter(symbol="USDC", reference="USD", time__lte=transaction.date)
-                        .order_by("-time")
-                        .first()
-                    )
-                elif symbol.startswith("aPol"):
-                    new_symbol = symbol.replace("aPol", "")
-                    data = (
-                        MarketData.objects.filter(symbol=new_symbol, reference="USD", time__lte=transaction.date)
-                        .order_by("-time")
-                        .first()
-                    )
-                else:
-                    data = (
-                        MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=transaction.date)
-                        .order_by("-time")
-                        .first()
-                    )
+                # Retrieve the market data for the specified symbol and transaction date
+                data = get_market_data(symbol, transaction.date)
 
+                # Calculate the price and cost in fiat based on the market data
                 transaction.price_fiat_based = data.close if data else 0
                 transaction.price = transaction.price_fiat_based
                 transaction.cost_fiat_based = data.close * transaction.quantity if data else 0
-                transaction.against_fiat = fiat
-                transaction.save()
+                transaction.against_fiat = fiat  # Set the fiat currency for the transaction
+                transactions_to_update.append(transaction)
 
+                # Debug logging for a specific transaction hash
                 logger.info(f"Multi-part transaction for {transaction}")
                 if (
                     DEBUG == True
                     and transaction.hash == "0xf9746d44db326689f36d6851f5fcda84109d518437f6fb6943231094ddbeb7ed"
                 ):
                     # 0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb
-                    logger.info(f"transaction.position.contract.symbol : {transaction.position.contract.symbol}")
-                    logger.info(f"transaction.quantity : {transaction.quantity}")
-                    logger.info(f"transaction.date : {transaction.date}")
-                    logger.info(f"transaction.price : {transaction.price}")
-                    logger.info(f"transaction.against_contract : {transaction.against_contract}")
-                    logger.info(f"transaction.price_contract_based : {transaction.price_contract_based}")
-                    logger.info(f"transaction.against_fiat : {transaction.against_fiat}")
-                    logger.info(f"transaction.price_fiat_based : {transaction.price_fiat_based}")
-                    logger.info(f"transaction.cost_fiat_based : {transaction.cost_fiat_based}")
-                    logger.info(f"transaction.type : {transaction.type}")
-                    logger.info(f"transaction.position : {transaction.position}")
-                    logger.info(f"symbol : {symbol}")
+                    calculate_cost_transaction_task_debug(transaction, symbol)
         
+        # Save all-in-one bulk the transactions
+        Transaction.objects.bulk_update(
+            transactions_to_update,
+            [
+                "price",
+                "against_contract",
+                "cost_contract_based",
+                "price_contract_based",
+                "price_fiat_based",
+                "cost_fiat_based",
+                "against_fiat",
+            ],
+        )
+
         end_time = time.time()
         logger.info(
             f"Task completed [calculate_cost_transaction_task] in {(end_time - start_time)} seconds ({wallet_id})"
@@ -994,7 +1008,7 @@ def get_historical_price_from_market_task(previous_return: list, symbol: str):
 
         # Iterate over each data point
         for record in prices["Data"]["Data"]:
-            time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), dt_timezone.utc)
+            time2 = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), dt_timezone.utc)
             high = record["high"]
             low = record["low"]
             open_price = record["open"]
@@ -1006,7 +1020,7 @@ def get_historical_price_from_market_task(previous_return: list, symbol: str):
             market_data = MarketData(
                 symbol=symbol,
                 reference="USD",
-                time=time,
+                time=time2,
                 high=high,
                 low=low,
                 open=open_price,
@@ -1053,7 +1067,7 @@ def get_full_init_historical_price_from_market_task(previous_return: list, symbo
 
             # Iterate over each data point
             for record in prices["Data"]["Data"]:
-                time = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), dt_timezone.utc)
+                time2 = timezone.make_aware(datetime.fromtimestamp(int(record["time"])), dt_timezone.utc)
                 high = record["high"]
                 low = record["low"]
                 open_price = record["open"]
@@ -1065,7 +1079,7 @@ def get_full_init_historical_price_from_market_task(previous_return: list, symbo
                 market_data = MarketData(
                     symbol=symbol,
                     reference="USD",
-                    time=time,
+                    time=time2,
                     high=high,
                     low=low,
                     open=open_price,
