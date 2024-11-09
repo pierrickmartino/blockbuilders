@@ -1,9 +1,16 @@
 import { createTheme } from "@mui/material/styles";
 // import { TimelineConnector } from '@mui/lab';
-import { Poppins } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
 import theme from "../theme";
 
-export const poppins = Poppins({
+// export const poppins = Poppins({
+//   weight: ["300", "400", "500", "600", "700"],
+//   subsets: ["latin"],
+//   display: "swap",
+//   fallback: ["Helvetica", "Arial", "sans-serif"],
+// });
+
+export const inter = Inter({
   weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
   display: "swap",
@@ -75,59 +82,70 @@ const baselightTheme = createTheme({
   },
 
   typography: {
-    fontFamily: poppins.style.fontFamily,
+    fontFamily: inter.style.fontFamily,
     h1: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '2.25rem',
       lineHeight: '2.75rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h2: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '1.875rem',
       lineHeight: '2.25rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h3: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '1.5rem',
       lineHeight: '1.75rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h4: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '1.3125rem',
       lineHeight: '1.6rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h5: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '1.125rem',
       lineHeight: '1.6rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h6: {
-      fontWeight: 500,
-      fontSize: '1rem',
-      lineHeight: '1.2rem',
+      fontWeight: 600,
+      fontSize: '0.875rem',
+      lineHeight: '1.25rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     button: {
       textTransform: 'capitalize',
       fontWeight: 400,
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     body1: {
       fontSize: '0.875rem',
       fontWeight: 400,
-      lineHeight: '1.334rem',
+      lineHeight: '1.25rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     body2: {
       fontSize: '0.75rem',
       letterSpacing: '0rem',
       fontWeight: 400,
       lineHeight: '1rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     subtitle1: {
       fontSize: '0.875rem',
       fontWeight: 400,
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     subtitle2: {
       fontSize: '0.875rem',
       fontWeight: 400,
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
   },
   components: {
@@ -370,59 +388,70 @@ const basedarkTheme = createTheme({
   },
 
   typography: {
-    fontFamily: poppins.style.fontFamily,
+    fontFamily: inter.style.fontFamily,
     h1: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '2.25rem',
       lineHeight: '2.75rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h2: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '1.875rem',
       lineHeight: '2.25rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h3: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '1.5rem',
       lineHeight: '1.75rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h4: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '1.3125rem',
       lineHeight: '1.6rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h5: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '1.125rem',
       lineHeight: '1.6rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h6: {
-      fontWeight: 500,
+      fontWeight: 600,
       fontSize: '1rem',
       lineHeight: '1.2rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     button: {
       textTransform: 'capitalize',
       fontWeight: 400,
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     body1: {
       fontSize: '0.875rem',
       fontWeight: 400,
       lineHeight: '1.334rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     body2: {
       fontSize: '0.75rem',
       letterSpacing: '0rem',
       fontWeight: 400,
       lineHeight: '1rem',
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     subtitle1: {
       fontSize: '0.875rem',
       fontWeight: 400,
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     subtitle2: {
       fontSize: '0.875rem',
       fontWeight: 400,
+      fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
   },
   components: {

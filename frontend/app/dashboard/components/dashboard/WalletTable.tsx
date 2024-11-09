@@ -190,6 +190,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
         >
           <Table
             aria-label="simple table"
+            size="small"
             sx={{
               whiteSpace: "nowrap",
               mt: 0,
@@ -254,7 +255,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
                     <Box display="flex" alignItems="center">
                       <Box>
                         <Typography fontSize="14px">
-                          {truncateText(wallet.address, 25)}
+                          {truncateText(wallet.address, 15)}
                         </Typography>
                       </Box>
                     </Box>
