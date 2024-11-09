@@ -210,6 +210,11 @@ const WalletTable: React.FC<WalletTableProps> = ({
                 </TableCell>
                 <TableCell>
                   <Typography color="textSecondary" variant="h6">
+                    Description
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography color="textSecondary" variant="h6">
                     Address
                   </Typography>
                 </TableCell>
@@ -242,10 +247,16 @@ const WalletTable: React.FC<WalletTableProps> = ({
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <Box>
-                        <Typography fontSize="14px" fontWeight={600}>
+                        <Typography fontWeight={500}>
                           {wallet.name}
                         </Typography>
-                        <Typography color="textSecondary" fontSize="13px">
+                      </Box>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box display="flex" alignItems="center">
+                      <Box>
+                      <Typography color="textSecondary">
                           {wallet.description}
                         </Typography>
                       </Box>
@@ -254,14 +265,14 @@ const WalletTable: React.FC<WalletTableProps> = ({
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <Box>
-                        <Typography fontSize="14px">
+                        <Typography>
                           {truncateText(wallet.address, 15)}
                         </Typography>
                       </Box>
                     </Box>
                   </TableCell>
                   <TableCell align="right">
-                    <Typography fontSize="14px">
+                    <Typography>
                       {formatNumber(wallet.balance, "currency")}
                     </Typography>
                   </TableCell>

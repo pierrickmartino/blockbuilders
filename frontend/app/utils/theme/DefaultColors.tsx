@@ -421,8 +421,8 @@ const basedarkTheme = createTheme({
     },
     h6: {
       fontWeight: 600,
-      fontSize: '1rem',
-      lineHeight: '1.2rem',
+      fontSize: '0.875rem',
+      lineHeight: '1.25rem',
       fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     button: {
@@ -433,7 +433,7 @@ const basedarkTheme = createTheme({
     body1: {
       fontSize: '0.875rem',
       fontWeight: 400,
-      lineHeight: '1.334rem',
+      lineHeight: '1.25rem',
       fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     body2: {
