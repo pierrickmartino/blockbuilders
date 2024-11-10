@@ -1,6 +1,5 @@
 "use client";
 import {
-  Grid,
   Box,
   Card,
   Stack,
@@ -11,6 +10,7 @@ import {
   Breadcrumbs,
 } from "@mui/material";
 // components
+import Grid from "@mui/material/Grid2";
 import { Fragment, useEffect, useState, useCallback } from "react";
 import { Transaction } from "@/app/lib/definition";
 import { fetchTransactions, fetchTransactionsWithSearch } from "@/app/lib/data";
@@ -111,9 +111,9 @@ const Transactions = () => {
     <PageContainer title="Transactions" description="this is Transactions">
       <Box mt={0}>
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <Stack direction="row" justifyContent="space-between">
-              <Typography color="textSecondary" variant="h4">
+              <Typography color="textPrimary" variant="h4">
                 Transactions
               </Typography>
               <Button
@@ -132,7 +132,7 @@ const Transactions = () => {
               {breadcrumbs}
             </Breadcrumbs>
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <CustomCard title="Total Amount">
               <Stack direction="row" justifyContent="flex-end" spacing={2}>
                 {transactions.length > 0 && transactions[0]?.position ? (
@@ -145,7 +145,7 @@ const Transactions = () => {
               </Stack>
             </CustomCard>
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <CustomCard title="Market Price">
               <Stack direction="row" justifyContent="flex-end" spacing={2}>
                 {transactions.length > 0 && transactions[0]?.position ? (
@@ -161,7 +161,7 @@ const Transactions = () => {
               </Stack>
             </CustomCard>
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <CustomCard title="Performance">
               {transactions.length > 0 && transactions[0]?.position ? (
                 <Stack>
@@ -380,7 +380,7 @@ const Transactions = () => {
               {/* </Stack> */}
             </CustomCard>
           </Grid>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <Card variant="outlined" sx={{ p: 3 }}>
               <Box px={0} py={0} mb="-15px">
                 <Typography variant="h5">Filter</Typography>
@@ -398,7 +398,7 @@ const Transactions = () => {
               </Box>
             </Card>
           </Grid>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <TransactionTable
               transactions={transactions}
               page={page}
