@@ -66,8 +66,8 @@ const baselightTheme = createTheme({
       600: "#2a3547",
     },
     text: {
-      primary: "#2a3547",
-      secondary: "#2a3547",
+      primary: "#111827",
+      secondary: "#6b7280",
     },
     action: {
       disabledBackground: "rgba(73,82,88,0.12)",
@@ -218,6 +218,12 @@ const baselightTheme = createTheme({
       styleOverrides: {
         root: {
           borderBottom: `1px solid #e5eaef`,
+          paddingTop: "0px",
+          paddingBottom: "0px",
+        },
+        head: {
+          paddingTop: "6px",
+          paddingBottom: "6px",
         },
       },
     },
@@ -226,6 +232,7 @@ const baselightTheme = createTheme({
         root: {
           "&:last-child td": {
             borderBottom: 0,
+            paddingBottom: "12px",
           },
         },
       },
@@ -524,6 +531,12 @@ const basedarkTheme = createTheme({
       styleOverrides: {
         root: {
           borderBottom: `1px solid #e5eaef`,
+          paddingTop: "0px",
+          paddingBottom: "0px",
+        },
+        head: {
+          paddingTop: "6px",
+          paddingBottom: "6px",
         },
       },
     },
@@ -532,6 +545,7 @@ const basedarkTheme = createTheme({
         root: {
           "&:last-child td": {
             borderBottom: 0,
+            paddingBottom: "12px",
           },
         },
       },

@@ -36,7 +36,7 @@ const TopBlockchains: React.FC<TopBlockchainsProps> = ({ blockchains }) => {
             <Typography variant="h6" fontSize="14px">
               {formatNumber(blockchain.balance, "currency")}
             </Typography>
-            <Typography variant="subtitle1" fontSize="12px">
+            <Typography color="textSecondary" fontSize="12px">
               {formatNumber(blockchain.progress_percentage, "percentage")}
             </Typography>
           </Stack>

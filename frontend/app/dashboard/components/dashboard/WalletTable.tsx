@@ -204,32 +204,32 @@ const WalletTable: React.FC<WalletTableProps> = ({
                   </Typography>
                 </TableCell> */}
                 <TableCell>
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Name
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Description
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Address
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Balance
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Capital Gain
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     UnRealized
                   </Typography>
                 </TableCell>

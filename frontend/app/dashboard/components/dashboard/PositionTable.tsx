@@ -162,6 +162,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
         >
           <Table
             aria-label="simple table"
+            size="small"
             sx={{
               whiteSpace: "nowrap",
               mt: 0,
@@ -170,37 +171,37 @@ const PositionTable: React.FC<PositionTableProps> = ({
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Token
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Perf Daily
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Price
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Quantity
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Amount
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     Capital Gain
                   </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
+                  <Typography variant="h6">
                     UnRealized
                   </Typography>
                 </TableCell>
@@ -220,10 +221,10 @@ const PositionTable: React.FC<PositionTableProps> = ({
                         }
                       />
                       <Stack>
-                        <Typography variant="body1">
+                        <Typography>
                           {truncateText(position.contract.symbol, 8)}
                         </Typography>
-                        <Typography variant="body2">
+                        <Typography color="textSecondary">
                           {truncateText(position.contract.name, 18)}
                         </Typography>
                       </Stack>
@@ -265,17 +266,17 @@ const PositionTable: React.FC<PositionTableProps> = ({
                     ></Chip>
                   </TableCell>
                   <TableCell align="right">
-                    <Typography fontSize="12px">
+                    <Typography color="textSecondary">
                       {formatNumber(position.contract.price, "quantity")}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Typography fontSize="12px">
+                    <Typography color="textSecondary">
                       {formatNumber(position.quantity, "quantity_precise")}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Typography fontSize="12px">
+                    <Typography color="textSecondary">
                       {formatNumber(position.amount, "currency")}
                     </Typography>
                   </TableCell>

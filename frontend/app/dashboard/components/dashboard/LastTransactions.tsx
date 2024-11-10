@@ -109,7 +109,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
                           <Typography variant="h6">
                             {transaction.position.contract.symbol}
                           </Typography>
-                          <Typography color="subtitle1" fontSize="12px">
+                          <Typography color="textSecondary" fontSize="12px">
                             {transaction.against_contract.symbol}
                           </Typography>
                         </Stack>
@@ -145,7 +145,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
                           )}
                         ></Chip>
                       </Stack>
-                      <Typography variant="subtitle1" fontSize="12px" mb={2}>
+                      <Typography color="textSecondary" fontSize="12px" mb={2}>
                         {formatDate(transaction.date)}
                       </Typography>
 
@@ -158,7 +158,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
                           >
                             Price
                           </Typography>
-                          <Typography variant="subtitle2" fontSize="12px">
+                          <Typography color="textSecondary" fontSize="12px">
                             {formatNumber(transaction.price, "currency")}
                           </Typography>
                         </Grid>
@@ -170,7 +170,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
                           >
                             Cost
                           </Typography>
-                          <Typography variant="subtitle2" fontSize="12px">
+                          <Typography color="textSecondary" fontSize="12px">
                             {formatNumber(transaction.cost, "currency")}
                           </Typography>
                         </Grid>
@@ -182,7 +182,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
                           >
                             Avg.Cost
                           </Typography>
-                          <Typography variant="subtitle2" fontSize="12px">
+                          <Typography color="textSecondary" fontSize="12px">
                             {formatNumber(transaction.average_cost, "currency")}
                           </Typography>
                         </Grid>

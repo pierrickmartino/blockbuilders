@@ -1,6 +1,5 @@
 "use client";
 import {
-  Grid,
   Box,
   Stack,
   Card,
@@ -12,7 +11,7 @@ import {
   Link,
   Breadcrumbs,
 } from "@mui/material";
-// components
+import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
 import { Position } from "@/app/lib/definition";
 import { fetchPositions, fetchPositionsWithSearch } from "@/app/lib/data";
@@ -90,11 +89,11 @@ const Positions = () => {
     </Link>,
 
     positions.length > 0 ? (
-      <Typography key="2" sx={{ color: "text.primary" }}>
+      <Typography key="2" color="textPrimary">
         Positions in wallet {positions[0].wallet.name}
       </Typography>
     ) : (
-      <Typography key="2" sx={{ color: "text.primary" }}>
+      <Typography key="2" color="textPrimary">
         Loading Positions...
       </Typography>
     ),
@@ -104,9 +103,9 @@ const Positions = () => {
     <PageContainer title="Positions" description="this is Positions">
       <Box mt={1}>
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <Stack direction="row" justifyContent="space-between">
-              <Typography color="textSecondary" variant="h4">
+              <Typography color="textPrimary" variant="h4">
                 Positions
               </Typography>
               <Button
@@ -125,7 +124,7 @@ const Positions = () => {
               {breadcrumbs}
             </Breadcrumbs>
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <CustomCard title="Total Amount">
               <Stack direction="row" justifyContent="flex-end" spacing={2}>
                 {positions.length > 0 && positions[0]?.wallet ? (
@@ -138,7 +137,7 @@ const Positions = () => {
               </Stack>
             </CustomCard>
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <CustomCard title="Total Capital Gain">
               <Stack direction="row" justifyContent="flex-end" spacing={2}>
                 {positions.length > 0 && positions[0]?.wallet ? (
@@ -151,7 +150,7 @@ const Positions = () => {
               </Stack>
             </CustomCard>
           </Grid>
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <CustomCard title="Total Unrealized">
               <Stack direction="row" justifyContent="flex-end" spacing={2}>
                 {positions.length > 0 && positions[0]?.wallet ? (
@@ -167,7 +166,7 @@ const Positions = () => {
               </Stack>
             </CustomCard>
           </Grid>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <Card variant="outlined" sx={{ p: 3 }}>
               <Box px={0} py={0} mb="-15px">
                 <Typography variant="h5">Filter</Typography>
@@ -191,7 +190,7 @@ const Positions = () => {
               </Box>
             </Card>
           </Grid>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <PositionTable
               positions={positions}
               page={page}

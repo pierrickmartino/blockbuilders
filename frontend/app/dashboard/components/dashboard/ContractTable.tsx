@@ -62,6 +62,7 @@ const ContractTable: React.FC<ContractTableProps> = ({
         >
           <Table
             aria-label="simple table"
+            size="small"
             sx={{
               whiteSpace: "nowrap",
               mt: 0,

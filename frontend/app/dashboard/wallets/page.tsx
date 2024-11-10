@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import PageContainer from "../components/container/PageContainer";
-// components
 import SalesOverview from "../components/dashboard/TheSalesOverview";
 import Blogcard from "../components/dashboard/TheBlogCard";
 import ProfileCard from "../components/dashboard/TheProfileCard";

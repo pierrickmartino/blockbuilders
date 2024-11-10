@@ -29,7 +29,7 @@ const TopPositions: React.FC<TopPositionsProps> = ({ positions }) => {
               <Typography variant="h6" fontSize="14px">
                 {position.contract.name}
               </Typography>
-              <Typography color="subtitle1" fontSize="12px">
+              <Typography color="textSecondary" fontSize="12px">
                 {formatNumber(position.quantity, "quantity_precise")}{" "}
                 {position.contract.symbol}
               </Typography>
@@ -43,7 +43,7 @@ const TopPositions: React.FC<TopPositionsProps> = ({ positions }) => {
             <Typography variant="h6" fontSize="14px">
               {formatNumber(position.amount, "currency")}
             </Typography>
-            <Typography variant="subtitle1" fontSize="12px">
+            <Typography color="textSecondary" fontSize="12px">
               {formatNumber(position.progress_percentage, "percentage")}
             </Typography>
           </Stack>
