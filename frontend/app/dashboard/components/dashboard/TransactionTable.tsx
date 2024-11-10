@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 
 import {
   Typography,
@@ -13,17 +13,14 @@ import {
   IconButton,
   TablePagination,
   Stack,
-  ListItemIcon,
-  Menu,
-  MenuItem,
+  Button,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
 import formatDate from "@/app/utils/formatDate";
 import { Transaction } from "../../../lib/definition";
 import Link from "next/link";
-import { Download, Link as LinkIcon } from "@mui/icons-material";
-import { IconDotsVertical } from "@tabler/icons-react";
+import { Link as LinkIcon } from "@mui/icons-material";
 import { exportTransactions } from "@/app/lib/export-transaction";
 import { saveAs } from "file-saver";
 
@@ -52,52 +49,24 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     onPageChange(newPage); // Call the passed prop to update the page state in the parent
   };
 
-  const transactionMenuItems = [
-    {
-      title: "Export",
-      key: "transaction-export",
-      value: "transaction-export",
-      button: <Download fontSize="small" />,
-    },
-  ];
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const [selectedPositionId, setSelectedPositionId] = useState<string | null>(
-    null
-  );
-
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     onRowsPerPageChange(parseInt(event.target.value, 10)); // Call the passed prop to update the rows per page state
   };
 
-  const handleClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    position_id: string
-  ) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedPositionId(position_id);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-    setSelectedPositionId(null);
-  };
-
-  const handleExportTransactions = async () => {
+  const handleExportTransactions = async (position_id: string) => {
     console.log("Export function called"); // Debug log
 
-    if (selectedPositionId !== null) {
+    if (position_id !== null) {
       try {
         console.log(
           "Attempting to export transactions with ID:",
-          selectedPositionId
+          position_id
         );
 
         const response = await exportTransactions(
-          selectedPositionId.toString()
+          position_id.toString()
         );
 
         // Log response to check if we got it successfully
@@ -129,47 +98,17 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     }
   };
 
-  // const truncateText = (text: string, maxLength: number) => {
-  //   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  // };
-
   const action = (
     <Fragment>
-      <IconButton
-        id="basic-button"
-        aria-controls={open ? "basic-menu" : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
-        onClick={(event) => handleClick(event, transactions[0].position.id)}
-        aria-label="Open to show more"
-        title="Open to show more"
+      <Button
+        variant="contained"
+        size="small"
+        onClick={() => {
+         handleExportTransactions(transactions[0].position.id);
+        }}
       >
-        <IconDotsVertical width={18} />
-      </IconButton>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={open}
-        onClose={handleClose}
-      >
-        {transactionMenuItems.map((item) => (
-          <MenuItem
-            onClick={() => {
-              console.log(`Clicked on menu item: ${item.key}`);
-              handleClose();
-              if (item.key === "transaction-export") {
-                handleExportTransactions();
-              }
-            }}
-            key={item.key}
-            value={item.value}
-          >
-            <ListItemIcon>{item.button}</ListItemIcon>
-            {item.title}
-          </MenuItem>
-        ))}
-      </Menu>
+        Export
+      </Button>
     </Fragment>
   );
 
@@ -298,26 +237,22 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                   </TableCell>
                   <TableCell align="right">
                     <Typography color="textSecondary">
-                      {transaction.against_fiat.short_symbol}{" "}
-                      {formatNumber(transaction.price, "quantity")}
+                      {formatNumber(transaction.price, "currency")}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Typography color="textSecondary">
-                      {transaction.against_fiat.short_symbol}{" "}
-                      {formatNumber(transaction.cost, "quantity")}
+                      {formatNumber(transaction.cost, "currency")}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Typography color="textSecondary">
-                      {transaction.against_fiat.short_symbol}{" "}
-                      {formatNumber(transaction.total_cost, "quantity")}
+                      {formatNumber(transaction.total_cost, "currency")}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Typography color="textSecondary">
-                      {transaction.against_fiat.short_symbol}{" "}
-                      {formatNumber(transaction.average_cost, "quantity")}
+                      {formatNumber(transaction.average_cost, "currency")}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
