@@ -267,7 +267,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
                   </TableCell>
                   <TableCell align="right">
                     <Typography color="textSecondary">
-                      {formatNumber(position.contract.price, "quantity")}
+                      {formatNumber(position.contract.price, "currency")}
                     </Typography>
                   </TableCell>
                   <TableCell align="right">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 
 import {
   Typography,
@@ -15,6 +15,7 @@ import {
   MenuItem,
   ListItemIcon,
   TablePagination,
+  Button,
 } from "@mui/material";
 import DashboardCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
@@ -174,10 +175,25 @@ const WalletTable: React.FC<WalletTableProps> = ({
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
 
+  const action = (
+    <Fragment>
+      <Button
+        variant="contained"
+        size="small"
+        onClick={() => {
+         console.log("click");
+        }}
+      >
+        Add wallet
+      </Button>
+    </Fragment>
+  );
+
   return (
     <DashboardCard
       title="Wallet Overview"
       subtitle="Track balances, performance, and key metrics across your wallets"
+      action={action}
     >
       <Box>
         <TableContainer

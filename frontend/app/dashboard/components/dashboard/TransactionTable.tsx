@@ -210,7 +210,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                         <Typography>
                           {transaction.position.contract.symbol}
                         </Typography>
-                        <Typography color="textSecondary">
+                        <Typography color="textSecondary" variant="body2">
                           {transaction.against_contract?.symbol || ""}
                         </Typography>
                       </Stack>
@@ -280,7 +280,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                   <TableCell>
                     <Box display="flex">
                       <Box>
-                        <Typography color="textSecondary">
+                        <Typography color="textSecondary" variant="body2" >
                           {formatDate(transaction.date)}
                         </Typography>
                       </Box>
