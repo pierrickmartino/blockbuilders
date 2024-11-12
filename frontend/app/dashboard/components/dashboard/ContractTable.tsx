@@ -11,9 +11,12 @@ import {
   TableContainer,
   TablePagination,
   Stack,
+  IconButton,
 } from "@mui/material";
 import BaseCard from "../shared/DashboardCard";
 import { Contract } from "../../../lib/definition";
+import formatNumber from "@/app/utils/formatNumber";
+import { IconDotsVertical } from "@tabler/icons-react";
 
 // Define the props type that will be passed into WalletTable
 interface ContractTableProps {
@@ -46,6 +49,10 @@ const ContractTable: React.FC<ContractTableProps> = ({
     onRowsPerPageChange(parseInt(event.target.value, 10)); // Call the passed prop to update the rows per page state
   };
 
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+
   return (
     <BaseCard
       title="Contract History"
@@ -71,120 +78,64 @@ const ContractTable: React.FC<ContractTableProps> = ({
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Typography color="textSecondary" variant="h6">
-                    Position
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
-                    Quantity
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
-                    Running Qty.
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
-                    Price
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
-                    Cost
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
-                    Total Cost
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
-                    Avg.Cost
-                  </Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography color="textSecondary" variant="h6">
-                    Cap.gain
-                  </Typography>
+                  <Typography variant="h6">Blockchain</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography color="textSecondary" variant="h6">
-                    Date
-                  </Typography>
+                  <Typography variant="h6">Name</Typography>
                 </TableCell>
-                {/* <TableCell>
-              </TableCell> */}
+                <TableCell>
+                  <Typography variant="h6">Symbol</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6">Address</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6">Category</Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="h6">Price</Typography>
+                </TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {contracts.map((contract: Contract) => (
                 <TableRow key={contract.id}>
                   <TableCell>
-                    <Stack direction="row" spacing={2}>
-                      <Stack>
-                        <Typography fontSize="14px">
-                          {contract.symbol}
-                        </Typography>
-                        <Typography fontSize="12px">
-                          {contract.address}
-                        </Typography>
-                      </Stack>
-                    </Stack>
+                    <Typography color="textSecondary">
+                      {contract.blockchain.name}
+                    </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography
-                      fontSize="12px"
-                    >
+                    <Typography color="textSecondary">
+                      {contract.name}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography color="textSecondary">
+                      {contract.symbol}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography color="textSecondary">
+                      {truncateText(contract.address, 15)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography color="textSecondary">
                       {contract.category}
                     </Typography>
                   </TableCell>
-                  <TableCell>
-                    <Typography fontSize="12px">
-                      {
-                        contract.name
-                        }
-                    </Typography>
-                  </TableCell>
                   <TableCell align="right">
-                    <Typography fontSize="12px">
-                      
+                    <Typography color="textSecondary">
+                      {formatNumber(contract.price, "currency")}
                     </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography fontSize="12px">
-                      
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography fontSize="12px">
-                      
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography fontSize="12px">
-                      
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    
                   </TableCell>
                   <TableCell>
-                    <Box display="flex">
-                      <Box>
-                        <Typography fontSize="12px">
-                          
-                        </Typography>
-                      </Box>
-                    </Box>
+                    <IconButton>
+                      <IconDotsVertical width={18} />
+                    </IconButton>
                   </TableCell>
-                  {/* <TableCell>
-                <IconButton>
-                  <IconDotsVertical width={18} />
-                </IconButton>
-                </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
