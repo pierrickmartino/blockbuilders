@@ -1,14 +1,6 @@
 import { createTheme } from "@mui/material/styles";
-// import { TimelineConnector } from '@mui/lab';
 import { Inter, Poppins } from "next/font/google";
 import theme from "../theme";
-
-// export const poppins = Poppins({
-//   weight: ["300", "400", "500", "600", "700"],
-//   subsets: ["latin"],
-//   display: "swap",
-//   fallback: ["Helvetica", "Arial", "sans-serif"],
-// });
 
 export const inter = Inter({
   weight: ["300", "400", "500", "600", "700"],
@@ -34,10 +26,10 @@ const baselightTheme = createTheme({
       contrastText: "#ffffff",
     },
     success: {
-      main: "#13deb9",
-      light: "#E6FFFA",
-      dark: "#02b3a9",
-      contrastText: "#ffffff",
+      main: "rgba(21, 128, 61, 1)",
+      light: "rgba(240, 253, 244, 1)",
+      dark: "rgba(22, 163, 74, 0.2)",
+      contrastText: "rgba(255, 255, 255, 1)",
     },
     info: {
       main: "#7460ee",
@@ -46,10 +38,10 @@ const baselightTheme = createTheme({
       contrastText: "#ffffff",
     },
     error: {
-      main: "#fa896b",
-      light: "#FDEDE8",
-      dark: "#f3704d",
-      contrastText: "#ffffff",
+      main: "rgba(185, 28, 28, 1)",
+      light: "rgba(254, 242, 242, 1)",
+      dark: "rgba(220, 38, 38, 0.1)",
+      contrastText: "rgba(255, 255, 255, 1)",
     },
     warning: {
       main: "#ffb22b",
@@ -141,11 +133,13 @@ const baselightTheme = createTheme({
       fontSize: '0.875rem',
       fontWeight: 400,
       fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
+      lineHeight: '1rem',
     },
     subtitle2: {
       fontSize: '0.875rem',
       fontWeight: 400,
       fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
+      lineHeight: '1rem',
     },
   },
   components: {
@@ -347,10 +341,10 @@ const basedarkTheme = createTheme({
       contrastText: "#ffffff",
     },
     success: {
-      main: "#13deb9",
-      light: "#E6FFFA",
-      dark: "#02b3a9",
-      contrastText: "#ffffff",
+      main: "rgba(21, 128, 61, 1)",
+      light: "rgba(240, 253, 244, 1)",
+      dark: "rgba(22, 163, 74, 0.2)",
+      contrastText: "rgba(255, 255, 255, 1)",
     },
     info: {
       main: "#7460ee",
@@ -359,10 +353,10 @@ const basedarkTheme = createTheme({
       contrastText: "#ffffff",
     },
     error: {
-      main: "#fa896b",
-      light: "#FDEDE8",
-      dark: "#f3704d",
-      contrastText: "#ffffff",
+      main: "rgba(185, 28, 28, 1)",
+      light: "rgba(254, 242, 242, 1)",
+      dark: "rgba(220, 38, 38, 0.1)",
+      contrastText: "rgba(255, 255, 255, 1)",
     },
     warning: {
       main: "#ffb22b",
@@ -454,11 +448,13 @@ const basedarkTheme = createTheme({
       fontSize: '0.875rem',
       fontWeight: 400,
       fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
+      lineHeight: '1rem',
     },
     subtitle2: {
       fontSize: '0.875rem',
       fontWeight: 400,
       fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
+      lineHeight: '1rem',
     },
   },
   components: {

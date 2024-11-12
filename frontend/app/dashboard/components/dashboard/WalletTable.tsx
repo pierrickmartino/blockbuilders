@@ -21,7 +21,7 @@ import DashboardCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
 import { IconDotsVertical } from "@tabler/icons-react";
 import { Wallet } from "@/app/lib/definition";
-import { EventRepeat, Refresh } from "@mui/icons-material";
+import { Add, Edit, EventRepeat, Refresh } from "@mui/icons-material";
 import { Download } from "@mui/icons-material";
 import { Delete } from "@mui/icons-material";
 import { Visibility } from "@mui/icons-material";
@@ -31,6 +31,7 @@ import {
   refreshWallet,
   refreshFullWallet,
 } from "@/app/lib/actions";
+import PerformanceChip from "../../ui-components/chips/PerformanceChip";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
@@ -44,6 +45,7 @@ interface WalletTableProps {
   onWalletDownloaded: (response: string) => void;
   onWalletRefreshed: (response: string) => void;
   onWalletFullRefreshed: (response: string) => void;
+  onCreateWallet: () => void;
 }
 
 const WalletTable: React.FC<WalletTableProps> = ({
@@ -57,6 +59,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
   onWalletDownloaded,
   onWalletRefreshed,
   onWalletFullRefreshed,
+  onCreateWallet,
 }) => {
   const walletMenuItems = [
     {
@@ -64,6 +67,12 @@ const WalletTable: React.FC<WalletTableProps> = ({
       key: "wallet-details",
       value: "wallet-details",
       button: <Visibility fontSize="small" />,
+    },
+    {
+      title: "Edit wallet",
+      key: "wallet-edit",
+      value: "wallet-edit",
+      button: <Edit fontSize="small" />,
     },
     {
       title: "Download history",
@@ -180,8 +189,9 @@ const WalletTable: React.FC<WalletTableProps> = ({
       <Button
         variant="contained"
         size="small"
+        startIcon={<Add />}
         onClick={() => {
-         console.log("click");
+          onCreateWallet();
         }}
       >
         Add wallet
@@ -205,7 +215,6 @@ const WalletTable: React.FC<WalletTableProps> = ({
           }}
         >
           <Table
-            aria-label="simple table"
             size="small"
             sx={{
               whiteSpace: "nowrap",
@@ -220,34 +229,22 @@ const WalletTable: React.FC<WalletTableProps> = ({
                   </Typography>
                 </TableCell> */}
                 <TableCell>
-                  <Typography variant="h6">
-                    Name
-                  </Typography>
+                  <Typography variant="h6">Name</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6">
-                    Description
-                  </Typography>
+                  <Typography variant="h6">Description</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6">
-                    Address
-                  </Typography>
+                  <Typography variant="h6">Address</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Balance
-                  </Typography>
+                  <Typography variant="h6">Balance</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Capital Gain
-                  </Typography>
+                  <Typography variant="h6">Capital Gain</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    UnRealized
-                  </Typography>
+                  <Typography variant="h6">UnRealized</Typography>
                 </TableCell>
                 <TableCell></TableCell>
               </TableRow>
@@ -263,16 +260,14 @@ const WalletTable: React.FC<WalletTableProps> = ({
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <Box>
-                        <Typography fontWeight={500}>
-                          {wallet.name}
-                        </Typography>
+                        <Typography fontWeight={500}>{wallet.name}</Typography>
                       </Box>
                     </Box>
                   </TableCell>
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       <Box>
-                      <Typography color="textSecondary">
+                        <Typography color="textSecondary">
                           {wallet.description}
                         </Typography>
                       </Box>
@@ -293,48 +288,10 @@ const WalletTable: React.FC<WalletTableProps> = ({
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Chip
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          wallet.capital_gain < 0
-                            ? "error.light"
-                            : wallet.capital_gain > 0
-                            ? "success.light"
-                            : "", // No background color if the capital gain is 0
-                        color:
-                          wallet.capital_gain < 0
-                            ? "error.main"
-                            : wallet.capital_gain > 0
-                            ? "success.main"
-                            : "", // No color if the unrealized gain is 0
-                      }}
-                      size="small"
-                      label={formatNumber(wallet.capital_gain, "currency")}
-                    ></Chip>
+                    <PerformanceChip input={wallet.capital_gain} type="currency" />
                   </TableCell>
                   <TableCell align="right">
-                    <Chip
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          wallet.unrealized_gain < 0
-                            ? "error.light"
-                            : wallet.unrealized_gain > 0
-                            ? "success.light"
-                            : "", // No background color if the unrealized gain is 0
-                        color:
-                          wallet.unrealized_gain < 0
-                            ? "error.main"
-                            : wallet.unrealized_gain > 0
-                            ? "success.main"
-                            : "", // No color if the unrealized gain is 0
-                      }}
-                      size="small"
-                      label={formatNumber(wallet.unrealized_gain, "percentage")}
-                    ></Chip>
+                     <PerformanceChip input={wallet.unrealized_gain} type="percentage" />
                   </TableCell>
                   <TableCell>
                     <IconButton

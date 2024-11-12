@@ -23,6 +23,7 @@ import Link from "next/link";
 import { Link as LinkIcon } from "@mui/icons-material";
 import { exportTransactions } from "@/app/lib/export-transaction";
 import { saveAs } from "file-saver";
+import PerformanceChip from "../../ui-components/chips/PerformanceChip";
 
 // Define the props type that will be passed into WalletTable
 interface TransactionTableProps {
@@ -256,26 +257,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Chip
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          transaction.capital_gain < 0
-                            ? "error.light"
-                            : transaction.capital_gain > 0
-                            ? "success.light"
-                            : "", // No background color if the capital gain is 0
-                        color:
-                          transaction.capital_gain < 0
-                            ? "error.main"
-                            : transaction.capital_gain > 0
-                            ? "success.main"
-                            : "",
-                      }}
-                      size="small"
-                      label={formatNumber(transaction.capital_gain, "currency")}
-                    ></Chip>
+                    <PerformanceChip input={transaction.capital_gain} type="currency" />
                   </TableCell>
                   <TableCell>
                     <Box display="flex">

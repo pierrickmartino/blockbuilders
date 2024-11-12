@@ -2,7 +2,14 @@
 
 import { createWallet, State } from "../../lib/actions";
 import { useState } from "react";
-import { Box, Button, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Add, Save } from "@mui/icons-material";
 
 // Define the props for WalletWizard, including the onWalletCreated function
@@ -30,7 +37,7 @@ const CreateWalletForm: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Form Data:", formData);
+    // console.log("Form Data:", formData);
 
     // Directly pass formData as JSON instead of FormData
     const result = await createWallet(state, formData);
@@ -47,53 +54,71 @@ const CreateWalletForm: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} height="264px">
-      <Stack spacing={3}>
-        <TextField
-          id="address"
-          label="Address"
-          variant="outlined"
-          value={formData.address}
-          onChange={handleInputChange}
-          error={!!state.errors?.address}
-          helperText={state.errors?.address?.[0]}
-        />
-        <TextField
-          id="name"
-          label="Name"
-          variant="outlined"
-          value={formData.name}
-          onChange={handleInputChange}
-          error={!!state.errors?.name}
-          helperText={state.errors?.name?.[0]}
-        />
-        <TextField
-          id="description"
-          label="Description"
-          variant="outlined"
-          value={formData.description}
-          onChange={handleInputChange}
-          error={!!state.errors?.description}
-          helperText={state.errors?.description?.[0]}
-        />
-      </Stack>
-
-      <Box mt={4} mb={1}>
-        <Stack direction="row" spacing={2}>
-          {/* <ButtonGroup variant="contained" aria-label="contained button group"> */}
-          <Button
-            variant="contained"
-            color="success"
-            startIcon={<Add />}
-            onClick={handleSubmit}
-          >
-            Add
-          </Button>
-          <Button variant="contained" color="primary" startIcon={<Save />}>
-            Save
-          </Button>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{ height: "auto" }}
+    >
+      <Stack direction="column" justifyContent={"space-between"}>
+        <Box px={3} py={3}>
+          <Stack spacing={4}>
+            <Stack spacing={1}>
+              <Typography variant="h6">Wallet address</Typography>
+              <TextField
+                id="address"
+                // label="Address"
+                variant="outlined"
+                value={formData.address}
+                onChange={handleInputChange}
+                error={!!state.errors?.address}
+                helperText={state.errors?.address?.[0]}
+              />
+            </Stack>
+            <Stack spacing={1}>
+              <Typography variant="h6">Wallet name</Typography>
+              <TextField
+                id="name"
+                // label="Name"
+                variant="outlined"
+                value={formData.name}
+                onChange={handleInputChange}
+                error={!!state.errors?.name}
+                helperText={state.errors?.name?.[0]}
+              />
+            </Stack>
+            <Stack spacing={1}>
+              <Typography variant="h6">Wallet description</Typography>
+              <TextField
+                id="description"
+                // label="Description"
+                variant="outlined"
+                value={formData.description}
+                onChange={handleInputChange}
+                error={!!state.errors?.description}
+                helperText={state.errors?.description?.[0]}
+              />
+            </Stack>
+          </Stack>
+        </Box>
+        <Stack>
+          <Divider />
+          <Box px={3} py={2}>
+            <Stack direction="row" spacing={2} justifyContent={"flex-end"}>
+              <Button size="small" variant="outlined" color="primary">
+                Cancel
+              </Button>
+              <Button
+                size="small"
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit}
+              >
+                Save
+              </Button>
+            </Stack>
+          </Box>
         </Stack>
-      </Box>
+      </Stack>
     </Box>
   );
 };

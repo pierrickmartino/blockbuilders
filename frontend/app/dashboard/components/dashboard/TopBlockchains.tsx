@@ -17,7 +17,7 @@ const TopBlockchains: React.FC<TopBlockchainsProps> = ({ blockchains }) => {
           alignItems="center"
           spacing={2}
           justifyContent="space-between"
-          mb={3}
+          mb={2}
         >
           <Stack direction="row" spacing={2}>
             <Avatar

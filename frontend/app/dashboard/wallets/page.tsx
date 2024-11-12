@@ -8,6 +8,7 @@ import {
   Alert,
   AlertTitle,
   AlertColor,
+  Drawer,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import PageContainer from "../components/container/PageContainer";
@@ -35,6 +36,7 @@ import {
 import LastTransactions from "../components/dashboard/LastTransactions";
 import TopRepartition from "../components/dashboard/TopRepartition";
 import TradingCalendar from "../components/dashboard/TradingCalendar";
+import React from "react";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -52,13 +54,22 @@ const Wallets = () => {
   const [taskPolling, setTaskPolling] = useState<{
     [taskId: string]: NodeJS.Timeout;
   }>({}); // New state for task polling
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleClick = (message: string, title: string, severity: AlertColor) => {
-    setSnackbarMessage(message);
-    setSnackbarSeverity(severity);
-    setSnackbarTitle(title);
-    setOpen(true);
+  const toggleDrawer = (open : boolean) => {
+    setDrawerOpen(open);
   };
+
+  const handleAddWalletClick = () => {
+    toggleDrawer(true);
+  };
+
+  // const handleClick = (message: string, title: string, severity: AlertColor) => {
+  //   setSnackbarMessage(message);
+  //   setSnackbarSeverity(severity);
+  //   setSnackbarTitle(title);
+  //   setOpen(true);
+  // };
 
   const handleClose = (
     event: React.SyntheticEvent | Event,
@@ -116,12 +127,12 @@ const Wallets = () => {
 
   // Fetch top positions function
   const fetchTopPositionData = async () => {
-    await fetchTopPositions(4, setTopPositions);
+    await fetchTopPositions(5, setTopPositions);
   };
 
   // Fetch top blockchain function
   const fetchTopBlockchainData = async () => {
-    await fetchTopBlockchains(4, setTopBlockchains);
+    await fetchTopBlockchains(5, setTopBlockchains);
   };
 
   // Fetch last transaction function
@@ -152,6 +163,7 @@ const Wallets = () => {
 
   const handleWalletCreated = () => {
     fetchWalletData(); // Re-fetch wallet data after a new wallet is created
+    toggleDrawer(false);
   };
 
   const handleWalletDeleted = () => {
@@ -159,18 +171,17 @@ const Wallets = () => {
   };
 
   const handleWalletDownloaded = (taskId: string) => {
-    // console.log("Task triggered in handleWalletDownloaded:", taskId);
-    handleClick("Download in progress for " + taskId, "Info", "info");
+    // handleClick("Download in progress for " + taskId, "Info", "info");
     pollTaskStatus(taskId); // Start polling task status
   };
 
   const handleWalletRefreshed = (taskId: string) => {
-    handleClick("Refresh in progress for" + taskId, "Info", "info");
+    // handleClick("Refresh in progress for " + taskId, "Info", "info");
     pollTaskStatus(taskId); // Start polling task status
   };
 
   const handleWalletFullRefreshed = (taskId: string) => {
-    handleClick("Full refresh in progress for " + taskId, "Info", "info");
+    // handleClick("Full refresh in progress for " + taskId, "Info", "info");
     pollTaskStatus(taskId); // Start polling task status
   };
 
@@ -193,6 +204,12 @@ const Wallets = () => {
     };
   }, [taskPolling]);
 
+  const DrawerList = (
+    <Box sx={{ width: 350, height: '100%' }} role="presentation">
+      <WalletWizard onWalletCreated={handleWalletCreated} />
+    </Box>
+  );
+
   return (
     <PageContainer title="Wallets" description="this is Wallets">
       <Box mt={0}>
@@ -211,13 +228,7 @@ const Wallets = () => {
             />
           </Grid>
           <Grid size={{ xs: 12, lg: 4 }}>
-            <WalletWizard onWalletCreated={handleWalletCreated} />
-          </Grid>
-          <Grid size={{ xs: 12, lg: 8 }}>
-            <SalesOverview />
-          </Grid>
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <Blogcard />
+            <TradingCalendar />
           </Grid>
           <Grid size={{ xs: 12, lg: 12 }}>
             <WalletTable
@@ -231,7 +242,14 @@ const Wallets = () => {
               onWalletDownloaded={handleWalletDownloaded}
               onWalletRefreshed={handleWalletRefreshed}
               onWalletFullRefreshed={handleWalletFullRefreshed}
+              onCreateWallet={handleAddWalletClick}
             />
+          </Grid>
+          <Grid size={{ xs: 12, lg: 8 }}>
+            <SalesOverview />
+          </Grid>
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <Blogcard />
           </Grid>
           <Grid size={{ xs: 12, lg: 4 }}>
             <Grid container spacing={3}>
@@ -249,9 +267,6 @@ const Wallets = () => {
               count={count_transactions}
             />
           </Grid>
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <TradingCalendar />
-          </Grid>
         </Grid>
       </Box>
       <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
@@ -260,6 +275,9 @@ const Wallets = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+      <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
+    {DrawerList}
+  </Drawer>
     </PageContainer>
   );
 };

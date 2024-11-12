@@ -21,16 +21,14 @@ const WalletWizard: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
   };
 
   return (
-    <DashboardCard isNarrow={true}>
-      <Fragment>
-        <Box px={3} py={2} mb="-15px">
-          <Typography variant="h5">Form</Typography>
-        </Box>
-        <Box px={3} py={2} mt={1}>
-          <CreateWalletForm onWalletCreated={handleSubmit} />
-        </Box>
-      </Fragment>
-    </DashboardCard>
+    <Fragment>
+      <Box px={3} py={2} bgcolor="primary.main" color="white">
+        <Typography variant="h5">Add wallet</Typography>
+        <Typography variant="subtitle1">Get started by filling in the information below to create your new wallet.</Typography>
+      </Box>
+
+      <CreateWalletForm onWalletCreated={handleSubmit} />
+    </Fragment>
   );
 };
 

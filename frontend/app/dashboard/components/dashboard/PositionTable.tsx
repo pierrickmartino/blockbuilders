@@ -35,6 +35,7 @@ import {
   setContractAsStable,
   setContractAsSuspicious,
 } from "@/app/lib/actions";
+import PerformanceChip from "../../ui-components/chips/PerformanceChip";
 
 // Define the props type that will be passed into WalletTable
 interface PositionTableProps {
@@ -171,39 +172,25 @@ const PositionTable: React.FC<PositionTableProps> = ({
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Typography variant="h6">
-                    Token
-                  </Typography>
+                  <Typography variant="h6">Token</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Perf Daily
-                  </Typography>
+                  <Typography variant="h6">Perf Daily</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Price
-                  </Typography>
+                  <Typography variant="h6">Price</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Quantity
-                  </Typography>
+                  <Typography variant="h6">Quantity</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Amount
-                  </Typography>
+                  <Typography variant="h6">Amount</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Capital Gain
-                  </Typography>
+                  <Typography variant="h6">Capital Gain</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    UnRealized
-                  </Typography>
+                  <Typography variant="h6">UnRealized</Typography>
                 </TableCell>
                 <TableCell></TableCell>
               </TableRow>
@@ -231,7 +218,9 @@ const PositionTable: React.FC<PositionTableProps> = ({
                     </Stack>
                   </TableCell>
                   <TableCell align="right">
-                    <Chip
+                    <PerformanceChip
+                      input={position.daily_price_delta}
+                      type="percentage"
                       icon={
                         position.daily_price_delta < 0 ? (
                           <ArrowDropDown />
@@ -241,29 +230,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
                           <Fragment></Fragment>
                         )
                       }
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          position.daily_price_delta < 0
-                            ? "error.light"
-                            : position.daily_price_delta > 0
-                            ? "success.light"
-                            : "", // No background color if the capital gain is 0
-                        color:
-                          position.daily_price_delta < 0
-                            ? "error.main"
-                            : position.daily_price_delta > 0
-                            ? "success.main"
-                            : "",
-                        mb: "4px",
-                      }}
-                      size="small"
-                      label={formatNumber(
-                        position.daily_price_delta,
-                        "percentage"
-                      )}
-                    ></Chip>
+                    />
                   </TableCell>
                   <TableCell align="right">
                     <Typography color="textSecondary">
@@ -281,51 +248,16 @@ const PositionTable: React.FC<PositionTableProps> = ({
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <Chip
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          position.capital_gain < 0
-                            ? "error.light"
-                            : position.capital_gain > 0
-                            ? "success.light"
-                            : "", // No background color if the capital gain is 0
-                        color:
-                          position.capital_gain < 0
-                            ? "error.main"
-                            : position.capital_gain > 0
-                            ? "success.main"
-                            : "",
-                      }}
-                      size="small"
-                      label={formatNumber(position.capital_gain, "currency")}
-                    ></Chip>
+                    <PerformanceChip
+                      input={position.capital_gain}
+                      type="currency"
+                    />
                   </TableCell>
                   <TableCell align="right">
-                    <Chip
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          position.unrealized_gain < 0
-                            ? "error.light"
-                            : position.unrealized_gain > 0
-                            ? "success.light"
-                            : "", // No background color if the capital gain is 0
-                        color:
-                          position.unrealized_gain < 0
-                            ? "error.main"
-                            : position.unrealized_gain > 0
-                            ? "success.main"
-                            : "",
-                      }}
-                      size="small"
-                      label={formatNumber(
-                        position.unrealized_gain,
-                        "percentage"
-                      )}
-                    ></Chip>
+                    <PerformanceChip
+                      input={position.unrealized_gain}
+                      type="percentage"
+                    />
                   </TableCell>
                   <TableCell>
                     <Checkbox

@@ -9,7 +9,7 @@ interface TopPositionsProps {
 
 const TopPositions: React.FC<TopPositionsProps> = ({ positions }) => {
   return positions.length > 0 ? (
-    <Box px={2} width="60%" height="240px">
+    <Box px={2} width="50%" height="240px">
       {positions.map((position: Position) => (
         <Stack
           key={position.id}
@@ -17,7 +17,7 @@ const TopPositions: React.FC<TopPositionsProps> = ({ positions }) => {
           alignItems="center"
           spacing={2}
           justifyContent="space-between"
-          mb={3}
+          mb={2}
         >
           <Stack direction="row" spacing={2}>
             <Avatar

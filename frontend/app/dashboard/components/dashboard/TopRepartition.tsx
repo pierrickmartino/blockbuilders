@@ -46,7 +46,6 @@ const TopRepartition: React.FC<TopRepartitionProps> = ({
             <Box>
               <TabList
                 onChange={handleChange}
-                aria-label="lab API tabs example"
                 variant="fullWidth"
               >
                 <Tab label="Positions" value="1" />

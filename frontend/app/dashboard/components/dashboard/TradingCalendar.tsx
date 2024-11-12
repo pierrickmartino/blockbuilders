@@ -37,7 +37,7 @@ function fakeFetch(date: Dayjs, { signal }: { signal: AbortSignal }) {
   });
 }
 
-const initialValue = dayjs("2022-04-17");
+const initialValue = dayjs();
 
 function ServerDay(
   props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }
@@ -107,7 +107,7 @@ const TradingCalendar = () => {
   };
 
   return (
-    <DashboardCard isNarrow={true}>
+    <DashboardCard title="Trading calendar">
       <Box>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateCalendar
