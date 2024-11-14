@@ -22,5 +22,5 @@ djangorestframework
 django-cors-headers
 django-filter
 
-# djangorestframework-simplejwt
+djangorestframework-simplejwt
 # djangorestframework-api-key==2.*

@@ -25,8 +25,11 @@ from app.utils.optimism import view_optimism
 from app.utils.bsc import view_bsc
 from app.views.views_api import (
     FiatViewSet,
+    Loginview,
+    LogoutView,
     PositionTopView,
     PositionView,
+    RegisterView,
     TransactionLastView,
     BlockchainTopView,
     TransactionView,
@@ -49,6 +52,7 @@ from app.views.views_api import (
 # )
 
 from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework_simplejwt import views as jwt_views
 
 wallet_list = WalletViewSet.as_view({"get": "list", "post": "create"})
 wallet_detail = WalletViewSet.as_view(
@@ -94,11 +98,12 @@ urlpatterns = format_suffix_patterns(
         path("", views.dashboard_redirect, name="dashboard"),
         path("__debug__/", include("debug_toolbar.urls")),
         path("admin/", admin.site.urls),
+
         path("prometheus/", include("django_prometheus.urls")),
         # AUTHENTICATION / USER
-        path("login/", auth_views.LoginView.as_view(), name="login"),
-        path("logout/", auth_views.LogoutView.as_view(), name="logout"),
-        path("register/", views.register, name="register"),
+        # path("login/", auth_views.LoginView.as_view(), name="login"),
+        # path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+        # path("register/", views.register, name="register"),
         path("profile/", views_profile.profile, name="profile"),
         path("profile/update/", views_profile.update_user_settings, name="update_user_settings"),
         # DASHBOARD
@@ -221,7 +226,13 @@ urlpatterns = format_suffix_patterns(
         path("bsc/bnb/", view_bsc.bnb_price, name="bsc_bnb_price"),
         ######################
         # API DEDICATED URLS #
-        ######################
+        ###################### 
+        # path('user/', include('authentication.urls')),
+        path('api/token/', jwt_views.TokenObtainPairView.as_view(), name ="token_obtain_pair"),
+        path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
+        path('api/register/', RegisterView.as_view(), name="register"),
+        path('api/login/', Loginview.as_view(), name="login"),
+        path('api/logout/', LogoutView.as_view(), name = "logout"),
         # path("api/auth/", include("rest_framework.urls")),
         # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
         # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

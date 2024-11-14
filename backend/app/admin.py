@@ -1,7 +1,9 @@
 from django.contrib import admin
 
-from app.models import Blockchain, Wallet, Contract, Position, Transaction, Fiat, WalletProcess, UserSetting, MarketData
+from app.models import Blockchain, User, Wallet, Contract, Position, Transaction, Fiat, WalletProcess, UserSetting, MarketData
 
+class User_Admin(admin.ModelAdmin):
+    list_display = ("id", "name", "email")
 
 class Wallet_Admin(admin.ModelAdmin):
     list_display = ("id", "address", "name", "balance", "description")
@@ -101,7 +103,7 @@ class UserSetting_Admin(admin.ModelAdmin):
         "show_only_secure_contracts",
     )
 
-
+admin.site.register(User, User_Admin)
 admin.site.register(UserSetting, UserSetting_Admin)
 admin.site.register(Wallet, Wallet_Admin)
 admin.site.register(WalletProcess, Wallet_Process_Admin)

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Box, AppBar, Toolbar, styled, Stack, IconButton,
   // , Badge, Button, 
-  FormControlLabel, FormGroup, Switch } from '@mui/material';
+  FormControlLabel, FormGroup, Switch, 
+  Button} from '@mui/material';
 import PropTypes from 'prop-types';
 import Logo from "../shared/logo/Logo";
 // components
@@ -109,7 +110,7 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
           sx={{
             color:'#fff',
             display: {
-              lg: "none",
+              lg: "flex",
               xs: "flex",
             },
           }}
@@ -121,17 +122,20 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
 
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <MaterialUISwitch
-                sx={{ m: 1 }}
-                checked={mode === "dark"}
-                onChange={onThemeChange} />}
-            label=""
-          />
-        </FormGroup>
-          <Profile />
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <MaterialUISwitch
+                  sx={{ m: 1 }}
+                  checked={mode === "dark"}
+                  onChange={onThemeChange} />}
+              label=""
+            />
+          </FormGroup>
+          <Button href="/signin" variant="outlined" sx={{marginBottom:'5px', color:'#fff'}}>
+                Sign In
+              </Button>
+          {/* <Profile /> */}
         </Stack>
       </ToolbarStyled>
     </AppBarStyled>
