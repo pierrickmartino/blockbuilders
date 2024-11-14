@@ -949,6 +949,12 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
     logger.info(f"Task started [get_price_from_market_task] with ({','.join(symbol_list)})")
 
     try:
+        
+        # Get contracts with a relative symbol in the symbol_list
+        relative_contracts = Contract.objects.filter(relative_symbol__in=symbol_list)  
+
+        # Remove them from the symbol list 
+        for contract in relative_contracts: symbol_list.remove(contract.symbol)
 
         # Get the price for each of the symbols in the list
         prices = get_multiple_symbols_price(symbol_list)

@@ -1,5 +1,5 @@
 - core - fix lint issues (npm run lint)
-- core - implémenter une authentification
+- core - implémenter une authentification JWT
 - dashboard - dark mode
 - dashboard - pouvoir switcher entre la fullpage en largeur et la vue serrée
 - dashboard - ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois 
