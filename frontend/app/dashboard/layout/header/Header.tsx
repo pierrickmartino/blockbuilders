@@ -9,6 +9,7 @@ import Logo from "../shared/logo/Logo";
 import Profile from './Profile';
 import Search from './Search';
 import { IconMenu2 } from '@tabler/icons-react';
+import SidebarItems from '../sidebar/SidebarItems';
 // import Switch, { SwitchProps } from '@mui/material/Switch';
 
 interface ItemType {
@@ -21,7 +22,7 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow:
-      "rgba(0, 0, 0, 0.2) 0px 3px 5px -1px, rgba(0, 0, 0, 0.14) 0px 5px 8px 0px, rgba(0, 0, 0, 0.12) 0px 1px 14px 0px !important;",
+      "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;",
     background: theme.palette.primary.main,
     justifyContent: "center",
     backdropFilter: "blur(4px)",
@@ -90,6 +91,10 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
     },
   }));
 
+  const handleToggleSidebar = () => {
+    // logic to toggle the sidebar
+  };
+
   return (
     <AppBarStyled position="sticky" color="default">
       <ToolbarStyled>
@@ -115,13 +120,12 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
             },
           }}
         >
-          <IconMenu2 width="22" height="22" />
+          {/* <IconMenu2 width="22" height="22" /> */}
         </IconButton>
-
-        <Search />
-
+        <Box sx={{mt:'8px' }}><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
+        <Search />
           <FormGroup>
             <FormControlLabel
               control={
@@ -132,10 +136,10 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
               label=""
             />
           </FormGroup>
-          <Button href="/signin" variant="outlined" sx={{marginBottom:'5px', color:'#fff'}}>
+          <Button href="/signin" variant="outlined" sx={{marginBottom:'5px', color:"#ffffff" }} size='small'>
                 Sign In
               </Button>
-          {/* <Profile /> */}
+          <Profile />
         </Stack>
       </ToolbarStyled>
     </AppBarStyled>

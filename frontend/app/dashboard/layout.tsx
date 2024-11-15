@@ -53,7 +53,7 @@ export default function RootLayout({
       <PageWrapper className="page-wrapper"
           sx={{
               [theme.breakpoints.up("xl")]: {
-                ml: `270px`,
+                ml: `0px`,
               },
           }}
       >
@@ -61,11 +61,11 @@ export default function RootLayout({
         {/* ------------------------------------------- */}
         {/* Sidebar */}
         {/* ------------------------------------------- */}
-        <Sidebar
+        {/* <Sidebar
           isSidebarOpen={isSidebarOpen}
           isMobileSidebarOpen={isMobileSidebarOpen}
           onSidebarClose={() => setMobileSidebarOpen(false)}
-        />
+        /> */}
 
         {/* ------------------------------------------- */}
         {/* PageContent */}
@@ -73,7 +73,7 @@ export default function RootLayout({
         <Container
           sx={{
             paddingTop: "20px",
-            maxWidth: "1200px",
+            maxWidth: "1400px",
           }}
         >
           {/* ------------------------------------------- */}
@@ -87,7 +87,7 @@ export default function RootLayout({
           {/* ------------------------------------------- */}
           {/* Footer */}
           {/* ------------------------------------------- */}
-          <Footer />
+          {/* <Footer /> */}
         </Container>
       </PageWrapper>
     </MainWrapper>

@@ -14,9 +14,9 @@ const baselightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#1e88e5",
+      main: "rgba(17, 24, 39, 1)",
       light: "#e3f1fc",
-      dark: "#1e88e5",
+      dark: "rgba(17, 24, 39, 1)",
       contrastText: "#ffffff",
     },
     secondary: {
@@ -58,7 +58,7 @@ const baselightTheme = createTheme({
       600: "#2a3547",
     },
     text: {
-      primary: "#111827",
+      primary: "rgba(17, 24, 39, 1)",
       secondary: "#6b7280",
     },
     action: {
@@ -101,14 +101,16 @@ const baselightTheme = createTheme({
     },
     h5: {
       fontWeight: 600,
-      fontSize: '1.125rem',
-      lineHeight: '1.6rem',
+      fontSize: '1rem',
+      lineHeight: '1.75rem',
+      letterSpacing: '-.015em',
       fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h6: {
       fontWeight: 600,
       fontSize: '0.875rem',
       lineHeight: '1.25rem',
+      letterSpacing: '-.015em',
       fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     button: {
@@ -197,7 +199,7 @@ const baselightTheme = createTheme({
         root: {
           borderRadius: "7px",
           padding: "0",
-          boxShadow: "0px 7px 30px 0px rgba(90, 114, 123, 0.11)",
+          boxShadow: "0px 0px 0px 1px rgba(9, 9, 11, .07), 0px 2px 2px 0px rgba(9, 9, 11, .05)",
         },
       },
     },
