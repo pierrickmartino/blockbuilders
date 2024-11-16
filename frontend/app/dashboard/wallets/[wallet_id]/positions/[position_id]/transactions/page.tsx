@@ -118,10 +118,9 @@ const Transactions = () => {
               </Typography>
               <Button
                 variant="outlined"
-                startIcon={<NavigateBefore />}
+                size="small"
                 href={`/dashboard/wallets/${wallet_id}/positions`}
               >
-                {" "}
                 Back
               </Button>
             </Stack>

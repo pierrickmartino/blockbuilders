@@ -21,13 +21,13 @@ interface ItemType {
 const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
-    boxShadow:
-      "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;",
+    // boxShadow:
+    //   "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;",
     background: theme.palette.primary.main,
     justifyContent: "center",
     backdropFilter: "blur(4px)",
     [theme.breakpoints.up('lg')]: {
-      minHeight: '64px',
+      minHeight: '44px',
     },
   }));
   const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
@@ -102,11 +102,11 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
         {/* ------------------------------------------- */}
         {/* Logo */}
         {/* ------------------------------------------- */}
-        <Box sx={{
+        {/* <Box sx={{
             width: '256px',
           }}>
           <Logo />
-        </Box>
+        </Box> */}
 
         <IconButton
           color="inherit"
@@ -122,7 +122,7 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
         >
           {/* <IconMenu2 width="22" height="22" /> */}
         </IconButton>
-        <Box sx={{mt:'8px' }}><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
+        <Box><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
         <Search />

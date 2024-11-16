@@ -14,16 +14,18 @@ const baselightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "rgba(17, 24, 39, 1)",
+      // main: "rgba(17, 24, 39, 1)",
+      main: "rgba(31, 41, 55, 1)",
       light: "#e3f1fc",
-      dark: "rgba(17, 24, 39, 1)",
+      // dark: "rgba(17, 24, 39, 1)",
+      dark: "rgba(31, 41, 55, 1)",
       contrastText: "#ffffff",
     },
     secondary: {
-      main: "#21c1d6",
-      light: "#e1f7f8",
-      dark: "#21c1d6",
-      contrastText: "#ffffff",
+      main: "rgba(17, 24, 39, 1)",
+      light: "rgba(58, 65, 81, 1)",
+      dark: "rgba(17, 24, 39, 1)",
+      contrastText: "rgba(209, 213, 219, 1)",
     },
     success: {
       main: "rgba(21, 128, 61, 1)",

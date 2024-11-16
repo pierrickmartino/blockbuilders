@@ -110,10 +110,9 @@ const Positions = () => {
               </Typography>
               <Button
                 variant="outlined"
-                startIcon={<NavigateBefore />}
+                size="small"
                 href="/dashboard/wallets/"
               >
-                {" "}
                 Back
               </Button>
             </Stack>
