@@ -40,7 +40,7 @@ const Profile = () => {
   return (
     <Box>
       <IconButton
-        size="large"
+        size="small"
         aria-label="menu"
         color="inherit"
         aria-controls="msgs-menu"
@@ -49,6 +49,7 @@ const Profile = () => {
           ...(typeof anchorEl2 === "object" && {
             borderRadius: "9px",
           }),
+          padding: "0px",
         }}
         onClick={handleClick2}
       >

@@ -26,13 +26,15 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
     background: theme.palette.primary.main,
     justifyContent: "center",
     backdropFilter: "blur(4px)",
+    height: '50px',
     [theme.breakpoints.up('lg')]: {
-      minHeight: '44px',
+      minHeight: '50px',
     },
   }));
   const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
     width: '100%',
     color: theme.palette.text.secondary,
+    height: '50px',
   }));
 
   const MaterialUISwitch = styled(Switch)(({ theme }) => ({
