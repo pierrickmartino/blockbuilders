@@ -2,13 +2,16 @@ import React from 'react';
 import { Box, AppBar, Toolbar, styled, Stack, IconButton,
   // , Badge, Button, 
   FormControlLabel, FormGroup, Switch, 
-  Button} from '@mui/material';
+  Button,
+  Menu,
+  MenuItem,
+  Typography} from '@mui/material';
 import PropTypes from 'prop-types';
 import Logo from "../shared/logo/Logo";
 // components
 import Profile from './Profile';
 import Search from './Search';
-import { IconMenu2 } from '@tabler/icons-react';
+import { IconMenu, IconMenu2 } from '@tabler/icons-react';
 import SidebarItems from '../sidebar/SidebarItems';
 // import Switch, { SwitchProps } from '@mui/material/Switch';
 
@@ -19,7 +22,8 @@ interface ItemType {
 }
 
 const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
-
+  
+  
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     // boxShadow:
     //   "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;",
@@ -93,9 +97,22 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
     },
   }));
 
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+
   const handleToggleSidebar = () => {
-    // logic to toggle the sidebar
+    // setAnchorElNav(event.currentTarget);
   };
+
+  const pages = ['Products', 'Pricing', 'Blog'];
+
+  
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
 
   return (
     <AppBarStyled position="sticky" color="default">
@@ -109,11 +126,13 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
           }}>
           <Logo />
         </Box> */}
-
+        {/* <IconMenu2 width="22" height="22" /> */}
+        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
         <IconButton
           color="inherit"
           aria-label="menu"
-          onClick={toggleMobileSidebar}
+          // onClick={toggleMobileSidebar}
+          onClick={handleOpenNavMenu}
           sx={{
             color:'#fff',
             display: {
@@ -122,10 +141,33 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
             },
           }}
         >
-          {/* <IconMenu2 width="22" height="22" /> */}
+          <IconMenu2 />
         </IconButton>
-        <Box><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
-        <Box flexGrow={1} />
+        <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{ display: { xs: 'block', md: 'none' } }}
+            >
+              {pages.map((page) => (
+                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+        </Box>
+        <Box  sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
+        {/* <Box flexGrow={1} /> */}
         <Stack spacing={1} direction="row" alignItems="center">
         <Search />
           <FormGroup>
