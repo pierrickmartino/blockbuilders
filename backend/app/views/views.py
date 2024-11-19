@@ -10,8 +10,8 @@ from app.views.calculators.calculators_position import calculate_wallet_position
 logger = logging.getLogger("blockbuilders")
 
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
+# from django.contrib.auth import login, authenticate
+# from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 
@@ -225,16 +225,16 @@ def blockchains(request: HttpRequest):
     return render(request, "blockchains.html", context)
 
 
-def register(request: HttpRequest):
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password1")
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect("dashboard")
-    else:
-        form = UserCreationForm()
-    return render(request, "registration/register.html", {"form": form})
+# def register(request: HttpRequest):
+#     if request.method == "POST":
+#         form = UserCreationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             username = form.cleaned_data.get("username")
+#             password = form.cleaned_data.get("password1")
+#             user = authenticate(username=username, password=password)
+#             login(request, user)
+#             return redirect("dashboard")
+#     else:
+#         form = UserCreationForm()
+#     return render(request, "registration/register.html", {"form": form})

@@ -7,7 +7,7 @@ interface RegisterUserProps {
 }
 
 interface LoginUserProps {
-  identifier: string;
+  email: string;
   password: string;
 }
 
@@ -31,27 +31,33 @@ export async function registerUserService(userData: RegisterUserProps) {
       }
     );
 
-    return response.data;
+    return response;
   } catch (error) {
     console.error("Registration Service Error:", error);
   }
 }
 
 export async function loginUserService(userData: LoginUserProps) {
-  const url = new URL("/api/login", backendUrl);
-
   try {
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...userData }),
-    });
+    // console.log("in loginUserService start");
+    const response = await axios.post(
+      `${backendUrl}/api/token/`,
 
-    return response.json();
+      JSON.stringify({ ...userData }),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "*/*",
+          "Accept-Encoding": "gzip, deflate, br",
+          Connection: "keep-alive",
+        },
+      }
+    );
+
+    // console.log("in loginUserService end", response);
+
+    return response;
   } catch (error) {
     console.error("Login Service Error:", error);
-    throw error;
   }
 }

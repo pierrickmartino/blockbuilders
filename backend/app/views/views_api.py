@@ -33,7 +33,14 @@ from app.models import (
 ##################
 # AUTHENTICATION #
 ##################
+class UserView(generics.RetrieveAPIView):
+    model = User
+    serializer_class = UserSerializer
 
+    def retrieve(self, request, pk=None):
+        if request.user and pk == 'me':
+            return Response(UserSerializer(request.user).data)
+        return super(UserView, self).retrieve(request, pk)
 
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]

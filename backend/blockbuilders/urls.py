@@ -33,6 +33,7 @@ from app.views.views_api import (
     TransactionLastView,
     BlockchainTopView,
     TransactionView,
+    UserView,
     WalletPositionDetailView,
     WalletPositionTransactionDetailView,
     WalletPositionTransactionView,
@@ -227,12 +228,12 @@ urlpatterns = format_suffix_patterns(
         ######################
         # API DEDICATED URLS #
         ###################### 
-        # path('user/', include('authentication.urls')),
+        # path('api/users/', UserView.as_view(), name='users'),
         path('api/token/', jwt_views.TokenObtainPairView.as_view(), name ="token_obtain_pair"),
         path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
         path('api/register/', RegisterView.as_view(), name="register"),
-        path('api/login/', Loginview.as_view(), name="login"),
-        path('api/logout/', LogoutView.as_view(), name = "logout"),
+        # path('api/login/', Loginview.as_view(), name="login"),
+        # path('api/logout/', LogoutView.as_view(), name = "logout"),
         # path("api/auth/", include("rest_framework.urls")),
         # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
         # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

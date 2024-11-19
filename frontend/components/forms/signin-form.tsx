@@ -1,8 +1,8 @@
 "use client";
 
+import { loginUserAction } from "@/app/lib/auth-actions";
 import {
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -12,28 +12,36 @@ import {
   Typography,
 } from "@mui/material";
 import Link from "next/link";
+import { useActionState } from "react";
+import { AuthErrors } from "../custom/auth-errors";
+import { SubmitButton } from "../custom/submit-button";
 
-// import {
-//   CardTitle,
-//   CardDescription,
-//   CardHeader,
-//   CardContent,
-//   CardFooter,
-//   Card,
-// } from "@/components/ui/card";
-
-// import { Label } from "@/components/ui/label";
-// import { Input } from "@/components/ui/input";
+const INITIAL_STATE = {
+  zodErrors: null,
+  authErrors: null,
+  data: null,
+  message: null,
+};
 
 export function SigninForm() {
+  const [formState, formAction] = useActionState(
+    loginUserAction,
+    INITIAL_STATE
+  );
+
+  // console.log("## will render on client ##");
+  // console.log(formState);
+  // console.log("###########################");
+
   return (
     <Box>
-      <Box component="form">
+      <Box component="form" action={formAction}>
         <Card>
           <CardHeader
             title="Sign In"
             subheader="Enter your details to sign in to your account"
-          ></CardHeader>
+            sx={{ paddingBottom: "0px" }}
+          />
           <CardContent>
             <Stack spacing={4}>
               <Stack spacing={1}>
@@ -42,7 +50,7 @@ export function SigninForm() {
                   id="identifier"
                   name="identifier"
                   type="text"
-                  placeholder="username or email"
+                  placeholder="identifier"
                 />
               </Stack>
               <Stack spacing={1}>
@@ -56,12 +64,13 @@ export function SigninForm() {
               </Stack>
             </Stack>
           </CardContent>
-          <CardActions>
-            <Button>Sign In</Button>
+          <CardActions sx={{ padding: "8px 30px 30px 30px" }}>
+            <SubmitButton text="Sign In" loadingText="Loading" />
+            <AuthErrors error={formState?.authErrors} />
           </CardActions>
         </Card>
         <Box sx={{ mt: 2 }}>
-          Don&apos;t have an account?
+          Don&apos;t have an account?&nbsp;
           <Link href="/signup">Sign Up</Link>
         </Box>
       </Box>

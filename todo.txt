@@ -1,5 +1,6 @@
 - core - fix lint issues (npm run lint)
 - core - implémenter une authentification JWT (https://strapi.io/blog/epic-next-js-15-tutorial-part-4-how-to-handle-login-and-authentication-in-next-js)
+- core - gérer le retour erreur de l'API d'authentification
 - dashboard - dark mode
 - dashboard - pouvoir switcher entre la fullpage en largeur et la vue serrée
 - dashboard - ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois 

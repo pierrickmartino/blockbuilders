@@ -4,7 +4,6 @@ import { registerUserAction } from "@/app/lib/auth-actions";
 import { useActionState } from "react";
 import {
   Box,
-  Button,
   Card,
   CardActions,
   CardContent,
@@ -15,31 +14,22 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { ZodErrors } from "../custom/zod-errors";
-
-
-// import {
-//   CardTitle,
-//   CardDescription,
-//   CardHeader,
-//   CardContent,
-//   CardFooter,
-//   Card,
-// } from "@/components/ui/card";
-
-// import { Label } from "@/components/ui/label";
-// import { Input } from "@/components/ui/input";
-
+import { AuthErrors } from "../custom/auth-errors";
+import { SubmitButton } from "../custom/submit-button";
 
 const INITIAL_STATE = {
-    data: null,
-  };
+  data: null,
+};
 
 export function SignupForm() {
-    const [formState, formAction] = useActionState(registerUserAction, INITIAL_STATE);
+  const [formState, formAction] = useActionState(
+    registerUserAction,
+    INITIAL_STATE
+  );
 
-  console.log("## will render on client ##");
-  console.log(formState);
-  console.log("###########################");
+  // console.log("## will render on client ##");
+  // console.log(formState);
+  // console.log("###########################");
 
   return (
     <Box>
@@ -48,7 +38,8 @@ export function SignupForm() {
           <CardHeader
             title="Sign Up"
             subheader="Enter your details to create a new account"
-          ></CardHeader>
+            sx={{ paddingBottom: "0px" }}
+          />
           <CardContent>
             <Stack spacing={4}>
               <Stack spacing={1}>
@@ -84,12 +75,13 @@ export function SignupForm() {
               </Stack>
             </Stack>
           </CardContent>
-          <CardActions>
-            <Button type="submit">Sign Up</Button>
+          <CardActions sx={{ padding: "8px 30px 30px 30px" }}>
+            <SubmitButton text="Sign Up" loadingText="Loading" />
+            <AuthErrors error={formState?.authErrors} />
           </CardActions>
         </Card>
         <Box sx={{ mt: 2 }}>
-          Have an account?
+          Have an account?&nbsp;
           <Link href="/signin">Sign In</Link>
         </Box>
       </Box>
