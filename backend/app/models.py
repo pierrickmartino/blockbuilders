@@ -35,6 +35,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
+    id = models.UUIDField(auto_created=True, primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=250)
     email = models.CharField(max_length=250, unique=True)
     password = models.CharField(max_length=250)

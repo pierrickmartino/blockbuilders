@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getUserMeLoader } from "./app/lib/get-user-me-loader";
+// import { getUserMeLoader } from "./app/lib/get-user-me-loader";
 
 // Define an array of protected routes
 const protectedRoutes = [
@@ -14,7 +14,7 @@ const protectedRoutes = [
 // }
 
 export async function middleware(request: NextRequest) {
-  const user = await getUserMeLoader();
+  // const user = await getUserMeLoader();
   const currentPath = request.nextUrl.pathname;
 
   // if (isProtectedRoute(currentPath) && user.ok === false) {

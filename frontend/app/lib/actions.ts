@@ -4,6 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import axios from "axios";
+import { getAuthToken } from "./get-token";
 
 // const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 const webUrl = process.env.NEXT_PUBLIC_WEB_URL || "http://127.0.0.1";
@@ -46,6 +47,10 @@ export async function createWallet(
   // Prepare data for insertion into the database
   const { address, name, description } = validatedFields.data;
 
+  // Get the user auth token
+  const authToken = await getAuthToken();
+  if (!authToken) throw new Error("No auth token found");
+
   // Log the data being sent
   // console.log("Data being sent:", { address, name, description });
   // console.log("Request URL:", `${apiUrl}/api/wallets/`);
@@ -61,7 +66,7 @@ export async function createWallet(
       },
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
@@ -106,12 +111,17 @@ export async function downloadWallet(id: string) {
   // console.log("Enter downloadWallet for :", id);
   // console.log(`${backendUrl}/api/wallets/${id}/download/`);
   // console.log(`Token ${userToken}`);
+  
+  // Get the user auth token
+  const authToken = await getAuthToken();
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.post(
       `${backendUrl}/api/wallets/${id}/download/`,
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
@@ -131,12 +141,17 @@ export async function refreshWallet(id: string) {
   // console.log("Enter refreshWallet for :", id);
   // console.log(`${backendUrl}/api/wallets/${id}/refresh/`);
   // console.log(`Token ${userToken}`);
+
+  // Get the user auth token
+  const authToken = await getAuthToken();
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.post(
       `${backendUrl}/api/wallets/${id}/refresh/`,
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
@@ -153,12 +168,17 @@ export async function refreshWallet(id: string) {
 }
 
 export async function refreshFullWallet(id: string) {
+  
+  // Get the user auth token
+  const authToken = await getAuthToken();
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.post(
       `${backendUrl}/api/wallets/${id}/refresh-full/`,
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
           "Content-Type": "application/json",
           Accept: "*/*",
           "Accept-Encoding": "gzip, deflate, br",
@@ -175,10 +195,15 @@ export async function refreshFullWallet(id: string) {
 }
 
 export async function deleteWallet(id: string) {
+  
+  // Get the user auth token
+  const authToken = await getAuthToken();
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.delete(`${backendUrl}/api/wallets/${id}/`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
     });
     return response.data;
@@ -188,12 +213,17 @@ export async function deleteWallet(id: string) {
 }
 
 export async function setContractAsSuspicious(id: string) {
+  
+  // Get the user auth token
+  const authToken = await getAuthToken();
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.post(
       `${backendUrl}/api/contracts/${id}/suspicious/`,
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
         },
       }
     );
@@ -204,12 +234,17 @@ export async function setContractAsSuspicious(id: string) {
 }
 
 export async function setContractAsStable(id: string) {
+
+  // Get the user auth token
+  const authToken = await getAuthToken();
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.post(
       `${backendUrl}/api/contracts/${id}/stable/`,
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
         },
       }
     );
@@ -220,12 +255,17 @@ export async function setContractAsStable(id: string) {
 }
 
 export async function setContractAsStandard(id: string) {
+
+  // Get the user auth token
+  const authToken = await getAuthToken();
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.post(
       `${backendUrl}/api/contracts/${id}/standard/`,
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
         },
       }
     );
@@ -234,57 +274,3 @@ export async function setContractAsStandard(id: string) {
     return { message: "Database Error: Failed to set contract as Standard." };
   }
 }
-
-// export async function updateWallet(
-//   id: string,
-//   prevState: State,
-//   formData: FormData,
-// ) {
-//   const validatedFields = UpdateWallet.safeParse({
-//     customerId: formData.get('customerId'),
-//     amount: formData.get('amount'),
-//     status: formData.get('status'),
-//   });
-
-//   if (!validatedFields.success) {
-//     return {
-//       errors: validatedFields.error.flatten().fieldErrors,
-//       message: 'Missing Fields. Failed to Update Invoice.',
-//     };
-//   }
-
-//   const { customerId, amount, status } = validatedFields.data;
-//   const amountInCents = amount * 100;
-
-//   try {
-//     await sql`
-//       UPDATE invoices
-//       SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-//       WHERE id = ${id}
-//     `;
-//   } catch (error) {
-//     return { message: 'Database Error: Failed to Update Invoice.' };
-//   }
-
-//   revalidatePath('/dashboard/invoices');
-//   redirect('/dashboard/invoices');
-// }
-
-// export async function authenticate(
-//   prevState: string | undefined,
-//   formData: FormData,
-// ) {
-//   try {
-//     await signIn('credentials', formData);
-//   } catch (error) {
-//     if (error instanceof AuthError) {
-//       switch (error.type) {
-//         case 'CredentialsSignin':
-//           return 'Invalid credentials.';
-//         default:
-//           return 'Something went wrong.';
-//       }
-//     }
-//     throw error;
-//   }
-// }

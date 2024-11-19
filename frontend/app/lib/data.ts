@@ -6,6 +6,7 @@ import {
   Blockchain,
   Contract,
 } from "./definition";
+import Cookies from "js-cookie";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 const userToken = process.env.NEXT_PUBLIC_USER_TOKEN || "";
@@ -16,11 +17,17 @@ export const fetchWallets = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  console.log("authToken:", authToken);
+  if (!authToken) throw new Error("No auth token found");
+  
   try {
     // console.log("User Token:", process.env.NEXT_PUBLIC_USER_TOKEN);
     const response = await axios.get(`${apiUrl}/api/wallets`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
       params: {
         page: page + 1, // Convert 0-based page index to 1-based if needed by API
@@ -47,12 +54,18 @@ export const fetchPositionsWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  console.log(authToken);
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(
       `${apiUrl}/api/wallets/${wallet_id}/positions`,
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
         },
         params: {
           search: searchTerm,
@@ -80,10 +93,15 @@ export const fetchPositionsAllWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(`${apiUrl}/api/positions`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
       params: {
         search: searchTerm,
@@ -110,12 +128,17 @@ export const fetchPositions = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(
       `${apiUrl}/api/wallets/${wallet_id}/positions`,
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
         },
         params: {
           page: page + 1, // Convert 0-based page index to 1-based if needed by API
@@ -141,10 +164,15 @@ export const fetchPositionsAll = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(`${apiUrl}/api/positions`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
       params: {
         page: page + 1, // Convert 0-based page index to 1-based if needed by API
@@ -167,10 +195,15 @@ export const fetchTopPositions = async (
   max: number,
   setTopPositions: React.Dispatch<React.SetStateAction<Position[]>>
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(`${apiUrl}/api/positions/top/${max}`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
     });
 
@@ -188,10 +221,15 @@ export const fetchTopBlockchains = async (
   max: number,
   setTopBlockchains: React.Dispatch<React.SetStateAction<Blockchain[]>>
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(`${apiUrl}/api/blockchains/top/${max}`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
     });
 
@@ -209,10 +247,15 @@ export const fetchLastTransactions = async (
   max: number,
   setLastTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(`${apiUrl}/api/transactions/last/${max}`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
     });
 
@@ -229,10 +272,15 @@ export const fetchLastTransactions = async (
 export const fetchCountTransactions = async (
   setCountTransactions: React.Dispatch<React.SetStateAction<number>>
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(`${apiUrl}/api/transactions/count`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
     });
 
@@ -254,12 +302,17 @@ export const fetchTransactions = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(
       `${apiUrl}/api/wallets/${wallet_id}/positions/${position_id}/transactions`,
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
         },
         params: {
           page: page + 1, // Convert 0-based page index to 1-based if needed by API
@@ -285,10 +338,15 @@ export const fetchTransactionsAll = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(`${apiUrl}/api/transactions`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
       params: {
         page: page + 1, // Convert 0-based page index to 1-based if needed by API
@@ -316,12 +374,17 @@ export const fetchTransactionsWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(
       `${apiUrl}/api/wallets/${wallet_id}/positions/${position_id}/transactions`,
       {
         headers: {
-          Authorization: `Token ${userToken}`,
+          Authorization: `Bearer ${authToken}`,
         },
         params: {
           search: searchTerm,
@@ -349,10 +412,15 @@ export const fetchTransactionsAllWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+  
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+  
   try {
     const response = await axios.get(`${apiUrl}/api/transactions`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
       params: {
         search: searchTerm,
@@ -378,10 +446,15 @@ export const fetchContractsAll = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(`${apiUrl}/api/contracts`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
       params: {
         page: page + 1, // Convert 0-based page index to 1-based if needed by API
@@ -407,10 +480,15 @@ export const fetchContractsAllWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(`${apiUrl}/api/contracts`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
       params: {
         search: searchTerm,
@@ -431,10 +509,14 @@ export const fetchContractsAllWithSearch = async (
 };
 
 export const fetchTaskStatus = async (task_id: string): Promise<string> => {
+  // Get the user auth token
+  const authToken = Cookies.get("jwt_access");
+  if (!authToken) throw new Error("No auth token found");
+
   try {
     const response = await axios.get(`${apiUrl}/api/tasks/${task_id}/status`, {
       headers: {
-        Authorization: `Token ${userToken}`,
+        Authorization: `Bearer ${authToken}`,
       },
     });
 
