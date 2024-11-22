@@ -57,7 +57,7 @@ export const fetchPositionsWithSearch = async (
 
   // Get the user auth token
   const authToken = Cookies.get("jwt_access");
-  console.log(authToken);
+  // console.log(authToken);
   if (!authToken) throw new Error("No auth token found");
 
   try {

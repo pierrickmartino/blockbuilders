@@ -1,23 +1,25 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-// import { getUserMeLoader } from "./app/lib/get-user-me-loader";
+import Cookies from "js-cookie";
 
 // Define an array of protected routes
-const protectedRoutes = [
-  "/dashboard",
-  // Add more protected routes here
-];
+const protectedRoutes = ['/dashboard']
+const publicRoutes = ['/signin', '/signup', '/']
 
 // Helper function to check if a path is protected
-// function isProtectedRoute(path: string): boolean {
-//   return protectedRoutes.some((route) => path.startsWith(route));
-// }
+function isProtectedRoute(path: string): boolean {
+  return protectedRoutes.some((route) => path.startsWith(route));
+}
 
-export async function middleware(request: NextRequest) {
-  // const user = await getUserMeLoader();
+export function middleware(request: NextRequest) {
   const currentPath = request.nextUrl.pathname;
+  let accessToken = request.cookies.get('accessToken')
+  
+  if (isProtectedRoute(currentPath) && !accessToken) {
+    return NextResponse.redirect(new URL("/signin", request.url));
+  }
 
-  // if (isProtectedRoute(currentPath) && user.ok === false) {
+  // if (!accessToken && request.nextUrl.pathname !== "/") {
   //   return NextResponse.redirect(new URL("/signin", request.url));
   // }
 

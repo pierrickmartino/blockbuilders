@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { Fragment, useState } from "react";
 // import { useTheme } from "@mui/material/styles";
 import {
   Box,
@@ -10,7 +12,12 @@ import {
   ListItemButton,
   List,
   ListItemText,
+  Typography,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
+// import useSWR from "swr";
+// import { fetcher } from "@/app/lib/fetcher";
+import { AuthActions } from "@/app/(auth)/utils";
 
 // import { Stack } from "@mui/system";
 // import {
@@ -28,6 +35,23 @@ const Profile = () => {
   };
   const handleClose2 = () => {
     setAnchorEl2(null);
+  };
+
+  const router = useRouter();
+  // const { data: user } = useSWR("/api/auth/users/me", fetcher);
+
+  const { logout, removeTokens } = AuthActions();
+
+  const handleLogout = () => {
+    logout()
+      .res(() => {
+        removeTokens();
+        router.push("/signin");
+      })
+      .catch(() => {
+        removeTokens();
+        router.push("/signin");
+      });
   };
 
   // const theme = useTheme();
@@ -82,28 +106,35 @@ const Profile = () => {
           },
         }}
       >
-
+        
+        {/* <Fragment>
+          <Box mb={2}>
+            <Typography>{user?.email}</Typography>
+          </Box>
+          <Divider />
+        </Fragment> */}
+        
         <Box pt={0}>
 
           <List>
             <ListItemButton component="a" href="#">
               <ListItemText primary="My Profile" />
             </ListItemButton>
-            <ListItemButton component="a" href="#">
+            {/* <ListItemButton component="a" href="#">
               <ListItemText primary="My Account" />
-            </ListItemButton>
+            </ListItemButton> */}
             <ListItemButton component="a" href="#">
               <ListItemText primary="Change Password" />
             </ListItemButton>
-            <ListItemButton component="a" href="#">
+            {/* <ListItemButton component="a" href="#">
               <ListItemText primary="My Task" />
-            </ListItemButton>
+            </ListItemButton> */}
           </List>
 
         </Box>
         <Divider />
         <Box mt={2}>
-          <Button fullWidth variant="contained" color="primary">
+          <Button fullWidth variant="contained" color="primary" onClick={handleLogout}>
             Logout
           </Button>
         </Box>

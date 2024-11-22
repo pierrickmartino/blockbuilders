@@ -1,5 +1,7 @@
-import { SignupForm } from "@/components/forms/signup-form";
+"use client";
 
-export default function SingUoRoute() {
-  return <SignupForm />;
+import Register from "@/components/auth/register";
+
+export default function SignUpRoute() {
+  return <Register />;
 }

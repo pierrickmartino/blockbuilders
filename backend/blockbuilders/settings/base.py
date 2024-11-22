@@ -74,6 +74,7 @@ INSTALLED_APPS = [
     "django_filters",
     "channels",
     "corsheaders",
+    "djoser",
 ]
 
 MIDDLEWARE = [
@@ -239,5 +240,17 @@ SIMPLE_JWT = {
   'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-
 AUTH_USER_MODEL = 'app.User'
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+DJOSER = {
+    "PASSWORD_RESET_CONFIRM_URL": "auth/password/reset-password-confirmation/?uid={uid}&token={token}",
+    "ACTIVATION_URL": "#/activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": False,
+    "SERIALIZERS": {},
+    "LOGIN_FIELD": "email",
+}
+
+SITE_NAME = "Blockbuilders"
+DOMAIN = 'localhost:3030'

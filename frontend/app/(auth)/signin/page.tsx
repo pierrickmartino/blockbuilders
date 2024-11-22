@@ -1,5 +1,7 @@
-import { SigninForm } from "@/components/forms/signin-form";
+"use client";
 
-export default function SingInRoute() {
-  return <SigninForm />;
+import Login from "@/components/auth/login";
+
+export default function SignInRoute() {
+  return <Login />;
 }
