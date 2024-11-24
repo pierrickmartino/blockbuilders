@@ -17,7 +17,6 @@ import Blogcard from "../components/dashboard/TheBlogCard";
 import ProfileCard from "../components/dashboard/TheProfileCard";
 import MyContacts from "../components/dashboard/TheMyContacts";
 import WalletTable from "../components/dashboard/WalletTable";
-import WalletWizard from "../components/dashboard/WalletWizard";
 import { useEffect, useState, useCallback } from "react";
 import {
   Wallet,
@@ -37,6 +36,7 @@ import LastTransactions from "../components/dashboard/LastTransactions";
 import TopRepartition from "../components/dashboard/TopRepartition";
 import TradingCalendar from "../components/dashboard/TradingCalendar";
 import React from "react";
+import CreateWalletForm from "@/app/ui/wallets/CreateWalletForm";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -206,7 +206,7 @@ const Wallets = () => {
 
   const DrawerList = (
     <Box sx={{ width: 350, height: '100%' }} role="presentation">
-      <WalletWizard onWalletCreated={handleWalletCreated} />
+      <CreateWalletForm />
     </Box>
   );
 
