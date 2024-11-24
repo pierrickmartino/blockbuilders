@@ -19,7 +19,7 @@ export const fetchWallets = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   console.log("authToken:", authToken);
   if (!authToken) throw new Error("No auth token found");
   
@@ -56,7 +56,7 @@ export const fetchPositionsWithSearch = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   // console.log(authToken);
   if (!authToken) throw new Error("No auth token found");
 
@@ -95,7 +95,7 @@ export const fetchPositionsAllWithSearch = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -130,7 +130,7 @@ export const fetchPositions = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -166,7 +166,7 @@ export const fetchPositionsAll = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -197,7 +197,7 @@ export const fetchTopPositions = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -223,7 +223,7 @@ export const fetchTopBlockchains = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -249,7 +249,7 @@ export const fetchLastTransactions = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -274,7 +274,7 @@ export const fetchCountTransactions = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -304,7 +304,7 @@ export const fetchTransactions = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -340,7 +340,7 @@ export const fetchTransactionsAll = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -376,7 +376,7 @@ export const fetchTransactionsWithSearch = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -414,7 +414,7 @@ export const fetchTransactionsAllWithSearch = async (
 ): Promise<void> => {
   
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
   
   try {
@@ -448,7 +448,7 @@ export const fetchContractsAll = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -482,7 +482,7 @@ export const fetchContractsAllWithSearch = async (
 ): Promise<void> => {
 
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -510,7 +510,7 @@ export const fetchContractsAllWithSearch = async (
 
 export const fetchTaskStatus = async (task_id: string): Promise<string> => {
   // Get the user auth token
-  const authToken = Cookies.get("jwt_access");
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {

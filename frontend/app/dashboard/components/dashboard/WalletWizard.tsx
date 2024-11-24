@@ -27,7 +27,7 @@ const WalletWizard: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
         <Typography variant="subtitle1">Get started by filling in the information below to create your new wallet.</Typography>
       </Box>
 
-      <CreateWalletForm onWalletCreated={handleSubmit} />
+      <CreateWalletForm />
     </Fragment>
   );
 };

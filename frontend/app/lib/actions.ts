@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import axios from "axios";
-import { getAuthToken } from "./get-token";
+import Cookies from "js-cookie";
 
 // const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 const webUrl = process.env.NEXT_PUBLIC_WEB_URL || "http://127.0.0.1";
@@ -48,7 +48,7 @@ export async function createWallet(
   const { address, name, description } = validatedFields.data;
 
   // Get the user auth token
-  const authToken = await getAuthToken();
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   // Log the data being sent
@@ -113,7 +113,7 @@ export async function downloadWallet(id: string) {
   // console.log(`Token ${userToken}`);
   
   // Get the user auth token
-  const authToken = await getAuthToken();
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -143,7 +143,7 @@ export async function refreshWallet(id: string) {
   // console.log(`Token ${userToken}`);
 
   // Get the user auth token
-  const authToken = await getAuthToken();
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -170,7 +170,7 @@ export async function refreshWallet(id: string) {
 export async function refreshFullWallet(id: string) {
   
   // Get the user auth token
-  const authToken = await getAuthToken();
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -197,7 +197,7 @@ export async function refreshFullWallet(id: string) {
 export async function deleteWallet(id: string) {
   
   // Get the user auth token
-  const authToken = await getAuthToken();
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -215,7 +215,7 @@ export async function deleteWallet(id: string) {
 export async function setContractAsSuspicious(id: string) {
   
   // Get the user auth token
-  const authToken = await getAuthToken();
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -236,7 +236,7 @@ export async function setContractAsSuspicious(id: string) {
 export async function setContractAsStable(id: string) {
 
   // Get the user auth token
-  const authToken = await getAuthToken();
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
@@ -257,7 +257,7 @@ export async function setContractAsStable(id: string) {
 export async function setContractAsStandard(id: string) {
 
   // Get the user auth token
-  const authToken = await getAuthToken();
+  const authToken = Cookies.get("accessToken");
   if (!authToken) throw new Error("No auth token found");
 
   try {
