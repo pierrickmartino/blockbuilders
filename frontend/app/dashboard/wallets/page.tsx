@@ -161,10 +161,10 @@ const Wallets = () => {
     fetchCountTransactionData();
   }, []);
 
-  const handleWalletCreated = () => {
-    fetchWalletData(); // Re-fetch wallet data after a new wallet is created
-    toggleDrawer(false);
-  };
+  // const handleWalletCreated = () => {
+  //   fetchWalletData(); // Re-fetch wallet data after a new wallet is created
+  //   toggleDrawer(false);
+  // };
 
   const handleWalletDeleted = () => {
     fetchWalletData(); // Re-fetch wallet data after a new wallet is created

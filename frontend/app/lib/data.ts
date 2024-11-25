@@ -20,7 +20,7 @@ export const fetchWallets = async (
 
   // Get the user auth token
   const authToken = Cookies.get("accessToken");
-  console.log("authToken:", authToken);
+  // console.log("authToken:", authToken);
   if (!authToken) throw new Error("No auth token found");
   
   try {

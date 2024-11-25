@@ -17,6 +17,7 @@ export function SaveButton({
   const status = useFormStatus();
   return (
     <Button
+      size="small"
       type="submit"
       variant="contained"
       color="primary"

@@ -73,6 +73,11 @@ const storeToken = (token: string, type: "access" | "refresh") => {
     return api.auth(`Bearer ${ accessToken }`).post({ address, name, description }, "/api/wallets/");
   };
 
+  const fetchWalletsPage = (page : number, limit: number) => {
+    const accessToken = getToken("access");
+    return api.auth(`Bearer ${ accessToken }`).get("/api/wallets/?page=" + page.toString() + "&limit=" + limit.toString());
+  };
+
   export const AuthActions = () => {
     return {
       login,
@@ -85,5 +90,6 @@ const storeToken = (token: string, type: "access" | "refresh") => {
       logout,
       removeTokens,
       createWallet,
+      fetchWalletsPage,
     };
   };
