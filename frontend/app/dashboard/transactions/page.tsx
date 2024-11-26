@@ -19,7 +19,7 @@ import {
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
 import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTable";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { NavigateNext } from "@mui/icons-material";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -90,12 +90,7 @@ const Transactions = () => {
               <Typography color="textSecondary" variant="h4">
                 Transactions
               </Typography>
-              <Button
-                variant="outlined"
-                startIcon={<NavigateBefore />}
-                href={`/dashboard`}
-              >
-                {" "}
+              <Button variant="outlined" size="small" href="/dashboard">
                 Back
               </Button>
             </Stack>

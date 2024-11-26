@@ -21,7 +21,7 @@ import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
 import formatNumber from "@/app/utils/formatNumber";
 import CustomCard from "@/app/dashboard/components/shared/CustomCard";
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { NavigateNext } from "@mui/icons-material";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
