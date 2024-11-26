@@ -288,12 +288,12 @@ const baselightTheme = createTheme({
           color: "white",
         },
         standardSuccess: {
-          backgroundColor: theme.palette.success.light,
-          color: theme.palette.success.main,
+          backgroundColor: "rgba(240, 253, 244, 1)",
+          color: "rgba(21, 128, 61, 1)",
         },
         standardError: {
-          backgroundColor: theme.palette.error.light,
-          color: theme.palette.error.main,
+          backgroundColor: "rgba(254, 242, 242, 1)",
+          color: "rgba(185, 28, 28, 1)",
         },
         standardWarning: {
           backgroundColor: theme.palette.warning.light,
@@ -304,16 +304,16 @@ const baselightTheme = createTheme({
           color: theme.palette.info.main,
         },
         outlinedSuccess: {
-          borderColor: theme.palette.success.main,
-          color: theme.palette.success.main,
+          borderColor: "rgba(21, 128, 61, 1)",
+          color: "rgba(21, 128, 61, 1)",
         },
         outlinedWarning: {
           borderColor: theme.palette.warning.main,
           color: theme.palette.warning.main,
         },
         outlinedError: {
-          borderColor: theme.palette.error.main,
-          color: theme.palette.error.main,
+          borderColor: "rgba(185, 28, 28, 1)",
+          color: "rgba(185, 28, 28, 1)",
         },
         outlinedInfo: {
           borderColor: theme.palette.info.main,
