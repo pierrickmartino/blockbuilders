@@ -40,3 +40,11 @@ const api = () => {
 export const fetcher = (url: string): Promise<any> => {
   return api().get(url).json();
 };
+
+export const deleter = (url: string): Promise<any> => {
+  return api().delete(url).json();
+};
+
+export const poster = (url: string, body?: any): Promise<any> => {
+  return api().post(body, url).json();
+};

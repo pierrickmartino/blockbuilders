@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   Position,
   Wallet,
@@ -6,11 +5,7 @@ import {
   Blockchain,
   Contract,
 } from "./definition";
-import Cookies from "js-cookie";
 import { fetcher } from "./fetcher";
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
-const userToken = process.env.NEXT_PUBLIC_USER_TOKEN || "";
 
 export const fetchWallets = async (
   setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>,

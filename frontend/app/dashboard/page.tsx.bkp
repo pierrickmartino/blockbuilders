@@ -9,6 +9,7 @@ import ProfileCard from "./components/dashboard/TheProfileCard";
 import MyContacts from "./components/dashboard/TheMyContacts";
 import ActivityTimeline from "./components/dashboard/TheActivityTimeline";
 import ProductPerformance from './components/dashboard/ProductPerformance';
+import React from 'react';
 
 const Dashboard = () => {
   return (
