@@ -11,7 +11,7 @@ export function AuthErrors({ error }: { readonly error: AuthErrorsProps }) {
   return (
     <Box
       sx={{
-        color: "rgba(185, 28, 28, 1)",
+        color: "error.main",
         fontSize: "0.75rem",
         fontStyle: "italic",
       }}

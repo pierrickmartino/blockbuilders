@@ -6,7 +6,7 @@ export function ZodErrors({ error }: { error: string[] }) {
     <Box
       key={index}
       sx={{
-        color: "rgba(185, 28, 28, 1)",
+        color: "error.main",
         fontSize: "0.75rem",
         fontStyle: "italic",
       }}

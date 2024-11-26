@@ -59,7 +59,7 @@ const Login = () => {
                 {errors.email && (
               <Box
               sx={{
-                  color: "rgba(185, 28, 28, 1)",
+                  color: "error.main",
                   fontSize: "0.75rem",
                   fontStyle: "italic",
               }}
@@ -80,7 +80,7 @@ const Login = () => {
                 {errors.password && (
               <Box
               sx={{
-                  color: "rgba(185, 28, 28, 1)",
+                  color: "error.main",
                   fontSize: "0.75rem",
                   fontStyle: "italic",
               }}
@@ -95,7 +95,7 @@ const Login = () => {
             <SubmitButton text="Sign In" loadingText="Loading" />
             {errors.root && (
             <Box sx={{
-                color: "rgba(185, 28, 28, 1)",
+                color: "error.main",
                 fontSize: "0.75rem",
                 fontStyle: "italic",
             }}>{errors.root.message}</Box>

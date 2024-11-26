@@ -61,7 +61,7 @@ const Register = () => {
                     {errors.username && (
                     <Box
               sx={{
-                  color: "rgba(185, 28, 28, 1)",
+                  color: "error.main",
                   fontSize: "0.75rem",
                   fontStyle: "italic",
               }}
@@ -82,7 +82,7 @@ const Register = () => {
                     {errors.email && (
               <Box
               sx={{
-                  color: "rgba(185, 28, 28, 1)",
+                  color: "error.main",
                   fontSize: "0.75rem",
                   fontStyle: "italic",
               }}
@@ -103,7 +103,7 @@ const Register = () => {
                     {errors.password && (
                     <Box
               sx={{
-                  color: "rgba(185, 28, 28, 1)",
+                  color: "error.main",
                   fontSize: "0.75rem",
                   fontStyle: "italic",
               }}
@@ -118,7 +118,7 @@ const Register = () => {
                 <SubmitButton text="Sign Up" loadingText="Loading" />
                 {errors.root && (
             <Box sx={{
-                color: "rgba(185, 28, 28, 1)",
+                color: "error.main",
                 fontSize: "0.75rem",
                 fontStyle: "italic",
             }}>{errors.root.message}</Box>

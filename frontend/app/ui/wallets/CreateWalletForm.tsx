@@ -44,10 +44,16 @@ const CreateWalletForm = () => {
 
   return (
     <Fragment>
-      <Box px={3} py={2} bgcolor="secondary.main" color="secondary.contrastText">
+      <Box
+        px={3}
+        py={2}
+        bgcolor="secondary.main"
+        color="secondary.contrastText"
+      >
         <Typography variant="h5">Add wallet</Typography>
         <Typography variant="subtitle1">
-          Get started by filling in the information below to create your new wallet.
+          Get started by filling in the information below to create your new
+          wallet.
         </Typography>
       </Box>
       <Box
@@ -66,6 +72,17 @@ const CreateWalletForm = () => {
                   variant="outlined"
                   {...register("address", { required: "Address is required" })}
                 />
+                {errors.address && (
+                  <Box
+                    sx={{
+                      color: "error.main",
+                      fontSize: "0.75rem",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {errors.address.message}
+                  </Box>
+                )}
               </Stack>
               <Stack spacing={1}>
                 <Typography variant="h6">Wallet name</Typography>
@@ -75,6 +92,17 @@ const CreateWalletForm = () => {
                   variant="outlined"
                   {...register("name", { required: "Name is required" })}
                 />
+                {errors.name && (
+                  <Box
+                    sx={{
+                      color: "error.main",
+                      fontSize: "0.75rem",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {errors.name.message}
+                  </Box>
+                )}
               </Stack>
               <Stack spacing={1}>
                 <Typography variant="h6">Wallet description</Typography>
@@ -82,10 +110,19 @@ const CreateWalletForm = () => {
                   id="description"
                   type="text"
                   variant="outlined"
-                  {...register("description", {
-                    required: "Description is required",
-                  })}
+                  {...register("description")}
                 />
+                {errors.description && (
+                  <Box
+                    sx={{
+                      color: "error.main",
+                      fontSize: "0.75rem",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {errors.description.message}
+                  </Box>
+                )}
               </Stack>
             </Stack>
           </Box>
