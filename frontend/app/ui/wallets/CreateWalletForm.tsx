@@ -44,7 +44,7 @@ const CreateWalletForm = () => {
 
   return (
     <Fragment>
-      <Box px={3} py={2} bgcolor="primary.main" color="white">
+      <Box px={3} py={2} bgcolor="secondary.main" color="secondary.contrastText">
         <Typography variant="h5">Add wallet</Typography>
         <Typography variant="subtitle1">
           Get started by filling in the information below to create your new wallet.

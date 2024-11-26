@@ -189,6 +189,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
       <Button
         variant="contained"
         size="small"
+        color="secondary"
         startIcon={<Add />}
         onClick={() => {
           onCreateWallet();

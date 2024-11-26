@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, AppBar, Toolbar, styled, Stack, IconButton,
   // , Badge, Button, 
   FormControlLabel, FormGroup, Switch, 
-  Button,
   Menu,
   MenuItem,
   Typography} from '@mui/material';
@@ -11,7 +10,7 @@ import Logo from "../shared/logo/Logo";
 // components
 import Profile from './Profile';
 import Search from './Search';
-import { IconMenu, IconMenu2 } from '@tabler/icons-react';
+import { IconMenu2 } from '@tabler/icons-react';
 import SidebarItems from '../sidebar/SidebarItems';
 // import Switch, { SwitchProps } from '@mui/material/Switch';
 

@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { Inter, Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import theme from "../theme";
 
 export const inter = Inter({
@@ -14,18 +14,16 @@ const baselightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      // main: "rgba(17, 24, 39, 1)",
       main: "rgba(31, 41, 55, 1)",
       light: "#e3f1fc",
-      // dark: "rgba(17, 24, 39, 1)",
-      dark: "rgba(31, 41, 55, 1)",
+      dark: "rgba(17, 24, 39, 1)",
       contrastText: "#ffffff",
     },
     secondary: {
-      main: "rgba(17, 24, 39, 1)",
+      main: "rgba(79, 70, 229, 1)",
       light: "rgba(58, 65, 81, 1)",
       dark: "rgba(17, 24, 39, 1)",
-      contrastText: "rgba(209, 213, 219, 1)",
+      contrastText: "rgba(255, 255, 255, 1)",
     },
     success: {
       main: "rgba(21, 128, 61, 1)",

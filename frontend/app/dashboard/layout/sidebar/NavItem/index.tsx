@@ -60,9 +60,9 @@ const NavItem = ({ item, level = 0, pathDirect, onClick }: ItemType) => {
       },
       "&.Mui-selected": {
         color: "white",
-        backgroundColor: theme.palette.secondary.main,
+        backgroundColor: theme.palette.primary.dark,
         "&:hover": {
-          backgroundColor: theme.palette.secondary.main,
+          backgroundColor: theme.palette.primary.dark,
           color: theme.palette.primary.contrastText,
         },
       },

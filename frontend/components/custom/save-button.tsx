@@ -20,7 +20,7 @@ export function SaveButton({
       size="small"
       type="submit"
       variant="contained"
-      color="primary"
+      color="secondary"
       aria-disabled={status.pending || loading}
       disabled={status.pending || loading}
       startIcon={

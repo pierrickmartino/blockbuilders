@@ -1,15 +1,3 @@
-import {
-  IconCircleDot,
-  IconFile,
-  IconHome,
-  IconInfoCircle,
-  IconPhoto,
-  IconStar,
-  IconTable,
-  IconTimeline,
-  IconUser,
-} from "@tabler/icons-react";
-
 import { uniqueId } from "lodash";
 
 const Menuitems = [
@@ -56,24 +44,6 @@ const Menuitems = [
     // icon: IconInfoCircle,
     href: "/dashboard/ui-components/alerts",
   },
-  // {
-  //   id: uniqueId(),
-  //   title: "Ratings",
-  //   icon: IconStar,
-  //   href: "/dashboard/ui-components/ratings",
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: "Images",
-  //   icon: IconPhoto,
-  //   href: "/dashboard/ui-components/images",
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: "Pagination",
-  //   icon: IconUser,
-  //   href: "/dashboard/ui-components/pagination",
-  // },
 ];
 
 export default Menuitems;
