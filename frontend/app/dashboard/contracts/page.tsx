@@ -66,7 +66,7 @@ const Contracts = () => {
   };
 
   const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/dashboard/wallets/">
+    <Link underline="hover" key="1" color="inherit" href="/dashboard">
       Dashboard
     </Link>,
     contracts.length > 0 ? (
@@ -92,7 +92,7 @@ const Contracts = () => {
               <Button
                 variant="outlined"
                 startIcon={<NavigateBefore />}
-                href={`/dashboard/wallets/`}
+                href={`/dashboard`}
               >
                 {" "}
                 Back

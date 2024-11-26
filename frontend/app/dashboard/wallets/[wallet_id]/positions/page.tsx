@@ -84,7 +84,7 @@ const Positions = () => {
   };
 
   const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/dashboard/wallets/">
+    <Link underline="hover" key="1" color="inherit" href="/dashboard">
       Dashboard
     </Link>,
 
@@ -111,7 +111,7 @@ const Positions = () => {
               <Button
                 variant="outlined"
                 size="small"
-                href="/dashboard/wallets/"
+                href="/dashboard"
               >
                 Back
               </Button>

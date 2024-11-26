@@ -17,7 +17,7 @@ const Menuitems = [
     id: uniqueId(),
     title: "Dashboard",
     // icon: IconHome,
-    href: "/dashboard/wallets",
+    href: "/dashboard",
   },
   {
     id: uniqueId(),

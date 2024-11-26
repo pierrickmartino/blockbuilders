@@ -27,11 +27,11 @@ const api = () => {
             .auth(`Bearer ${access}`)
             .fetch()
             .unauthorized(() => {
-              window.location.replace("/");
+              window.location.replace("/signin");
             })
             .json();
         } catch (err) {
-          window.location.replace("/");
+          window.location.replace("/signin");
         }
       })
   );

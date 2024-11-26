@@ -80,8 +80,8 @@ export async function createWallet(
       console.log("Wallet created successfully!");
 
       // Revalidate the cache for the wallets page and redirect the user.
-      revalidatePath(`${webUrl}/dashboard/wallets`);
-      redirect(`${webUrl}/dashboard/wallets`);
+      revalidatePath(`${webUrl}/dashboard`);
+      redirect(`${webUrl}/dashboard`);
     }
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
@@ -103,8 +103,8 @@ export async function createWallet(
   }
 
   // Revalidate the cache for the wallets page and redirect the user.
-  revalidatePath(`${webUrl}/dashboard/wallets`);
-  redirect(`${webUrl}/dashboard/wallets`);
+  revalidatePath(`${webUrl}/dashboard`);
+  redirect(`${webUrl}/dashboard`);
 }
 
 export async function downloadWallet(id: string) {
