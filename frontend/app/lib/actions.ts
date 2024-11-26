@@ -3,7 +3,6 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import axios from "axios";
 import { deleter, poster } from "./fetcher";
 
 // const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
