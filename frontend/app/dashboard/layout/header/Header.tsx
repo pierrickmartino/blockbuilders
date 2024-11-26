@@ -126,6 +126,23 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
           <Logo />
         </Box> */}
         {/* <IconMenu2 width="22" height="22" /> */}
+        <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/dashboard"
+            sx={{
+              mr: 4,
+              display: { xs: 'none', md: 'flex' },
+              fontWeight: 600,
+              letterSpacing: '.025rem',
+              color: 'primary.contrastText',
+              textDecoration: 'none',
+              fontSize: '1.2rem'
+            }}
+          >
+            blockbuilders
+          </Typography>
         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
         <IconButton
           color="inherit"
@@ -133,7 +150,7 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
           // onClick={toggleMobileSidebar}
           onClick={handleOpenNavMenu}
           sx={{
-            color:'#fff',
+            color:'primary.contrastText',
             display: {
               lg: "flex",
               xs: "flex",
