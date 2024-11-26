@@ -180,9 +180,6 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
               label=""
             />
           </FormGroup>
-          <Button href="/signin" variant="outlined" sx={{marginBottom:'5px', color:"#ffffff" }} size='small'>
-                Sign In
-              </Button>
           <Profile />
         </Stack>
       </ToolbarStyled>
