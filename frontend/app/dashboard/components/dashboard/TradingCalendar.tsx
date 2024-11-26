@@ -107,7 +107,10 @@ const TradingCalendar = () => {
   };
 
   return (
-    <DashboardCard title="Trading calendar">
+    <DashboardCard
+      title="Trading calendar"
+      subtitle="Track trading habits during the month"
+    >
       <Box>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateCalendar
