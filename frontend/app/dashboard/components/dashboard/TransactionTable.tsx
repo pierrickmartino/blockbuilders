@@ -74,23 +74,23 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         console.log("Export API response received:", response);
 
         // Check if response is OK and contains data
-        if (response.status === 200) {
-          console.log("Response status is 200. Proceeding to download.");
+        // if (response.status === 200) {
+        console.log("Response status is 200. Proceeding to download.");
 
-          // Create a Blob from the response data
-          const blob = new Blob([response.data], {
-            type: "text/csv;charset=utf-8;",
-          });
-          saveAs(
-            blob,
-            `transactions_${new Date().toISOString().replace(/[:.-]/g, "")}.csv`
-          );
-        } else {
-          console.error(
-            "Failed to export transactions, unexpected response status:",
-            response.status
-          );
-        }
+        // Create a Blob from the response data
+        const blob = new Blob([response], {
+          type: "text/csv;charset=utf-8;",
+        });
+        saveAs(
+          blob,
+          `transactions_${new Date().toISOString().replace(/[:.-]/g, "")}.csv`
+        );
+        // } else {
+        //   console.error(
+        //     "Failed to export transactions, unexpected response status:",
+        //     response.status
+        //   );
+        // }
       } catch (error) {
         console.error("An error occurred while exporting transactions:", error);
       }

@@ -41,6 +41,10 @@ export const fetcher = (url: string): Promise<any> => {
   return api().get(url).json();
 };
 
+export const fetcher_blob = (url: string): Promise<any> => {
+  return api().get(url).blob();
+};
+
 export const deleter = (url: string): Promise<any> => {
   return api().delete(url).json();
 };
