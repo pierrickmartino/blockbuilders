@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   Position,
   Wallet,
@@ -6,9 +5,7 @@ import {
   Blockchain,
   Contract,
 } from "./definition";
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
-const userToken = process.env.NEXT_PUBLIC_USER_TOKEN || "";
+import { fetcher } from "./fetcher";
 
 export const fetchWallets = async (
   setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>,
@@ -16,21 +13,13 @@ export const fetchWallets = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  try {
-    // console.log("User Token:", process.env.NEXT_PUBLIC_USER_TOKEN);
-    const response = await axios.get(`${apiUrl}/api/wallets`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-      params: {
-        page: page + 1, // Convert 0-based page index to 1-based if needed by API
-        limit: rowsPerPage,
-      },
-    });
 
-    if (response.data.results) {
-      setWallets(response.data.results); // Ensure the wallets are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+  try {
+    const response = await fetcher(`/api/wallets/?page=${page+1}&limit=${rowsPerPage}`);
+
+    if (response) {
+      setWallets(response.results); // Ensure the wallets are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from wallet API:", err);
@@ -47,24 +36,13 @@ export const fetchPositionsWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  try {
-    const response = await axios.get(
-      `${apiUrl}/api/wallets/${wallet_id}/positions`,
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-        },
-        params: {
-          search: searchTerm,
-          page: page + 1, // Convert 0-based page index to 1-based if needed by API
-          limit: rowsPerPage,
-        },
-      }
-    );
 
-    if (response.data.results) {
-      setPositions(response.data.results); // Ensure the positions are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+  try {
+    const response = await fetcher(`/api/wallets/${wallet_id}/positions/?search=${searchTerm}&page=${page+1}&limit=${rowsPerPage}`);
+
+    if (response.results) {
+      setPositions(response.results); // Ensure the positions are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from position API:", err);
@@ -80,21 +58,13 @@ export const fetchPositionsAllWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  try {
-    const response = await axios.get(`${apiUrl}/api/positions`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-      params: {
-        search: searchTerm,
-        page: page + 1, // Convert 0-based page index to 1-based if needed by API
-        limit: rowsPerPage,
-      },
-    });
 
-    if (response.data.results) {
-      setPositions(response.data.results); // Ensure the positions are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+  try {
+    const response = await fetcher(`/api/positions/?search=${searchTerm}&page=${page+1}&limit=${rowsPerPage}`);
+    
+    if (response.results) {
+      setPositions(response.results); // Ensure the positions are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from position API:", err);
@@ -110,23 +80,13 @@ export const fetchPositions = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  try {
-    const response = await axios.get(
-      `${apiUrl}/api/wallets/${wallet_id}/positions`,
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-        },
-        params: {
-          page: page + 1, // Convert 0-based page index to 1-based if needed by API
-          limit: rowsPerPage,
-        },
-      }
-    );
 
-    if (response.data.results) {
-      setPositions(response.data.results); // Ensure the positions are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+  try {
+    const response = await fetcher(`/api/wallets/${wallet_id}/positions/?page=${page+1}&limit=${rowsPerPage}`);
+
+    if (response.results) {
+      setPositions(response.results); // Ensure the positions are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from position API:", err);
@@ -141,20 +101,14 @@ export const fetchPositionsAll = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  try {
-    const response = await axios.get(`${apiUrl}/api/positions`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-      params: {
-        page: page + 1, // Convert 0-based page index to 1-based if needed by API
-        limit: rowsPerPage,
-      },
-    });
 
-    if (response.data.results) {
-      setPositions(response.data.results); // Ensure the positions are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+ 
+  try {
+    const response = await fetcher(`/api/positions/?page=${page+1}&limit=${rowsPerPage}`);
+
+    if (response.results) {
+      setPositions(response.results); // Ensure the positions are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from position API:", err);
@@ -167,15 +121,13 @@ export const fetchTopPositions = async (
   max: number,
   setTopPositions: React.Dispatch<React.SetStateAction<Position[]>>
 ): Promise<void> => {
-  try {
-    const response = await axios.get(`${apiUrl}/api/positions/top/${max}`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-    });
 
-    if (response.data.results) {
-      setTopPositions(response.data.results); // Ensure the positions are correctly set
+ 
+  try {
+    const response = await fetcher(`/api/positions/top/${max}`);
+    
+    if (response.results) {
+      setTopPositions(response.results); // Ensure the positions are correctly set
     }
   } catch (err) {
     console.error("Error fetching data from top position API:", err);
@@ -188,15 +140,14 @@ export const fetchTopBlockchains = async (
   max: number,
   setTopBlockchains: React.Dispatch<React.SetStateAction<Blockchain[]>>
 ): Promise<void> => {
-  try {
-    const response = await axios.get(`${apiUrl}/api/blockchains/top/${max}`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-    });
 
-    if (response.data.results) {
-      setTopBlockchains(response.data.results); // Ensure the blockchains are correctly set
+  
+
+  try {
+    const response = await fetcher(`/api/blockchains/top/${max}`);
+
+    if (response.results) {
+      setTopBlockchains(response.results); // Ensure the blockchains are correctly set
     }
   } catch (err) {
     console.error("Error fetching data from top blockchain API:", err);
@@ -209,15 +160,12 @@ export const fetchLastTransactions = async (
   max: number,
   setLastTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>
 ): Promise<void> => {
-  try {
-    const response = await axios.get(`${apiUrl}/api/transactions/last/${max}`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-    });
 
-    if (response.data.results) {
-      setLastTransactions(response.data.results); // Ensure the transactions are correctly set
+  try {
+    const response = await fetcher(`/api/transactions/last/${max}`);    
+
+    if (response.results) {
+      setLastTransactions(response.results); // Ensure the transactions are correctly set
     }
   } catch (err) {
     console.error("Error fetching data from last transactions API:", err);
@@ -229,15 +177,12 @@ export const fetchLastTransactions = async (
 export const fetchCountTransactions = async (
   setCountTransactions: React.Dispatch<React.SetStateAction<number>>
 ): Promise<void> => {
-  try {
-    const response = await axios.get(`${apiUrl}/api/transactions/count`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-    });
 
-    if (response.data) {
-      setCountTransactions(response.data.counter); // Ensure the transactions are correctly set
+  try {
+    const response = await fetcher(`/api/transactions/count`);    
+    
+    if (response) {
+      setCountTransactions(response.counter); // Ensure the transactions are correctly set
     }
   } catch (err) {
     console.error("Error fetching data from last transactions API:", err);
@@ -254,23 +199,13 @@ export const fetchTransactions = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  try {
-    const response = await axios.get(
-      `${apiUrl}/api/wallets/${wallet_id}/positions/${position_id}/transactions`,
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-        },
-        params: {
-          page: page + 1, // Convert 0-based page index to 1-based if needed by API
-          limit: rowsPerPage,
-        },
-      }
-    );
 
-    if (response.data.results) {
-      setTransactions(response.data.results); // Ensure the transactions are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+  try {
+    const response = await fetcher(`/api/wallets/${wallet_id}/positions/${position_id}/transactions/?page=${page+1}&limit=${rowsPerPage}`);
+
+    if (response.results) {
+      setTransactions(response.results); // Ensure the transactions are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
@@ -285,20 +220,13 @@ export const fetchTransactionsAll = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  try {
-    const response = await axios.get(`${apiUrl}/api/transactions`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-      params: {
-        page: page + 1, // Convert 0-based page index to 1-based if needed by API
-        limit: rowsPerPage,
-      },
-    });
 
-    if (response.data.results) {
-      setTransactions(response.data.results); // Ensure the transactions are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+  try {
+    const response = await fetcher(`/api/transactions/?page=${page+1}&limit=${rowsPerPage}`);
+    
+    if (response.results) {
+      setTransactions(response.results); // Ensure the transactions are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
@@ -316,24 +244,13 @@ export const fetchTransactionsWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  try {
-    const response = await axios.get(
-      `${apiUrl}/api/wallets/${wallet_id}/positions/${position_id}/transactions`,
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-        },
-        params: {
-          search: searchTerm,
-          page: page + 1, // Convert 0-based page index to 1-based if needed by API
-          limit: rowsPerPage,
-        },
-      }
-    );
 
-    if (response.data.results) {
-      setTransactions(response.data.results); // Ensure the transactions are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+  try {
+    const response = await fetcher(`/api/wallets/${wallet_id}/positions/${position_id}/transactions/?search=${searchTerm}&page=${page+1}&limit=${rowsPerPage}`);
+    
+    if (response.results) {
+      setTransactions(response.results); // Ensure the transactions are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
@@ -349,21 +266,13 @@ export const fetchTransactionsAllWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
+  
   try {
-    const response = await axios.get(`${apiUrl}/api/transactions`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-      params: {
-        search: searchTerm,
-        page: page + 1, // Convert 0-based page index to 1-based if needed by API
-        limit: rowsPerPage,
-      },
-    });
-
-    if (response.data.results) {
-      setTransactions(response.data.results); // Ensure the transactions are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+    const response = await fetcher(`/api/transactions/?search=${searchTerm}&page=${page+1}&limit=${rowsPerPage}`);
+  
+    if (response.results) {
+      setTransactions(response.results); // Ensure the transactions are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
@@ -378,20 +287,13 @@ export const fetchContractsAll = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  try {
-    const response = await axios.get(`${apiUrl}/api/contracts`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-      params: {
-        page: page + 1, // Convert 0-based page index to 1-based if needed by API
-        limit: rowsPerPage,
-      },
-    });
 
-    if (response.data.results) {
-      setContracts(response.data.results); // Ensure the transactions are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+  try {
+    const response = await fetcher(`/api/contracts/?page=${page+1}&limit=${rowsPerPage}`);
+    
+    if (response.results) {
+      setContracts(response.results); // Ensure the transactions are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
@@ -407,21 +309,13 @@ export const fetchContractsAllWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  try {
-    const response = await axios.get(`${apiUrl}/api/contracts`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-      params: {
-        search: searchTerm,
-        page: page + 1, // Convert 0-based page index to 1-based if needed by API
-        limit: rowsPerPage,
-      },
-    });
 
-    if (response.data.results) {
-      setContracts(response.data.results); // Ensure the transactions are correctly set
-      setTotalCount(response.data.count); // Update total count if pagination is enabled
+  try {
+    const response = await fetcher(`/api/contracts/?search=${searchTerm}&page=${page+1}&limit=${rowsPerPage}`);
+    
+    if (response.results) {
+      setContracts(response.results); // Ensure the transactions are correctly set
+      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
@@ -431,15 +325,12 @@ export const fetchContractsAllWithSearch = async (
 };
 
 export const fetchTaskStatus = async (task_id: string): Promise<string> => {
+  
   try {
-    const response = await axios.get(`${apiUrl}/api/tasks/${task_id}/status`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-    });
-
-    if (response.data) {
-      return response.data.status;
+    const response = await fetcher(`/api/tasks/${task_id}/status`);
+    
+    if (response) {
+      return response.status;
     } else {
       throw new Error("Task status not found in response.");
     }

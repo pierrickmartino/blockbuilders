@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { Inter, Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import theme from "../theme";
 
 export const inter = Inter({
@@ -14,16 +14,16 @@ const baselightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#1e88e5",
+      main: "rgba(31, 41, 55, 1)",
       light: "#e3f1fc",
-      dark: "#1e88e5",
+      dark: "rgba(17, 24, 39, 1)",
       contrastText: "#ffffff",
     },
     secondary: {
-      main: "#21c1d6",
-      light: "#e1f7f8",
-      dark: "#21c1d6",
-      contrastText: "#ffffff",
+      main: "rgba(79, 70, 229, 1)",
+      light: "rgba(58, 65, 81, 1)",
+      dark: "rgba(17, 24, 39, 1)",
+      contrastText: "rgba(255, 255, 255, 1)",
     },
     success: {
       main: "rgba(21, 128, 61, 1)",
@@ -58,7 +58,7 @@ const baselightTheme = createTheme({
       600: "#2a3547",
     },
     text: {
-      primary: "#111827",
+      primary: "rgba(17, 24, 39, 1)",
       secondary: "#6b7280",
     },
     action: {
@@ -68,7 +68,7 @@ const baselightTheme = createTheme({
     },
     divider: "#e5eaef",
     background: {
-      default: "#eef5f9",
+      default: "rgba(250,250,250,1)",
       paper: "#ffffff",
     },
   },
@@ -101,14 +101,16 @@ const baselightTheme = createTheme({
     },
     h5: {
       fontWeight: 600,
-      fontSize: '1.125rem',
-      lineHeight: '1.6rem',
+      fontSize: '1rem',
+      lineHeight: '1.75rem',
+      letterSpacing: '-.015em',
       fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     h6: {
       fontWeight: 600,
       fontSize: '0.875rem',
       lineHeight: '1.25rem',
+      letterSpacing: '-.015em',
       fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
     },
     button: {
@@ -197,7 +199,7 @@ const baselightTheme = createTheme({
         root: {
           borderRadius: "7px",
           padding: "0",
-          boxShadow: "0px 7px 30px 0px rgba(90, 114, 123, 0.11)",
+          boxShadow: "0px 0px 0px 1px rgba(9, 9, 11, .07), 0px 2px 2px 0px rgba(9, 9, 11, .05)",
         },
       },
     },
@@ -284,12 +286,12 @@ const baselightTheme = createTheme({
           color: "white",
         },
         standardSuccess: {
-          backgroundColor: theme.palette.success.light,
-          color: theme.palette.success.main,
+          backgroundColor: "rgba(240, 253, 244, 1)",
+          color: "rgba(21, 128, 61, 1)",
         },
         standardError: {
-          backgroundColor: theme.palette.error.light,
-          color: theme.palette.error.main,
+          backgroundColor: "rgba(254, 242, 242, 1)",
+          color: "rgba(185, 28, 28, 1)",
         },
         standardWarning: {
           backgroundColor: theme.palette.warning.light,
@@ -300,16 +302,16 @@ const baselightTheme = createTheme({
           color: theme.palette.info.main,
         },
         outlinedSuccess: {
-          borderColor: theme.palette.success.main,
-          color: theme.palette.success.main,
+          borderColor: "rgba(21, 128, 61, 1)",
+          color: "rgba(21, 128, 61, 1)",
         },
         outlinedWarning: {
           borderColor: theme.palette.warning.main,
           color: theme.palette.warning.main,
         },
         outlinedError: {
-          borderColor: theme.palette.error.main,
-          color: theme.palette.error.main,
+          borderColor: "rgba(185, 28, 28, 1)",
+          color: "rgba(185, 28, 28, 1)",
         },
         outlinedInfo: {
           borderColor: theme.palette.info.main,

@@ -21,7 +21,7 @@ import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
 import formatNumber from "@/app/utils/formatNumber";
 import CustomCard from "@/app/dashboard/components/shared/CustomCard";
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { NavigateNext } from "@mui/icons-material";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -84,7 +84,7 @@ const Positions = () => {
   };
 
   const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/dashboard/wallets/">
+    <Link underline="hover" key="1" color="inherit" href="/dashboard">
       Dashboard
     </Link>,
 
@@ -110,10 +110,9 @@ const Positions = () => {
               </Typography>
               <Button
                 variant="outlined"
-                startIcon={<NavigateBefore />}
-                href="/dashboard/wallets/"
+                size="small"
+                href="/dashboard"
               >
-                {" "}
                 Back
               </Button>
             </Stack>

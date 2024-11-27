@@ -1,13 +1,17 @@
 import React from 'react';
 import { Box, AppBar, Toolbar, styled, Stack, IconButton,
   // , Badge, Button, 
-  FormControlLabel, FormGroup, Switch } from '@mui/material';
+  FormControlLabel, FormGroup, Switch, 
+  Menu,
+  MenuItem,
+  Typography} from '@mui/material';
 import PropTypes from 'prop-types';
 import Logo from "../shared/logo/Logo";
 // components
 import Profile from './Profile';
 import Search from './Search';
 import { IconMenu2 } from '@tabler/icons-react';
+import SidebarItems from '../sidebar/SidebarItems';
 // import Switch, { SwitchProps } from '@mui/material/Switch';
 
 interface ItemType {
@@ -17,20 +21,23 @@ interface ItemType {
 }
 
 const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
-
+  
+  
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
-    boxShadow:
-      "rgba(0, 0, 0, 0.2) 0px 3px 5px -1px, rgba(0, 0, 0, 0.14) 0px 5px 8px 0px, rgba(0, 0, 0, 0.12) 0px 1px 14px 0px !important;",
+    // boxShadow:
+    //   "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1) !important;",
     background: theme.palette.primary.main,
     justifyContent: "center",
     backdropFilter: "blur(4px)",
+    height: '50px',
     [theme.breakpoints.up('lg')]: {
-      minHeight: '64px',
+      minHeight: '50px',
     },
   }));
   const ToolbarStyled = styled(Toolbar)(({ theme }) => ({
     width: '100%',
     color: theme.palette.text.secondary,
+    height: '50px',
   }));
 
   const MaterialUISwitch = styled(Switch)(({ theme }) => ({
@@ -89,6 +96,23 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
     },
   }));
 
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+
+  const handleToggleSidebar = () => {
+    // setAnchorElNav(event.currentTarget);
+  };
+
+  const pages = ['Products', 'Pricing', 'Blog'];
+
+  
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+
   return (
     <AppBarStyled position="sticky" color="default">
       <ToolbarStyled>
@@ -96,41 +120,82 @@ const Header = ({ toggleMobileSidebar, mode, onThemeChange }: ItemType) => {
         {/* ------------------------------------------- */}
         {/* Logo */}
         {/* ------------------------------------------- */}
-        <Box sx={{
+        {/* <Box sx={{
             width: '256px',
           }}>
           <Logo />
-        </Box>
-
+        </Box> */}
+        {/* <IconMenu2 width="22" height="22" /> */}
+        <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/dashboard"
+            sx={{
+              mr: 4,
+              display: { xs: 'none', md: 'flex' },
+              fontWeight: 600,
+              letterSpacing: '.025rem',
+              color: 'primary.contrastText',
+              textDecoration: 'none',
+              fontSize: '1.2rem'
+            }}
+          >
+            blockbuilders
+          </Typography>
+        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
         <IconButton
           color="inherit"
           aria-label="menu"
-          onClick={toggleMobileSidebar}
+          // onClick={toggleMobileSidebar}
+          onClick={handleOpenNavMenu}
           sx={{
-            color:'#fff',
+            color:'primary.contrastText',
             display: {
-              lg: "none",
+              lg: "flex",
               xs: "flex",
             },
           }}
         >
-          <IconMenu2 width="22" height="22" />
+          <IconMenu2 />
         </IconButton>
-
-        <Search />
-
-        <Box flexGrow={1} />
+        <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{ display: { xs: 'block', md: 'none' } }}
+            >
+              {pages.map((page) => (
+                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+        </Box>
+        <Box  sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
+        {/* <Box flexGrow={1} /> */}
         <Stack spacing={1} direction="row" alignItems="center">
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <MaterialUISwitch
-                sx={{ m: 1 }}
-                checked={mode === "dark"}
-                onChange={onThemeChange} />}
-            label=""
-          />
-        </FormGroup>
+        <Search />
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <MaterialUISwitch
+                  sx={{ m: 1 }}
+                  checked={mode === "dark"}
+                  onChange={onThemeChange} />}
+              label=""
+            />
+          </FormGroup>
           <Profile />
         </Stack>
       </ToolbarStyled>

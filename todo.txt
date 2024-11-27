@@ -1,6 +1,7 @@
+- core - créer une page avec un exemple de chaque composant
 - core - fix lint issues (npm run lint)
-- core - implémenter une authentification JWT
 - dashboard - dark mode
+- dashboard - améliorer les couleurs
 - dashboard - pouvoir switcher entre la fullpage en largeur et la vue serrée
 - dashboard - ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois 
 - dashboard - ajouter un calendrier du mois avec le nombre de trade sur chaque journée
@@ -12,6 +13,8 @@
 - transaction - fix - pagination et dernier item de la page qui reste
 - position - déplacer le filtrage pour mieux l'intégrer au reste de la page
 - position - fix - pagination et dernier item de la page qui reste
+- position - ajouter les indicateurs tels que EMA, RSI, etc...
+- backend - reconnaitre les contrats qui sont des "utilities" en ne plus les valoriser
 - backend - mettre en suspicious une position doit supprimer les transactions associées au contract
 - backend - revoir les logs tasks pour trouver la source de lenteur
 - backend - optimiser les traitements
@@ -20,3 +23,4 @@
     - Task completed [calculate_running_quantity_transaction_task] in 5.284175634384155 seconds
 - backend - récupérer les informations de METIS
 - backend - migrer vers etherscan API V2
+- backend - un utilisateur ne doit pas voir les données d'un autre

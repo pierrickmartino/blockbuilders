@@ -18,9 +18,12 @@ plotly==5.23.0
 
 django-prometheus
 channels
-djangorestframework
-django-cors-headers
 django-filter
 
-# djangorestframework-simplejwt
+# Auth
+djangorestframework-simplejwt
+djoser
+djangorestframework
+django-cors-headers
+
 # djangorestframework-api-key==2.*

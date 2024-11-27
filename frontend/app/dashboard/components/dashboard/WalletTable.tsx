@@ -189,6 +189,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
       <Button
         variant="contained"
         size="small"
+        color="secondary"
         startIcon={<Add />}
         onClick={() => {
           onCreateWallet();
@@ -288,10 +289,16 @@ const WalletTable: React.FC<WalletTableProps> = ({
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <PerformanceChip input={wallet.capital_gain} type="currency" />
+                    <PerformanceChip
+                      input={wallet.capital_gain}
+                      type="currency"
+                    />
                   </TableCell>
                   <TableCell align="right">
-                     <PerformanceChip input={wallet.unrealized_gain} type="percentage" />
+                    <PerformanceChip
+                      input={wallet.unrealized_gain}
+                      type="percentage"
+                    />
                   </TableCell>
                   <TableCell>
                     <IconButton

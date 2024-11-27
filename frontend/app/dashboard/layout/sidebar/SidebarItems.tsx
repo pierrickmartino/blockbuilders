@@ -1,7 +1,7 @@
 import React from "react";
 import Menuitems from "./MenuItems";
 import { usePathname } from "next/navigation";
-import { Box, List } from "@mui/material";
+import { Box, List, Stack } from "@mui/material";
 import NavItem from "./NavItem";
 
 interface SidebarItemsProps {
@@ -13,9 +13,8 @@ const SidebarItems: React.FC<SidebarItemsProps> = ({ toggleMobileSidebar }) => {
   const pathDirect = pathname;
 
   return (
-    <Box sx={{ px: 2 }}>
-      <List sx={{ pt: 0 }} className="sidebarNav" component="div">
-        {Menuitems.map((item) => {
+    <Stack spacing={1} direction="row">
+      {Menuitems.map((item) => {
           return (
             <NavItem
               item={item}
@@ -25,8 +24,7 @@ const SidebarItems: React.FC<SidebarItemsProps> = ({ toggleMobileSidebar }) => {
             />
           );
         })}
-      </List>
-    </Box>
+    </Stack>
   );
 };
 export default SidebarItems;

@@ -1,6 +1,5 @@
 "use client";
 import {
-  Grid,
   Box,
   Card,
   Stack,
@@ -10,15 +9,13 @@ import {
   Breadcrumbs,
 } from "@mui/material";
 // components
+import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
 import { Contract } from "@/app/lib/definition";
 import { fetchContractsAll, fetchContractsAllWithSearch } from "@/app/lib/data";
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
-import {
-  NavigateBefore,
-  NavigateNext,
-} from "@mui/icons-material";
+import { NavigateNext } from "@mui/icons-material";
 import ContractTable from "../components/dashboard/ContractTable";
 
 const Contracts = () => {
@@ -26,10 +23,6 @@ const Contracts = () => {
   const [page, setPage] = useState(0); // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
-
-  // const params = useParams();
-  // const wallet_id = params.wallet_id;
-  // const position_id = params.position_id;
 
   // Memoize fetchContractData using useCallback
   const fetchContractData = useCallback(async () => {
@@ -49,7 +42,7 @@ const Contracts = () => {
       page,
       rowsPerPage
     );
-};
+  };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage); // Update page state
@@ -66,7 +59,7 @@ const Contracts = () => {
   };
 
   const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/dashboard/wallets/">
+    <Link underline="hover" key="1" color="inherit" href="/dashboard">
       Dashboard
     </Link>,
     contracts.length > 0 ? (
@@ -84,17 +77,12 @@ const Contracts = () => {
     <PageContainer title="Contracts" description="this is Contracts">
       <Box mt={0}>
         <Grid container spacing={3}>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <Stack direction="row" justifyContent="space-between">
               <Typography color="textSecondary" variant="h4">
                 Contracts
               </Typography>
-              <Button
-                variant="outlined"
-                startIcon={<NavigateBefore />}
-                href={`/dashboard/wallets/`}
-              >
-                {" "}
+              <Button variant="outlined" size="small" href="/dashboard">
                 Back
               </Button>
             </Stack>
@@ -105,7 +93,7 @@ const Contracts = () => {
               {breadcrumbs}
             </Breadcrumbs>
           </Grid>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <Card variant="outlined" sx={{ p: 3 }}>
               <Box px={0} py={0} mb="-15px">
                 <Typography variant="h5">Filter</Typography>
@@ -123,7 +111,7 @@ const Contracts = () => {
               </Box>
             </Card>
           </Grid>
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <ContractTable
               contracts={contracts}
               page={page}

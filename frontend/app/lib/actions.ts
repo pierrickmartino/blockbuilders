@@ -1,14 +1,13 @@
-"use server";
+// "use server";
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import axios from "axios";
+import { deleter, poster } from "./fetcher";
 
 // const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 const webUrl = process.env.NEXT_PUBLIC_WEB_URL || "http://127.0.0.1";
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://backend:4000";
-const userToken = process.env.NEXT_PUBLIC_USER_TOKEN || "";
 
 const FormSchema = z.object({
   address: z.string(),
@@ -52,45 +51,21 @@ export async function createWallet(
 
   // Insert data into the database
   try {
-    const response = await axios.post(
-      `${backendUrl}/api/wallets/`,
-      {
-        address, // Wallet address
-        name, // Wallet name
-        description, // Wallet description
-      },
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-          "Content-Type": "application/json",
-          Accept: "*/*",
-          "Accept-Encoding": "gzip, deflate, br",
-          Connection: "keep-alive",
-        },
-      }
-    );
+    const response = await poster(`/api/wallets/`, {
+      address, // Wallet address
+      name, // Wallet name
+      description, // Wallet description
+    });
 
     // Only redirect if the API request was successful
     if (response.status === 201) {
       console.log("Wallet created successfully!");
 
       // Revalidate the cache for the wallets page and redirect the user.
-      revalidatePath(`${webUrl}/dashboard/wallets`);
-      redirect(`${webUrl}/dashboard/wallets`);
+      revalidatePath(`${webUrl}/dashboard`);
+      redirect(`${webUrl}/dashboard`);
     }
-  } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      // Log the error for debugging
-      console.error(
-        "Error creating wallet:",
-        error.response ? error.response.data : error.message
-      );
-    } else if (error instanceof Error) {
-      console.error("Error creating wallet:", error.message);
-    } else {
-      console.error("An unexpected error occurred:", error);
-    }
-
+  } catch (err) {
     // If a database error occurs, return a more specific error.
     return {
       message: "Database Error: Failed to Create Wallet.",
@@ -98,28 +73,14 @@ export async function createWallet(
   }
 
   // Revalidate the cache for the wallets page and redirect the user.
-  revalidatePath(`${webUrl}/dashboard/wallets`);
-  redirect(`${webUrl}/dashboard/wallets`);
+  revalidatePath(`${webUrl}/dashboard`);
+  redirect(`${webUrl}/dashboard`);
 }
 
 export async function downloadWallet(id: string) {
-  // console.log("Enter downloadWallet for :", id);
-  // console.log(`${backendUrl}/api/wallets/${id}/download/`);
-  // console.log(`Token ${userToken}`);
   try {
-    const response = await axios.post(
-      `${backendUrl}/api/wallets/${id}/download/`,
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-          "Content-Type": "application/json",
-          Accept: "*/*",
-          "Accept-Encoding": "gzip, deflate, br",
-          Connection: "keep-alive",
-        },
-      }
-    );
-    const result = await response.data;
+    const response = await poster(`/api/wallets/${id}/download/`);
+    const result = await response;
     console.log("Task triggered in downloadWallet:", result);
     return result;
   } catch {
@@ -128,23 +89,9 @@ export async function downloadWallet(id: string) {
 }
 
 export async function refreshWallet(id: string) {
-  // console.log("Enter refreshWallet for :", id);
-  // console.log(`${backendUrl}/api/wallets/${id}/refresh/`);
-  // console.log(`Token ${userToken}`);
   try {
-    const response = await axios.post(
-      `${backendUrl}/api/wallets/${id}/refresh/`,
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-          "Content-Type": "application/json",
-          Accept: "*/*",
-          "Accept-Encoding": "gzip, deflate, br",
-          Connection: "keep-alive",
-        },
-      }
-    );
-    const result = await response.data;
+    const response = await poster(`/api/wallets/${id}/refresh/`);
+    const result = await response;
     console.log("Task triggered:", result);
     return result;
   } catch {
@@ -154,19 +101,8 @@ export async function refreshWallet(id: string) {
 
 export async function refreshFullWallet(id: string) {
   try {
-    const response = await axios.post(
-      `${backendUrl}/api/wallets/${id}/refresh-full/`,
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-          "Content-Type": "application/json",
-          Accept: "*/*",
-          "Accept-Encoding": "gzip, deflate, br",
-          Connection: "keep-alive",
-        },
-      }
-    );
-    const result = await response.data;
+    const response = await poster(`/api/wallets/${id}/refresh-full/`);
+    const result = await response;
     console.log("Task triggered:", result);
     return result;
   } catch {
@@ -176,12 +112,9 @@ export async function refreshFullWallet(id: string) {
 
 export async function deleteWallet(id: string) {
   try {
-    const response = await axios.delete(`${backendUrl}/api/wallets/${id}/`, {
-      headers: {
-        Authorization: `Token ${userToken}`,
-      },
-    });
-    return response.data;
+    const response = await deleter(`/api/wallets/${id}/`);
+    console.log("Task triggered:", response);
+    return response;
   } catch {
     return { message: "Database Error: Failed to delete wallet." };
   }
@@ -189,15 +122,8 @@ export async function deleteWallet(id: string) {
 
 export async function setContractAsSuspicious(id: string) {
   try {
-    const response = await axios.post(
-      `${backendUrl}/api/contracts/${id}/suspicious/`,
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-        },
-      }
-    );
-    return response.data;
+    const response = await poster(`/api/contracts/${id}/suspicious/`);
+    return response;
   } catch {
     return { message: "Database Error: Failed to set contract as Suspicious." };
   }
@@ -205,15 +131,8 @@ export async function setContractAsSuspicious(id: string) {
 
 export async function setContractAsStable(id: string) {
   try {
-    const response = await axios.post(
-      `${backendUrl}/api/contracts/${id}/stable/`,
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-        },
-      }
-    );
-    return response.data;
+    const response = await poster(`/api/contracts/${id}/stable/`);
+    return response;
   } catch {
     return { message: "Database Error: Failed to set contract as Stable." };
   }
@@ -221,70 +140,9 @@ export async function setContractAsStable(id: string) {
 
 export async function setContractAsStandard(id: string) {
   try {
-    const response = await axios.post(
-      `${backendUrl}/api/contracts/${id}/standard/`,
-      {
-        headers: {
-          Authorization: `Token ${userToken}`,
-        },
-      }
-    );
-    return response.data;
+    const response = await poster(`/api/contracts/${id}/standard/`);
+    return response;
   } catch {
     return { message: "Database Error: Failed to set contract as Standard." };
   }
 }
-
-// export async function updateWallet(
-//   id: string,
-//   prevState: State,
-//   formData: FormData,
-// ) {
-//   const validatedFields = UpdateWallet.safeParse({
-//     customerId: formData.get('customerId'),
-//     amount: formData.get('amount'),
-//     status: formData.get('status'),
-//   });
-
-//   if (!validatedFields.success) {
-//     return {
-//       errors: validatedFields.error.flatten().fieldErrors,
-//       message: 'Missing Fields. Failed to Update Invoice.',
-//     };
-//   }
-
-//   const { customerId, amount, status } = validatedFields.data;
-//   const amountInCents = amount * 100;
-
-//   try {
-//     await sql`
-//       UPDATE invoices
-//       SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
-//       WHERE id = ${id}
-//     `;
-//   } catch (error) {
-//     return { message: 'Database Error: Failed to Update Invoice.' };
-//   }
-
-//   revalidatePath('/dashboard/invoices');
-//   redirect('/dashboard/invoices');
-// }
-
-// export async function authenticate(
-//   prevState: string | undefined,
-//   formData: FormData,
-// ) {
-//   try {
-//     await signIn('credentials', formData);
-//   } catch (error) {
-//     if (error instanceof AuthError) {
-//       switch (error.type) {
-//         case 'CredentialsSignin':
-//           return 'Invalid credentials.';
-//         default:
-//           return 'Something went wrong.';
-//       }
-//     }
-//     throw error;
-//   }
-// }

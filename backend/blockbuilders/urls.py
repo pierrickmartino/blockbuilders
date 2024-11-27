@@ -15,7 +15,6 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from app.views import views, views_contract, views_position, views_transaction, views_wallet, views_profile
@@ -25,6 +24,7 @@ from app.utils.optimism import view_optimism
 from app.utils.bsc import view_bsc
 from app.views.views_api import (
     FiatViewSet,
+    LogoutView,
     PositionTopView,
     PositionView,
     TransactionLastView,
@@ -42,11 +42,6 @@ from app.views.views_api import (
     TransactionViewSet,
     PositionViewSet
 )
-
-# from rest_framework_simplejwt.views import (
-#     TokenObtainPairView,
-#     TokenRefreshView,
-# )
 
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -88,17 +83,19 @@ blockchain_top_list = BlockchainTopView.as_view()
 position_detail = PositionViewSet.as_view(
     {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
 )
-urlpatterns = format_suffix_patterns(
-    [
+urlpatterns = [
+# format_suffix_patterns(
+    
         # GLOBAL
         path("", views.dashboard_redirect, name="dashboard"),
         path("__debug__/", include("debug_toolbar.urls")),
         path("admin/", admin.site.urls),
+
         path("prometheus/", include("django_prometheus.urls")),
         # AUTHENTICATION / USER
-        path("login/", auth_views.LoginView.as_view(), name="login"),
-        path("logout/", auth_views.LogoutView.as_view(), name="logout"),
-        path("register/", views.register, name="register"),
+        # path("login/", auth_views.LoginView.as_view(), name="login"),
+        # path("logout/", auth_views.LogoutView.as_view(), name="logout"),
+        # path("register/", views.register, name="register"),
         path("profile/", views_profile.profile, name="profile"),
         path("profile/update/", views_profile.update_user_settings, name="update_user_settings"),
         # DASHBOARD
@@ -221,7 +218,18 @@ urlpatterns = format_suffix_patterns(
         path("bsc/bnb/", view_bsc.bnb_price, name="bsc_bnb_price"),
         ######################
         # API DEDICATED URLS #
-        ######################
+        ###################### 
+        # path('api/users/', UserView.as_view(), name='users'),
+        # path('api/token/', jwt_views.TokenObtainPairView.as_view(), name ="token_obtain_pair"),
+        # path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
+        # path('api/token/verify/', jwt_views.TokenVerifyView.as_view(), name='token_verify'),
+        path("api/auth/", include("djoser.urls")),
+        path("api/auth/", include("djoser.urls.jwt")),
+        path("api/auth/logout/", LogoutView.as_view()),
+        # path('api/register/', RegisterView.as_view(), name="register"),
+        
+        # path('api/login/', Loginview.as_view(), name="login"),
+        # path('api/logout/', LogoutView.as_view(), name = "logout"),
         # path("api/auth/", include("rest_framework.urls")),
         # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
         # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -307,4 +315,4 @@ urlpatterns = format_suffix_patterns(
             name="task_id",
         ),
     ]
-)
+# )

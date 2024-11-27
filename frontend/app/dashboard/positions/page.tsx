@@ -19,7 +19,7 @@ import { fetchPositionsAll, fetchPositionsAllWithSearch } from "@/app/lib/data";
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { NavigateNext } from "@mui/icons-material";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -71,7 +71,7 @@ const Positions = () => {
   };
 
   const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/dashboard/wallets/">
+    <Link underline="hover" key="1" color="inherit" href="/dashboard">
       Dashboard
     </Link>,
 
@@ -95,12 +95,7 @@ const Positions = () => {
               <Typography color="textSecondary" variant="h4">
                 Positions
               </Typography>
-              <Button
-                variant="outlined"
-                startIcon={<NavigateBefore />}
-                href="/dashboard/wallets/"
-              >
-                {" "}
+              <Button variant="outlined" size="small" href="/dashboard">
                 Back
               </Button>
             </Stack>

@@ -84,7 +84,7 @@ const Transactions = () => {
   };
 
   const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/dashboard/wallets/">
+    <Link underline="hover" key="1" color="inherit" href="/dashboard">
       Dashboard
     </Link>,
 
@@ -118,10 +118,9 @@ const Transactions = () => {
               </Typography>
               <Button
                 variant="outlined"
-                startIcon={<NavigateBefore />}
+                size="small"
                 href={`/dashboard/wallets/${wallet_id}/positions`}
               >
-                {" "}
                 Back
               </Button>
             </Stack>

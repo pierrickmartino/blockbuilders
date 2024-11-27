@@ -61,36 +61,21 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
 
     if (position_id !== null) {
       try {
-        console.log(
-          "Attempting to export transactions with ID:",
-          position_id
-        );
+        console.log("Attempting to export transactions with ID:", position_id);
 
-        const response = await exportTransactions(
-          position_id.toString()
-        );
+        const response = await exportTransactions(position_id.toString());
 
         // Log response to check if we got it successfully
         console.log("Export API response received:", response);
 
-        // Check if response is OK and contains data
-        if (response.status === 200) {
-          console.log("Response status is 200. Proceeding to download.");
-
-          // Create a Blob from the response data
-          const blob = new Blob([response.data], {
-            type: "text/csv;charset=utf-8;",
-          });
-          saveAs(
-            blob,
-            `transactions_${new Date().toISOString().replace(/[:.-]/g, "")}.csv`
-          );
-        } else {
-          console.error(
-            "Failed to export transactions, unexpected response status:",
-            response.status
-          );
-        }
+        // Create a Blob from the response data
+        const blob = new Blob([response], {
+          type: "text/csv;charset=utf-8;",
+        });
+        saveAs(
+          blob,
+          `transactions_${new Date().toISOString().replace(/[:.-]/g, "")}.csv`
+        );
       } catch (error) {
         console.error("An error occurred while exporting transactions:", error);
       }
@@ -105,7 +90,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         variant="contained"
         size="small"
         onClick={() => {
-         handleExportTransactions(transactions[0].position.id);
+          handleExportTransactions(transactions[0].position.id);
         }}
       >
         Export
@@ -139,49 +124,31 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Typography variant="h6">
-                    Position
-                  </Typography>
+                  <Typography variant="h6">Position</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Quantity
-                  </Typography>
+                  <Typography variant="h6">Quantity</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Running Qty.
-                  </Typography>
+                  <Typography variant="h6">Running Qty.</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Price
-                  </Typography>
+                  <Typography variant="h6">Price</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Cost
-                  </Typography>
+                  <Typography variant="h6">Cost</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Total Cost
-                  </Typography>
+                  <Typography variant="h6">Total Cost</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Avg.Cost
-                  </Typography>
+                  <Typography variant="h6">Avg.Cost</Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    Cap.gain
-                  </Typography>
+                  <Typography variant="h6">Cap.gain</Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6">
-                    Date
-                  </Typography>
+                  <Typography variant="h6">Date</Typography>
                 </TableCell>
                 {/* <TableCell>
               </TableCell> */}
@@ -257,12 +224,15 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
                     </Typography>
                   </TableCell>
                   <TableCell align="right">
-                    <PerformanceChip input={transaction.capital_gain} type="currency" />
+                    <PerformanceChip
+                      input={transaction.capital_gain}
+                      type="currency"
+                    />
                   </TableCell>
                   <TableCell>
                     <Box display="flex">
                       <Box>
-                        <Typography color="textSecondary" variant="body2" >
+                        <Typography color="textSecondary" variant="body2">
                           {formatDate(transaction.date)}
                         </Typography>
                       </Box>

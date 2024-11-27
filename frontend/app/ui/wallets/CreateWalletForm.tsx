@@ -1,7 +1,5 @@
 "use client";
 
-import { createWallet, State } from "../../lib/actions";
-import { useState } from "react";
 import {
   Box,
   Button,
@@ -10,116 +8,138 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Add, Save } from "@mui/icons-material";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { SaveButton } from "@/components/custom/save-button";
+import { AuthActions } from "@/app/(auth)/utils";
+import { Fragment } from "react";
 
-// Define the props for WalletWizard, including the onWalletCreated function
-interface WalletWizardProps {
-  onWalletCreated: (e: React.FormEvent) => Promise<void>;
-}
+type FormData = {
+  address: string;
+  name: string;
+  description: string;
+};
 
-const CreateWalletForm: React.FC<WalletWizardProps> = ({ onWalletCreated }) => {
-  const [formData, setFormData] = useState({
-    address: "",
-    name: "",
-    description: "",
-  });
-  const [state, setState] = useState<State>({ message: null, errors: {} });
+const CreateWalletForm = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError,
+  } = useForm<FormData>();
 
-  // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
-  };
+  const router = useRouter();
 
-  // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const { createWallet } = AuthActions();
 
-    // console.log("Form Data:", formData);
-
-    // Directly pass formData as JSON instead of FormData
-    const result = await createWallet(state, formData);
-    // Reset form after POST
-    setFormData({ address: "", name: "", description: "" });
-
-    // Handle the response
-    if (result.errors) {
-      setState((prev) => ({ ...prev, errors: result.errors }));
-    } else {
-      onWalletCreated(e); // Trigger the wallet refresh in the parent component
-      setState((prev) => ({ ...prev, message: result.message }));
-    }
+  const onSubmit = (data: FormData) => {
+    createWallet(data.address, data.name, data.description)
+      .json((json) => {
+        router.push("/dashboard");
+      })
+      .catch((err) => {
+        setError("root", { type: "manual", message: err.json.detail });
+      });
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{ height: "auto" }}
-    >
-      <Stack direction="column" justifyContent={"space-between"}>
-        <Box px={3} py={3}>
-          <Stack spacing={4}>
-            <Stack spacing={1}>
-              <Typography variant="h6">Wallet address</Typography>
-              <TextField
-                id="address"
-                // label="Address"
-                variant="outlined"
-                value={formData.address}
-                onChange={handleInputChange}
-                error={!!state.errors?.address}
-                helperText={state.errors?.address?.[0]}
-              />
-            </Stack>
-            <Stack spacing={1}>
-              <Typography variant="h6">Wallet name</Typography>
-              <TextField
-                id="name"
-                // label="Name"
-                variant="outlined"
-                value={formData.name}
-                onChange={handleInputChange}
-                error={!!state.errors?.name}
-                helperText={state.errors?.name?.[0]}
-              />
-            </Stack>
-            <Stack spacing={1}>
-              <Typography variant="h6">Wallet description</Typography>
-              <TextField
-                id="description"
-                // label="Description"
-                variant="outlined"
-                value={formData.description}
-                onChange={handleInputChange}
-                error={!!state.errors?.description}
-                helperText={state.errors?.description?.[0]}
-              />
-            </Stack>
-          </Stack>
-        </Box>
-        <Stack>
-          <Divider />
-          <Box px={3} py={2}>
-            <Stack direction="row" spacing={2} justifyContent={"flex-end"}>
-              <Button size="small" variant="outlined" color="primary">
-                Cancel
-              </Button>
-              <Button
-                size="small"
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-              >
-                Save
-              </Button>
+    <Fragment>
+      <Box
+        px={3}
+        py={2}
+        bgcolor="secondary.main"
+        color="secondary.contrastText"
+      >
+        <Typography variant="h5">Add wallet</Typography>
+        <Typography variant="subtitle1">
+          Get started by filling in the information below to create your new
+          wallet.
+        </Typography>
+      </Box>
+      <Box
+        component="form"
+        onSubmit={handleSubmit(onSubmit)}
+        sx={{ height: "auto" }}
+      >
+        <Stack direction="column" justifyContent={"space-between"}>
+          <Box px={3} py={3}>
+            <Stack spacing={4}>
+              <Stack spacing={1}>
+                <Typography variant="h6">Wallet address</Typography>
+                <TextField
+                  id="address"
+                  type="text"
+                  variant="outlined"
+                  {...register("address", { required: "Address is required" })}
+                />
+                {errors.address && (
+                  <Box
+                    sx={{
+                      color: "error.main",
+                      fontSize: "0.75rem",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {errors.address.message}
+                  </Box>
+                )}
+              </Stack>
+              <Stack spacing={1}>
+                <Typography variant="h6">Wallet name</Typography>
+                <TextField
+                  id="name"
+                  type="text"
+                  variant="outlined"
+                  {...register("name", { required: "Name is required" })}
+                />
+                {errors.name && (
+                  <Box
+                    sx={{
+                      color: "error.main",
+                      fontSize: "0.75rem",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {errors.name.message}
+                  </Box>
+                )}
+              </Stack>
+              <Stack spacing={1}>
+                <Typography variant="h6">Wallet description</Typography>
+                <TextField
+                  id="description"
+                  type="text"
+                  variant="outlined"
+                  {...register("description")}
+                />
+                {errors.description && (
+                  <Box
+                    sx={{
+                      color: "error.main",
+                      fontSize: "0.75rem",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    {errors.description.message}
+                  </Box>
+                )}
+              </Stack>
             </Stack>
           </Box>
+          <Stack>
+            <Divider />
+            <Box px={3} py={2}>
+              <Stack direction="row" spacing={2} justifyContent={"flex-end"}>
+                <Button size="small" variant="outlined" color="primary">
+                  Cancel
+                </Button>
+                <SaveButton text="Save" loadingText="Loading" />
+              </Stack>
+            </Box>
+          </Stack>
         </Stack>
-      </Stack>
-    </Box>
+      </Box>
+    </Fragment>
   );
 };
 export default CreateWalletForm;

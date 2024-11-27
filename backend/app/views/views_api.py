@@ -1,6 +1,10 @@
-from rest_framework import viewsets, generics, filters
+from rest_framework import viewsets, generics, filters, permissions
 from rest_framework.exceptions import NotFound
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken, TokenError
+from rest_framework import status
 
 from app.serializers import (
     BlockchainSerializer,
@@ -9,6 +13,7 @@ from app.serializers import (
     MarketDataSerializer,
     PositionSerializer,
     TransactionSerializer,
+    UserSerializer,
     UserSettingSerializer,
     WalletSerializer,
 )
@@ -20,14 +25,66 @@ from app.models import (
     MarketData,
     Position,
     Transaction,
+    User,
     UserSetting,
     Wallet,
 )
 
+##################
+# AUTHENTICATION #
+##################
+class UserView(generics.RetrieveAPIView):
+    model = User
+    serializer_class = UserSerializer
+
+    def retrieve(self, request, pk=None):
+        if request.user and pk == 'me':
+            return Response(UserSerializer(request.user).data)
+        return super(UserView, self).retrieve(request, pk)
+
+class RegisterView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
+class Loginview(APIView):
+    def post(self, request):
+        email = request.data["email"]
+        password = request.data["password"]
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise AuthenticationFailed("Account does not exist")
+        if user is None:
+            raise AuthenticationFailed("User does not exist")
+        if not user.check_password(password):
+            raise AuthenticationFailed("Incorrect Password")
+        access_token = AccessToken.for_user(user)
+        refresh_token = RefreshToken.for_user(user)
+        return Response({"access_token": access_token, "refresh_token": refresh_token})
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh"]
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+            return Response("Logout Successful", status=status.HTTP_200_OK)
+        except TokenError:
+            raise AuthenticationFailed("Invalid Token")
+
+
 ################
 # ModelViewSet #
 ################
-
 
 class WalletViewSet(viewsets.ModelViewSet):
     queryset = Wallet.objects.all()

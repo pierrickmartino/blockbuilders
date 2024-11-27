@@ -37,7 +37,7 @@ DEBUG = config("DEBUG", default=False, cast=bool)
 
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS").split(',')
+ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS").split(",")
 
 INTERNAL_IPS = [
     "127.0.0.1",
@@ -68,11 +68,13 @@ INSTALLED_APPS = [
     "celery",
     "django_prometheus",
     "rest_framework",
-    "rest_framework.authtoken",
+    # "rest_framework.authtoken",
+    "rest_framework_simplejwt.token_blacklist",
     # "rest_framework_api_key",
     "django_filters",
     "channels",
     "corsheaders",
+    "djoser",
 ]
 
 MIDDLEWARE = [
@@ -220,20 +222,35 @@ LOGGING = {
 FIXTURE_DIRS = "fixtures/"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.TokenAuthentication",),
-    # "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
+    # "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework.authentication.TokenAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_PAGINATION_CLASS": "app.pagination.CustomStandardPagination",
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
     "PAGE_SIZE": 10,
 }
 
-# SIMPLE_JWT = {
-#   'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-#   'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-#   'ROTATE_REFRESH_TOKENS': True,
-#   'BLACKLIST_AFTER_ROTATION': True,
-#   'ALGORITHM': 'HS256',
-#   'SIGNING_KEY': SECRET_KEY,
-#   'AUTH_HEADER_TYPES': ('Bearer',),
-# }
+SIMPLE_JWT = {
+  'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+  'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+  'ROTATE_REFRESH_TOKENS': True,
+  'BLACKLIST_AFTER_ROTATION': True,
+  'ALGORITHM': 'HS256',
+  'SIGNING_KEY': SECRET_KEY,
+  'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+AUTH_USER_MODEL = 'app.User'
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+DJOSER = {
+    "PASSWORD_RESET_CONFIRM_URL": "auth/password/reset-password-confirmation/?uid={uid}&token={token}",
+    "ACTIVATION_URL": "#/activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": False,
+    "SERIALIZERS": {},
+    "LOGIN_FIELD": "email",
+}
+
+SITE_NAME = "Blockbuilders"
+DOMAIN = 'localhost:3030'
