@@ -37,6 +37,8 @@ import TopRepartition from "./components/dashboard/TopRepartition";
 import TradingCalendar from "./components/dashboard/TradingCalendar";
 import React from "react";
 import CreateWalletForm from "@/app/ui/wallets/CreateWalletForm";
+import StatCard, { StatCardProps } from "./components/dashboard/StatCard";
+import HighlightedCard from "./components/dashboard/HighlightedCard";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -45,9 +47,9 @@ const Wallets = () => {
   const [last_transactions, setLastTransactions] = useState<Transaction[]>([]);
   const [count_transactions, setCountTransactions] = useState(0);
   const [open, setOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState(""); 
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarTitle, setSnackbarTitle] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("info"); 
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("info");
   const [page, setPage] = useState(0); // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
@@ -56,7 +58,7 @@ const Wallets = () => {
   }>({}); // New state for task polling
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const toggleDrawer = (open : boolean) => {
+  const toggleDrawer = (open: boolean) => {
     setDrawerOpen(open);
   };
 
@@ -90,8 +92,8 @@ const Wallets = () => {
         console.log("Task result in pollTaskStatus:", status);
         if (status === "SUCCESS") {
           setSnackbarMessage(`Task ${taskId} finished successfully.`);
-          setSnackbarTitle('Great News !');
-          setSnackbarSeverity('success');
+          setSnackbarTitle("Great News !");
+          setSnackbarSeverity("success");
           setOpen(true);
           clearInterval(taskPolling[taskId]);
           setTaskPolling((prev) => {
@@ -205,80 +207,134 @@ const Wallets = () => {
   }, [taskPolling]);
 
   const DrawerList = (
-    <Box sx={{ width: 350, height: '100%' }} role="presentation">
+    <Box sx={{ width: 350, height: "100%" }} role="presentation">
       <CreateWalletForm />
     </Box>
   );
 
+  const data: StatCardProps[] = [
+    {
+      title: "Users",
+      value: "14k",
+      interval: "Last 30 days",
+      trend: "up",
+      data: [
+        200, 24, 220, 260, 240, 380, 100, 240, 280, 240, 300, 340, 320, 360,
+        340, 380, 360, 400, 380, 420, 400, 640, 340, 460, 440, 480, 460, 600,
+        880, 920,
+      ],
+    },
+    {
+      title: "Conversions",
+      value: "325",
+      interval: "Last 30 days",
+      trend: "down",
+      data: [
+        1640, 1250, 970, 1130, 1050, 900, 720, 1080, 900, 450, 920, 820, 840,
+        600, 820, 780, 800, 760, 380, 740, 660, 620, 840, 500, 520, 480, 400,
+        360, 300, 220,
+      ],
+    },
+    {
+      title: "Event count",
+      value: "200k",
+      interval: "Last 30 days",
+      trend: "neutral",
+      data: [
+        500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620,
+        510, 530, 520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430,
+        520, 510,
+      ],
+    },
+  ];
+
   return (
-    <PageContainer title="Wallets" description="this is Wallets">
-      <Box mt={0}>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, lg: 12 }}>
-            <Stack direction="row" justifyContent="space-between">
-              <Typography color="textPrimary" variant="h4">
-                Dashboard
-              </Typography>
-            </Stack>
+    <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
+      {/* cards */}
+      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+        Overview
+      </Typography>
+      <Grid
+        container
+        spacing={2}
+        columns={12}
+        sx={{ mb: (theme) => theme.spacing(2) }}
+      >
+        {data.map((card, index) => (
+          <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
+            <StatCard {...card} />
           </Grid>
-          <Grid size={{ xs: 12, lg: 8 }}>
-            <TopRepartition
-              blockchains={top_blockchains}
-              positions={top_positions}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <TradingCalendar />
-          </Grid>
-          <Grid size={{ xs: 12, lg: 12 }}>
-            <WalletTable
-              wallets={wallets}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              totalCount={totalCount}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              onWalletDeleted={handleWalletDeleted}
-              onWalletDownloaded={handleWalletDownloaded}
-              onWalletRefreshed={handleWalletRefreshed}
-              onWalletFullRefreshed={handleWalletFullRefreshed}
-              onCreateWallet={handleAddWalletClick}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, lg: 8 }}>
-            <SalesOverview />
-          </Grid>
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <Blogcard />
-          </Grid>
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12 }}>
-                <ProfileCard />
-              </Grid>
-              <Grid size={{ xs: 12 }}>
-                <MyContacts />
-              </Grid>
+        ))}
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <HighlightedCard />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
+          <TopRepartition
+            blockchains={top_blockchains}
+            positions={top_positions}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <TradingCalendar />
+        </Grid>
+        <Grid size={{ xs: 12, lg: 12 }}>
+          <WalletTable
+            wallets={wallets}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            totalCount={totalCount}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+            onWalletDeleted={handleWalletDeleted}
+            onWalletDownloaded={handleWalletDownloaded}
+            onWalletRefreshed={handleWalletRefreshed}
+            onWalletFullRefreshed={handleWalletFullRefreshed}
+            onCreateWallet={handleAddWalletClick}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, lg: 8 }}>
+          <SalesOverview />
+        </Grid>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <Blogcard />
+        </Grid>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12 }}>
+              <ProfileCard />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <MyContacts />
             </Grid>
           </Grid>
-          <Grid size={{ xs: 12, lg: 8 }}>
-            <LastTransactions
-              transactions={last_transactions}
-              count={count_transactions}
-            />
-          </Grid>
         </Grid>
-      </Box>
+        <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
+          <LastTransactions
+            transactions={last_transactions}
+            count={count_transactions}
+          />
+        </Grid>
+      </Grid>
+      {/* </Box> */}
       <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-        <Alert severity={snackbarSeverity} onClose={handleClose} sx={{ width: "100%" }}>
+        <Alert
+          severity={snackbarSeverity}
+          onClose={handleClose}
+          sx={{ width: "100%" }}
+        >
           <AlertTitle>{snackbarTitle}</AlertTitle>
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
-    {DrawerList}
-  </Drawer>
-    </PageContainer>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => toggleDrawer(false)}
+      >
+        {DrawerList}
+      </Drawer>
+      {/* </PageContainer> */}
+    </Box>
   );
 };
 

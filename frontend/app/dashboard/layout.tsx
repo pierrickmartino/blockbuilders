@@ -1,95 +1,56 @@
 "use client";
-import { styled, Container, Box, PaletteMode } from "@mui/material";
-import React, { useMemo, useState } from "react";
-import Sidebar from "./layout/sidebar/Sidebar";
-import Footer from "./layout/footer/page";
-import { basedarkTheme, baselightTheme } from "../utils/theme/DefaultColors";
 
-const MainWrapper = styled("div")(() => ({
-  // display: "flex",
-  // minHeight: "100vh",
-  // width: "100%",
-}));
+import { useMemo, useState } from "react";
+import { PaletteMode } from "@mui/material/styles";
+import { Box, Stack } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 
-const PageWrapper = styled("div")(() => ({
-  display: "flex",
-  flexGrow: 1,
-  paddingBottom: "60px",
-  flexDirection: "column",
-  zIndex: 1,
-  backgroundColor: "transparent",
-}));
-
-// interface Props {
-//   children: React.ReactNode;
-// }
-
-
+import SideMenu from "./layout/sidebar/SideMenu";
+import AppNavbar from "./components/dashboard/AppNavBar";
+import Header from "./layout/header/Header";
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  // const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [isSidebarOpen] = useState(true);
-  const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
-  // State to manage light or dark mode
-  const [mode, setMode] = useState<PaletteMode>("light");
-
-  // Create theme based on mode
-  const theme = useMemo(() => {
-    return mode === "light" ? baselightTheme : basedarkTheme;
-  }, [mode]);
-
-
   return (
-    <MainWrapper className="mainwrapper">
-
-      {/* ------------------------------------------- */}
-      {/* page Wrapper */}
-      {/* ------------------------------------------- */}
-      <PageWrapper className="page-wrapper"
-          sx={{
-              [theme.breakpoints.up("xl")]: {
-                ml: `0px`,
-              },
-          }}
+    <Box sx={{ display: "flex" }}>
+      <SideMenu />
+      <AppNavbar />
+      {/* Main content */}
+      <Box
+        component="main"
+        sx={(theme) => ({
+          flexGrow: 1,
+          backgroundColor: alpha(theme.palette.background.default, 1),
+          overflow: "auto",
+        })}
       >
-
-        {/* ------------------------------------------- */}
-        {/* Sidebar */}
-        {/* ------------------------------------------- */}
-        {/* <Sidebar
-          isSidebarOpen={isSidebarOpen}
-          isMobileSidebarOpen={isMobileSidebarOpen}
-          onSidebarClose={() => setMobileSidebarOpen(false)}
-        /> */}
-
-        {/* ------------------------------------------- */}
-        {/* PageContent */}
-        {/* ------------------------------------------- */}
-        <Container
+        <Stack
+          spacing={2}
           sx={{
-            paddingTop: "16px",
-            maxWidth: "1600px",
+            alignItems: "center",
+            mx: 3,
+            pb: 5,
+            mt: { xs: 8, md: 0 },
           }}
         >
           {/* ------------------------------------------- */}
-          {/* Page Route */}
+          {/* Header */}
           {/* ------------------------------------------- */}
-          <Box mt={2} sx={{ minHeight: "calc(100vh - 170px)" }}>{children}</Box>
-          {/* ------------------------------------------- */}
-          {/* End Page */}
-          {/* ------------------------------------------- */}
+          <Header />
+          {/* <Header
+                  mode={mode}
+                  onThemeChange={handleThemeChange}
+                  toggleMobileSidebar={handleMobileSidebar}
+                /> */}
+          {/* <MainGrid /> */}
 
-          {/* ------------------------------------------- */}
-          {/* Footer */}
-          {/* ------------------------------------------- */}
-          {/* <Footer /> */}
-        </Container>
-      </PageWrapper>
-    </MainWrapper>
+          {/* Render the rest of the page content */}
+          {children}
+        </Stack>
+      </Box>
+    </Box>
   );
 }

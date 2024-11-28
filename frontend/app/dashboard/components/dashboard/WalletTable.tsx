@@ -16,6 +16,10 @@ import {
   ListItemIcon,
   TablePagination,
   Button,
+  Card,
+  CardContent,
+  Stack,
+  CardActions,
 } from "@mui/material";
 import DashboardCard from "../shared/DashboardCard";
 import formatNumber from "@/app/utils/formatNumber";
@@ -32,6 +36,7 @@ import {
   refreshFullWallet,
 } from "@/app/lib/actions";
 import PerformanceChip from "../../ui-components/chips/PerformanceChip";
+import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
@@ -184,6 +189,53 @@ const WalletTable: React.FC<WalletTableProps> = ({
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
 
+  function renderChipAmount(amount: number, type: 'currency' | 'quantity_precise' | 'quantity' | 'percentage') {
+    return <Chip label={formatNumber(amount, type)} color={amount < 0 ? 'error' : amount > 0 ? 'success' : 'default'} size="small" />;
+  };
+
+  const columns: GridColDef[] = [
+    { field: 'name', headerName: 'Name', flex: 1.5, minWidth: 150 },
+    {
+      field: 'description',
+      headerName: 'Description',
+      flex: 1,
+      minWidth: 150,
+    },
+    {
+      field: 'address',
+      headerName: 'Address',
+      flex: 1,
+      minWidth: 100,
+    },
+    {
+      field: 'balance',
+      headerName: 'Balance',
+      headerAlign: 'right',
+      align: 'right',
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => renderChipAmount(params.value, 'currency'),
+    },
+    {
+      field: 'capital_gain',
+      headerName: 'Capital Gain',
+      headerAlign: 'right',
+      align: 'right',
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => renderChipAmount(params.value, 'currency'),
+    },
+    {
+      field: 'unrealized_gain',
+      headerName: 'Unrealized Gain',
+      headerAlign: 'right',
+      align: 'right',
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => renderChipAmount(params.value, 'percentage'),
+    }
+  ];
+
   const action = (
     <Fragment>
       <Button
@@ -201,169 +253,224 @@ const WalletTable: React.FC<WalletTableProps> = ({
   );
 
   return (
-    <DashboardCard
-      title="Wallet Overview"
-      subtitle="Track balances, performance, and key metrics across your wallets"
-      action={action}
-    >
-      <Box>
-        <TableContainer
-          sx={{
-            width: {
-              xs: "274px",
-              sm: "100%",
-            },
-          }}
+    <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
+      <CardActions>{action}</CardActions>
+      <CardContent>
+        <Typography component="h2" variant="subtitle2" gutterBottom>
+          Wallet Overview
+        </Typography>
+        <Stack
+          direction="column"
+          sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
         >
-          <Table
-            size="small"
-            sx={{
-              whiteSpace: "nowrap",
-              mt: 0,
-            }}
-          >
-            <TableHead>
-              <TableRow>
-                {/* <TableCell>
+          <Stack sx={{ justifyContent: "space-between" }}>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              Track balances, performance, and key metrics across your wallets
+            </Typography>
+          </Stack>
+          <Box>
+            <TableContainer
+              sx={{
+                width: {
+                  xs: "274px",
+                  sm: "100%",
+                },
+              }}
+            >
+              <Table
+                size="small"
+                sx={{
+                  whiteSpace: "nowrap",
+                  mt: 0,
+                }}
+              >
+                <TableHead>
+                  <TableRow>
+                    {/* <TableCell>
                   <Typography color="textSecondary" variant="h6">
                     Id
                   </Typography>
                 </TableCell> */}
-                <TableCell>
-                  <Typography variant="h6">Name</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Description</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Address</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="h6">Balance</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="h6">Capital Gain</Typography>
-                </TableCell>
-                <TableCell align="right">
-                  <Typography variant="h6">UnRealized</Typography>
-                </TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {wallets.map((wallet: Wallet) => (
-                <TableRow key={wallet.id}>
-                  {/* <TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Name</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Description</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">Address</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">Balance</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">Capital Gain</Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">UnRealized</Typography>
+                    </TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {wallets.map((wallet: Wallet) => (
+                    <TableRow key={wallet.id}>
+                      {/* <TableCell>
                     <Typography fontSize="14px" fontWeight={500}>
                       {wallet.id}
                     </Typography>
                   </TableCell> */}
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Box>
-                        <Typography fontWeight={500}>{wallet.name}</Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Box>
-                        <Typography color="textSecondary">
-                          {wallet.description}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Box>
+                      <TableCell>
+                        <Box display="flex" alignItems="center">
+                          <Box>
+                            <Typography fontWeight={500}>
+                              {wallet.name}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Box display="flex" alignItems="center">
+                          <Box>
+                            <Typography color="textSecondary">
+                              {wallet.description}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Box display="flex" alignItems="center">
+                          <Box>
+                            <Typography>
+                              {truncateText(wallet.address, 15)}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell align="right">
                         <Typography>
-                          {truncateText(wallet.address, 15)}
+                          {formatNumber(wallet.balance, "currency")}
                         </Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography>
-                      {formatNumber(wallet.balance, "currency")}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <PerformanceChip
-                      input={wallet.capital_gain}
-                      type="currency"
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <PerformanceChip
-                      input={wallet.unrealized_gain}
-                      type="percentage"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <IconButton
-                      id="basic-button"
-                      aria-controls={open ? "basic-menu" : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={open ? "true" : undefined}
-                      onClick={(event) => handleClick(event, wallet.id)}
-                      aria-label="Open to show more"
-                      title="Open to show more"
-                    >
-                      <IconDotsVertical width={18} />
-                    </IconButton>
-                    <Menu
-                      id="basic-menu"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={open}
-                      onClose={handleClose}
-                    >
-                      {walletMenuItems.map((item) => (
-                        <MenuItem
-                          onClick={() => {
-                            handleClose();
-                            if (item.key === "wallet-details") {
-                              handleNavigateToDetails();
-                            }
-                            if (item.key === "wallet-delete") {
-                              handleDeletion();
-                            }
-                            if (item.key === "wallet-download") {
-                              handleDownload();
-                            }
-                            if (item.key === "wallet-refresh") {
-                              handleRefresh();
-                            }
-                            if (item.key === "wallet-refresh-full") {
-                              handleRefreshFull();
-                            }
-                          }}
-                          key={item.key}
-                          value={item.value}
+                      </TableCell>
+                      <TableCell align="right">
+                        <PerformanceChip
+                          input={wallet.capital_gain}
+                          type="currency"
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        <PerformanceChip
+                          input={wallet.unrealized_gain}
+                          type="percentage"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          id="basic-button"
+                          aria-controls={open ? "basic-menu" : undefined}
+                          aria-haspopup="true"
+                          aria-expanded={open ? "true" : undefined}
+                          onClick={(event) => handleClick(event, wallet.id)}
+                          aria-label="Open to show more"
+                          title="Open to show more"
                         >
-                          <ListItemIcon>{item.button}</ListItemIcon>
-                          {item.title}
-                        </MenuItem>
-                      ))}
-                    </Menu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          component="div"
-          rowsPerPageOptions={[5, 10]}
-          count={totalCount}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Box>
-    </DashboardCard>
+                          <IconDotsVertical width={18} />
+                        </IconButton>
+                        <Menu
+                          id="basic-menu"
+                          anchorEl={anchorEl}
+                          keepMounted
+                          open={open}
+                          onClose={handleClose}
+                        >
+                          {walletMenuItems.map((item) => (
+                            <MenuItem
+                              onClick={() => {
+                                handleClose();
+                                if (item.key === "wallet-details") {
+                                  handleNavigateToDetails();
+                                }
+                                if (item.key === "wallet-delete") {
+                                  handleDeletion();
+                                }
+                                if (item.key === "wallet-download") {
+                                  handleDownload();
+                                }
+                                if (item.key === "wallet-refresh") {
+                                  handleRefresh();
+                                }
+                                if (item.key === "wallet-refresh-full") {
+                                  handleRefreshFull();
+                                }
+                              }}
+                              key={item.key}
+                              value={item.value}
+                            >
+                              <ListItemIcon>{item.button}</ListItemIcon>
+                              {item.title}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              component="div"
+              rowsPerPageOptions={[5, 10]}
+              count={totalCount}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+            <DataGrid
+      autoHeight
+      checkboxSelection
+      rows={wallets}
+      columns={columns}
+      getRowClassName={(params) =>
+        params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
+      }
+      initialState={{
+        pagination: { paginationModel: { pageSize: 10 } },
+      }}
+      pageSizeOptions={[10, 20, 50]}
+      disableColumnResize
+      density="compact"
+      slotProps={{
+        filterPanel: {
+          filterFormProps: {
+            logicOperatorInputProps: {
+              variant: 'outlined',
+              size: 'small',
+            },
+            columnInputProps: {
+              variant: 'outlined',
+              size: 'small',
+              sx: { mt: 'auto' },
+            },
+            operatorInputProps: {
+              variant: 'outlined',
+              size: 'small',
+              sx: { mt: 'auto' },
+            },
+            valueInputProps: {
+              InputComponentProps: {
+                variant: 'outlined',
+                size: 'small',
+              },
+            },
+          },
+        },
+      }}
+    />
+          </Box>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };
 

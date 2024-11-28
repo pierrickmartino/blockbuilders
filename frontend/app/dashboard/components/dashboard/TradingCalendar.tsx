@@ -1,4 +1,11 @@
-import { Badge, Box } from "@mui/material";
+import {
+  Badge,
+  Box,
+  Card,
+  CardContent,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {
   DateCalendar,
@@ -9,7 +16,6 @@ import {
 } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
-import DashboardCard from "../shared/DashboardCard";
 
 function getRandomNumber(min: number, max: number) {
   return Math.round(Math.random() * (max - min) + min);
@@ -107,30 +113,43 @@ const TradingCalendar = () => {
   };
 
   return (
-    <DashboardCard
-      title="Trading calendar"
-      subtitle="Track trading habits during the month"
-    >
-      <Box>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DateCalendar
-            readOnly
-            defaultValue={initialValue}
-            loading={isLoading}
-            onMonthChange={handleMonthChange}
-            renderLoading={() => <DayCalendarSkeleton />}
-            slots={{
-              day: ServerDay,
-            }}
-            slotProps={{
-              day: {
-                highlightedDays,
-              } as any,
-            }}
-          />
-        </LocalizationProvider>
-      </Box>
-    </DashboardCard>
+    <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
+      <CardContent>
+        <Typography component="h2" variant="subtitle2" gutterBottom>
+          Trading calendar
+        </Typography>
+        <Stack
+          direction="column"
+          sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
+        >
+          <Stack sx={{ justifyContent: "space-between" }}>
+            <Typography variant="caption" sx={{ color: "text.secondary" }}>
+              Track trading habits during the month
+            </Typography>
+          </Stack>
+
+          <Box sx={{ width: "100%" }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DateCalendar
+                readOnly
+                defaultValue={initialValue}
+                loading={isLoading}
+                onMonthChange={handleMonthChange}
+                renderLoading={() => <DayCalendarSkeleton />}
+                slots={{
+                  day: ServerDay,
+                }}
+                slotProps={{
+                  day: {
+                    highlightedDays,
+                  } as any,
+                }}
+              />
+            </LocalizationProvider>
+          </Box>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };
 export default TradingCalendar;

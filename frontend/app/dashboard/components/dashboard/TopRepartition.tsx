@@ -1,9 +1,6 @@
-import React, { Fragment } from "react";
+import React from "react";
 
-import {
-  Box,
-  Stack,
-} from "@mui/material";
+import { Box, Card, CardContent, Stack } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
@@ -14,7 +11,6 @@ import TopPositions from "./TopPositions";
 import TopPositionsGraph from "./TopPositionsGraph";
 import TopBlockchainsGraph from "./TopBlockchainsGraph";
 import TopBlockchains from "./TopBlockchains";
-import DashboardCard from "../shared/DashboardCard";
 
 // Define the props type that will be passed into WalletTable
 interface TopRepartitionProps {
@@ -40,13 +36,15 @@ const TopRepartition: React.FC<TopRepartitionProps> = ({
   // };
 
   return (
-    <DashboardCard isNarrow={true}>
-      <Box sx={{ width: "100%", typography: "body1", padding: "-24px" }}>
+    <Card variant="outlined" sx={{ px: 0, py: 1, height: "100%", flexGrow: 1 }}>
+      <CardContent sx={{ p: 0 }}>
+        <Box sx={{ width: "100%", typography: "body1", padding: "-24px" }}>
           <TabContext value={value}>
             <Box>
               <TabList
                 onChange={handleChange}
                 variant="fullWidth"
+                indicatorColor="primary"
               >
                 <Tab label="Positions" value="1" />
                 <Tab label="Blockchain" value="2" />
@@ -78,7 +76,8 @@ const TopRepartition: React.FC<TopRepartitionProps> = ({
             </TabPanel>
           </TabContext>
         </Box>
-    </DashboardCard>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -1,5 +1,12 @@
 import { Position } from "@/app/lib/definition";
-import { Box, Typography, Stack, Avatar, Skeleton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Stack,
+  Avatar,
+  Skeleton,
+  LinearProgress,
+} from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 
 // Define the props type that will be passed into WalletTable
@@ -47,6 +54,8 @@ const TopPositions: React.FC<TopPositionsProps> = ({ positions }) => {
               {formatNumber(position.progress_percentage, "percentage")}
             </Typography>
           </Stack>
+
+
         </Stack>
       ))}
     </Box>
