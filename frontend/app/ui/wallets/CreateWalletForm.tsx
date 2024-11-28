@@ -50,8 +50,8 @@ const CreateWalletForm = () => {
         bgcolor="secondary.main"
         color="secondary.contrastText"
       >
-        <Typography variant="h5">Add wallet</Typography>
-        <Typography variant="subtitle1">
+        <Typography variant="subtitle2" gutterBottom>Add wallet</Typography>
+        <Typography variant="caption">
           Get started by filling in the information below to create your new
           wallet.
         </Typography>
@@ -65,7 +65,7 @@ const CreateWalletForm = () => {
           <Box px={3} py={3}>
             <Stack spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h6">Wallet address</Typography>
+                <Typography variant="subtitle2" gutterBottom>Wallet address</Typography>
                 <TextField
                   id="address"
                   type="text"
@@ -85,7 +85,7 @@ const CreateWalletForm = () => {
                 )}
               </Stack>
               <Stack spacing={1}>
-                <Typography variant="h6">Wallet name</Typography>
+                <Typography variant="subtitle2" gutterBottom>Wallet name</Typography>
                 <TextField
                   id="name"
                   type="text"
@@ -105,7 +105,7 @@ const CreateWalletForm = () => {
                 )}
               </Stack>
               <Stack spacing={1}>
-                <Typography variant="h6">Wallet description</Typography>
+                <Typography variant="subtitle2" gutterBottom>Wallet description</Typography>
                 <TextField
                   id="description"
                   type="text"
