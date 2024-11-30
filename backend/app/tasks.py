@@ -51,7 +51,7 @@ logger = logging.getLogger("blockbuilders")
 
 
 def is_contract_suspicious(contract_name, contract_symbol):
-    suspicious_startswith_keywords = ["$", "claim ", "(e", "http", "use just", "visit ", "www.", "@", "!", "#"]
+    suspicious_startswith_keywords = ["$", "claim ", "(e", "http", "use just", "visit ", "www.", "@", "!", "#", "NO_NAME"]
 
     suspicious_endswith_keywords = [
         ".com",
@@ -174,8 +174,8 @@ def create_transactions(wallet, transactions, blockchain_name):
         contract, created = Contract.objects.get_or_create(
             blockchain_id=blockchain.id,
             address=contract_address,
-            name=contract_name,
-            symbol=contract_symbol,
+            name=contract_name if contract_name else "NO_NAME",
+            symbol=contract_symbol if contract_symbol else "NO_SYMBOL",
             defaults={
                 "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
                 "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
