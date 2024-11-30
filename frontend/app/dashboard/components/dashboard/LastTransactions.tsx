@@ -55,28 +55,6 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({
   const handleChange3 = (event: any) => {
     setNumber(event.target.value);
   };
-  const theme = useTheme();
-
-  const trendColors = {
-    up:
-      theme.palette.mode === 'light'
-        ? theme.palette.success.main
-        : theme.palette.success.dark,
-    down:
-      theme.palette.mode === 'light'
-        ? theme.palette.error.main
-        : theme.palette.error.dark,
-    neutral:
-      theme.palette.mode === 'light'
-        ? theme.palette.grey[400]
-        : theme.palette.grey[700],
-  };
-
-  const labelColors = {
-    up: 'success' as const,
-    down: 'error' as const,
-    neutral: 'default' as const,
-  };
 
   return (
     <Card variant="outlined" sx={{ px: 0, py: 1, height: "100%", flexGrow: 1 }}>
@@ -141,7 +119,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({
                             {transaction.position.contract.symbol}
                           </Typography>
                           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                            {transaction.against_contract.symbol}
+                            {transaction.against_contract ? transaction.against_contract.symbol : ''}
                           </Typography>
                         </Stack>
                         <Chip
