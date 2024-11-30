@@ -189,51 +189,102 @@ const WalletTable: React.FC<WalletTableProps> = ({
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
 
-  function renderChipAmount(amount: number, type: 'currency' | 'quantity_precise' | 'quantity' | 'percentage') {
-    return <Chip label={formatNumber(amount, type)} color={amount < 0 ? 'error' : amount > 0 ? 'success' : 'default'} size="small" />;
-  };
+  function renderChipAmount(
+    amount: number,
+    type: "currency" | "quantity_precise" | "quantity" | "percentage"
+  ) {
+    return (
+      <Chip
+        label={formatNumber(amount, type)}
+        color={amount < 0 ? "error" : amount > 0 ? "success" : "default"}
+        size="small"
+      />
+    );
+  }
 
   const columns: GridColDef[] = [
-    { field: 'name', headerName: 'Name', flex: 1.5, minWidth: 150 },
+    { field: "name", headerName: "Name", flex: 1.5, minWidth: 150 },
     {
-      field: 'description',
-      headerName: 'Description',
+      field: "description",
+      headerName: "Description",
       flex: 1,
       minWidth: 150,
     },
     {
-      field: 'address',
-      headerName: 'Address',
+      field: "address",
+      headerName: "Address",
       flex: 1,
       minWidth: 100,
     },
     {
-      field: 'balance',
-      headerName: 'Balance',
-      headerAlign: 'right',
-      align: 'right',
+      field: "balance",
+      headerName: "Balance",
+      headerAlign: "right",
+      align: "right",
       flex: 1,
       minWidth: 100,
-      renderCell: (params) => renderChipAmount(params.value, 'currency'),
+      renderCell: (params) => renderChipAmount(params.value, "currency"),
     },
     {
-      field: 'capital_gain',
-      headerName: 'Capital Gain',
-      headerAlign: 'right',
-      align: 'right',
+      field: "capital_gain",
+      headerName: "Capital Gain",
+      headerAlign: "right",
+      align: "right",
       flex: 1,
       minWidth: 120,
-      renderCell: (params) => renderChipAmount(params.value, 'currency'),
+      renderCell: (params) => renderChipAmount(params.value, "currency"),
     },
     {
-      field: 'unrealized_gain',
-      headerName: 'Unrealized Gain',
-      headerAlign: 'right',
-      align: 'right',
+      field: "unrealized_gain",
+      headerName: "Unrealized Gain",
+      headerAlign: "right",
+      align: "right",
       flex: 1,
       minWidth: 100,
-      renderCell: (params) => renderChipAmount(params.value, 'percentage'),
-    }
+      renderCell: (params) => renderChipAmount(params.value, "percentage"),
+    },
+    {
+      field: "actions",
+      type: "actions",
+      width: 80,
+      getActions: (cell) => [
+        <GridActionsCellItem
+          key="wallet-details"
+          label="See details"
+          onClick={() => handleNavigateToDetails()}
+          showInMenu
+        />,
+        // <GridActionsCellItem
+        //   label="Edit wallet"
+        //   onClick={() => openPickModal(cell.row)}
+        //   showInMenu
+        // />,
+        <GridActionsCellItem
+          key="wallet-download"
+          label="Download history"
+          onClick={() => handleDownload()}
+          showInMenu
+        />,
+        <GridActionsCellItem
+          key="wallet-refresh"
+          label="Refresh price"
+          onClick={() => handleRefresh()}
+          showInMenu
+        />,
+        <GridActionsCellItem
+          key="wallet-refresh-full"
+          label="Full refresh"
+          onClick={() => handleRefreshFull()}
+          showInMenu
+        />,
+        <GridActionsCellItem
+          key="wallet-delete"
+          label="Delete wallet"
+          onClick={() => handleDeletion()}
+          showInMenu
+        />,
+      ],
+    },
   ];
 
   const action = (
@@ -427,46 +478,46 @@ const WalletTable: React.FC<WalletTableProps> = ({
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
             <DataGrid
-      autoHeight
-      checkboxSelection
-      rows={wallets}
-      columns={columns}
-      getRowClassName={(params) =>
-        params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
-      }
-      initialState={{
-        pagination: { paginationModel: { pageSize: 10 } },
-      }}
-      pageSizeOptions={[10, 20, 50]}
-      disableColumnResize
-      density="compact"
-      slotProps={{
-        filterPanel: {
-          filterFormProps: {
-            logicOperatorInputProps: {
-              variant: 'outlined',
-              size: 'small',
-            },
-            columnInputProps: {
-              variant: 'outlined',
-              size: 'small',
-              sx: { mt: 'auto' },
-            },
-            operatorInputProps: {
-              variant: 'outlined',
-              size: 'small',
-              sx: { mt: 'auto' },
-            },
-            valueInputProps: {
-              InputComponentProps: {
-                variant: 'outlined',
-                size: 'small',
-              },
-            },
-          },
-        },
-      }}
-    />
+              autoHeight
+              checkboxSelection
+              rows={wallets}
+              columns={columns}
+              getRowClassName={(params) =>
+                params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+              }
+              initialState={{
+                pagination: { paginationModel: { pageSize: 10 } },
+              }}
+              pageSizeOptions={[10, 20, 50]}
+              disableColumnResize
+              density="compact"
+              slotProps={{
+                filterPanel: {
+                  filterFormProps: {
+                    logicOperatorInputProps: {
+                      variant: "outlined",
+                      size: "small",
+                    },
+                    columnInputProps: {
+                      variant: "outlined",
+                      size: "small",
+                      sx: { mt: "auto" },
+                    },
+                    operatorInputProps: {
+                      variant: "outlined",
+                      size: "small",
+                      sx: { mt: "auto" },
+                    },
+                    valueInputProps: {
+                      InputComponentProps: {
+                        variant: "outlined",
+                        size: "small",
+                      },
+                    },
+                  },
+                },
+              }}
+            />
           </Box>
         </Stack>
       </CardContent>
