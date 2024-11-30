@@ -71,6 +71,7 @@ def is_contract_suspicious(contract_name, contract_symbol):
         ".io",
         ".fi",
         ".gg",
+        "www.ethena.promo)",
     ]
 
     # Check if contract symbol starts with any suspicious keywords
