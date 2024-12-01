@@ -257,7 +257,6 @@ const WalletTable: React.FC<WalletTableProps> = ({
           </Stack>
           <Box>
             <DataGrid
-              autoHeight
               checkboxSelection
               rows={wallets}
               columns={columns}
