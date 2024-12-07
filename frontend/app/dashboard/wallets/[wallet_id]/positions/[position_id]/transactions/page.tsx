@@ -5,16 +5,13 @@ import {
   Stack,
   Typography,
   Chip,
-  Button,
   Link,
-  Breadcrumbs,
 } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
 import { Fragment, useEffect, useState, useCallback } from "react";
 import { Transaction } from "@/app/lib/definition";
 import { fetchTransactions, fetchTransactionsWithSearch } from "@/app/lib/data";
-import PageContainer from "@/app/dashboard/components/container/PageContainer";
 import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
@@ -26,6 +23,10 @@ import {
   NavigateBefore,
   NavigateNext,
 } from "@mui/icons-material";
+import StatCard, {
+  StatCardProps,
+} from "@/app/dashboard/components/dashboard/StatCard";
+import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -83,6 +84,42 @@ const Transactions = () => {
     fetchTransactionDataWithSearch(searchTerm);
   };
 
+  const data: StatCardProps[] = [
+    {
+      title: "Total amount",
+      value: "14k",
+      interval: "Last 30 days",
+      trend: "up",
+      data: [
+        200, 24, 220, 260, 240, 380, 100, 240, 280, 240, 300, 340, 320, 360,
+        340, 380, 360, 400, 380, 420, 400, 640, 340, 460, 440, 480, 460, 600,
+        880, 920,
+      ],
+    },
+    {
+      title: "Total capital gain",
+      value: "325",
+      interval: "Last 30 days",
+      trend: "down",
+      data: [
+        1640, 1250, 970, 1130, 1050, 900, 720, 1080, 900, 450, 920, 820, 840,
+        600, 820, 780, 800, 760, 380, 740, 660, 620, 840, 500, 520, 480, 400,
+        360, 300, 220,
+      ],
+    },
+    {
+      title: "Total unrealized",
+      value: "200k",
+      interval: "Last 30 days",
+      trend: "neutral",
+      data: [
+        500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620,
+        510, 530, 520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430,
+        520, 510,
+      ],
+    },
+  ];
+
   const breadcrumbs = [
     <Link underline="hover" key="1" color="inherit" href="/dashboard">
       Dashboard
@@ -108,283 +145,226 @@ const Transactions = () => {
   ];
 
   return (
-    <PageContainer title="Transactions" description="this is Transactions">
-      <Box mt={0}>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, lg: 12 }}>
-            <Stack direction="row" justifyContent="space-between">
-              <Typography color="textPrimary" variant="h4">
-                Transactions
-              </Typography>
-              <Button
-                variant="outlined"
-                size="small"
-                href={`/dashboard/wallets/${wallet_id}/positions`}
-              >
-                Back
-              </Button>
+    <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
+      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+        Transactions
+      </Typography>
+      <Grid
+        container
+        spacing={2}
+        columns={12}
+        sx={{ mb: (theme) => theme.spacing(2) }}
+      >
+        {data.map((card, index) => (
+          <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
+            <StatCard {...card} />
+          </Grid>
+        ))}
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <HighlightedCard />
+        </Grid>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <CustomCard title="Total Amount">
+            <Stack direction="row" justifyContent="flex-end" spacing={2}>
+              {transactions.length > 0 && transactions[0]?.position ? (
+                <Typography color="textSecondary" variant="h3">
+                  {formatNumber(transactions[0].position.amount, "currency")}
+                </Typography>
+              ) : (
+                <Typography>No data available</Typography> // Fallback if transactions are not available
+              )}
             </Stack>
-            <Breadcrumbs
-              separator={<NavigateNext fontSize="small" />}
-              aria-label="breadcrumb"
-            >
-              {breadcrumbs}
-            </Breadcrumbs>
-          </Grid>
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <CustomCard title="Total Amount">
-              <Stack direction="row" justifyContent="flex-end" spacing={2}>
-                {transactions.length > 0 && transactions[0]?.position ? (
-                  <Typography color="textSecondary" variant="h3">
-                    {formatNumber(transactions[0].position.amount, "currency")}
-                  </Typography>
-                ) : (
-                  <Typography>No data available</Typography> // Fallback if transactions are not available
-                )}
-              </Stack>
-            </CustomCard>
-          </Grid>
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <CustomCard title="Market Price">
-              <Stack direction="row" justifyContent="flex-end" spacing={2}>
-                {transactions.length > 0 && transactions[0]?.position ? (
-                  <Typography color="textSecondary" variant="h3">
-                    {formatNumber(
-                      transactions[0].position.contract.price,
+          </CustomCard>
+        </Grid>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <CustomCard title="Market Price">
+            <Stack direction="row" justifyContent="flex-end" spacing={2}>
+              {transactions.length > 0 && transactions[0]?.position ? (
+                <Typography color="textSecondary" variant="h3">
+                  {formatNumber(
+                    transactions[0].position.contract.price,
+                    "currency"
+                  )}
+                </Typography>
+              ) : (
+                <Typography>No data available</Typography> // Fallback if transactions are not available
+              )}
+            </Stack>
+          </CustomCard>
+        </Grid>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <CustomCard title="Performance">
+            {transactions.length > 0 && transactions[0]?.position ? (
+              <Stack>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={2}
+                  justifyContent="space-between"
+                  mb={1}
+                >
+                  Capital Gain
+                  <Chip
+                    icon={
+                      transactions[0].position.capital_gain < 0 ? (
+                        <ArrowDropDown />
+                      ) : transactions[0].position.capital_gain > 0 ? (
+                        <ArrowDropUp />
+                      ) : (
+                        <Fragment></Fragment>
+                      )
+                    }
+                    sx={{
+                      pl: "4px",
+                      pr: "4px",
+                      backgroundColor:
+                        transactions[0].position.capital_gain < 0
+                          ? "error.light"
+                          : transactions[0].position.capital_gain > 0
+                          ? "success.light"
+                          : "", // No background color if the capital gain is 0
+                      color:
+                        transactions[0].position.capital_gain < 0
+                          ? "error.main"
+                          : transactions[0].position.capital_gain > 0
+                          ? "success.main"
+                          : "",
+                      mb: "4px",
+                    }}
+                    size="small"
+                    label={formatNumber(
+                      transactions[0].position.capital_gain,
                       "currency"
                     )}
-                  </Typography>
-                ) : (
-                  <Typography>No data available</Typography> // Fallback if transactions are not available
-                )}
-              </Stack>
-            </CustomCard>
-          </Grid>
-          <Grid size={{ xs: 12, lg: 4 }}>
-            <CustomCard title="Performance">
-              {transactions.length > 0 && transactions[0]?.position ? (
-                <Stack>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={2}
-                    justifyContent="space-between"
-                    mb={1}
-                  >
-                    Capital Gain
-                    <Chip
-                      icon={
-                        transactions[0].position.capital_gain < 0 ? (
-                          <ArrowDropDown />
-                        ) : transactions[0].position.capital_gain > 0 ? (
-                          <ArrowDropUp />
-                        ) : (
-                          <Fragment></Fragment>
-                        )
-                      }
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          transactions[0].position.capital_gain < 0
-                            ? "error.light"
-                            : transactions[0].position.capital_gain > 0
-                            ? "success.light"
-                            : "", // No background color if the capital gain is 0
-                        color: transactions[0].position.capital_gain < 0
-                        ? "error.main"
-                        : transactions[0].position.capital_gain > 0
-                        ? "success.main"
-                        : "",
-                        mb: "4px",
-                      }}
-                      size="small"
-                      label={formatNumber(
-                        transactions[0].position.capital_gain,
-                        "currency"
-                      )}
-                    ></Chip>
-                  </Stack>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={2}
-                    justifyContent="space-between"
-                    mb={1}
-                  >
-                    Unrealized
-                    <Chip
-                      icon={
-                        transactions[0].position.unrealized_gain < 0 ? (
-                          <ArrowDropDown />
-                        ) : transactions[0].position.unrealized_gain > 0 ? (
-                          <ArrowDropUp />
-                        ) : (
-                          <Fragment></Fragment>
-                        )
-                      }
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          transactions[0].position.unrealized_gain < 0
-                            ? "error.light"
-                            : transactions[0].position.unrealized_gain > 0
-                            ? "success.light"
-                            : "", // No background color if the capital gain is 0
-                        color: transactions[0].position.unrealized_gain < 0
-                        ? "error.main"
-                        : transactions[0].position.unrealized_gain > 0
-                        ? "success.main"
-                        : "",
-                        mb: "4px",
-                      }}
-                      size="small"
-                      label={formatNumber(
-                        transactions[0].position.unrealized_gain,
-                        "percentage"
-                      )}
-                    ></Chip>
-                  </Stack>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={2}
-                    justifyContent="space-between"
-                    mb={1}
-                  >
-                    Daily
-                    <Chip
-                      icon={
-                        transactions[0].position.daily_price_delta < 0 ? (
-                          <ArrowDropDown />
-                        ) : transactions[0].position.daily_price_delta > 0 ? (
-                          <ArrowDropUp />
-                        ) : (
-                          <Fragment></Fragment>
-                        )
-                      }
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          transactions[0].position.daily_price_delta < 0
-                            ? "error.light"
-                            : transactions[0].position.daily_price_delta > 0
-                            ? "success.light"
-                            : "", // No background color if the capital gain is 0
-                        color: transactions[0].position.daily_price_delta < 0
-                        ? "error.main"
-                        : transactions[0].position.daily_price_delta > 0
-                        ? "success.main"
-                        : "",
-                        mb: "4px",
-                      }}
-                      size="small"
-                      label={formatNumber(
-                        transactions[0].position.daily_price_delta,
-                        "percentage"
-                      )}
-                    ></Chip>
-                  </Stack>
-
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={2}
-                    justifyContent="space-between"
-                    mb={1}
-                  >
-                    Weekly
-                    <Chip
-                      icon={
-                        transactions[0].position.weekly_price_delta < 0 ? (
-                          <ArrowDropDown />
-                        ) : transactions[0].position.weekly_price_delta > 0 ? (
-                          <ArrowDropUp />
-                        ) : (
-                          <Fragment></Fragment>
-                        )
-                      }
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          transactions[0].position.weekly_price_delta < 0
-                            ? "error.light"
-                            : transactions[0].position.weekly_price_delta > 0
-                            ? "success.light"
-                            : "", // No background color if the capital gain is 0
-                        color: transactions[0].position.weekly_price_delta < 0
-                        ? "error.main"
-                        : transactions[0].position.weekly_price_delta > 0
-                        ? "success.main"
-                        : "",
-                        mb: "4px",
-                      }}
-                      size="small"
-                      label={formatNumber(
-                        transactions[0].position.weekly_price_delta,
-                        "percentage"
-                      )}
-                    ></Chip>
-                  </Stack>
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={2}
-                    justifyContent="space-between"
-                    mb={0}
-                  >
-                    Monthly
-                    <Chip
-                      icon={
-                        transactions[0].position.monthly_price_delta < 0 ? (
-                          <ArrowDropDown />
-                        ) : transactions[0].position.monthly_price_delta > 0 ? (
-                          <ArrowDropUp />
-                        ) : (
-                          <Fragment></Fragment>
-                        )
-                      }
-                      sx={{
-                        pl: "4px",
-                        pr: "4px",
-                        backgroundColor:
-                          transactions[0].position.monthly_price_delta < 0
-                            ? "error.light"
-                            : transactions[0].position.monthly_price_delta > 0
-                            ? "success.light"
-                            : "", // No background color if the capital gain is 0
-                        color: transactions[0].position.monthly_price_delta < 0
-                        ? "error.main"
-                        : transactions[0].position.monthly_price_delta > 0
-                        ? "success.main"
-                        : "",
-                      }}
-                      size="small"
-                      label={formatNumber(
-                        transactions[0].position.monthly_price_delta,
-                        "percentage"
-                      )}
-                    ></Chip>
-                  </Stack>
+                  ></Chip>
                 </Stack>
-              ) : (
-                <Stack>
-                  <Typography>No data available</Typography>
-                </Stack> // Fallback if transactions are not available
-              )}
-              {/* </Stack> */}
-              {/* </Stack> */}
-            </CustomCard>
-          </Grid>
-          <Grid size={{ xs: 12, lg: 12 }}>
-            <Card variant="outlined" sx={{ p: 3 }}>
-              <Box px={0} py={0} mb="-15px">
-                <Typography variant="h5">Filter</Typography>
-              </Box>
-              <Box px={0} py={0} mt={3}>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={2}
+                  justifyContent="space-between"
+                  mb={1}
+                >
+                  Unrealized
+                  <Chip
+                    icon={
+                      transactions[0].position.unrealized_gain < 0 ? (
+                        <ArrowDropDown />
+                      ) : transactions[0].position.unrealized_gain > 0 ? (
+                        <ArrowDropUp />
+                      ) : (
+                        <Fragment></Fragment>
+                      )
+                    }
+                    sx={{
+                      pl: "4px",
+                      pr: "4px",
+                      backgroundColor:
+                        transactions[0].position.unrealized_gain < 0
+                          ? "error.light"
+                          : transactions[0].position.unrealized_gain > 0
+                          ? "success.light"
+                          : "", // No background color if the capital gain is 0
+                      color:
+                        transactions[0].position.unrealized_gain < 0
+                          ? "error.main"
+                          : transactions[0].position.unrealized_gain > 0
+                          ? "success.main"
+                          : "",
+                      mb: "4px",
+                    }}
+                    size="small"
+                    label={formatNumber(
+                      transactions[0].position.unrealized_gain,
+                      "percentage"
+                    )}
+                  ></Chip>
+                </Stack>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={2}
+                  justifyContent="space-between"
+                  mb={1}
+                >
+                  Daily
+                  <Chip
+                    icon={
+                      transactions[0].position.daily_price_delta < 0 ? (
+                        <ArrowDropDown />
+                      ) : transactions[0].position.daily_price_delta > 0 ? (
+                        <ArrowDropUp />
+                      ) : (
+                        <Fragment></Fragment>
+                      )
+                    }
+                    sx={{
+                      pl: "4px",
+                      pr: "4px",
+                      backgroundColor:
+                        transactions[0].position.daily_price_delta < 0
+                          ? "error.light"
+                          : transactions[0].position.daily_price_delta > 0
+                          ? "success.light"
+                          : "", // No background color if the capital gain is 0
+                      color:
+                        transactions[0].position.daily_price_delta < 0
+                          ? "error.main"
+                          : transactions[0].position.daily_price_delta > 0
+                          ? "success.main"
+                          : "",
+                      mb: "4px",
+                    }}
+                    size="small"
+                    label={formatNumber(
+                      transactions[0].position.daily_price_delta,
+                      "percentage"
+                    )}
+                  ></Chip>
+                </Stack>
+
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={2}
+                  justifyContent="space-between"
+                  mb={1}
+                >
+                  Weekly
+                  <Chip
+                    icon={
+                      transactions[0].position.weekly_price_delta < 0 ? (
+                        <ArrowDropDown />
+                      ) : transactions[0].position.weekly_price_delta > 0 ? (
+                        <ArrowDropUp />
+                      ) : (
+                        <Fragment></Fragment>
+                      )
+                    }
+                    sx={{
+                      pl: "4px",
+                      pr: "4px",
+                      backgroundColor:
+                        transactions[0].position.weekly_price_delta < 0
+                          ? "error.light"
+                          : transactions[0].position.weekly_price_delta > 0
+                          ? "success.light"
+                          : "", // No background color if the capital gain is 0
+                      color:
+                        transactions[0].position.weekly_price_delta < 0
+                          ? "error.main"
+                          : transactions[0].position.weekly_price_delta > 0
+                          ? "success.main"
+                          : "",
+                      mb: "4px",
+                    }}
+                    size="small"
+                    label={formatNumber(
+                      transactions[0].position.weekly_price_delta,
+                      "percentage"
+                    )}
+                  ></Chip>
+                </Stack>
                 <Stack
                   direction="row"
                   alignItems="center"
@@ -392,24 +372,80 @@ const Transactions = () => {
                   justifyContent="space-between"
                   mb={0}
                 >
-                  <SearchForm onSearch={handleSearch} />
+                  Monthly
+                  <Chip
+                    icon={
+                      transactions[0].position.monthly_price_delta < 0 ? (
+                        <ArrowDropDown />
+                      ) : transactions[0].position.monthly_price_delta > 0 ? (
+                        <ArrowDropUp />
+                      ) : (
+                        <Fragment></Fragment>
+                      )
+                    }
+                    sx={{
+                      pl: "4px",
+                      pr: "4px",
+                      backgroundColor:
+                        transactions[0].position.monthly_price_delta < 0
+                          ? "error.light"
+                          : transactions[0].position.monthly_price_delta > 0
+                          ? "success.light"
+                          : "", // No background color if the capital gain is 0
+                      color:
+                        transactions[0].position.monthly_price_delta < 0
+                          ? "error.main"
+                          : transactions[0].position.monthly_price_delta > 0
+                          ? "success.main"
+                          : "",
+                    }}
+                    size="small"
+                    label={formatNumber(
+                      transactions[0].position.monthly_price_delta,
+                      "percentage"
+                    )}
+                  ></Chip>
                 </Stack>
-              </Box>
-            </Card>
-          </Grid>
-          <Grid size={{ xs: 12, lg: 12 }}>
-            <TransactionTable
-              transactions={transactions}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              totalCount={totalCount}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-            />
-          </Grid>
+              </Stack>
+            ) : (
+              <Stack>
+                <Typography>No data available</Typography>
+              </Stack> // Fallback if transactions are not available
+            )}
+            {/* </Stack> */}
+            {/* </Stack> */}
+          </CustomCard>
         </Grid>
-      </Box>
-    </PageContainer>
+        <Grid size={{ xs: 12, lg: 12 }}>
+          <Card variant="outlined" sx={{ p: 3 }}>
+            <Box px={0} py={0} mb="-15px">
+              <Typography variant="h5">Filter</Typography>
+            </Box>
+            <Box px={0} py={0} mt={3}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={2}
+                justifyContent="space-between"
+                mb={0}
+              >
+                <SearchForm onSearch={handleSearch} />
+              </Stack>
+            </Box>
+          </Card>
+        </Grid>
+        <Grid size={{ xs: 12, lg: 12 }}>
+          <TransactionTable
+            transactions={transactions}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            totalCount={totalCount}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+          />
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
