@@ -24,3 +24,4 @@
 - backend - récupérer les informations de METIS
 - backend - migrer vers etherscan API V2
 - backend - un utilisateur ne doit pas voir les données d'un autre
+- backend - fix - cost pour transaction OUT EGLD de 1.1 donne 0
