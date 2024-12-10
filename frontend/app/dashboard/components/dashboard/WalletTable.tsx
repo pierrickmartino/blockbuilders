@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   Stack,
-  CardHeader,
 } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 import { Wallet } from "@/app/lib/definition";
@@ -21,7 +20,12 @@ import {
   refreshWallet,
   refreshFullWallet,
 } from "@/app/lib/actions";
-import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridRenderCellParams,
+} from "@mui/x-data-grid";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
@@ -51,7 +55,6 @@ const WalletTable: React.FC<WalletTableProps> = ({
   onWalletFullRefreshed,
   onCreateWallet,
 }) => {
-
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
@@ -66,14 +69,14 @@ const WalletTable: React.FC<WalletTableProps> = ({
   };
 
   // Handle navigation to wallet details
-  const handleNavigateToDetails = (selectedWalletId : string) => {
+  const handleNavigateToDetails = (selectedWalletId: string) => {
     if (selectedWalletId !== null) {
       window.location.href = `/dashboard/wallets/${selectedWalletId}/positions`;
     }
   };
 
   // Handle navigation to wallet details
-  const handleDeletion = async (selectedWalletId : string) => {
+  const handleDeletion = async (selectedWalletId: string) => {
     if (selectedWalletId !== null) {
       const response = await deleteWallet(selectedWalletId.toString());
       if (response.message !== "Database Error: Failed to delete wallet.") {
@@ -82,7 +85,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
     }
   };
 
-  const handleDownload = async (selectedWalletId : string) => {
+  const handleDownload = async (selectedWalletId: string) => {
     if (selectedWalletId !== null) {
       const response = await downloadWallet(selectedWalletId.toString());
       if (response.task_id) {
@@ -94,7 +97,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
     }
   };
 
-  const handleRefresh = async (selectedWalletId : string) => {
+  const handleRefresh = async (selectedWalletId: string) => {
     if (selectedWalletId !== null) {
       const response = await refreshWallet(selectedWalletId.toString());
       if (response.task_id) {
@@ -105,7 +108,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
     }
   };
 
-  const handleRefreshFull = async (selectedWalletId : string) => {
+  const handleRefreshFull = async (selectedWalletId: string) => {
     if (selectedWalletId !== null) {
       const response = await refreshFullWallet(selectedWalletId.toString());
       if (response.task_id) {
@@ -119,6 +122,17 @@ const WalletTable: React.FC<WalletTableProps> = ({
   const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
+
+  function renderGreyString(params: GridRenderCellParams<any, string, any>) {
+    const input = params.value ?? "";
+    return (
+      <Box>
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit" }}>
+          {input}
+        </Typography>
+      </Box>
+    );
+  }
 
   function renderChipAmount(
     amount: number,
@@ -140,12 +154,19 @@ const WalletTable: React.FC<WalletTableProps> = ({
       headerName: "Description",
       flex: 1,
       minWidth: 150,
+      renderCell: renderGreyString,
     },
     {
       field: "address",
       headerName: "Address",
       flex: 1,
-      minWidth: 100,
+      minWidth: 150,
+      valueFormatter: (value?: string) => {
+        if (!value || typeof value !== "string") {
+          return value;
+        }
+        return `${truncateText(value, 15)}`;
+      },
     },
     {
       field: "balance",
@@ -162,7 +183,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
       headerAlign: "right",
       align: "right",
       flex: 1,
-      minWidth: 120,
+      minWidth: 100,
       renderCell: (params) => renderChipAmount(params.value, "currency"),
     },
     {
@@ -182,7 +203,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
         <GridActionsCellItem
           key="wallet-details"
           label="See details"
-          icon={<Edit fontSize="small"  />}
+          icon={<Edit fontSize="small" />}
           onClick={() => handleNavigateToDetails(cell.id.toString())}
           showInMenu
         />,
@@ -240,21 +261,25 @@ const WalletTable: React.FC<WalletTableProps> = ({
   );
 
   return (
-    <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
-      <CardHeader action={action}></CardHeader>
+    <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}> 
       <CardContent>
-        <Typography component="h2" variant="subtitle2" gutterBottom>
-          Wallet Overview
-        </Typography>
         <Stack
           direction="column"
-          sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
+          sx={{ justifyContent: "space-between", flexGrow: 1, gap: 1 }}
         >
-          <Stack sx={{ justifyContent: "space-between" }}>
-            <Typography variant="caption" sx={{ color: "text.secondary" }}>
-              Track balances, performance, and key metrics across your wallets
-            </Typography>
+          <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+            <Stack direction="column" sx={{ justifyContent: "space-between" }}>
+              <Typography component="h2" variant="subtitle2" gutterBottom>
+                Wallet Overview
+              </Typography>
+
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                Track balances, performance, and key metrics across your wallets
+              </Typography>
+            </Stack>
+            {action}
           </Stack>
+
           <Box>
             <DataGrid
               checkboxSelection

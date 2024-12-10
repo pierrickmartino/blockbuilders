@@ -18,7 +18,9 @@ import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
 import formatNumber from "@/app/utils/formatNumber";
 import CustomCard from "@/app/dashboard/components/shared/CustomCard";
-import StatCard, { StatCardProps } from "@/app/dashboard/components/dashboard/StatCard";
+import StatCard, {
+  StatCardProps,
+} from "@/app/dashboard/components/dashboard/StatCard";
 import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
 
 const Positions = () => {
@@ -152,7 +154,7 @@ const Positions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <HighlightedCard />
         </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <CustomCard title="Total Amount">
             <Stack direction="row" justifyContent="flex-end" spacing={2}>
               {positions.length > 0 && positions[0]?.wallet ? (
@@ -165,7 +167,7 @@ const Positions = () => {
             </Stack>
           </CustomCard>
         </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <CustomCard title="Total Capital Gain">
             <Stack direction="row" justifyContent="flex-end" spacing={2}>
               {positions.length > 0 && positions[0]?.wallet ? (
@@ -178,7 +180,7 @@ const Positions = () => {
             </Stack>
           </CustomCard>
         </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <CustomCard title="Total Unrealized">
             <Stack direction="row" justifyContent="flex-end" spacing={2}>
               {positions.length > 0 && positions[0]?.wallet ? (
@@ -219,16 +221,21 @@ const Positions = () => {
           </Card>
         </Grid>
         <Grid size={{ xs: 12, lg: 12 }}>
-          <PositionTable
-            positions={positions}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            totalCount={totalCount}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            onContractSetAsStable={handleContractSetAsStable}
-            onContractSetAsSuspicious={handleContractSetAsSuspicious}
-          />
+          {positions.length > 0 && positions[0]?.wallet ? (
+            <PositionTable
+              positions={positions}
+              wallet={positions[0].wallet}
+              page={page}
+              rowsPerPage={rowsPerPage}
+              totalCount={totalCount}
+              onPageChange={handlePageChange}
+              onRowsPerPageChange={handleRowsPerPageChange}
+              onContractSetAsStable={handleContractSetAsStable}
+              onContractSetAsSuspicious={handleContractSetAsSuspicious}
+            />
+          ) : (
+            <Typography>No data available</Typography> // Fallback if positions are not available
+          )}
         </Grid>
       </Grid>
     </Box>

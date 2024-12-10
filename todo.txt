@@ -1,19 +1,28 @@
 - core - créer une page avec un exemple de chaque composant
 - core - fix lint issues (npm run lint)
+
 - dashboard - dark mode
 - dashboard - améliorer les couleurs
 - dashboard - pouvoir switcher entre la fullpage en largeur et la vue serrée
 - dashboard - ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois 
 - dashboard - ajouter un calendrier du mois avec le nombre de trade sur chaque journée
 - dashboard - ajouter la fonctionalité d'édition d'un wallet
+
 - transaction - utiliser les tabs sur un widget avec Info / Performance
 - transaction - ajouter un widget avec les informations du contract 
 - transaction - déplacer le MarketPrice sur un widget graphique montrant l'évolution du prix 
 - transaction - déplacer le filtrage pour mieux l'intégrer au reste de la page
 - transaction - fix - pagination et dernier item de la page qui reste
+- transaction - afficher le statut de la position en cours et sa variation (ex. OPEN, INCREASE +5%)
+- transaction - fix - augmentation sans limite sur la page générique
+
 - position - déplacer le filtrage pour mieux l'intégrer au reste de la page
 - position - fix - pagination et dernier item de la page qui reste
+- position - fix - lien vers la page de transactions
 - position - ajouter les indicateurs tels que EMA, RSI, etc...
+- position - matérialiser l'ouverture d'une position et sa fermeture totale ou progressive (OPEN, CLOSE, INCREASE, REDUCTION)
+- position - fix - augmentation sans limite sur la page générique
+
 - backend - reconnaitre les contrats qui sont des "utilities" en ne plus les valoriser
 - backend - mettre en suspicious une position doit supprimer les transactions associées au contract
 - backend - revoir les logs tasks pour trouver la source de lenteur

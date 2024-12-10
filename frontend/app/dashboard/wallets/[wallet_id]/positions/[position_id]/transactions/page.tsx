@@ -163,8 +163,8 @@ const Transactions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <HighlightedCard />
         </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <CustomCard title="Total Amount">
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <Card variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
             <Stack direction="row" justifyContent="flex-end" spacing={2}>
               {transactions.length > 0 && transactions[0]?.position ? (
                 <Typography color="textSecondary" variant="h3">
@@ -174,9 +174,9 @@ const Transactions = () => {
                 <Typography>No data available</Typography> // Fallback if transactions are not available
               )}
             </Stack>
-          </CustomCard>
+          </Card>
         </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <CustomCard title="Market Price">
             <Stack direction="row" justifyContent="flex-end" spacing={2}>
               {transactions.length > 0 && transactions[0]?.position ? (
@@ -192,7 +192,7 @@ const Transactions = () => {
             </Stack>
           </CustomCard>
         </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <CustomCard title="Performance">
             {transactions.length > 0 && transactions[0]?.position ? (
               <Stack>

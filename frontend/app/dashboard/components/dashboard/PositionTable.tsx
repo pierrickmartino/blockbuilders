@@ -1,17 +1,8 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 
 import {
   Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   Chip,
-  TableContainer,
-  IconButton,
-  Menu,
-  TablePagination,
   Checkbox,
   Avatar,
   Stack,
@@ -20,28 +11,29 @@ import {
   Box,
 } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
-import { Position } from "../../../lib/definition";
-import { IconDotsVertical } from "@tabler/icons-react";
+import { Position, Wallet } from "../../../lib/definition";
 import {
   CreditScore,
   Payment,
   ReportGmailerrorred,
   Visibility,
   Report,
-  ArrowDropDown,
-  ArrowDropUp,
   Edit,
 } from "@mui/icons-material";
 import {
   setContractAsStable,
   setContractAsSuspicious,
 } from "@/app/lib/actions";
-import PerformanceChip from "../../ui-components/chips/PerformanceChip";
-import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+} from "@mui/x-data-grid";
 
 // Define the props type that will be passed into WalletTable
 interface PositionTableProps {
   positions: Position[];
+  wallet: Wallet;
   page: number;
   rowsPerPage: number;
   totalCount: number;
@@ -53,6 +45,7 @@ interface PositionTableProps {
 
 const PositionTable: React.FC<PositionTableProps> = ({
   positions,
+  wallet,
   page,
   rowsPerPage,
   totalCount,
@@ -140,15 +133,29 @@ const PositionTable: React.FC<PositionTableProps> = ({
   };
 
   // Handle navigation to wallet details
-  const handleNavigateToDetails = (selectedWalletId: string) => {
+  const handleNavigateToDetails = (selectedPositionId: string) => {
     if (selectedPositionId !== null) {
-      window.location.href = `/dashboard/wallets/${selectedWalletId}/positions/${selectedPositionId}/transactions`;
+      window.location.href = `/dashboard/wallets/${wallet.id}/positions/${selectedPositionId}/transactions`;
     }
   };
 
   const truncateText = (text: string, maxLength: number) => {
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
+
+  function renderGreyNumber(
+    amount: number,
+    type: "currency" | "quantity_precise" | "quantity" | "percentage"
+  ) {
+    const input = amount ?? "";
+    return (
+      <Box>
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit" }}>
+          {formatNumber(input, type)}
+        </Typography>
+      </Box>
+    );
+  }
 
   function renderChipAmount(
     amount: number,
@@ -163,8 +170,62 @@ const PositionTable: React.FC<PositionTableProps> = ({
     );
   }
 
+  function renderToken(
+    token_symbol: string,
+    token_name: string,
+    blockchain_name: string,
+    blockchain_icon: string
+  ) {
+    return (
+      <Stack alignItems="center" direction="row" spacing={2}>
+        <Avatar
+          alt={blockchain_name}
+          sx={{ width: 24, height: 24 }}
+          src={"/images/logos/" + blockchain_icon}
+        />
+        <Typography sx={{ lineHeight: "inherit" }}>
+          {truncateText(token_symbol, 8)}
+        </Typography>
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit" }}>
+          {truncateText(token_name, 18)}
+        </Typography>
+      </Stack>
+    );
+  }
+
+  function renderButtons(contract_category: string, contract_id: string) {
+    return (
+      <Stack height="100%" alignItems="center" direction="row" spacing={1}>
+        <Checkbox
+          icon={<Payment />}
+          checkedIcon={<CreditScore />}
+          checked={contract_category === "stable"}
+          onChange={(event) => handleChangeStable(event, contract_id)}
+        />
+        <Checkbox
+          icon={<ReportGmailerrorred />}
+          checkedIcon={<Report />}
+          checked={contract_category === "suspicious"}
+          onChange={(event) => handleChangeSuspicious(event, contract_id)}
+        />
+      </Stack>
+    );
+  }
+
   const columns: GridColDef[] = [
-    { field: "token", headerName: "Token", flex: 1.5, minWidth: 150 },
+    {
+      field: "token",
+      headerName: "Token",
+      flex: 1.5,
+      minWidth: 150,
+      renderCell: (params) =>
+        renderToken(
+          params.row.contract.symbol,
+          params.row.contract.name,
+          params.row.contract.blockchain.name,
+          params.row.contract.blockchain.icon
+        ),
+    },
     {
       field: "daily_price_delta",
       headerName: "Perf Daily",
@@ -181,22 +242,29 @@ const PositionTable: React.FC<PositionTableProps> = ({
       align: "right",
       flex: 1,
       minWidth: 100,
+      renderCell: (params) =>
+        renderGreyNumber(params.row.contract.price, "currency"),
     },
     {
       field: "quantity",
       headerName: "Quantity",
       headerAlign: "right",
+      type: "number",
       align: "right",
       flex: 1,
       minWidth: 100,
+      renderCell: (params) =>
+        renderGreyNumber(params.value, "quantity_precise"),
     },
     {
       field: "amount",
       headerName: "Amount",
       headerAlign: "right",
+      type: "number",
       align: "right",
       flex: 1,
       minWidth: 100,
+      renderCell: (params) => renderGreyNumber(params.value, "currency"),
     },
     {
       field: "capital_gain",
@@ -204,7 +272,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerAlign: "right",
       align: "right",
       flex: 1,
-      minWidth: 120,
+      minWidth: 100,
       renderCell: (params) => renderChipAmount(params.value, "currency"),
     },
     {
@@ -217,9 +285,16 @@ const PositionTable: React.FC<PositionTableProps> = ({
       renderCell: (params) => renderChipAmount(params.value, "percentage"),
     },
     {
+      field: "buttons",
+      headerName: "",
+      width: 70,
+      renderCell: (params) =>
+        renderButtons(params.row.contract.category, params.row.contract.id),
+    },
+    {
       field: "actions",
       type: "actions",
-      width: 100,
+      width: 70,
       getActions: (cell) => [
         <GridActionsCellItem
           key="wallet-details"
@@ -235,195 +310,22 @@ const PositionTable: React.FC<PositionTableProps> = ({
   return (
     <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
       <CardContent>
-        <Typography component="h2" variant="subtitle2" gutterBottom>
-          Wallet Positions
-        </Typography>
         <Stack
           direction="column"
-          sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
+          sx={{ justifyContent: "space-between", flexGrow: 1, gap: 1 }}
         >
-          <Stack sx={{ justifyContent: "space-between" }}>
-            <Typography variant="caption" sx={{ color: "text.secondary" }}>
-              Track balances, performance, and key metrics across your wallets
-            </Typography>
+          <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+            <Stack direction="column" sx={{ justifyContent: "space-between" }}>
+              <Typography component="h2" variant="subtitle2" gutterBottom>
+                Wallet Positions
+              </Typography>
+
+              <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                Detailed view of asset quantities and performance
+              </Typography>
+            </Stack>
           </Stack>
           <Box>
-            <TableContainer
-              sx={{
-                width: {
-                  xs: "274px",
-                  sm: "100%",
-                },
-              }}
-            >
-              <Table
-                aria-label="simple table"
-                size="small"
-                sx={{
-                  whiteSpace: "nowrap",
-                  mt: 0,
-                }}
-              >
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant="h6">Token</Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="h6">Perf Daily</Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="h6">Price</Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="h6">Quantity</Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="h6">Amount</Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="h6">Capital Gain</Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="h6">UnRealized</Typography>
-                    </TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {positions.map((position: Position) => (
-                    <TableRow key={position.id}>
-                      <TableCell>
-                        <Stack direction="row" spacing={2}>
-                          <Avatar
-                            alt={position.contract.blockchain.name}
-                            sx={{ width: 24, height: 24 }}
-                            src={
-                              "/images/logos/" +
-                              position.contract.blockchain.icon
-                            }
-                          />
-                          <Stack>
-                            <Typography>
-                              {truncateText(position.contract.symbol, 8)}
-                            </Typography>
-                            <Typography color="textSecondary">
-                              {truncateText(position.contract.name, 18)}
-                            </Typography>
-                          </Stack>
-                        </Stack>
-                      </TableCell>
-                      <TableCell align="right">
-                        <PerformanceChip
-                          input={position.daily_price_delta}
-                          type="percentage"
-                          icon={
-                            position.daily_price_delta < 0 ? (
-                              <ArrowDropDown />
-                            ) : position.daily_price_delta > 0 ? (
-                              <ArrowDropUp />
-                            ) : (
-                              <Fragment></Fragment>
-                            )
-                          }
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <Typography color="textSecondary">
-                          {formatNumber(position.contract.price, "currency")}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Typography color="textSecondary">
-                          {formatNumber(position.quantity, "quantity_precise")}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Typography color="textSecondary">
-                          {formatNumber(position.amount, "currency")}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="right">
-                        <PerformanceChip
-                          input={position.capital_gain}
-                          type="currency"
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <PerformanceChip
-                          input={position.unrealized_gain}
-                          type="percentage"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Checkbox
-                          icon={<Payment />}
-                          checkedIcon={<CreditScore />}
-                          checked={position.contract.category === "stable"}
-                          onChange={(event) =>
-                            handleChangeStable(event, position.contract.id)
-                          }
-                        />
-                        <Checkbox
-                          icon={<ReportGmailerrorred />}
-                          checkedIcon={<Report />}
-                          checked={position.contract.category === "suspicious"}
-                          onChange={(event) =>
-                            handleChangeSuspicious(event, position.contract.id)
-                          }
-                        />
-                        <IconButton
-                          id="basic-button"
-                          aria-controls={open ? "basic-menu" : undefined}
-                          aria-haspopup="true"
-                          aria-expanded={open ? "true" : undefined}
-                          onClick={(event) =>
-                            handleClick(event, position.id, position.wallet.id)
-                          }
-                          aria-label="Open to show more"
-                          title="Open to show more"
-                        >
-                          <IconDotsVertical width={18} />
-                        </IconButton>
-                        <Menu
-                          id="basic-menu"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={open}
-                          onClose={handleClose}
-                        >
-                          {/* {positionMenuItems.map((item) => (
-                        <MenuItem
-                          onClick={() => {
-                            handleClose();
-                            if (item.key === "position-details") {
-                              handleNavigateToDetails();
-                            }
-                          }}
-                          key={item.key}
-                          value={item.value}
-                        >
-                          <ListItemIcon>{item.button}</ListItemIcon>
-                          {item.title}
-                        </MenuItem>
-                      ))} */}
-                        </Menu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <TablePagination
-              component="div"
-              rowsPerPageOptions={[5, 10, 25]}
-              count={totalCount}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-
             <DataGrid
               checkboxSelection
               rows={positions}

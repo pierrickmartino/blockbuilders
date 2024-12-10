@@ -120,14 +120,14 @@ const Transactions = () => {
             </Card>
           </Grid>
           <Grid item xs={12} lg={12}>
-            <TransactionTable
+            {/* <TransactionTable
               transactions={transactions}
               page={page}
               rowsPerPage={rowsPerPage}
               totalCount={totalCount}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
-            />
+            /> */}
           </Grid>
         </Grid>
       </Box>

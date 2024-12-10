@@ -131,7 +131,7 @@ const Positions = () => {
             </Card>
           </Grid>
           <Grid item xs={12} lg={12}>
-            <PositionTable
+            {/* <PositionTable
               positions={positions}
               page={page}
               rowsPerPage={rowsPerPage}
@@ -140,7 +140,7 @@ const Positions = () => {
               onRowsPerPageChange={handleRowsPerPageChange}
               onContractSetAsStable={handleContractSetAsStable}
               onContractSetAsSuspicious={handleContractSetAsSuspicious}
-            />
+            /> */}
           </Grid>
         </Grid>
       </Box>

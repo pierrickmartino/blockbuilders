@@ -266,15 +266,11 @@ const Wallets = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <HighlightedCard />
         </Grid>
-        <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
-          <TopRepartition
-            blockchains={top_blockchains}
-            positions={top_positions}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <TradingCalendar />
-        </Grid>
+      </Grid>
+      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+        Details
+      </Typography>
+      <Grid container spacing={2} columns={12}>
         <Grid size={{ xs: 12, lg: 12 }}>
           <WalletTable
             wallets={wallets}
@@ -289,6 +285,15 @@ const Wallets = () => {
             onWalletFullRefreshed={handleWalletFullRefreshed}
             onCreateWallet={handleAddWalletClick}
           />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
+          <TopRepartition
+            blockchains={top_blockchains}
+            positions={top_positions}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <TradingCalendar />
         </Grid>
         <Grid size={{ xs: 12, lg: 8 }}>
           <SalesOverview />
