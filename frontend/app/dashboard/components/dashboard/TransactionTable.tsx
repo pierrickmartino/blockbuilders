@@ -12,7 +12,7 @@ import {
 import formatNumber from "@/app/utils/formatNumber";
 import formatDate from "@/app/utils/formatDate";
 import { Transaction } from "../../../lib/definition";
-import { Link as LinkIcon } from "@mui/icons-material";
+import { Download, Link as LinkIcon } from "@mui/icons-material";
 import { exportTransactions } from "@/app/lib/export-transaction";
 import { saveAs } from "file-saver";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
@@ -248,6 +248,8 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
       <Button
         variant="contained"
         size="small"
+        color="secondary"
+        startIcon={<Download />}
         onClick={() => {
           handleExportTransactions(transactions[0].position.id);
         }}

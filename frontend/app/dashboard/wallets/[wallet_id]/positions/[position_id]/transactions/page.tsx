@@ -6,6 +6,7 @@ import {
   Typography,
   Chip,
   Link,
+  CardContent,
 } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
@@ -164,33 +165,126 @@ const Transactions = () => {
           <HighlightedCard />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <Card variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
-            <Stack direction="row" justifyContent="flex-end" spacing={2}>
-              {transactions.length > 0 && transactions[0]?.position ? (
-                <Typography color="textSecondary" variant="h3">
-                  {formatNumber(transactions[0].position.amount, "currency")}
-                </Typography>
-              ) : (
-                <Typography>No data available</Typography> // Fallback if transactions are not available
-              )}
-            </Stack>
+          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
+            <CardContent>
+              <Typography component="h2" variant="subtitle2" gutterBottom>
+                Total amount
+              </Typography>
+              <Stack
+                direction="column"
+                sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
+              >
+                <Stack sx={{ justifyContent: "space-between" }}>
+                  <Stack
+                    direction="row"
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {transactions.length > 0 && transactions[0]?.position ? (
+                      <Typography variant="h4" component="p">
+                        {formatNumber(
+                          transactions[0].position.amount,
+                          "currency"
+                        )}
+                      </Typography>
+                    ) : (
+                      <Typography>No data available</Typography> // Fallback if transactions are not available
+                    )}
+                    <Chip size="small" color={"success"} label={"+25%"} />
+                  </Stack>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "text.secondary" }}
+                  >
+                    Last 30 days
+                  </Typography>
+                </Stack>
+                {/* <Box sx={{ width: '100%', height: 50 }}>
+            <SparkLineChart
+              colors={[chartColor]}
+              data={data}
+              area
+              showHighlight
+              showTooltip
+              xAxis={{
+                scaleType: 'band',
+                data: daysInWeek, // Use the correct property 'data' for xAxis
+              }}
+              sx={{
+                [`& .${areaElementClasses.root}`]: {
+                  fill: `url(#area-gradient-${value})`,
+                },
+              }}
+            >
+              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
+            </SparkLineChart>
+          </Box> */}
+              </Stack>
+            </CardContent>
           </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <CustomCard title="Market Price">
-            <Stack direction="row" justifyContent="flex-end" spacing={2}>
-              {transactions.length > 0 && transactions[0]?.position ? (
-                <Typography color="textSecondary" variant="h3">
-                  {formatNumber(
-                    transactions[0].position.contract.price,
-                    "currency"
-                  )}
-                </Typography>
-              ) : (
-                <Typography>No data available</Typography> // Fallback if transactions are not available
-              )}
-            </Stack>
-          </CustomCard>
+          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
+            <CardContent>
+              <Typography component="h2" variant="subtitle2" gutterBottom>
+                Market price
+              </Typography>
+              <Stack
+                direction="column"
+                sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
+              >
+                <Stack sx={{ justifyContent: "space-between" }}>
+                  <Stack
+                    direction="row"
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {transactions.length > 0 && transactions[0]?.position ? (
+                      <Typography variant="h4" component="p">
+                        {formatNumber(
+                          transactions[0].position.contract.price,
+                          "currency"
+                        )}
+                      </Typography>
+                    ) : (
+                      <Typography>No data available</Typography> // Fallback if transactions are not available
+                    )}
+                    <Chip size="small" color={"success"} label={"+25%"} />
+                  </Stack>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "text.secondary" }}
+                  >
+                    Last 30 days
+                  </Typography>
+                </Stack>
+                {/* <Box sx={{ width: '100%', height: 50 }}>
+            <SparkLineChart
+              colors={[chartColor]}
+              data={data}
+              area
+              showHighlight
+              showTooltip
+              xAxis={{
+                scaleType: 'band',
+                data: daysInWeek, // Use the correct property 'data' for xAxis
+              }}
+              sx={{
+                [`& .${areaElementClasses.root}`]: {
+                  fill: `url(#area-gradient-${value})`,
+                },
+              }}
+            >
+              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
+            </SparkLineChart>
+          </Box> */}
+              </Stack>
+            </CardContent>
+          </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <CustomCard title="Performance">
