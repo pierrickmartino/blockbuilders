@@ -334,9 +334,9 @@ const PositionTable: React.FC<PositionTableProps> = ({
                 params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
               }
               initialState={{
-                pagination: { paginationModel: { pageSize: 10 } },
+                pagination: { paginationModel: { pageSize: 25 } },
               }}
-              pageSizeOptions={[10, 20, 50]}
+              pageSizeOptions={[10, 25, 50]}
               disableColumnResize
               density="compact"
               slotProps={{

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 import math
 
 class CustomStandardPagination(PageNumberPagination):
-    page_size = 20 # default page size
+    page_size = 25 # default page size
     max_page_size = 1000 # default max page size
     page_size_query_param = 'limit' # if you want to dynamic items per page from request you must have to add it 
       
