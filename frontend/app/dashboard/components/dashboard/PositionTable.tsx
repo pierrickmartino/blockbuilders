@@ -16,7 +16,7 @@ import {
   CreditScore,
   Payment,
   ReportGmailerrorred,
-  Visibility,
+  // Visibility,
   Report,
   Edit,
 } from "@mui/icons-material";
@@ -58,33 +58,36 @@ const PositionTable: React.FC<PositionTableProps> = ({
   //   console.log("Positions in PositionTable:", positions); // Log positions inside PositionTable
   // }, [positions]);
 
-  const positionMenuItems = [
-    {
-      title: "See details",
-      key: "position-details",
-      value: "position-details",
-      button: <Visibility fontSize="small" />,
-    },
-  ];
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedPositionId, setSelectedPositionId] = useState<string | null>(
-    null
-  );
-  const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
+  // const positionMenuItems = [
+  //   {
+  //     title: "See details",
+  //     key: "position-details",
+  //     value: "position-details",
+  //     button: <Visibility fontSize="small" />,
+  //   },
+  // ];
+  const [paginationModel, setPaginationModel] = React.useState({
+    pageSize: rowsPerPage,
+    page: page,
+  });
+  // const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  // const [selectedPositionId, setSelectedPositionId] = useState<string | null>(
+  //   null
+  // );
+  // const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [checkedStable, setCheckedStable] = React.useState(true);
   const [checkedSuspicious, setCheckedSuspicious] = React.useState(true);
-  const open = Boolean(anchorEl);
+  // const open = Boolean(anchorEl);
 
-  const handleClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    position_id: string,
-    wallet_id: string
-  ) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedPositionId(position_id);
-    setSelectedWalletId(wallet_id);
-  };
+  // const handleClick = (
+  //   event: React.MouseEvent<HTMLButtonElement>,
+  //   position_id: string,
+  //   wallet_id: string
+  // ) => {
+  //   setAnchorEl(event.currentTarget);
+  //   setSelectedPositionId(position_id);
+  //   setSelectedWalletId(wallet_id);
+  // };
 
   const handleChangeSuspicious = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -126,11 +129,11 @@ const PositionTable: React.FC<PositionTableProps> = ({
     onRowsPerPageChange(parseInt(event.target.value, 10)); // Call the passed prop to update the rows per page state
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-    setSelectedPositionId(null);
-    setSelectedWalletId(null);
-  };
+  // const handleClose = () => {
+  //   setAnchorEl(null);
+  //   setSelectedPositionId(null);
+  //   setSelectedWalletId(null);
+  // };
 
   // Handle navigation to wallet details
   const handleNavigateToDetails = (selectedPositionId: string) => {
@@ -333,10 +336,16 @@ const PositionTable: React.FC<PositionTableProps> = ({
               getRowClassName={(params) =>
                 params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
               }
-              initialState={{
-                pagination: { paginationModel: { pageSize: 25 } },
-              }}
+              // initialState={{
+              //   pagination: { paginationModel: { pageSize: rowsPerPage, page: page } },
+              // }}
+              
               pageSizeOptions={[10, 25, 50]}
+              rowCount={totalCount}
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+              paginationMode="server"
+
               disableColumnResize
               density="compact"
               slotProps={{
