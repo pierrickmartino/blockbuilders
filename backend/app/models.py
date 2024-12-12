@@ -1,12 +1,13 @@
 from datetime import datetime
 from django.db import models
+
 # from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 import uuid
 
 
 class UserManager(BaseUserManager):
-    
+
     def _create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("The Email field must be set.")
@@ -24,13 +25,13 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault("is_active", True)
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
-        
+
         return self._create_user(email, password, **extra_fields)
 
 
@@ -57,6 +58,13 @@ class BlockchainChoices(models.TextChoices):
 class TypeTransactionChoices(models.TextChoices):
     IN = "IN", "IN"
     OUT = "OUT", "OUT"
+
+
+class StatusTransactionChoices(models.TextChoices):
+    OPEN = "open", "Open"
+    INCREASE = "increase", "Increase"
+    DIMINUTION = "diminution", "Diminution"
+    CLOSE = "close", "Close"
 
 
 class CategoryContractChoices(models.TextChoices):
@@ -210,9 +218,9 @@ class Contract(models.Model):
     )  # Reference to the blockchain
     name = models.CharField(max_length=255)  # Name of the contract
     symbol = models.CharField(max_length=50)  # Symbol of the contract
-    relative_symbol = models.CharField(max_length=50, default="")  # Symbol of the contract
+    relative_symbol = models.CharField(max_length=50, default="", blank=True)  # Symbol of the contract
     address = models.CharField(max_length=255)  # Unique address of the contract
-    logo_uri = models.CharField(max_length=255, default="")  # Logo URI of the contract
+    logo_uri = models.CharField(max_length=255, default="", blank=True)  # Logo URI of the contract
     decimals = models.IntegerField(default=0)  # Decimals used to calculate quantity of the contract
 
     price = models.DecimalField(max_digits=15, decimal_places=8, default=0)
@@ -387,6 +395,9 @@ class Transaction(TimeStampModel):
         blank=True,
         null=True,
     )
+
+    status = models.CharField(max_length=20, choices=StatusTransactionChoices.choices, blank=True)
+    status_value = models.DecimalField(max_digits=24, decimal_places=8, default=0, blank=True)
 
     class Meta:
         verbose_name = "Transaction"

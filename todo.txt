@@ -12,15 +12,11 @@
 - transaction - ajouter un widget avec les informations du contract 
 - transaction - déplacer le MarketPrice sur un widget graphique montrant l'évolution du prix 
 - transaction - déplacer le filtrage pour mieux l'intégrer au reste de la page
-- transaction - fix - pagination et dernier item de la page qui reste
 - transaction - afficher le statut de la position en cours et sa variation (ex. OPEN, INCREASE +5%)
 - transaction - fix - augmentation sans limite sur la page générique
 
 - position - déplacer le filtrage pour mieux l'intégrer au reste de la page
-- position - fix - pagination et dernier item de la page qui reste
-- position - fix - lien vers la page de transactions
 - position - ajouter les indicateurs tels que EMA, RSI, etc...
-- position - matérialiser l'ouverture d'une position et sa fermeture totale ou progressive (OPEN, CLOSE, INCREASE, REDUCTION)
 - position - fix - augmentation sans limite sur la page générique
 
 - backend - reconnaitre les contrats qui sont des "utilities" en ne plus les valoriser

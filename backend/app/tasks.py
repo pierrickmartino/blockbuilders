@@ -37,6 +37,7 @@ from app.models import (
     MarketData,
     Position,
     PositionCalculator,
+    StatusTransactionChoices,
     TaskStatusChoices,
     Transaction,
     TransactionCalculator,
@@ -892,14 +893,18 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
                     if (running_quantity * price) < 1:
                         total_cost = cost_price_based
                         buy_quantity = transaction.quantity
+                        transaction.status = StatusTransactionChoices.OPEN
                     else:
                         total_cost += cost_price_based
                         buy_quantity += transaction.quantity
+                        transaction.status = StatusTransactionChoices.INCREASE
                     # Then update the running_quantity
                     running_quantity += transaction.quantity
                 elif transaction.type == TypeTransactionChoices.OUT:
                     running_quantity -= transaction.quantity
                     sell_quantity += transaction.quantity
+                    transaction.status = StatusTransactionChoices.CLOSE if (running_quantity * price) < 1 else StatusTransactionChoices.DIMINUTION
+                    
 
                 price_contract_based = transaction.price_contract_based
                 price = transaction.price
@@ -916,6 +921,11 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
                 transaction.buy_quantity = buy_quantity
                 transaction.sell_quantity = sell_quantity
                 transaction.total_cost = total_cost
+
+                quantity_to_consider = transaction.quantity if transaction.status == StatusTransactionChoices.INCREASE else -transaction.quantity 
+                transaction.status_value = transaction.quantity / (transaction.running_quantity - quantity_to_consider) * 100 if transaction.status == StatusTransactionChoices.DIMINUTION or transaction.status == StatusTransactionChoices.INCREASE else 0
+                 
+                # Save the transaction 
                 transaction.save()
 
                 calculator = TransactionCalculator(transaction)

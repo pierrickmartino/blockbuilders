@@ -128,4 +128,6 @@ class TransactionSerializer(serializers.ModelSerializer):
             "against_contract",
             "against_fiat",
             "position",
+            "status",
+            "status_value"
         ]

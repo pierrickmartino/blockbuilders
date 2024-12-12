@@ -76,6 +76,8 @@ class Transaction_Admin(admin.ModelAdmin):
         "total_cost_fiat_based",
         "against_contract",
         "against_fiat",
+        "status",
+        "status_value"
     )
 
 class MarketData_Admin(admin.ModelAdmin):

@@ -82,4 +82,6 @@ export type Transaction = {
   capital_gain: number;
   against_contract: Contract;
   against_fiat: Fiat;
+  status: string;
+  status_value: number;
 };

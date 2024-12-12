@@ -4,11 +4,12 @@ import { Typography, Box, Stack, Button, Chip } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 import formatDate from "@/app/utils/formatDate";
 import { Transaction } from "../../../lib/definition";
-import { Download, Link as LinkIcon } from "@mui/icons-material";
+import { Add, Download, Link as LinkIcon, Remove, TrendingDown, TrendingUp } from "@mui/icons-material";
 import { exportTransactions } from "@/app/lib/export-transaction";
 import { saveAs } from "file-saver";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
+import capitalizeFirstLetter from "@/app/utils/capitalizeFirstLetter";
 
 // Define the props type that will be passed into WalletTable
 interface TransactionTableProps {
@@ -142,16 +143,47 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     );
   }
 
+  function renderStatus(
+    status_label: string,
+    status_value: number
+  ) {
+
+    const label = status_label == "close" || status_label == "open" ? capitalizeFirstLetter(status_label) : formatNumber(status_value, "percentage")
+    const sign = status_label == "diminution" ? "-" : status_label == "increase" ? "+" : ""
+    const color = status_label == "close" || status_label == "diminution" ? "error" : status_label == "open" || status_label == "increase" ? "success" : "default"
+
+    return (
+      <Chip
+        // {...(status_label === "increase" && { icon: <TrendingUp /> })}
+        // {...(status_label === "diminution" && { icon: <TrendingDown /> })}
+        label={sign + " " + label}
+        color={color}
+        size="small"
+      />
+    );
+  }
+
   const columns: GridColDef[] = [
     {
       field: "position",
       headerName: "Position",
-      flex: 1.5,
-      minWidth: 150,
+      flex: 1,
+      minWidth: 100,
       renderCell: (params) =>
         renderPosition(
           params.row.position.contract.symbol,
           params.row.against_contract?.symbol
+        ),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) =>
+        renderStatus(
+          params.row.status,
+          params.row.status_value
         ),
     },
     {
@@ -216,7 +248,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
       headerAlign: "right",
       align: "right",
       flex: 1,
-      minWidth: 120,
+      minWidth: 100,
       renderCell: (params) => renderChipAmount(params.value, "currency"),
     },
     {
