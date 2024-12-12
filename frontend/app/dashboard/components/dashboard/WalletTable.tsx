@@ -157,11 +157,11 @@ const WalletTable: React.FC<WalletTableProps> = ({
   }
 
   const columns: GridColDef[] = [
-    { field: "name", headerName: "Name", flex: 1.5, minWidth: 150 },
+    { field: "name", headerName: "Name", flex: 1, minWidth: 150 },
     {
       field: "description",
       headerName: "Description",
-      flex: 1,
+      flex: 1.5,
       minWidth: 150,
       renderCell: renderGreyString,
     },

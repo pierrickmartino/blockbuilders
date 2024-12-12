@@ -19,7 +19,7 @@ const BasicCard = ({ title, subtitle, children, action }: Props) => {
           <Stack direction="row" sx={{ justifyContent: "space-between" }}>
             <Stack direction="column" sx={{ justifyContent: "space-between" }}>
               {title ? (
-                <Typography component="h2" variant="subtitle2" gutterBottom>
+                <Typography variant="subtitle2" gutterBottom>
                   {title}
                 </Typography>
               ) : (

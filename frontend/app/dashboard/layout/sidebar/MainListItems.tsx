@@ -2,11 +2,12 @@ import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import AnalyticsRoundedIcon from "@mui/icons-material/AnalyticsRounded";
 
 import {
+  AcUnitRounded,
   AdjustRounded,
   AppsRounded,
-  ArrowRightRounded,
   ReceiptLongRounded,
   TimelineRounded,
+  WhatshotRounded,
 } from "@mui/icons-material";
 
 const mainListItems = [
@@ -38,8 +39,13 @@ const mainListItems = [
   },
   {
     text: "Alerts",
-    icon: <ArrowRightRounded />,
+    icon: <AcUnitRounded />,
     href: "/dashboard/ui-components/alerts",
+  },
+  {
+    text: "Typographies",
+    icon: <WhatshotRounded />,
+    href: "/dashboard/ui-components/typographies",
   },
 ];
 export default mainListItems;
