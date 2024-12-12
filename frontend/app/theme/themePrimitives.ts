@@ -39,29 +39,29 @@ const defaultTheme = createTheme();
 const customShadows: Shadows = [...defaultTheme.shadows];
 
 export const brand = {
-  50: 'hsl(210, 100%, 95%)',
-  100: 'hsl(210, 100%, 92%)',
-  200: 'hsl(210, 100%, 80%)',
-  300: 'hsl(210, 100%, 65%)',
-  400: 'hsl(210, 98%, 48%)',
-  500: 'hsl(210, 98%, 42%)',
-  600: 'hsl(210, 98%, 55%)',
-  700: 'hsl(210, 100%, 35%)',
-  800: 'hsl(210, 100%, 16%)',
-  900: 'hsl(210, 100%, 21%)',
+  50: 'hsl(210, 100%, 97%)',
+  100: 'hsl(210, 100%, 94%)',
+  200: 'hsl(210, 100%, 87%)',
+  300: 'hsl(210, 100%, 77%)',
+  400: 'hsl(210, 98%, 53%)',
+  500: 'hsl(210, 98%, 30%)',
+  600: 'hsl(210, 98%, 25%)',
+  700: 'hsl(210, 100%, 18%)',
+  800: 'hsl(210, 100%, 12%)',
+  900: 'hsl(210, 100%, 6%)',
 };
 
 export const gray = {
   50: 'hsl(220, 35%, 97%)',
   100: 'hsl(220, 30%, 94%)',
-  200: 'hsl(220, 20%, 88%)',
-  300: 'hsl(220, 20%, 80%)',
-  400: 'hsl(220, 20%, 65%)',
-  500: 'hsl(220, 20%, 42%)',
-  600: 'hsl(220, 20%, 35%)',
-  700: 'hsl(220, 20%, 25%)',
-  800: 'hsl(220, 30%, 6%)',
-  900: 'hsl(220, 35%, 3%)',
+  200: 'hsl(220, 20%, 87%)',
+  300: 'hsl(220, 20%, 77%)',
+  400: 'hsl(220, 20%, 53%)',
+  500: 'hsl(220, 20%, 30%)',
+  600: 'hsl(220, 20%, 25%)',
+  700: 'hsl(220, 20%, 18%)',
+  800: 'hsl(220, 30%, 12%)',
+  900: 'hsl(220, 35%, 6%)',
 };
 
 export const green = {
@@ -72,35 +72,48 @@ export const green = {
   400: 'hsl(120, 44%, 53%)',
   500: 'hsl(120, 59%, 30%)',
   600: 'hsl(120, 70%, 25%)',
-  700: 'hsl(120, 75%, 16%)',
-  800: 'hsl(120, 84%, 10%)',
+  700: 'hsl(120, 75%, 18%)',
+  800: 'hsl(120, 84%, 12%)',
   900: 'hsl(120, 87%, 6%)',
 };
 
 export const orange = {
   50: 'hsl(45, 100%, 97%)',
-  100: 'hsl(45, 92%, 90%)',
-  200: 'hsl(45, 94%, 80%)',
-  300: 'hsl(45, 90%, 65%)',
-  400: 'hsl(45, 90%, 40%)',
-  500: 'hsl(45, 90%, 35%)',
+  100: 'hsl(45, 92%, 94%)',
+  200: 'hsl(45, 94%, 87%)',
+  300: 'hsl(45, 90%, 77%)',
+  400: 'hsl(45, 90%, 53%)',
+  500: 'hsl(45, 90%, 30%)',
   600: 'hsl(45, 91%, 25%)',
-  700: 'hsl(45, 94%, 20%)',
-  800: 'hsl(45, 95%, 16%)',
-  900: 'hsl(45, 93%, 12%)',
+  700: 'hsl(45, 94%, 18%)',
+  800: 'hsl(45, 95%, 12%)',
+  900: 'hsl(45, 93%, 6%)',
 };
 
 export const red = {
   50: 'hsl(0, 100%, 97%)',
-  100: 'hsl(0, 92%, 90%)',
-  200: 'hsl(0, 94%, 80%)',
-  300: 'hsl(0, 90%, 65%)',
-  400: 'hsl(0, 90%, 40%)',
+  100: 'hsl(0, 92%, 94%)',
+  200: 'hsl(0, 94%, 87%)',
+  300: 'hsl(0, 90%, 77%)',
+  400: 'hsl(0, 90%, 53%)',
   500: 'hsl(0, 90%, 30%)',
   600: 'hsl(0, 91%, 25%)',
   700: 'hsl(0, 94%, 18%)',
   800: 'hsl(0, 95%, 12%)',
   900: 'hsl(0, 93%, 6%)',
+};
+
+export const purple = {
+  50: 'hsl(275, 100%, 97%)',
+  100: 'hsl(275, 92%, 94%)',
+  200: 'hsl(275, 94%, 87%)',
+  300: 'hsl(275, 90%, 77%)',
+  400: 'hsl(275, 90%, 53%)',
+  500: 'hsl(275, 90%, 30%)',
+  600: 'hsl(275, 91%, 25%)',
+  700: 'hsl(275, 94%, 18%)',
+  800: 'hsl(275, 95%, 12%)',
+  900: 'hsl(275, 93%, 6%)',
 };
 
 export const getDesignTokens = (mode: PaletteMode) => {
@@ -113,9 +126,9 @@ export const getDesignTokens = (mode: PaletteMode) => {
     palette: {
       mode,
       primary: {
-        light: brand[200],
+        light: brand[300],
         main: brand[400],
-        dark: brand[700],
+        dark: brand[600],
         contrastText: brand[50],
         ...(mode === 'dark' && {
           contrastText: brand[50],
@@ -125,8 +138,8 @@ export const getDesignTokens = (mode: PaletteMode) => {
         }),
       },
       info: {
-        light: brand[100],
-        main: brand[300],
+        light: brand[300],
+        main: brand[400],
         dark: brand[600],
         contrastText: gray[50],
         ...(mode === 'dark' && {
@@ -139,7 +152,8 @@ export const getDesignTokens = (mode: PaletteMode) => {
       warning: {
         light: orange[300],
         main: orange[400],
-        dark: orange[800],
+        dark: orange[600],
+        contrastText: orange[50],
         ...(mode === 'dark' && {
           light: orange[400],
           main: orange[500],
@@ -149,7 +163,8 @@ export const getDesignTokens = (mode: PaletteMode) => {
       error: {
         light: red[300],
         main: red[400],
-        dark: red[800],
+        dark: red[600],
+        contrastText: red[50],
         ...(mode === 'dark' && {
           light: red[400],
           main: red[500],
@@ -159,7 +174,8 @@ export const getDesignTokens = (mode: PaletteMode) => {
       success: {
         light: green[300],
         main: green[400],
-        dark: green[800],
+        dark: green[600],
+        contrastText: green[50],
         ...(mode === 'dark' && {
           light: green[400],
           main: green[500],
@@ -261,31 +277,40 @@ export const colorSchemes = {
   light: {
     palette: {
       primary: {
-        light: brand[200],
+        light: brand[300],
         main: brand[400],
-        dark: brand[700],
+        dark: brand[600],
         contrastText: brand[50],
       },
+      secondary: {
+        light: purple[300],
+        main: purple[400],
+        dark: purple[600],
+        contrastText: purple[50],
+      },
       info: {
-        light: brand[100],
-        main: brand[300],
+        light: brand[300],
+        main: brand[400],
         dark: brand[600],
         contrastText: gray[50],
       },
       warning: {
         light: orange[300],
         main: orange[400],
-        dark: orange[800],
+        dark: orange[600],
+        contrastText: orange[50],
       },
       error: {
         light: red[300],
         main: red[400],
-        dark: red[800],
+        dark: red[600],
+        contrastText: red[50],
       },
       success: {
         light: green[300],
         main: green[400],
-        dark: green[800],
+        dark: green[600],
+        contrastText: green[50],
       },
       grey: {
         ...gray,
@@ -311,31 +336,40 @@ export const colorSchemes = {
   dark: {
     palette: {
       primary: {
-        contrastText: brand[50],
         light: brand[300],
         main: brand[400],
         dark: brand[700],
+        contrastText: brand[50],
+      },
+      secondary: {
+        light: purple[300],
+        main: purple[400],
+        dark: purple[600],
+        contrastText: purple[50],
       },
       info: {
-        contrastText: brand[300],
         light: brand[500],
         main: brand[700],
         dark: brand[900],
+        contrastText: brand[50],
       },
       warning: {
         light: orange[400],
         main: orange[500],
         dark: orange[700],
+        contrastText: orange[50],
       },
       error: {
         light: red[400],
         main: red[500],
         dark: red[700],
+        contrastText: red[50],
       },
       success: {
         light: green[400],
         main: green[500],
         dark: green[700],
+        contrastText: green[50],
       },
       grey: {
         ...gray,
@@ -366,46 +400,57 @@ export const typography = {
     fontWeight: 600,
     lineHeight: 1.2,
     letterSpacing: -0.5,
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
   h2: {
     fontSize: defaultTheme.typography.pxToRem(36),
     fontWeight: 600,
     lineHeight: 1.2,
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
   h3: {
     fontSize: defaultTheme.typography.pxToRem(30),
     lineHeight: 1.2,
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
   h4: {
     fontSize: defaultTheme.typography.pxToRem(24),
     fontWeight: 600,
     lineHeight: 1.5,
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
   h5: {
     fontSize: defaultTheme.typography.pxToRem(20),
     fontWeight: 600,
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
   h6: {
     fontSize: defaultTheme.typography.pxToRem(18),
     fontWeight: 600,
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
   subtitle1: {
     fontSize: defaultTheme.typography.pxToRem(18),
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
   subtitle2: {
     fontSize: defaultTheme.typography.pxToRem(14),
     fontWeight: 500,
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
   body1: {
     fontSize: defaultTheme.typography.pxToRem(14),
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
   body2: {
     fontSize: defaultTheme.typography.pxToRem(14),
     fontWeight: 400,
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
   caption: {
     fontSize: defaultTheme.typography.pxToRem(12),
     fontWeight: 400,
+    fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
   },
 };
 
