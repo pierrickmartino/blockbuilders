@@ -8,8 +8,7 @@ import {
   Avatar,
   Box,
 } from "@mui/material";
-
-import DashboardCard from "../shared/DashboardCard";
+import BasicCard from "../shared/BasicCard";
 
 
 const SalesOverview = () => {
@@ -76,7 +75,7 @@ const SalesOverview = () => {
   return (
     <Fragment>
 
-      <DashboardCard
+      <BasicCard
         title="Sales Overview"
         subtitle="Ample Admin Vs Pixel Admin"
         action={
@@ -127,7 +126,7 @@ const SalesOverview = () => {
             width={"100%"}
           />
         </Box>
-      </DashboardCard>
+      </BasicCard>
     </Fragment>
   );
 };

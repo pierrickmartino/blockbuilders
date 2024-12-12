@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 
 import {
   Typography,
-  Box,
   Table,
   TableBody,
   TableCell,
@@ -10,13 +9,12 @@ import {
   TableRow,
   TableContainer,
   TablePagination,
-  Stack,
   IconButton,
 } from "@mui/material";
-import BaseCard from "../shared/DashboardCard";
 import { Contract } from "../../../lib/definition";
 import formatNumber from "@/app/utils/formatNumber";
 import { IconDotsVertical } from "@tabler/icons-react";
+import BasicCard from "../shared/BasicCard";
 
 // Define the props type that will be passed into WalletTable
 interface ContractTableProps {
@@ -54,7 +52,7 @@ const ContractTable: React.FC<ContractTableProps> = ({
   };
 
   return (
-    <BaseCard
+    <BasicCard
       title="Contract History"
       subtitle="A detailed log of all recent contracts"
     >
@@ -151,7 +149,7 @@ const ContractTable: React.FC<ContractTableProps> = ({
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Fragment>
-    </BaseCard>
+    </BasicCard>
   );
 };
 

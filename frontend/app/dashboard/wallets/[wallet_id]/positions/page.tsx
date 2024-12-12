@@ -17,11 +17,11 @@ import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
 import formatNumber from "@/app/utils/formatNumber";
-import CustomCard from "@/app/dashboard/components/shared/CustomCard";
 import StatCard, {
   StatCardProps,
 } from "@/app/dashboard/components/dashboard/StatCard";
 import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
+import BasicCard from "@/app/dashboard/components/shared/BasicCard";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -155,7 +155,7 @@ const Positions = () => {
           <HighlightedCard />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <CustomCard title="Total Amount">
+          <BasicCard title="Total Amount">
             <Stack direction="row" justifyContent="flex-end" spacing={2}>
               {positions.length > 0 && positions[0]?.wallet ? (
                 <Typography color="textSecondary" variant="h3">
@@ -165,10 +165,10 @@ const Positions = () => {
                 <Typography>No data available</Typography> // Fallback if positions are not available
               )}
             </Stack>
-          </CustomCard>
+          </BasicCard>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <CustomCard title="Total Capital Gain">
+          <BasicCard title="Total Capital Gain">
             <Stack direction="row" justifyContent="flex-end" spacing={2}>
               {positions.length > 0 && positions[0]?.wallet ? (
                 <Typography color="textSecondary" variant="h3">
@@ -178,10 +178,10 @@ const Positions = () => {
                 <Typography>No data available</Typography> // Fallback if positions are not available
               )}
             </Stack>
-          </CustomCard>
+          </BasicCard>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <CustomCard title="Total Unrealized">
+          <BasicCard title="Total Unrealized">
             <Stack direction="row" justifyContent="flex-end" spacing={2}>
               {positions.length > 0 && positions[0]?.wallet ? (
                 <Typography color="textSecondary" variant="h3">
@@ -194,7 +194,7 @@ const Positions = () => {
                 <Typography>No data available</Typography> // Fallback if positions are not available
               )}
             </Stack>
-          </CustomCard>
+          </BasicCard>
         </Grid>
         <Grid size={{ xs: 12, lg: 12 }}>
           <Card variant="outlined" sx={{ p: 3 }}>

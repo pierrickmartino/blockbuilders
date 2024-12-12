@@ -24,11 +24,8 @@ import {
   setContractAsStable,
   setContractAsSuspicious,
 } from "@/app/lib/actions";
-import {
-  DataGrid,
-  GridActionsCellItem,
-  GridColDef,
-} from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
+import BasicCard from "../shared/BasicCard";
 
 // Define the props type that will be passed into WalletTable
 interface PositionTableProps {
@@ -311,74 +308,56 @@ const PositionTable: React.FC<PositionTableProps> = ({
   ];
 
   return (
-    <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
-      <CardContent>
-        <Stack
-          direction="column"
-          sx={{ justifyContent: "space-between", flexGrow: 1, gap: 1 }}
-        >
-          <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-            <Stack direction="column" sx={{ justifyContent: "space-between" }}>
-              <Typography component="h2" variant="subtitle2" gutterBottom>
-                Wallet Positions
-              </Typography>
+    <BasicCard
+      title="Wallet Positions"
+      subtitle="Detailed view of asset quantities and performance"
+    >
+      <DataGrid
+        checkboxSelection
+        rows={positions}
+        columns={columns}
+        getRowClassName={(params) =>
+          params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+        }
+        // initialState={{
+        //   pagination: { paginationModel: { pageSize: rowsPerPage, page: page } },
+        // }}
 
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                Detailed view of asset quantities and performance
-              </Typography>
-            </Stack>
-          </Stack>
-          <Box>
-            <DataGrid
-              checkboxSelection
-              rows={positions}
-              columns={columns}
-              getRowClassName={(params) =>
-                params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
-              }
-              // initialState={{
-              //   pagination: { paginationModel: { pageSize: rowsPerPage, page: page } },
-              // }}
-              
-              pageSizeOptions={[10, 25, 50]}
-              rowCount={totalCount}
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-              paginationMode="server"
-
-              disableColumnResize
-              density="compact"
-              slotProps={{
-                filterPanel: {
-                  filterFormProps: {
-                    logicOperatorInputProps: {
-                      variant: "outlined",
-                      size: "small",
-                    },
-                    columnInputProps: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { mt: "auto" },
-                    },
-                    operatorInputProps: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { mt: "auto" },
-                    },
-                    valueInputProps: {
-                      InputComponentProps: {
-                        variant: "outlined",
-                        size: "small",
-                      },
-                    },
-                  },
+        pageSizeOptions={[10, 25, 50]}
+        rowCount={totalCount}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        paginationMode="server"
+        disableColumnResize
+        density="compact"
+        slotProps={{
+          filterPanel: {
+            filterFormProps: {
+              logicOperatorInputProps: {
+                variant: "outlined",
+                size: "small",
+              },
+              columnInputProps: {
+                variant: "outlined",
+                size: "small",
+                sx: { mt: "auto" },
+              },
+              operatorInputProps: {
+                variant: "outlined",
+                size: "small",
+                sx: { mt: "auto" },
+              },
+              valueInputProps: {
+                InputComponentProps: {
+                  variant: "outlined",
+                  size: "small",
                 },
-              }}
-            />
-          </Box>
-        </Stack>
-      </CardContent>
-    </Card>
+              },
+            },
+          },
+        }}
+      />
+    </BasicCard>
   );
 };
 

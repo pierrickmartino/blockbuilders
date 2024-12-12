@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import {Grid} from '@mui/material'
-import BaseCard from '../../components/shared/BaseCard';
+import BasicCard from '../../components/shared/BasicCard';
 
 export default function BasicRating() {
   const [value, setValue] = React.useState<number | null>(2);
@@ -13,7 +13,7 @@ export default function BasicRating() {
 
     <Grid container spacing={3}>
       <Grid item xs={12} lg={12}>
-        <BaseCard title="Basic rating">
+        <BasicCard title="Basic rating">
           <Box
             sx={{
               '& > legend': { mt: 2 },
@@ -35,7 +35,7 @@ export default function BasicRating() {
             <Rating name="no-value" value={null} />
           </Box>
 
-        </BaseCard>
+        </BasicCard>
       </Grid>
     </Grid>
 

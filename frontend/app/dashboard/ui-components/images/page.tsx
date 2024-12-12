@@ -2,7 +2,6 @@
 import { Grid, ImageList, ImageListItem
   // ,   Paper 
 } from "@mui/material";
-import BaseCard from "../../components/shared/BaseCard";
 import Image from "next/image";
 
 import img1 from "/public/images/backgrounds/blog-img2.jpg";
@@ -12,6 +11,7 @@ import img4 from "/public/images/backgrounds/blog-img5.jpg";
 import img5 from "/public/images/backgrounds/blog-img6.jpg";
 import img6 from "/public/images/backgrounds/blog-img10.jpg";
 import img7 from "/public/images/backgrounds/blog-img1.jpg";
+import BasicCard from "../../components/shared/BasicCard";
 const itemData = [
   {
     img: img1,
@@ -61,7 +61,7 @@ const Images = () => {
   return (
     <Grid container spacing={0}>
       <Grid item xs={12} lg={12}>
-        <BaseCard title="Grid Image">
+        <BasicCard title="Grid Image">
           <ImageList variant="quilted" cols={4} rowHeight={121}>
             {itemData.map((itemimg, index) => (
               <ImageListItem
@@ -82,7 +82,7 @@ const Images = () => {
               </ImageListItem>
             ))}
           </ImageList>
-        </BaseCard>
+        </BasicCard>
       </Grid>
     </Grid>
   );

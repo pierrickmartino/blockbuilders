@@ -1,17 +1,16 @@
 'use client';
 import PageContainer from '../components/container/PageContainer';
-import DashboardCard from '../components/shared/DashboardCard';
-
+import BasicCard from '../components/shared/BasicCard';
 
 const Icons = () => {
   return (
     <PageContainer title="Icons" description="this is Icons">
 
-      <DashboardCard title="Icons">
+      <BasicCard title="Icons">
       <iframe src="https://tabler-icons.io/"  title="Inline Frame Example" frameBorder={0}
     width="100%"
     height="650"></iframe>
-      </DashboardCard>
+      </BasicCard>
     </PageContainer>
   );
 };

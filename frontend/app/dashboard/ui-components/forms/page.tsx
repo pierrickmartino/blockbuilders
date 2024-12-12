@@ -13,14 +13,14 @@ import {
     FormControl,
     Button,
 } from '@mui/material'
-import BaseCard from '../../components/shared/BaseCard';
 import { Fragment } from 'react';
+import BasicCard from '../../components/shared/BasicCard';
 
 const Forms = () => {
     return (
       <Grid container spacing={3}>
         <Grid item xs={12} lg={12}>
-          <BaseCard title="Form Layout">
+          <BasicCard title="Form Layout">
             <Fragment>
             <Stack spacing={3}>
               <TextField
@@ -91,11 +91,11 @@ const Forms = () => {
               Submit
             </Button>
             </Fragment>
-          </BaseCard>
+          </BasicCard>
         </Grid>
   
         <Grid item xs={12} lg={12}>
-          <BaseCard title="Form Design Type">
+          <BasicCard title="Form Design Type">
             <Stack spacing={3} direction="row">
               <TextField
                 id="outlined-basic"
@@ -109,7 +109,7 @@ const Forms = () => {
                 variant="standard"
               />
             </Stack>
-          </BaseCard>
+          </BasicCard>
         </Grid>
       </Grid>
     );

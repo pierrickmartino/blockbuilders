@@ -16,7 +16,6 @@ import { fetchTransactions, fetchTransactionsWithSearch } from "@/app/lib/data";
 import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
-import CustomCard from "@/app/dashboard/components/shared/CustomCard";
 import formatNumber from "@/app/utils/formatNumber";
 import {
   ArrowDropDown,
@@ -28,6 +27,7 @@ import StatCard, {
   StatCardProps,
 } from "@/app/dashboard/components/dashboard/StatCard";
 import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
+import BasicCard from "@/app/dashboard/components/shared/BasicCard";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -287,7 +287,7 @@ const Transactions = () => {
           </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <CustomCard title="Performance">
+          <BasicCard title="Performance">
             {transactions.length > 0 && transactions[0]?.position ? (
               <Stack>
                 <Stack
@@ -508,7 +508,7 @@ const Transactions = () => {
             )}
             {/* </Stack> */}
             {/* </Stack> */}
-          </CustomCard>
+          </BasicCard>
         </Grid>
         <Grid size={{ xs: 12, lg: 12 }}>
           <Card variant="outlined" sx={{ p: 3 }}>

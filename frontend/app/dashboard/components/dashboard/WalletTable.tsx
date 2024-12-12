@@ -26,6 +26,7 @@ import {
   GridColDef,
   GridRenderCellParams,
 } from "@mui/x-data-grid";
+import BasicCard from "../shared/BasicCard";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
@@ -261,70 +262,52 @@ const WalletTable: React.FC<WalletTableProps> = ({
   );
 
   return (
-    <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}> 
-      <CardContent>
-        <Stack
-          direction="column"
-          sx={{ justifyContent: "space-between", flexGrow: 1, gap: 1 }}
-        >
-          <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-            <Stack direction="column" sx={{ justifyContent: "space-between" }}>
-              <Typography component="h2" variant="subtitle2" gutterBottom>
-                Wallet Overview
-              </Typography>
-
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                Track balances, performance, and key metrics across your wallets
-              </Typography>
-            </Stack>
-            {action}
-          </Stack>
-
-          <Box>
-            <DataGrid
-              checkboxSelection
-              rows={wallets}
-              columns={columns}
-              getRowClassName={(params) =>
-                params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
-              }
-              initialState={{
-                pagination: { paginationModel: { pageSize: 10 } },
-              }}
-              pageSizeOptions={[10, 20, 50]}
-              disableColumnResize
-              density="compact"
-              slotProps={{
-                filterPanel: {
-                  filterFormProps: {
-                    logicOperatorInputProps: {
-                      variant: "outlined",
-                      size: "small",
-                    },
-                    columnInputProps: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { mt: "auto" },
-                    },
-                    operatorInputProps: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { mt: "auto" },
-                    },
-                    valueInputProps: {
-                      InputComponentProps: {
-                        variant: "outlined",
-                        size: "small",
-                      },
-                    },
-                  },
+    <BasicCard
+      title="Wallet Overview"
+      subtitle="Track balances, performance, and key metrics across your wallets"
+      action={action}
+    >
+      <DataGrid
+        checkboxSelection
+        rows={wallets}
+        columns={columns}
+        getRowClassName={(params) =>
+          params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+        }
+        initialState={{
+          pagination: { paginationModel: { pageSize: 10 } },
+        }}
+        pageSizeOptions={[10, 20, 50]}
+        disableColumnResize
+        density="compact"
+        slotProps={{
+          filterPanel: {
+            filterFormProps: {
+              logicOperatorInputProps: {
+                variant: "outlined",
+                size: "small",
+              },
+              columnInputProps: {
+                variant: "outlined",
+                size: "small",
+                sx: { mt: "auto" },
+              },
+              operatorInputProps: {
+                variant: "outlined",
+                size: "small",
+                sx: { mt: "auto" },
+              },
+              valueInputProps: {
+                InputComponentProps: {
+                  variant: "outlined",
+                  size: "small",
                 },
-              }}
-            />
-          </Box>
-        </Stack>
-      </CardContent>
-    </Card>
+              },
+            },
+          },
+        }}
+      />
+    </BasicCard>
   );
 };
 

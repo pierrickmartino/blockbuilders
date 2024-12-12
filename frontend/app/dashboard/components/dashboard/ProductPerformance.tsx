@@ -10,7 +10,7 @@ import {
   Chip,
   TableContainer,
 } from "@mui/material";
-import BaseCard from "../shared/DashboardCard";
+import BasicCard from "../shared/BasicCard";
 
 const products = [
   {
@@ -53,7 +53,7 @@ const products = [
 
 const ProductPerfomance = () => {
   return (
-    <BaseCard title="Basic Table">
+    <BasicCard title="Basic Table">
       <TableContainer
         sx={{
           width: {
@@ -143,7 +143,7 @@ const ProductPerfomance = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </BaseCard>
+    </BasicCard>
   );
 };
 

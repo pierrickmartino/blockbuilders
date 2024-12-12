@@ -16,6 +16,7 @@ import { Download, Link as LinkIcon } from "@mui/icons-material";
 import { exportTransactions } from "@/app/lib/export-transaction";
 import { saveAs } from "file-saver";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
+import BasicCard from "../shared/BasicCard";
 
 // Define the props type that will be passed into WalletTable
 interface TransactionTableProps {
@@ -260,70 +261,52 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   );
 
   return (
-    <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
-      <CardContent>
-        <Stack
-          direction="column"
-          sx={{ justifyContent: "space-between", flexGrow: 1, gap: 1 }}
-        >
-          <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-            <Stack direction="column" sx={{ justifyContent: "space-between" }}>
-              <Typography component="h2" variant="subtitle2" gutterBottom>
-                Transaction History
-              </Typography>
-
-              <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                A detailed log of all recent transactions and movements
-              </Typography>
-            </Stack>
-            {action}
-          </Stack>
-
-          <Box>
-            <DataGrid
-              checkboxSelection
-              rows={transactions}
-              columns={columns}
-              getRowClassName={(params) =>
-                params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
-              }
-              initialState={{
-                pagination: { paginationModel: { pageSize: 25 } },
-              }}
-              pageSizeOptions={[10, 25, 50]}
-              disableColumnResize
-              density="compact"
-              slotProps={{
-                filterPanel: {
-                  filterFormProps: {
-                    logicOperatorInputProps: {
-                      variant: "outlined",
-                      size: "small",
-                    },
-                    columnInputProps: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { mt: "auto" },
-                    },
-                    operatorInputProps: {
-                      variant: "outlined",
-                      size: "small",
-                      sx: { mt: "auto" },
-                    },
-                    valueInputProps: {
-                      InputComponentProps: {
-                        variant: "outlined",
-                        size: "small",
-                      },
-                    },
-                  },
+    <BasicCard
+      title="Transaction History"
+      subtitle="A detailed log of all recent transactions and movements"
+      action={action}
+    >
+      <DataGrid
+        checkboxSelection
+        rows={transactions}
+        columns={columns}
+        getRowClassName={(params) =>
+          params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+        }
+        initialState={{
+          pagination: { paginationModel: { pageSize: 25 } },
+        }}
+        pageSizeOptions={[10, 25, 50]}
+        disableColumnResize
+        density="compact"
+        slotProps={{
+          filterPanel: {
+            filterFormProps: {
+              logicOperatorInputProps: {
+                variant: "outlined",
+                size: "small",
+              },
+              columnInputProps: {
+                variant: "outlined",
+                size: "small",
+                sx: { mt: "auto" },
+              },
+              operatorInputProps: {
+                variant: "outlined",
+                size: "small",
+                sx: { mt: "auto" },
+              },
+              valueInputProps: {
+                InputComponentProps: {
+                  variant: "outlined",
+                  size: "small",
                 },
-              }}
-            />
-          </Box>
-        </Stack>
-      </CardContent>
-    </Card>
+              },
+            },
+          },
+        }}
+      />
+    </BasicCard>
   );
 };
 
