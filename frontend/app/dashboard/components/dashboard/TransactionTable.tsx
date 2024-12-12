@@ -1,14 +1,6 @@
 import React, { Fragment } from "react";
 
-import {
-  Typography,
-  Box,
-  Stack,
-  Button,
-  Chip,
-  Card,
-  CardContent,
-} from "@mui/material";
+import { Typography, Box, Stack, Button, Chip } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 import formatDate from "@/app/utils/formatDate";
 import { Transaction } from "../../../lib/definition";
@@ -36,17 +28,28 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   onPageChange,
   onRowsPerPageChange,
 }) => {
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    onPageChange(newPage); // Call the passed prop to update the page state in the parent
-  };
+  const [paginationModel, setPaginationModel] = React.useState({
+    pageSize: rowsPerPage,
+    page: page,
+  });
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    onRowsPerPageChange(parseInt(event.target.value, 10)); // Call the passed prop to update the rows per page state
+  const handlePaginationModelChange = (model: {
+    page: number;
+    pageSize: number;
+  }) => {
+    // console.log(
+    //   "Child paginationModelChange:",
+    //   model.page,
+    //   "PageSize:",
+    //   model.pageSize
+    // );
+    setPaginationModel(model);
+    if (model.page !== page) {
+      onPageChange(model.page); // Notify parent of page change
+    }
+    if (model.pageSize !== rowsPerPage) {
+      onRowsPerPageChange(model.pageSize); // Notify parent of rows per page change
+    }
   };
 
   const handleNavigateToExplorer = (url: string, id: string) => {
@@ -273,11 +276,14 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
         }
-        initialState={{
-          pagination: { paginationModel: { pageSize: 25 } },
-        }}
+        pagination
         pageSizeOptions={[10, 25, 50]}
+        rowCount={totalCount}
+        paginationModel={{ page: page, pageSize: rowsPerPage }}
+        onPaginationModelChange={handlePaginationModelChange}
+        paginationMode="server"
         disableColumnResize
+        disableColumnSorting
         density="compact"
         slotProps={{
           filterPanel: {

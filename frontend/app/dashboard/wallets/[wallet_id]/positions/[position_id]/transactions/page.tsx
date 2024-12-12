@@ -55,7 +55,7 @@ const Transactions = () => {
 
   useEffect(() => {
     fetchTransactionData();
-  }, [fetchTransactionData]); // Include fetchTransactionData as a dependency
+  }, [page, rowsPerPage, fetchTransactionData]); // Include fetchTransactionData as a dependency
 
   const fetchTransactionDataWithSearch = async (searchTerm: string) => {
     if (position_id && wallet_id) {
@@ -73,11 +73,13 @@ const Transactions = () => {
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage); // Update page state
+    fetchTransactionData();
   };
 
   const handleRowsPerPageChange = (newRowsPerPage: number) => {
     setRowsPerPage(newRowsPerPage); // Update rows per page state
     setPage(0); // Reset page to 0 whenever rows per page changes
+    fetchTransactionData();
   };
 
   const handleSearch = (searchTerm: string) => {

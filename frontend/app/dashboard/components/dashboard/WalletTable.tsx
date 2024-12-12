@@ -5,9 +5,6 @@ import {
   Box,
   Chip,
   Button,
-  Card,
-  CardContent,
-  Stack,
 } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 import { Wallet } from "@/app/lib/definition";
@@ -56,17 +53,28 @@ const WalletTable: React.FC<WalletTableProps> = ({
   onWalletFullRefreshed,
   onCreateWallet,
 }) => {
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    onPageChange(newPage); // Call the passed prop to update the page state in the parent
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    onRowsPerPageChange(parseInt(event.target.value, 10)); // Call the passed prop to update the rows per page state
+  const [paginationModel, setPaginationModel] = React.useState({
+    pageSize: rowsPerPage,
+    page: page,
+  });
+  
+  const handlePaginationModelChange = (model: {
+    page: number;
+    pageSize: number;
+  }) => {
+    // console.log(
+    //   "Child paginationModelChange:",
+    //   model.page,
+    //   "PageSize:",
+    //   model.pageSize
+    // );
+    setPaginationModel(model);
+    if (model.page !== page) {
+      onPageChange(model.page); // Notify parent of page change
+    }
+    if (model.pageSize !== rowsPerPage) {
+      onRowsPerPageChange(model.pageSize); // Notify parent of rows per page change
+    }
   };
 
   // Handle navigation to wallet details
@@ -274,11 +282,14 @@ const WalletTable: React.FC<WalletTableProps> = ({
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
         }
-        initialState={{
-          pagination: { paginationModel: { pageSize: 10 } },
-        }}
-        pageSizeOptions={[10, 20, 50]}
+        pagination
+        pageSizeOptions={[10, 25, 50]}
+        rowCount={totalCount}
+        paginationModel={{ page: page, pageSize: rowsPerPage }}
+        onPaginationModelChange={handlePaginationModelChange}
+        paginationMode="server"
         disableColumnResize
+        disableColumnSorting
         density="compact"
         slotProps={{
           filterPanel: {

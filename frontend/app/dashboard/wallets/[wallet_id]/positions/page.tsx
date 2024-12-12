@@ -46,7 +46,7 @@ const Positions = () => {
 
   useEffect(() => {
     fetchPositionData();
-  }, [fetchPositionData]);
+  }, [page, rowsPerPage, fetchPositionData]);
 
   const fetchPositionDataWithSearch = async (searchTerm: string) => {
     if (wallet_id) {
@@ -62,12 +62,16 @@ const Positions = () => {
   };
 
   const handlePageChange = (newPage: number) => {
+    // console.log("Parent handlePageChange called with:", newPage);
     setPage(newPage); // Update page state
+    fetchPositionData();
   };
 
   const handleRowsPerPageChange = (newRowsPerPage: number) => {
+    // console.log("Parent handleRowsPerPageChange called with:", newRowsPerPage);
     setRowsPerPage(newRowsPerPage); // Update rows per page state
     setPage(0); // Reset page to 0 whenever rows per page changes
+    fetchPositionData();
   };
 
   const handleContractSetAsSuspicious = () => {

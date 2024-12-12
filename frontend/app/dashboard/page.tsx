@@ -123,7 +123,7 @@ const Wallets = () => {
   // Use useEffect to call fetchWalletData
   useEffect(() => {
     fetchWalletData();
-  }, [fetchWalletData]); // Include fetchWalletData as a dependency
+  }, [page, rowsPerPage, fetchWalletData]); // Include fetchWalletData as a dependency
 
   // Fetch top positions function
   const fetchTopPositionData = async () => {
@@ -187,11 +187,13 @@ const Wallets = () => {
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage); // Update page state
+    fetchWalletData();
   };
 
   const handleRowsPerPageChange = (newRowsPerPage: number) => {
     setRowsPerPage(newRowsPerPage); // Update rows per page state
     setPage(0); // Reset page to 0 whenever rows per page changes
+    fetchWalletData();
   };
 
   // Handle cleanup on component unmount

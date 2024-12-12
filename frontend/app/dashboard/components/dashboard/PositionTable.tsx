@@ -1,15 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
-import {
-  Typography,
-  Chip,
-  Checkbox,
-  Avatar,
-  Stack,
-  Card,
-  CardContent,
-  Box,
-} from "@mui/material";
+import { Typography, Chip, Checkbox, Avatar, Stack, Box } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 import { Position, Wallet } from "../../../lib/definition";
 import {
@@ -34,6 +25,7 @@ interface PositionTableProps {
   page: number;
   rowsPerPage: number;
   totalCount: number;
+  // isLoading: boolean;
   onPageChange: (newPage: number) => void;
   onRowsPerPageChange: (newRowsPerPage: number) => void;
   onContractSetAsSuspicious: () => void;
@@ -46,45 +38,38 @@ const PositionTable: React.FC<PositionTableProps> = ({
   page,
   rowsPerPage,
   totalCount,
+  // isLoading,
   onPageChange,
   onRowsPerPageChange,
   onContractSetAsSuspicious,
   onContractSetAsStable,
 }) => {
-  // useEffect(() => {
-  //   console.log("Positions in PositionTable:", positions); // Log positions inside PositionTable
-  // }, [positions]);
-
-  // const positionMenuItems = [
-  //   {
-  //     title: "See details",
-  //     key: "position-details",
-  //     value: "position-details",
-  //     button: <Visibility fontSize="small" />,
-  //   },
-  // ];
   const [paginationModel, setPaginationModel] = React.useState({
     pageSize: rowsPerPage,
     page: page,
   });
-  // const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  // const [selectedPositionId, setSelectedPositionId] = useState<string | null>(
-  //   null
-  // );
-  // const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
+
   const [checkedStable, setCheckedStable] = React.useState(true);
   const [checkedSuspicious, setCheckedSuspicious] = React.useState(true);
-  // const open = Boolean(anchorEl);
 
-  // const handleClick = (
-  //   event: React.MouseEvent<HTMLButtonElement>,
-  //   position_id: string,
-  //   wallet_id: string
-  // ) => {
-  //   setAnchorEl(event.currentTarget);
-  //   setSelectedPositionId(position_id);
-  //   setSelectedWalletId(wallet_id);
-  // };
+  const handlePaginationModelChange = (model: {
+    page: number;
+    pageSize: number;
+  }) => {
+    // console.log(
+    //   "Child paginationModelChange:",
+    //   model.page,
+    //   "PageSize:",
+    //   model.pageSize
+    // );
+    setPaginationModel(model);
+    if (model.page !== page) {
+      onPageChange(model.page); // Notify parent of page change
+    }
+    if (model.pageSize !== rowsPerPage) {
+      onRowsPerPageChange(model.pageSize); // Notify parent of rows per page change
+    }
+  };
 
   const handleChangeSuspicious = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -112,25 +97,6 @@ const PositionTable: React.FC<PositionTableProps> = ({
       onContractSetAsStable(); // Notify parent to refresh
     }
   };
-
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
-    onPageChange(newPage); // Call the passed prop to update the page state in the parent
-  };
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    onRowsPerPageChange(parseInt(event.target.value, 10)); // Call the passed prop to update the rows per page state
-  };
-
-  // const handleClose = () => {
-  //   setAnchorEl(null);
-  //   setSelectedPositionId(null);
-  //   setSelectedWalletId(null);
-  // };
 
   // Handle navigation to wallet details
   const handleNavigateToDetails = (selectedPositionId: string) => {
@@ -319,16 +285,14 @@ const PositionTable: React.FC<PositionTableProps> = ({
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
         }
-        // initialState={{
-        //   pagination: { paginationModel: { pageSize: rowsPerPage, page: page } },
-        // }}
-
+        pagination
         pageSizeOptions={[10, 25, 50]}
         rowCount={totalCount}
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
+        paginationModel={{ page: page, pageSize: rowsPerPage }}
+        onPaginationModelChange={handlePaginationModelChange}
         paginationMode="server"
         disableColumnResize
+        disableColumnSorting
         density="compact"
         slotProps={{
           filterPanel: {
