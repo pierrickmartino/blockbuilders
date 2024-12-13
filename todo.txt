@@ -1,3 +1,5 @@
+- core - utiliser renovate pour la gestion des dépendances des packages nodes
+- core - mettre en place un CI/CD pipeline pour automatiser les deploiements
 - core - créer une page avec un exemple de chaque composant
 - core - fix lint issues (npm run lint)
 
