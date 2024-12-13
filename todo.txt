@@ -24,6 +24,7 @@
 - transaction - diminuer la taille de la font dans le tableau 0.79rem pour les infos secondaires
 - transaction - reprendre l'historique des market price dans le graph
 - transaction - faire la somme des capital gain daily pour afficher dans le graph
+- transaction - aligner à droite le Status
 
 - position - déplacer le filtrage pour mieux l'intégrer au reste de la page
 - position - ajouter les indicateurs tels que EMA, RSI, etc...
