@@ -8,6 +8,8 @@ import {
   FormGroup,
   FormControlLabel,
   Link,
+  CardContent,
+  Chip,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
@@ -150,55 +152,196 @@ const Positions = () => {
         columns={12}
         sx={{ mb: (theme) => theme.spacing(2) }}
       >
-        {data.map((card, index) => (
+        {/* {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
             <StatCard {...card} />
           </Grid>
         ))}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <HighlightedCard />
+        </Grid>  */}
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
+            <CardContent>
+              <Typography component="h2" variant="subtitle2" gutterBottom>
+                Total amount
+              </Typography>
+              <Stack
+                direction="column"
+                sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
+              >
+                <Stack sx={{ justifyContent: "space-between" }}>
+                  <Stack
+                    direction="row"
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {positions.length > 0 && positions[0]?.wallet ? (
+                      <Typography variant="h4" component="p">
+                        {formatNumber(positions[0].wallet.balance, "currency")}
+                      </Typography>
+                    ) : (
+                      <Typography>No data available</Typography> // Fallback if transactions are not available
+                    )}
+                    <Chip size="small" color={"success"} label={"+25%"} />
+                  </Stack>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "text.secondary" }}
+                  >
+                    Last 30 days
+                  </Typography>
+                </Stack>
+                {/* <Box sx={{ width: '100%', height: 50 }}>
+            <SparkLineChart
+              colors={[chartColor]}
+              data={data}
+              area
+              showHighlight
+              showTooltip
+              xAxis={{
+                scaleType: 'band',
+                data: daysInWeek, // Use the correct property 'data' for xAxis
+              }}
+              sx={{
+                [`& .${areaElementClasses.root}`]: {
+                  fill: `url(#area-gradient-${value})`,
+                },
+              }}
+            >
+              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
+            </SparkLineChart>
+          </Box> */}
+              </Stack>
+            </CardContent>
+          </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <BasicCard title="Total Amount">
-            <Stack direction="row" justifyContent="flex-end" spacing={2}>
-              {positions.length > 0 && positions[0]?.wallet ? (
-                <Typography color="textSecondary" variant="h3">
-                  {formatNumber(positions[0].wallet.balance, "currency")}
-                </Typography>
-              ) : (
-                <Typography>No data available</Typography> // Fallback if positions are not available
-              )}
-            </Stack>
-          </BasicCard>
+          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
+            <CardContent>
+              <Typography component="h2" variant="subtitle2" gutterBottom>
+                Total capital gain
+              </Typography>
+              <Stack
+                direction="column"
+                sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
+              >
+                <Stack sx={{ justifyContent: "space-between" }}>
+                  <Stack
+                    direction="row"
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {positions.length > 0 && positions[0]?.wallet ? (
+                      <Typography variant="h4" component="p">
+                        {formatNumber(
+                          positions[0].wallet.capital_gain,
+                          "currency"
+                        )}
+                      </Typography>
+                    ) : (
+                      <Typography>No data available</Typography> // Fallback if transactions are not available
+                    )}
+                    <Chip size="small" color={"error"} label={"-25%"} />
+                  </Stack>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "text.secondary" }}
+                  >
+                    Last 30 days
+                  </Typography>
+                </Stack>
+                {/* <Box sx={{ width: '100%', height: 50 }}>
+            <SparkLineChart
+              colors={[chartColor]}
+              data={data}
+              area
+              showHighlight
+              showTooltip
+              xAxis={{
+                scaleType: 'band',
+                data: daysInWeek, // Use the correct property 'data' for xAxis
+              }}
+              sx={{
+                [`& .${areaElementClasses.root}`]: {
+                  fill: `url(#area-gradient-${value})`,
+                },
+              }}
+            >
+              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
+            </SparkLineChart>
+          </Box> */}
+              </Stack>
+            </CardContent>
+          </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <BasicCard title="Total Capital Gain">
-            <Stack direction="row" justifyContent="flex-end" spacing={2}>
-              {positions.length > 0 && positions[0]?.wallet ? (
-                <Typography color="textSecondary" variant="h3">
-                  {formatNumber(positions[0].wallet.capital_gain, "currency")}
-                </Typography>
-              ) : (
-                <Typography>No data available</Typography> // Fallback if positions are not available
-              )}
-            </Stack>
-          </BasicCard>
+          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
+            <CardContent>
+              <Typography component="h2" variant="subtitle2" gutterBottom>
+                Total unrealized
+              </Typography>
+              <Stack
+                direction="column"
+                sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
+              >
+                <Stack sx={{ justifyContent: "space-between" }}>
+                  <Stack
+                    direction="row"
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {positions.length > 0 && positions[0]?.wallet ? (
+                      <Typography variant="h4" component="p">
+                        {formatNumber(
+                          positions[0].wallet.unrealized_gain,
+                          "percentage"
+                        )}
+                      </Typography>
+                    ) : (
+                      <Typography>No data available</Typography> // Fallback if transactions are not available
+                    )}
+                    <Chip size="small" color={"default"} label={"+0%"} />
+                  </Stack>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "text.secondary" }}
+                  >
+                    Last 30 days
+                  </Typography>
+                </Stack>
+                {/* <Box sx={{ width: '100%', height: 50 }}>
+            <SparkLineChart
+              colors={[chartColor]}
+              data={data}
+              area
+              showHighlight
+              showTooltip
+              xAxis={{
+                scaleType: 'band',
+                data: daysInWeek, // Use the correct property 'data' for xAxis
+              }}
+              sx={{
+                [`& .${areaElementClasses.root}`]: {
+                  fill: `url(#area-gradient-${value})`,
+                },
+              }}
+            >
+              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
+            </SparkLineChart>
+          </Box> */}
+              </Stack>
+            </CardContent>
+          </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <BasicCard title="Total Unrealized">
-            <Stack direction="row" justifyContent="flex-end" spacing={2}>
-              {positions.length > 0 && positions[0]?.wallet ? (
-                <Typography color="textSecondary" variant="h3">
-                  {formatNumber(
-                    positions[0].wallet.unrealized_gain,
-                    "percentage"
-                  )}
-                </Typography>
-              ) : (
-                <Typography>No data available</Typography> // Fallback if positions are not available
-              )}
-            </Stack>
-          </BasicCard>
+          <HighlightedCard />
         </Grid>
         <Grid size={{ xs: 12, lg: 12 }}>
           <Card variant="outlined" sx={{ p: 3 }}>
