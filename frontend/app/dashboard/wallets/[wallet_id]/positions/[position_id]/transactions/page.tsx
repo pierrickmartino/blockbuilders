@@ -158,14 +158,14 @@ const Transactions = () => {
         columns={12}
         sx={{ mb: (theme) => theme.spacing(2) }}
       >
-        {data.map((card, index) => (
+        {/* {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
             <StatCard {...card} />
           </Grid>
         ))}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <HighlightedCard />
-        </Grid>
+        </Grid> */}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
             <CardContent>
@@ -310,23 +310,16 @@ const Transactions = () => {
                         <Fragment></Fragment>
                       )
                     }
-                    sx={{
-                      pl: "4px",
-                      pr: "4px",
-                      backgroundColor:
-                        transactions[0].position.capital_gain < 0
-                          ? "error.light"
-                          : transactions[0].position.capital_gain > 0
-                          ? "success.light"
-                          : "", // No background color if the capital gain is 0
-                      color:
-                        transactions[0].position.capital_gain < 0
-                          ? "error.main"
-                          : transactions[0].position.capital_gain > 0
-                          ? "success.main"
-                          : "",
-                      mb: "4px",
-                    }}
+                    color={transactions[0].position.capital_gain < 0
+                    ? "error"
+                    : transactions[0].position.capital_gain > 0
+                    ? "success"
+                    : "default"}
+                    // sx={{
+                    //   pl: "4px",
+                    //   pr: "4px",
+                    //   mb: "4px",
+                    // }}
                     size="small"
                     label={formatNumber(
                       transactions[0].position.capital_gain,
@@ -352,23 +345,16 @@ const Transactions = () => {
                         <Fragment></Fragment>
                       )
                     }
-                    sx={{
-                      pl: "4px",
-                      pr: "4px",
-                      backgroundColor:
-                        transactions[0].position.unrealized_gain < 0
-                          ? "error.light"
-                          : transactions[0].position.unrealized_gain > 0
-                          ? "success.light"
-                          : "", // No background color if the capital gain is 0
-                      color:
-                        transactions[0].position.unrealized_gain < 0
-                          ? "error.main"
-                          : transactions[0].position.unrealized_gain > 0
-                          ? "success.main"
-                          : "",
-                      mb: "4px",
-                    }}
+                    color={transactions[0].position.unrealized_gain < 0
+                      ? "error"
+                      : transactions[0].position.unrealized_gain > 0
+                      ? "success"
+                      : "default"}
+                      // sx={{
+                      //   pl: "4px",
+                      //   pr: "4px",
+                      //   mb: "4px",
+                      // }}
                     size="small"
                     label={formatNumber(
                       transactions[0].position.unrealized_gain,
@@ -394,23 +380,16 @@ const Transactions = () => {
                         <Fragment></Fragment>
                       )
                     }
-                    sx={{
-                      pl: "4px",
-                      pr: "4px",
-                      backgroundColor:
-                        transactions[0].position.daily_price_delta < 0
-                          ? "error.light"
-                          : transactions[0].position.daily_price_delta > 0
-                          ? "success.light"
-                          : "", // No background color if the capital gain is 0
-                      color:
-                        transactions[0].position.daily_price_delta < 0
-                          ? "error.main"
-                          : transactions[0].position.daily_price_delta > 0
-                          ? "success.main"
-                          : "",
-                      mb: "4px",
-                    }}
+                    color={transactions[0].position.daily_price_delta < 0
+                      ? "error"
+                      : transactions[0].position.daily_price_delta > 0
+                      ? "success"
+                      : "default"}
+                      // sx={{
+                      //   pl: "4px",
+                      //   pr: "4px",
+                      //   mb: "4px",
+                      // }}
                     size="small"
                     label={formatNumber(
                       transactions[0].position.daily_price_delta,
@@ -437,23 +416,16 @@ const Transactions = () => {
                         <Fragment></Fragment>
                       )
                     }
-                    sx={{
-                      pl: "4px",
-                      pr: "4px",
-                      backgroundColor:
-                        transactions[0].position.weekly_price_delta < 0
-                          ? "error.light"
-                          : transactions[0].position.weekly_price_delta > 0
-                          ? "success.light"
-                          : "", // No background color if the capital gain is 0
-                      color:
-                        transactions[0].position.weekly_price_delta < 0
-                          ? "error.main"
-                          : transactions[0].position.weekly_price_delta > 0
-                          ? "success.main"
-                          : "",
-                      mb: "4px",
-                    }}
+                    color={transactions[0].position.weekly_price_delta < 0
+                      ? "error"
+                      : transactions[0].position.weekly_price_delta > 0
+                      ? "success"
+                      : "default"}
+                      // sx={{
+                      //   pl: "4px",
+                      //   pr: "4px",
+                      //   mb: "4px",
+                      // }}
                     size="small"
                     label={formatNumber(
                       transactions[0].position.weekly_price_delta,
@@ -479,22 +451,16 @@ const Transactions = () => {
                         <Fragment></Fragment>
                       )
                     }
-                    sx={{
-                      pl: "4px",
-                      pr: "4px",
-                      backgroundColor:
-                        transactions[0].position.monthly_price_delta < 0
-                          ? "error.light"
-                          : transactions[0].position.monthly_price_delta > 0
-                          ? "success.light"
-                          : "", // No background color if the capital gain is 0
-                      color:
-                        transactions[0].position.monthly_price_delta < 0
-                          ? "error.main"
-                          : transactions[0].position.monthly_price_delta > 0
-                          ? "success.main"
-                          : "",
-                    }}
+                    color={transactions[0].position.monthly_price_delta < 0
+                      ? "error"
+                      : transactions[0].position.monthly_price_delta > 0
+                      ? "success"
+                      : "default"}
+                      // sx={{
+                      //   pl: "4px",
+                      //   pr: "4px",
+                      //   mb: "4px",
+                      // }}
                     size="small"
                     label={formatNumber(
                       transactions[0].position.monthly_price_delta,
@@ -511,6 +477,9 @@ const Transactions = () => {
             {/* </Stack> */}
             {/* </Stack> */}
           </BasicCard>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <HighlightedCard />
         </Grid>
         <Grid size={{ xs: 12, lg: 12 }}>
           <Card variant="outlined" sx={{ p: 3 }}>
