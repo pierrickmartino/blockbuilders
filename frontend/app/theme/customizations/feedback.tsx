@@ -20,12 +20,12 @@ export const feedbackCustomizations: Components<Theme> = {
           color: "white",
         },
         standardSuccess: {
-          backgroundColor: "rgba(240, 253, 244, 1)",
-          color: "rgba(21, 128, 61, 1)",
+          backgroundColor: "hsl(138, 76.50%, 96.70%)",
+          color: "hsl(142, 70%, 29.20%)",
         },
         standardError: {
-          backgroundColor: "rgba(254, 242, 242, 1)",
-          color: "rgba(185, 28, 28, 1)",
+          backgroundColor: "hsl(0, 85.70%, 97.30%)",
+          color: "hsl(0, 73.70%, 41.80%)",
         },
         standardWarning: {
           backgroundColor: theme.palette.warning.light,
@@ -36,16 +36,16 @@ export const feedbackCustomizations: Components<Theme> = {
           color: theme.palette.info.main,
         },
         outlinedSuccess: {
-          borderColor: "rgba(21, 128, 61, 1)",
-          color: "rgba(21, 128, 61, 1)",
+          borderColor: "hsl(142, 70%, 29.20%)",
+          color: "hsl(142, 70%, 29.20%)",
         },
         outlinedWarning: {
           borderColor: theme.palette.warning.main,
           color: theme.palette.warning.main,
         },
         outlinedError: {
-          borderColor: "rgba(185, 28, 28, 1)",
-          color: "rgba(185, 28, 28, 1)",
+          borderColor: "hsl(0, 73.70%, 41.80%)",
+          color: "hsl(0, 73.70%, 41.80%)",
         },
         outlinedInfo: {
           borderColor: theme.palette.info.main,
