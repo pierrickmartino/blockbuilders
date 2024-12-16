@@ -10,6 +10,7 @@
 - frontend - utiliser un bleu foncé (ou autre) pour couleur principal
 - frontend - revoir le fonctionnement du breadcrumbs
 - frontend - revoir l'affichage des formulaires selon best practice mui
+- frontend - recupérer les logos des tokens
 
 - dashboard - ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois 
 - dashboard - ajouter un calendrier du mois avec le nombre de trade sur chaque journée
