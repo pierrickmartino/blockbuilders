@@ -18,23 +18,19 @@
 - dashboard - ajuster la position des Chip dans le WalletTable
 - dashboard - revoir l'affichage des tops positions et blockchain
 
-- transaction - utiliser les tabs sur un widget avec Info / Performance
-- transaction - ajouter un widget avec les informations du contract 
-- transaction - déplacer le MarketPrice sur un widget graphique montrant l'évolution du prix 
-- transaction - déplacer le filtrage pour mieux l'intégrer au reste de la page
-- transaction - afficher le statut de la position en cours et sa variation (ex. OPEN, INCREASE +5%)
-- transaction - fix - augmentation sans limite sur la page générique
-- transaction - diminuer la taille de la font dans le tableau 0.79rem pour les infos secondaires
-- transaction - reprendre l'historique des market price dans le graph
-- transaction - faire la somme des capital gain daily pour afficher dans le graph
-- transaction - aligner à droite le Status
-
 - position - déplacer le filtrage pour mieux l'intégrer au reste de la page
 - position - ajouter les indicateurs tels que EMA, RSI, etc...
 - position - fix - augmentation sans limite sur la page générique
 - position - mettre à jour les widgets de Stats
-- position - diminuer la taille de la font dans le tableau 0.79rem pour les infos secondaires
 - position - faire la somme des capital gain daily pour afficher dans le graph
+
+- transaction - utiliser les tabs sur un widget avec Info / Performance
+- transaction - ajouter un widget avec les informations du contract 
+- transaction - déplacer le MarketPrice sur un widget graphique montrant l'évolution du prix 
+- transaction - déplacer le filtrage pour mieux l'intégrer au reste de la page
+- transaction - fix - augmentation sans limite sur la page générique
+- transaction - reprendre l'historique des market price dans le graph
+- transaction - faire la somme des capital gain daily pour afficher dans le graph
 
 - backend - reconnaitre les contrats qui sont des "utilities" en ne plus les valoriser
 - backend - mettre en suspicious une position doit supprimer les transactions associées au contract

@@ -37,6 +37,9 @@ import React from "react";
 import CreateWalletForm from "@/app/ui/wallets/CreateWalletForm";
 import StatCard, { StatCardProps } from "./components/dashboard/StatCard";
 import HighlightedCard from "./components/dashboard/HighlightedCard";
+import BasicCard from "./components/shared/BasicCard";
+import TopPositions from "./components/dashboard/TopPositions";
+import TopBlockchains from "./components/dashboard/TopBlockchains";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -273,37 +276,59 @@ const Wallets = () => {
         Details
       </Typography>
       <Grid container spacing={2} columns={12}>
-        <Grid size={{ xs: 12, lg: 12 }}>
-          <WalletTable
-            wallets={wallets}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            totalCount={totalCount}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            onWalletDeleted={handleWalletDeleted}
-            onWalletDownloaded={handleWalletDownloaded}
-            onWalletRefreshed={handleWalletRefreshed}
-            onWalletFullRefreshed={handleWalletFullRefreshed}
-            onCreateWallet={handleAddWalletClick}
+        <Grid size={{ xs: 12, lg: 9 }}>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12 }}>
+              <WalletTable
+                wallets={wallets}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                totalCount={totalCount}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                onWalletDeleted={handleWalletDeleted}
+                onWalletDownloaded={handleWalletDownloaded}
+                onWalletRefreshed={handleWalletRefreshed}
+                onWalletFullRefreshed={handleWalletFullRefreshed}
+                onCreateWallet={handleAddWalletClick}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
+              <BasicCard title="Best positions" subtitle="Top 5 positions by amount" >
+                <TopPositions positions={top_positions}></TopPositions>
+                </BasicCard>
+                
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
+              <BasicCard title="Best blockchains" subtitle="Top 5 blockchains by amount">
+                <TopBlockchains blockchains={top_blockchains}></TopBlockchains>
+                </BasicCard>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
+                <TradingCalendar />
+              </Grid>
+          </Grid>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+          <LastTransactions
+            transactions={last_transactions}
+            count={count_transactions}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
+        
+        {/* <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
           <TopRepartition
             blockchains={top_blockchains}
             positions={top_positions}
           />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <TradingCalendar />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 8 }}>
+        </Grid> */}
+        {/* <Grid size={{ xs: 12, lg: 8 }}>
           <SalesOverview />
         </Grid>
         <Grid size={{ xs: 12, lg: 4 }}>
           <Blogcard />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
+        </Grid> */}
+        {/* <Grid size={{ xs: 12, lg: 4 }}>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12 }}>
               <ProfileCard />
@@ -312,13 +337,8 @@ const Wallets = () => {
               <MyContacts />
             </Grid>
           </Grid>
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-          <LastTransactions
-            transactions={last_transactions}
-            count={count_transactions}
-          />
-        </Grid>
+        </Grid> */}
+        
       </Grid>
       {/* </Box> */}
       <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>

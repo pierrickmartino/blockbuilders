@@ -105,7 +105,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     const input = amount ?? "";
     return (
       <Box>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit" }}>
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
           {formatNumber(input, type)}
         </Typography>
       </Box>
@@ -116,7 +116,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     const input = date ?? "";
     return (
       <Box>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit" }}>
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
           {formatDate(input)}
         </Typography>
       </Box>
@@ -135,7 +135,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         <Typography
           color="textSecondary"
           variant="body2"
-          sx={{ lineHeight: "inherit" }}
+          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
         >
           {against_contract_symbol || ""}
         </Typography>
@@ -178,6 +178,8 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     {
       field: "status",
       headerName: "Status",
+      headerAlign: "right",
+      align: "right",
       flex: 1,
       minWidth: 100,
       renderCell: (params) =>

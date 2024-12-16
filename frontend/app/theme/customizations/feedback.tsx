@@ -1,5 +1,5 @@
-import { Theme, alpha, Components } from '@mui/material/styles';
-import { gray, orange } from '../themePrimitives';
+import { Theme, alpha, Components } from "@mui/material/styles";
+import { gray, orange } from "../themePrimitives";
 
 /* eslint-disable import/prefer-default-export */
 export const feedbackCustomizations: Components<Theme> = {
@@ -57,7 +57,7 @@ export const feedbackCustomizations: Components<Theme> = {
         // '& .MuiAlert-icon': {
         //   color: orange[500],
         // },
-        ...theme.applyStyles('dark', {
+        ...theme.applyStyles("dark", {
           filledSuccess: {
             color: "white",
           },
@@ -111,10 +111,10 @@ export const feedbackCustomizations: Components<Theme> = {
   MuiDialog: {
     styleOverrides: {
       root: ({ theme }) => ({
-        '& .MuiDialog-paper': {
-          borderRadius: '10px',
-          border: '1px solid',
-          borderColor: (theme).palette.divider,
+        "& .MuiDialog-paper": {
+          borderRadius: "10px",
+          border: "1px solid",
+          borderColor: theme.palette.divider,
         },
       }),
     },
@@ -125,7 +125,7 @@ export const feedbackCustomizations: Components<Theme> = {
         height: 8,
         borderRadius: 8,
         backgroundColor: gray[200],
-        ...theme.applyStyles('dark', {
+        ...theme.applyStyles("dark", {
           backgroundColor: gray[800],
         }),
       }),

@@ -136,7 +136,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
     const input = params.value ?? "";
     return (
       <Box>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit" }}>
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
           {input}
         </Typography>
       </Box>

@@ -9,7 +9,7 @@ interface TopBlockchainsProps {
 
 const TopBlockchains: React.FC<TopBlockchainsProps> = ({ blockchains }) => {
   return blockchains.length > 0 ? (
-    <Box px={2} width="60%" height="240px">
+    <Box>
       {blockchains.map((blockchain: Blockchain) => (
         <Stack
           key={blockchain.id}
@@ -44,7 +44,7 @@ const TopBlockchains: React.FC<TopBlockchainsProps> = ({ blockchains }) => {
       ))}
     </Box>
   ) : (
-    <Box px={2} width="50%">
+    <Box>
       <Stack
         direction="row"
         alignItems="center"

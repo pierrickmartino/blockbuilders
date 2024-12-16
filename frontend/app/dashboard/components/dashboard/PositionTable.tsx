@@ -116,7 +116,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
     const input = amount ?? "";
     return (
       <Box>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit" }}>
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem"  }}>
           {formatNumber(input, type)}
         </Typography>
       </Box>
@@ -152,7 +152,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
         <Typography sx={{ lineHeight: "inherit" }}>
           {truncateText(token_symbol, 8)}
         </Typography>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit" }}>
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
           {truncateText(token_name, 18)}
         </Typography>
       </Stack>

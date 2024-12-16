@@ -347,7 +347,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({
                 </Box>
               </Stack>
             </TabPanel>
-            <TabPanel value="3">
+            {/* <TabPanel value="3">
               <form>
                 <CustomFormLabel
                   sx={{
@@ -397,7 +397,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({
                   Submit
                 </Button>
               </form>
-            </TabPanel>
+            </TabPanel> */}
           </TabContext>
         </Box>
       </CardContent>

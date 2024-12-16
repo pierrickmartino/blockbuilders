@@ -16,7 +16,7 @@ interface TopPositionsProps {
 
 const TopPositions: React.FC<TopPositionsProps> = ({ positions }) => {
   return positions.length > 0 ? (
-    <Box px={2} width="50%" height="240px">
+    <Box>
       {positions.map((position: Position) => (
         <Stack
           key={position.id}
@@ -26,6 +26,11 @@ const TopPositions: React.FC<TopPositionsProps> = ({ positions }) => {
           justifyContent="space-between"
           mb={2}
         >
+          {/* <LinearProgress
+            color="primary"
+            variant="determinate"
+            value={position.progress_percentage}
+          /> */}
           <Stack direction="row" spacing={2}>
             <Avatar
               alt={position.contract.blockchain.name}
@@ -54,13 +59,11 @@ const TopPositions: React.FC<TopPositionsProps> = ({ positions }) => {
               {formatNumber(position.progress_percentage, "percentage")}
             </Typography>
           </Stack>
-
-
         </Stack>
       ))}
     </Box>
   ) : (
-    <Box px={2} width="50%">
+    <Box>
       <Stack
         direction="row"
         alignItems="center"
