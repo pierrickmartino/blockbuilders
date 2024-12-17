@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 import { Wallet } from "@/app/lib/definition";
-import { Add, Edit, EventRepeat, Refresh } from "@mui/icons-material";
+import { Add, Edit, EventRepeat, Refresh, Visibility } from "@mui/icons-material";
 import { Download } from "@mui/icons-material";
 import { Delete } from "@mui/icons-material";
 import {
@@ -212,7 +212,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
         <GridActionsCellItem
           key="wallet-details"
           label="See details"
-          icon={<Edit fontSize="small" />}
+          icon={<Visibility fontSize="small" />}
           onClick={() => handleNavigateToDetails(cell.id.toString())}
           showInMenu
         />,

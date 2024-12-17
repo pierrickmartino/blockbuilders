@@ -8,14 +8,11 @@ import {
   AlertTitle,
   AlertColor,
   Drawer,
+  IconButton,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import SalesOverview from "./components/dashboard/TheSalesOverview";
-import Blogcard from "./components/dashboard/TheBlogCard";
-import ProfileCard from "./components/dashboard/TheProfileCard";
-import MyContacts from "./components/dashboard/TheMyContacts";
 import WalletTable from "./components/dashboard/WalletTable";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Fragment } from "react";
 import {
   Wallet,
   Position,
@@ -31,7 +28,6 @@ import {
   fetchTaskStatus,
 } from "@/app/lib/data";
 import LastTransactions from "./components/dashboard/LastTransactions";
-import TopRepartition from "./components/dashboard/TopRepartition";
 import TradingCalendar from "./components/dashboard/TradingCalendar";
 import React from "react";
 import CreateWalletForm from "@/app/ui/wallets/CreateWalletForm";
@@ -40,6 +36,7 @@ import HighlightedCard from "./components/dashboard/HighlightedCard";
 import BasicCard from "./components/shared/BasicCard";
 import TopPositions from "./components/dashboard/TopPositions";
 import TopBlockchains from "./components/dashboard/TopBlockchains";
+import { ReadMoreOutlined } from "@mui/icons-material";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -140,7 +137,7 @@ const Wallets = () => {
 
   // Fetch last transaction function
   const fetchLastTransactionData = async () => {
-    await fetchLastTransactions(5, setLastTransactions);
+    await fetchLastTransactions(6, setLastTransactions);
   };
 
   // Fetch last transaction function
@@ -253,7 +250,6 @@ const Wallets = () => {
 
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
-      {/* cards */}
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Overview
       </Typography>
@@ -294,53 +290,59 @@ const Wallets = () => {
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-              <BasicCard title="Best positions" subtitle="Top 5 positions by amount" >
+              <BasicCard
+                title="Best positions"
+                subtitle="Top 5 positions by amount"
+                action={
+                  <Fragment>
+                    <IconButton size="small" href="/dashboard/positions">
+                      <ReadMoreOutlined />
+                    </IconButton>
+                  </Fragment>
+                }
+              >
                 <TopPositions positions={top_positions}></TopPositions>
-                </BasicCard>
-                
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-              <BasicCard title="Best blockchains" subtitle="Top 5 blockchains by amount">
+              </BasicCard>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
+              <BasicCard
+                title="Best blockchains"
+                subtitle="Top 5 blockchains by amount"
+                action={
+                  <Fragment>
+                    <IconButton size="small" href="/dashboard/positions">
+                      <ReadMoreOutlined />
+                    </IconButton>
+                  </Fragment>
+                }
+              >
                 <TopBlockchains blockchains={top_blockchains}></TopBlockchains>
-                </BasicCard>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-                <TradingCalendar />
-              </Grid>
+              </BasicCard>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
+              <TradingCalendar />
+            </Grid>
           </Grid>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <LastTransactions
-            transactions={last_transactions}
-            count={count_transactions}
-          />
+          <BasicCard
+            title="Activity"
+            subtitle="Latest transactions across the various blockchains"
+            action={
+              <Fragment>
+                <IconButton size="small" href="/dashboard/transactions">
+                  <ReadMoreOutlined />
+                </IconButton>
+              </Fragment>
+            }
+          >
+            <LastTransactions
+              transactions={last_transactions}
+              count={count_transactions}
+            />
+          </BasicCard>
         </Grid>
-        
-        {/* <Grid size={{ xs: 12, sm: 12, lg: 6 }}>
-          <TopRepartition
-            blockchains={top_blockchains}
-            positions={top_positions}
-          />
-        </Grid> */}
-        {/* <Grid size={{ xs: 12, lg: 8 }}>
-          <SalesOverview />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <Blogcard />
-        </Grid> */}
-        {/* <Grid size={{ xs: 12, lg: 4 }}>
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12 }}>
-              <ProfileCard />
-            </Grid>
-            <Grid size={{ xs: 12 }}>
-              <MyContacts />
-            </Grid>
-          </Grid>
-        </Grid> */}
-        
       </Grid>
-      {/* </Box> */}
       <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
         <Alert
           severity={snackbarSeverity}
@@ -358,7 +360,6 @@ const Wallets = () => {
       >
         {DrawerList}
       </Drawer>
-      {/* </PageContainer> */}
     </Box>
   );
 };

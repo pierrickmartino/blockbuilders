@@ -18,46 +18,48 @@ const TopPositions: React.FC<TopPositionsProps> = ({ positions }) => {
   return positions.length > 0 ? (
     <Box>
       {positions.map((position: Position) => (
-        <Stack
-          key={position.id}
-          direction="row"
-          alignItems="center"
-          spacing={2}
-          justifyContent="space-between"
-          mb={2}
-        >
-          {/* <LinearProgress
-            color="primary"
+        <Stack key={position.id} direction="column" justifyContent="space-between" spacing={0} mb={2}>
+          <LinearProgress
+            color="secondary"
             variant="determinate"
             value={position.progress_percentage}
-          /> */}
-          <Stack direction="row" spacing={2}>
-            <Avatar
-              alt={position.contract.blockchain.name}
-              sx={{ width: 24, height: 24 }}
-              src={"/images/logos/" + position.contract.blockchain.icon}
-            />
-            <Stack direction="column" alignItems="flex-start" spacing={0}>
-              <Typography variant="h6" fontSize="14px">
-                {position.contract.name}
-              </Typography>
-              <Typography color="textSecondary" fontSize="12px">
-                {formatNumber(position.quantity, "quantity_precise")}{" "}
-                {position.contract.symbol}
-              </Typography>
-            </Stack>
-          </Stack>
+          />
 
-          {/* <Typography variant="subtitle1" fontSize="12px">
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={2}
+            justifyContent="space-between"
+            mt={1}
+          >
+            <Stack direction="row" spacing={2}>
+              <Avatar
+                alt={position.contract.blockchain.name}
+                sx={{ width: 24, height: 24 }}
+                src={"/images/logos/" + position.contract.blockchain.icon}
+              />
+              <Stack direction="column" alignItems="flex-start" spacing={0}>
+                <Typography variant="h6" fontSize="14px">
+                  {position.contract.name}
+                </Typography>
+                <Typography color="textSecondary" fontSize="12px">
+                  {formatNumber(position.quantity, "quantity_precise")}{" "}
+                  {position.contract.symbol}
+                </Typography>
+              </Stack>
+            </Stack>
+
+            {/* <Typography variant="subtitle1" fontSize="12px">
                       5 minutes ago
                     </Typography> */}
-          <Stack direction="column" alignItems="flex-end" spacing={0}>
-            <Typography variant="h6" fontSize="14px">
-              {formatNumber(position.amount, "currency")}
-            </Typography>
-            <Typography color="textSecondary" fontSize="12px">
-              {formatNumber(position.progress_percentage, "percentage")}
-            </Typography>
+            <Stack direction="column" alignItems="flex-end" spacing={0}>
+              <Typography variant="h6" fontSize="14px">
+                {formatNumber(position.amount, "currency")}
+              </Typography>
+              <Typography color="textSecondary" fontSize="12px">
+                {formatNumber(position.progress_percentage, "percentage")}
+              </Typography>
+            </Stack>
           </Stack>
         </Stack>
       ))}

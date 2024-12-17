@@ -1,5 +1,12 @@
 import { Blockchain } from "@/app/lib/definition";
-import { Box, Typography, Stack, Avatar, Skeleton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Stack,
+  Avatar,
+  Skeleton,
+  LinearProgress,
+} from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 
 // Define the props type that will be passed into WalletTable
@@ -13,32 +20,47 @@ const TopBlockchains: React.FC<TopBlockchainsProps> = ({ blockchains }) => {
       {blockchains.map((blockchain: Blockchain) => (
         <Stack
           key={blockchain.id}
-          direction="row"
-          alignItems="center"
-          spacing={2}
+          direction="column"
           justifyContent="space-between"
+          spacing={0}
           mb={2}
         >
-          <Stack direction="row" spacing={2}>
-            <Avatar
-              alt={blockchain.name}
-              sx={{ width: 24, height: 24 }}
-              src={"/images/logos/" + blockchain.icon}
-            />
-            <Stack direction="column" alignItems="flex-start" spacing={0}>
+          <LinearProgress
+            color="secondary"
+            variant="determinate"
+            value={blockchain.progress_percentage}
+          />
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={2}
+            justifyContent="space-between"
+            mt={1}
+          >
+            <Stack direction="row" spacing={2}>
+              <Avatar
+                alt={blockchain.name}
+                sx={{ width: 24, height: 24 }}
+                src={"/images/logos/" + blockchain.icon}
+              />
+              <Stack direction="column" alignItems="flex-start" spacing={0}>
+                <Typography variant="h6" fontSize="14px">
+                  {blockchain.name}
+                </Typography>
+                <Typography color="textSecondary" fontSize="12px">
+                {"-"}
+                </Typography>
+              </Stack>
+            </Stack>
+
+            <Stack direction="column" alignItems="flex-end" spacing={0}>
               <Typography variant="h6" fontSize="14px">
-                {blockchain.name}
+                {formatNumber(blockchain.balance, "currency")}
+              </Typography>
+              <Typography color="textSecondary" fontSize="12px">
+                {formatNumber(blockchain.progress_percentage, "percentage")}
               </Typography>
             </Stack>
-          </Stack>
-
-          <Stack direction="column" alignItems="flex-end" spacing={0}>
-            <Typography variant="h6" fontSize="14px">
-              {formatNumber(blockchain.balance, "currency")}
-            </Typography>
-            <Typography color="textSecondary" fontSize="12px">
-              {formatNumber(blockchain.progress_percentage, "percentage")}
-            </Typography>
           </Stack>
         </Stack>
       ))}

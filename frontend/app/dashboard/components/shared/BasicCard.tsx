@@ -26,7 +26,7 @@ const BasicCard = ({ title, subtitle, children, action }: Props) => {
                 ""
               )}
               {subtitle ? (
-                <Typography variant="caption" sx={{ color: "text.secondary" }} gutterBottom>
+                <Typography variant="caption" sx={{ color: "text.secondary" }} mb={2} gutterBottom>
                   {subtitle}
                 </Typography>
               ) : (

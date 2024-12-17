@@ -128,7 +128,7 @@ export const getDesignTokens = (mode: PaletteMode) => {
       primary: {
         light: brand[300],
         main: brand[400],
-        dark: brand[600],
+        dark: brand[500],
         contrastText: brand[50],
         ...(mode === 'dark' && {
           contrastText: brand[50],
@@ -140,7 +140,7 @@ export const getDesignTokens = (mode: PaletteMode) => {
       info: {
         light: brand[300],
         main: brand[400],
-        dark: brand[600],
+        dark: brand[500],
         contrastText: gray[50],
         ...(mode === 'dark' && {
           contrastText: brand[300],
@@ -152,7 +152,7 @@ export const getDesignTokens = (mode: PaletteMode) => {
       warning: {
         light: orange[300],
         main: orange[400],
-        dark: orange[600],
+        dark: orange[500],
         contrastText: orange[50],
         ...(mode === 'dark' && {
           light: orange[400],
@@ -163,7 +163,7 @@ export const getDesignTokens = (mode: PaletteMode) => {
       error: {
         light: red[300],
         main: red[400],
-        dark: red[600],
+        dark: red[500],
         contrastText: red[50],
         ...(mode === 'dark' && {
           light: red[400],
@@ -174,7 +174,7 @@ export const getDesignTokens = (mode: PaletteMode) => {
       success: {
         light: green[300],
         main: green[400],
-        dark: green[600],
+        dark: green[500],
         contrastText: green[50],
         ...(mode === 'dark' && {
           light: green[400],
@@ -279,37 +279,37 @@ export const colorSchemes = {
       primary: {
         light: brand[300],
         main: brand[400],
-        dark: brand[600],
+        dark: brand[500],
         contrastText: brand[50],
       },
       secondary: {
         light: purple[300],
         main: purple[400],
-        dark: purple[600],
+        dark: purple[500],
         contrastText: purple[50],
       },
       info: {
         light: brand[300],
         main: brand[400],
-        dark: brand[600],
+        dark: brand[500],
         contrastText: gray[50],
       },
       warning: {
         light: orange[300],
         main: orange[400],
-        dark: orange[600],
+        dark: orange[500],
         contrastText: orange[50],
       },
       error: {
         light: red[300],
         main: red[400],
-        dark: red[600],
+        dark: red[500],
         contrastText: red[50],
       },
       success: {
         light: green[300],
         main: green[400],
-        dark: green[600],
+        dark: green[500],
         contrastText: green[50],
       },
       grey: {
