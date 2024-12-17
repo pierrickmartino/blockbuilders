@@ -3,6 +3,7 @@ from blockbuilders.settings.base import CCOMPARE_API_KEY
 
 class CryptoCompareAPI:
     base_url = "https://min-api.cryptocompare.com/data"
+    data_url = "https://data-api.cryptocompare.com"
 
     def __init__(self, api_key=None):
         self.api_key = api_key or CCOMPARE_API_KEY
@@ -24,6 +25,15 @@ class CryptoCompareAPI:
             "fsym": symbol,
             "tsym": "USD",
             "limit": limit,
+            "api_key": self.api_key,
+        }
+        response = requests.get(self.base_url, params=params)
+        return self._handle_response(response)
+    
+    def get_asset_by_symbol(self, symbol: str):
+        self.base_url = self.data_url + "/asset/v1/data/by/symbol"
+        params = {
+            "asset_symbol": symbol,
             "api_key": self.api_key,
         }
         response = requests.get(self.base_url, params=params)

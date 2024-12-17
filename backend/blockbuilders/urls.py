@@ -43,7 +43,7 @@ from app.views.views_api import (
     PositionViewSet
 )
 
-from rest_framework.urlpatterns import format_suffix_patterns
+# from rest_framework.urlpatterns import format_suffix_patterns
 
 wallet_list = WalletViewSet.as_view({"get": "list", "post": "create"})
 wallet_detail = WalletViewSet.as_view(
@@ -274,6 +274,7 @@ urlpatterns = [
         # FROM CONTRACT OBJECT #
         path("api/contracts/", contract_list, name="contract-list"),
         path("api/contracts/<uuid:pk>/", contract_detail, name="contract-detail"),
+        path("api/contracts/<uuid:contract_id>/download/", views_contract.download_contract_info, name="contract-download-info"),
         path(
             "api/contracts/<uuid:contract_id>/suspicious/",
             views_contract.set_Contract_as_suspicious,

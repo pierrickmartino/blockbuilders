@@ -250,6 +250,26 @@ class Contract(models.Model):
     def __str__(self):
         return f"{self.name} ({self.symbol})"
 
+# Model to manage processes related to a contract
+class ContractProcess(TimeStampModel):
+    contract = models.OneToOneField(
+        Contract,
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )  # One-to-one relationship with Wallet
+
+    download_task = models.UUIDField(default=uuid.uuid4)  # UUID for download task
+    download_task_date = models.DateTimeField(default=datetime.now)
+    download_task_status = models.CharField(
+        max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING
+    )
+
+    class Meta:
+        verbose_name = "Contract Process"
+        verbose_name_plural = "Contracts Processes"
+
+    def __str__(self):
+        return f"{self.contract} processes"
 
 # Utility class for calculating contract details
 class ContractCalculator:

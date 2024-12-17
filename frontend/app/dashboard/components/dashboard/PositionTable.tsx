@@ -10,8 +10,10 @@ import {
   // Visibility,
   Report,
   Edit,
+  Download,
 } from "@mui/icons-material";
 import {
+  downloadContractInfo,
   setContractAsStable,
   setContractAsSuspicious,
 } from "@/app/lib/actions";
@@ -30,6 +32,7 @@ interface PositionTableProps {
   onRowsPerPageChange: (newRowsPerPage: number) => void;
   onContractSetAsSuspicious: () => void;
   onContractSetAsStable: () => void;
+  onContractInfoDownloaded: (response: string) => void;
 }
 
 const PositionTable: React.FC<PositionTableProps> = ({
@@ -43,6 +46,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
   onRowsPerPageChange,
   onContractSetAsSuspicious,
   onContractSetAsStable,
+  onContractInfoDownloaded,
 }) => {
   const [paginationModel, setPaginationModel] = React.useState({
     pageSize: rowsPerPage,
@@ -98,6 +102,17 @@ const PositionTable: React.FC<PositionTableProps> = ({
     }
   };
 
+  const handleContractInfoDownload = async (contract_id: string) => {
+      if (contract_id !== null) {
+        const response = await downloadContractInfo(contract_id.toString());
+        if (response.task_id) {
+          onContractInfoDownloaded(response.task_id); // Notify the parent component with the task ID
+        } else {
+          console.error("Error: Task ID not found in the response.");
+        }
+      }
+    };
+
   // Handle navigation to wallet details
   const handleNavigateToDetails = (selectedPositionId: string) => {
     if (selectedPositionId !== null) {
@@ -140,14 +155,15 @@ const PositionTable: React.FC<PositionTableProps> = ({
     token_symbol: string,
     token_name: string,
     blockchain_name: string,
-    blockchain_icon: string
+    blockchain_icon: string,
+    token_icon: string,
   ) {
     return (
       <Stack alignItems="center" direction="row" spacing={2}>
         <Avatar
           alt={blockchain_name}
           sx={{ width: 24, height: 24 }}
-          src={"/images/logos/" + blockchain_icon}
+          src={token_icon || `/images/logos/${blockchain_icon}`}
         />
         <Typography sx={{ lineHeight: "inherit" }}>
           {truncateText(token_symbol, 8)}
@@ -189,7 +205,8 @@ const PositionTable: React.FC<PositionTableProps> = ({
           params.row.contract.symbol,
           params.row.contract.name,
           params.row.contract.blockchain.name,
-          params.row.contract.blockchain.icon
+          params.row.contract.blockchain.icon,
+          params.row.contract.logo_uri
         ),
     },
     {
@@ -269,6 +286,13 @@ const PositionTable: React.FC<PositionTableProps> = ({
           onClick={() => handleNavigateToDetails(cell.id.toString())}
           showInMenu
         />,
+        <GridActionsCellItem
+                  key="contract-download-info"
+                  label="Download info"
+                  icon={<Download fontSize="small" />}
+                  onClick={() => handleContractInfoDownload(cell.row.contract.id.toString())}
+                  showInMenu
+                />,
       ],
     },
   ];

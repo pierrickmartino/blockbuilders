@@ -88,6 +88,18 @@ export async function downloadWallet(id: string) {
   }
 }
 
+export async function downloadContractInfo(id: string) {
+  try {
+    console.log("Request for data download in downloadContractInfo:", id);
+    const response = await poster(`/api/contracts/${id}/download/`);
+    const result = await response;
+    console.log("Task triggered in downloadContractInfo:", result);
+    return result;
+  } catch {
+    return { message: "Database Error: Failed to download contract icon." };
+  }
+}
+
 export async function refreshWallet(id: string) {
   try {
     const response = await poster(`/api/wallets/${id}/refresh/`);

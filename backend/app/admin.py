@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.models import Blockchain, User, Wallet, Contract, Position, Transaction, Fiat, WalletProcess, UserSetting, MarketData
+from app.models import Blockchain, User, Wallet, Contract, Position, Transaction, Fiat, WalletProcess, ContractProcess, UserSetting, MarketData
 
 class User_Admin(admin.ModelAdmin):
     list_display = ("id", "name", "email")
@@ -11,6 +11,9 @@ class Wallet_Admin(admin.ModelAdmin):
 
 class Wallet_Process_Admin(admin.ModelAdmin):
     list_display = ("wallet", "download_task", "full_download_task", "resync_task", "delete_task")
+
+class Contract_Process_Admin(admin.ModelAdmin):
+    list_display = ("contract", "download_task" )
 
 
 class Fiat_Admin(admin.ModelAdmin):
@@ -109,6 +112,7 @@ admin.site.register(User, User_Admin)
 admin.site.register(UserSetting, UserSetting_Admin)
 admin.site.register(Wallet, Wallet_Admin)
 admin.site.register(WalletProcess, Wallet_Process_Admin)
+admin.site.register(ContractProcess, Contract_Process_Admin)
 admin.site.register(Blockchain, Blockchain_Admin)
 admin.site.register(Fiat, Fiat_Admin)
 admin.site.register(Contract, Contract_Admin)

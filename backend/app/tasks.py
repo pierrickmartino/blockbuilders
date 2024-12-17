@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.db.models import F, Q, Sum, Count
 from datetime import timezone as dt_timezone
-from app.utils.cryptocompare.view_cryptocompare import get_daily_pair_ohlcv, get_multiple_symbols_price
+from app.utils.cryptocompare.view_cryptocompare import get_daily_pair_ohlcv, get_multiple_symbols_price, get_asset_by_symbol
 from app.utils.polygon.view_polygon import (
     account_balance_by_address as polygon_account_balance_by_address,
     erc20_transactions_by_wallet as polygon_erc20_transactions_by_wallet,
@@ -33,6 +33,7 @@ from app.models import (
     CategoryContractChoices,
     Contract,
     ContractCalculator,
+    ContractProcess,
     Fiat,
     MarketData,
     Position,
@@ -500,6 +501,31 @@ def get_optimism_token_balance(wallet_id: uuid):
 
 
 @shared_task
+def download_contract_info_task(contract_id: uuid):
+    """
+    Task to download main information for a contract.
+    """
+    start_time = time.time()
+    logger.info(f"Task started [download_contract_info_task] with ({contract_id})")
+
+    try:
+        contract = get_object_or_404(Contract, id=contract_id)
+        info = get_asset_by_symbol(contract.symbol)
+        
+        # logger.info(f"{info}")
+                    
+        contract.logo_uri = info.get("Data", {}).get("LOGO_URL")
+        contract.save()
+
+        end_time = time.time()
+        logger.info(f"Task completed [download_contract_info_task] in {(end_time - start_time)} seconds ({contract_id})")
+
+    except Exception as e:
+        logger.error(f"An error occurred while getting contract info for contract id {contract_id}: {str(e)}")
+
+    return contract_id
+
+@shared_task
 def aggregate_transactions_task(previous_return: int, wallet_id: uuid):
     """
     Task to aggregate transactions for a given wallet.
@@ -674,6 +700,41 @@ def calculate_cost_transaction_task(wallet_id: uuid):
     except Exception as e:
         logger.error(f"An error occurred while calculating transaction costs for wallet id {wallet_id} : {str(e)}")
 
+@shared_task
+def start_contract_download_task(contract_id: uuid):
+    """
+    Task to update contract process with STARTED download status.
+    """
+    start_time = time.time()
+    logger.info(f"Task started [start_contract_download_task] with ({contract_id})")
+
+    contract = get_object_or_404(Contract, id=contract_id)
+    contract_process, created = ContractProcess.objects.get_or_create(contract=contract)
+    contract_process.download_task_status = TaskStatusChoices.STARTED
+    contract_process.save()
+
+    end_time = time.time()
+    logger.info(f"Task completed [start_contract_download_task] in {(end_time - start_time)} seconds ({contract_id})")
+
+    return contract_id
+
+@shared_task
+def finish_contract_download_task(previous_return: list, contract_id: uuid):
+    """
+    Task to update contract process with FINISHED full download status.
+    """
+    start_time = time.time()
+    logger.info(f"Task started [finish_contract_download_task] with ({contract_id})")
+
+    contract = get_object_or_404(Contract, id=contract_id)
+    contract_process, created = ContractProcess.objects.get_or_create(contract=contract)
+    contract_process.download_task_status = TaskStatusChoices.FINISHED
+    contract_process.save()
+
+    end_time = time.time()
+    logger.info(f"Task completed [finish_contract_download_task] in {(end_time - start_time)} seconds ({contract_id})")
+
+    return contract_id
 
 @shared_task
 def start_wallet_resync_task(wallet_id: uuid):

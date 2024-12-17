@@ -10,11 +10,16 @@ import {
   Link,
   CardContent,
   Chip,
+  Snackbar,
+  Alert,
+  AlertTitle,
+  AlertColor,
+  SnackbarCloseReason,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
 import { Position } from "@/app/lib/definition";
-import { fetchPositions, fetchPositionsWithSearch } from "@/app/lib/data";
+import { fetchPositions, fetchPositionsWithSearch, fetchTaskStatus } from "@/app/lib/data";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
@@ -30,6 +35,15 @@ const Positions = () => {
   const [page, setPage] = useState(0); // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(25); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
+
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarTitle, setSnackbarTitle] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("info");
+
+  const [taskPolling, setTaskPolling] = useState<{
+      [taskId: string]: NodeJS.Timeout;
+    }>({}); // New state for task polling
 
   const params = useParams();
   const wallet_id = params.wallet_id;
@@ -63,6 +77,50 @@ const Positions = () => {
     }
   };
 
+  const handleClose = (
+      event: React.SyntheticEvent | Event,
+      reason?: SnackbarCloseReason
+    ) => {
+      if (reason === "clickaway") {
+        return;
+      }
+  
+      setOpen(false);
+    };
+  
+  // New function to poll task status
+  const pollTaskStatus = (taskId: string) => {
+    const intervalId = setInterval(async () => {
+      try {
+        const status = await fetchTaskStatus(taskId);
+        console.log("Task result in pollTaskStatus:", status);
+        if (status === "SUCCESS") {
+          setSnackbarMessage(`Task ${taskId} finished successfully.`);
+          setSnackbarTitle("Great News !");
+          setSnackbarSeverity("success");
+          setOpen(true);
+          clearInterval(taskPolling[taskId]);
+          setTaskPolling((prev) => {
+            const { [taskId]: _, ...remainingPolling } = prev; // Remove the completed task
+            return remainingPolling;
+          });
+        }
+      } catch (error) {
+        console.error("Error polling task status:", error);
+        clearInterval(intervalId);
+        setTaskPolling((prev) => {
+          const { [taskId]: _, ...remainingPolling } = prev; // Remove the errored task
+          return remainingPolling;
+        });
+      }
+    }, 3000); // Poll every 3 seconds
+
+    setTaskPolling((prev) => ({
+      ...prev,
+      [taskId]: intervalId,
+    }));
+  };
+
   const handlePageChange = (newPage: number) => {
     // console.log("Parent handlePageChange called with:", newPage);
     setPage(newPage); // Update page state
@@ -88,6 +146,21 @@ const Positions = () => {
     // Implement your search logic here, such as making API calls
     fetchPositionDataWithSearch(searchTerm);
   };
+
+  const handleContractInfoDownloaded = (taskId: string) => {
+    // handleClick("Refresh in progress for " + taskId, "Info", "info");
+    pollTaskStatus(taskId); // Start polling task status
+  };
+
+  // Handle cleanup on component unmount
+  useEffect(() => {
+    return () => {
+      // Clear all intervals
+      Object.values(taskPolling).forEach((intervalId) =>
+        clearInterval(intervalId)
+      );
+    };
+  }, [taskPolling]);
 
   const breadcrumbs = [
     <Link underline="hover" key="1" color="inherit" href="/dashboard">
@@ -379,12 +452,23 @@ const Positions = () => {
               onRowsPerPageChange={handleRowsPerPageChange}
               onContractSetAsStable={handleContractSetAsStable}
               onContractSetAsSuspicious={handleContractSetAsSuspicious}
+              onContractInfoDownloaded={handleContractInfoDownloaded}
             />
           ) : (
             <Typography>No data available</Typography> // Fallback if positions are not available
           )}
         </Grid>
       </Grid>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical:'top', horizontal:'right' }}>
+              <Alert
+                severity={snackbarSeverity}
+                onClose={handleClose}
+                sx={{ width: "100%" }}
+              >
+                <AlertTitle>{snackbarTitle}</AlertTitle>
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
     </Box>
   );
 };

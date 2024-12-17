@@ -343,7 +343,7 @@ const Wallets = () => {
           </BasicCard>
         </Grid>
       </Grid>
-      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical:'top', horizontal:'right' }}>
         <Alert
           severity={snackbarSeverity}
           onClose={handleClose}
