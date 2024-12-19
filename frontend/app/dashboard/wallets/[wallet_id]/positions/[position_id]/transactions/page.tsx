@@ -17,21 +17,14 @@ import { MarketData, Transaction } from "@/app/lib/definition";
 import {
   fetchContractMarketPriceHisto,
   fetchTransactions,
-  fetchTransactionsWithSearch,
 } from "@/app/lib/data";
 import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTable";
 import { useParams } from "next/navigation";
-import { SearchForm } from "@/app/ui/shared/SearchForm";
 import formatNumber from "@/app/utils/formatNumber";
 import {
   ArrowDropDown,
   ArrowDropUp,
-  NavigateBefore,
-  NavigateNext,
 } from "@mui/icons-material";
-import StatCard, {
-  StatCardProps,
-} from "@/app/dashboard/components/dashboard/StatCard";
 import BasicCard from "@/app/dashboard/components/shared/BasicCard";
 import { SparkLineChart } from "@mui/x-charts/SparkLineChart";
 import { areaElementClasses } from "@mui/x-charts/LineChart";
@@ -47,19 +40,21 @@ function AreaGradient({ color, id }: { color: string; id: string }) {
   );
 }
 
-function getDaysInMonth(month: number, year: number) {
-  const date = new Date(year, month, 0);
-  const monthName = date.toLocaleDateString("en-US", {
-    month: "short",
-  });
-  const daysInMonth = date.getDate();
-  const days = [];
-  let i = 1;
-  while (days.length < daysInMonth) {
-    days.push(`${monthName} ${i}`);
-    i += 1;
+function getLast30Days(): string[] {
+  const labels = [];
+  const today = new Date();
+
+  for (let i = 0; i < 30; i++) {
+    const pastDate = new Date();
+    pastDate.setDate(today.getDate() - i);
+
+    const day = pastDate.getDate(); // Numéro du jour
+    const monthName = pastDate.toLocaleDateString('en-US', { month: 'short' }); // Mois au format abrégé
+
+    labels.push(`${monthName} ${day}`);
   }
-  return days;
+
+  return labels.reverse(); // Inverser pour avoir du plus ancien au plus récent
 }
 
 const Transactions = () => {
@@ -111,20 +106,6 @@ const Transactions = () => {
     fetchContractMarketPriceHistoData();
   }, [fetchContractMarketPriceHistoData]);
 
-  // const fetchTransactionDataWithSearch = async (searchTerm: string) => {
-  //   if (position_id && wallet_id) {
-  //     await fetchTransactionsWithSearch(
-  //       String(position_id),
-  //       String(wallet_id),
-  //       String(searchTerm),
-  //       setTransactions,
-  //       setTotalCount,
-  //       page,
-  //       rowsPerPage
-  //     );
-  //   }
-  // };
-
   const handlePageChange = (newPage: number) => {
     setPage(newPage); // Update page state
     fetchTransactionData();
@@ -136,51 +117,7 @@ const Transactions = () => {
     fetchTransactionData();
   };
 
-  // const handleSearch = (searchTerm: string) => {
-  //   // Implement your search logic here, such as making API calls
-  //   fetchTransactionDataWithSearch(searchTerm);
-  // };
-
-  const today = new Date();
-  const month = today.getMonth() + 1;
-  const year = today.getFullYear();
-  const daysInWeek = getDaysInMonth(month, year);
-
-  const data: StatCardProps[] = [
-    {
-      title: "Total amount",
-      value: "14k",
-      interval: "Last 30 days",
-      trend: "up",
-      data: [
-        200, 24, 220, 260, 240, 380, 100, 240, 280, 240, 300, 340, 320, 360,
-        340, 380, 360, 400, 380, 420, 400, 640, 340, 460, 440, 480, 460, 600,
-        880, 920,
-      ],
-    },
-    {
-      title: "Total capital gain",
-      value: "325",
-      interval: "Last 30 days",
-      trend: "down",
-      data: [
-        1640, 1250, 970, 1130, 1050, 900, 720, 1080, 900, 450, 920, 820, 840,
-        600, 820, 780, 800, 760, 380, 740, 660, 620, 840, 500, 520, 480, 400,
-        360, 300, 220,
-      ],
-    },
-    {
-      title: "Total unrealized",
-      value: "200k",
-      interval: "Last 30 days",
-      trend: "neutral",
-      data: [
-        500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620,
-        510, 530, 520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430,
-        520, 510,
-      ],
-    },
-  ];
+  const last30Days = getLast30Days();
 
   const breadcrumbs = [
     <Link underline="hover" key="1" color="inherit" href="/dashboard">
@@ -217,14 +154,6 @@ const Transactions = () => {
         columns={12}
         sx={{ mb: (theme) => theme.spacing(2) }}
       >
-        {/* {data.map((card, index) => (
-          <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
-            <StatCard {...card} />
-          </Grid>
-        ))}
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <HighlightedCard />
-        </Grid> */}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
             <CardContent>
@@ -323,7 +252,7 @@ const Transactions = () => {
                     Last 30 days
                   </Typography>
                 </Stack>
-                <Box sx={{ width: "100%", height: 50 }}>
+                <Box sx={{ width: "100%", height: 80 }}>
                   {market_data.length > 0 && market_data[0]?.close ? (
                     <SparkLineChart
                       colors={[theme.palette.grey[400]]}
@@ -334,18 +263,13 @@ const Transactions = () => {
                       showTooltip
                       xAxis={{
                         scaleType: "band",
-                        data: daysInWeek, // Use the correct property 'data' for xAxis
+                        data: last30Days, // Use the correct property 'data' for xAxis
                       }}
                       sx={{
                         [`& .${areaElementClasses.root}`]: {
                           fill: `url(#area-gradient-${market_data[0].close})`,
                         },
                       }}
-                      // sx={{
-                      //   [`& .${areaElementClasses.root}`]: {
-                      //     fill: `url(#area-gradient-325)`,
-                      //   },
-                      // }}
                     >
                       {/* <AreaGradient color={theme.palette.grey[400]} id={`area-gradient-325`} /> */}
                       <AreaGradient
