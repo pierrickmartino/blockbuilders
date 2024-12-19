@@ -515,6 +515,17 @@ def download_contract_info_task(contract_id: uuid):
         # logger.info(f"{info}")
                     
         contract.logo_uri = info.get("Data", {}).get("LOGO_URL")
+        contract.description = info.get("Data", {}).get("ASSET_DESCRIPTION_SNIPPET")
+        contract.name = info.get("Data", {}).get("NAME")
+        contract.market_cap = info.get("Data", {}).get("TOTAL_MKT_CAP_USD") if info.get("Data", {}).get("TOTAL_MKT_CAP_USD") else 0
+
+        contract.supply_total = info.get("Data", {}).get("SUPPLY_TOTAL") if info.get("Data", {}).get("SUPPLY_TOTAL") else 0
+        contract.supply_circulating = info.get("Data", {}).get("SUPPLY_CIRCULATING") if info.get("Data", {}).get("SUPPLY_CIRCULATING") else 0
+        contract.supply_issued = info.get("Data", {}).get("SUPPLY_ISSUED") if info.get("Data", {}).get("SUPPLY_ISSUED") else 0
+        contract.supply_locked = info.get("Data", {}).get("SUPPLY_LOCKED") if info.get("Data", {}).get("SUPPLY_LOCKED") else 0
+        contract.supply_burnt = info.get("Data", {}).get("SUPPLY_BURNT") if info.get("Data", {}).get("SUPPLY_BURNT") else 0
+        contract.supply_staked = info.get("Data", {}).get("SUPPLY_STAKED") if info.get("Data", {}).get("SUPPLY_STAKED") else 0
+
         contract.save()
 
         end_time = time.time()

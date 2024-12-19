@@ -7,6 +7,7 @@ import {
   Chip,
   Link,
   CardContent,
+  Avatar,
 } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
@@ -57,19 +58,19 @@ const Transactions = () => {
     fetchTransactionData();
   }, [page, rowsPerPage, fetchTransactionData]); // Include fetchTransactionData as a dependency
 
-  const fetchTransactionDataWithSearch = async (searchTerm: string) => {
-    if (position_id && wallet_id) {
-      await fetchTransactionsWithSearch(
-        String(position_id),
-        String(wallet_id),
-        String(searchTerm),
-        setTransactions,
-        setTotalCount,
-        page,
-        rowsPerPage
-      );
-    }
-  };
+  // const fetchTransactionDataWithSearch = async (searchTerm: string) => {
+  //   if (position_id && wallet_id) {
+  //     await fetchTransactionsWithSearch(
+  //       String(position_id),
+  //       String(wallet_id),
+  //       String(searchTerm),
+  //       setTransactions,
+  //       setTotalCount,
+  //       page,
+  //       rowsPerPage
+  //     );
+  //   }
+  // };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage); // Update page state
@@ -82,10 +83,10 @@ const Transactions = () => {
     fetchTransactionData();
   };
 
-  const handleSearch = (searchTerm: string) => {
-    // Implement your search logic here, such as making API calls
-    fetchTransactionDataWithSearch(searchTerm);
-  };
+  // const handleSearch = (searchTerm: string) => {
+  //   // Implement your search logic here, such as making API calls
+  //   fetchTransactionDataWithSearch(searchTerm);
+  // };
 
   const data: StatCardProps[] = [
     {
@@ -479,9 +480,85 @@ const Transactions = () => {
           </BasicCard>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <HighlightedCard />
+        <BasicCard title="Information">
+            {transactions.length > 0 && transactions[0]?.position.contract ? (
+              <Stack>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={2}
+                  justifyContent="space-between"
+                  mb={1}
+                >
+                  {transactions[0].position.contract.name}
+                  <Avatar
+                alt={transactions[0].position.contract.name}
+                sx={{ width: 24, height: 24 }}
+                src={transactions[0].position.contract.logo_uri || `A`}
+              />
+
+                </Stack>
+                {/* <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={2}
+                  justifyContent="space-between"
+                  mb={1}
+                > */}
+                <Typography color="textSecondary" fontSize="12px">
+                {transactions[0].position.contract.description}
+                    </Typography>
+                  
+                  <Grid container spacing={3} mb={1} mt={1}>
+                  <Grid size={{ xs: 6, sm: 4 }}>
+                    <Typography
+                      variant="subtitle2"
+                      fontWeight="500"
+                      fontSize="13px"
+                    >
+                      Supply Total
+                    </Typography>
+                    <Typography color="textSecondary" fontSize="12px">
+                      {formatNumber(transactions[0].position.contract.supply_total, "quantity_rounded")}
+                    </Typography>
+                  </Grid>
+                  <Grid size={{ xs: 6, sm: 4 }}>
+                    <Typography
+                      variant="subtitle2"
+                      fontWeight="500"
+                      fontSize="13px"
+                    >
+                      Supply Locked
+                    </Typography>
+                    <Typography color="textSecondary" fontSize="12px">
+                      {formatNumber(transactions[0].position.contract.supply_locked, "quantity_rounded")}
+                    </Typography>
+                  </Grid>
+                  <Grid size={{ xs: 6, sm: 4 }}>
+                    <Typography
+                      variant="subtitle2"
+                      fontWeight="500"
+                      fontSize="13px"
+                    >
+                      Supply Burnt
+                    </Typography>
+                    <Typography color="textSecondary" fontSize="12px">
+                      {formatNumber(transactions[0].position.contract.supply_burnt, "quantity_rounded")}
+                    </Typography>
+                  </Grid>
+                </Grid>
+                {/* </Stack> */}
+              </Stack>
+            ) : (
+              <Stack>
+                <Typography>No data available</Typography>
+              </Stack> // Fallback if transactions are not available
+            )}
+            {/* </Stack> */}
+            {/* </Stack> */}
+          </BasicCard>
         </Grid>
-        <Grid size={{ xs: 12, lg: 12 }}>
+        {/* <Grid size={{ xs: 12, lg: 12 }}>
           <Card variant="outlined" sx={{ p: 3 }}>
             <Box px={0} py={0} mb="-15px">
               <Typography variant="h5">Filter</Typography>
@@ -498,7 +575,7 @@ const Transactions = () => {
               </Stack>
             </Box>
           </Card>
-        </Grid>
+        </Grid> */}
         <Grid size={{ xs: 12, lg: 12 }}>
           <TransactionTable
             transactions={transactions}

@@ -54,8 +54,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({
                   <Avatar
                     alt={transaction.position.contract.blockchain.name}
                     src={
-                      "/images/logos/" +
-                      transaction.position.contract.blockchain.icon
+                      transaction.position.contract.logo_uri || `/images/logos/${transaction.position.contract.blockchain.icon}`
                     }
                   />
                 </TimelineDot>

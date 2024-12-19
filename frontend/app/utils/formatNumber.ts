@@ -1,7 +1,7 @@
-// Function to format a number or string into a specific format type (currency, quantity, quantity_precise or percentage).
+// Function to format a number or string into a specific format type (currency, quantity, quantity_precise, quantity_rounded or percentage).
 const formatNumber = (
   value: number | string, // Accepts either a number or string as input.
-  type: "currency" | "quantity_precise" | "quantity" | "percentage" = "quantity" // The format type with a default value of "quantity".
+  type: "currency" | "quantity_precise" | "quantity_rounded" | "quantity" | "percentage" = "quantity" // The format type with a default value of "quantity".
 ) => {
   // Guard clause to handle invalid inputs: empty strings, null, undefined, or non-numeric values.
   if (
@@ -35,6 +35,13 @@ const formatNumber = (
       return new Intl.NumberFormat("en-US", {
         minimumFractionDigits: 0, // No minimum decimal places.
         maximumFractionDigits: 8, // Allow up to 8 decimal places.
+      }).format(numValue);
+    
+    case "quantity_rounded":
+      // If the type is "quantity_rounded", format the number with up to 0 decimal places and round to the nearest cent.
+      return new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: 0, // No minimum decimal places.
+        maximumFractionDigits: 0, // No maximum decimal places, so it will be rounded.
       }).format(numValue);
 
     case "quantity":

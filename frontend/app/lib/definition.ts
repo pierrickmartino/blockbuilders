@@ -44,6 +44,14 @@ export type Contract = {
   previous_day: string;
   previous_week: string;
   previous_month: string;
+  description: string;
+  market_cap: number;
+  supply_issued: number;
+  supply_total: number;
+  supply_locked: number;
+  supply_circulating: number;
+  supply_staked: number;
+  supply_burnt: number;
   category: string;
   blockchain: Blockchain;
 };

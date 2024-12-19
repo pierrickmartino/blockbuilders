@@ -237,8 +237,16 @@ class Contract(models.Model):
         max_length=20, choices=CategoryContractChoices.choices, default=CategoryContractChoices.STANDARD
     )
 
-    # market_cap = models.DecimalField(max_digits=20, decimal_places=2, default=0) # type: ignore
+    market_cap = models.DecimalField(max_digits=24, decimal_places=6, default=0)
     # volume = models.DecimalField(max_digits=20, decimal_places=10, default=0) # type: ignore
+    description = models.TextField(default="", blank=True)
+
+    supply_issued = models.DecimalField(max_digits=24, decimal_places=6, default=0)
+    supply_total = models.DecimalField(max_digits=24, decimal_places=6, default=0)
+    supply_locked = models.DecimalField(max_digits=24, decimal_places=6, default=0)
+    supply_circulating = models.DecimalField(max_digits=24, decimal_places=6, default=0)
+    supply_staked = models.DecimalField(max_digits=24, decimal_places=6, default=0)
+    supply_burnt = models.DecimalField(max_digits=24, decimal_places=6, default=0)
 
     class Meta:
         verbose_name = "Contract"
