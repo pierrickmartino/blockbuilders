@@ -311,11 +311,13 @@ const Transactions = () => {
                         <Fragment></Fragment>
                       )
                     }
-                    color={transactions[0].position.capital_gain < 0
-                    ? "error"
-                    : transactions[0].position.capital_gain > 0
-                    ? "success"
-                    : "default"}
+                    color={
+                      transactions[0].position.capital_gain < 0
+                        ? "error"
+                        : transactions[0].position.capital_gain > 0
+                        ? "success"
+                        : "default"
+                    }
                     // sx={{
                     //   pl: "4px",
                     //   pr: "4px",
@@ -346,16 +348,18 @@ const Transactions = () => {
                         <Fragment></Fragment>
                       )
                     }
-                    color={transactions[0].position.unrealized_gain < 0
-                      ? "error"
-                      : transactions[0].position.unrealized_gain > 0
-                      ? "success"
-                      : "default"}
-                      // sx={{
-                      //   pl: "4px",
-                      //   pr: "4px",
-                      //   mb: "4px",
-                      // }}
+                    color={
+                      transactions[0].position.unrealized_gain < 0
+                        ? "error"
+                        : transactions[0].position.unrealized_gain > 0
+                        ? "success"
+                        : "default"
+                    }
+                    // sx={{
+                    //   pl: "4px",
+                    //   pr: "4px",
+                    //   mb: "4px",
+                    // }}
                     size="small"
                     label={formatNumber(
                       transactions[0].position.unrealized_gain,
@@ -381,16 +385,18 @@ const Transactions = () => {
                         <Fragment></Fragment>
                       )
                     }
-                    color={transactions[0].position.daily_price_delta < 0
-                      ? "error"
-                      : transactions[0].position.daily_price_delta > 0
-                      ? "success"
-                      : "default"}
-                      // sx={{
-                      //   pl: "4px",
-                      //   pr: "4px",
-                      //   mb: "4px",
-                      // }}
+                    color={
+                      transactions[0].position.daily_price_delta < 0
+                        ? "error"
+                        : transactions[0].position.daily_price_delta > 0
+                        ? "success"
+                        : "default"
+                    }
+                    // sx={{
+                    //   pl: "4px",
+                    //   pr: "4px",
+                    //   mb: "4px",
+                    // }}
                     size="small"
                     label={formatNumber(
                       transactions[0].position.daily_price_delta,
@@ -417,16 +423,18 @@ const Transactions = () => {
                         <Fragment></Fragment>
                       )
                     }
-                    color={transactions[0].position.weekly_price_delta < 0
-                      ? "error"
-                      : transactions[0].position.weekly_price_delta > 0
-                      ? "success"
-                      : "default"}
-                      // sx={{
-                      //   pl: "4px",
-                      //   pr: "4px",
-                      //   mb: "4px",
-                      // }}
+                    color={
+                      transactions[0].position.weekly_price_delta < 0
+                        ? "error"
+                        : transactions[0].position.weekly_price_delta > 0
+                        ? "success"
+                        : "default"
+                    }
+                    // sx={{
+                    //   pl: "4px",
+                    //   pr: "4px",
+                    //   mb: "4px",
+                    // }}
                     size="small"
                     label={formatNumber(
                       transactions[0].position.weekly_price_delta,
@@ -452,16 +460,18 @@ const Transactions = () => {
                         <Fragment></Fragment>
                       )
                     }
-                    color={transactions[0].position.monthly_price_delta < 0
-                      ? "error"
-                      : transactions[0].position.monthly_price_delta > 0
-                      ? "success"
-                      : "default"}
-                      // sx={{
-                      //   pl: "4px",
-                      //   pr: "4px",
-                      //   mb: "4px",
-                      // }}
+                    color={
+                      transactions[0].position.monthly_price_delta < 0
+                        ? "error"
+                        : transactions[0].position.monthly_price_delta > 0
+                        ? "success"
+                        : "default"
+                    }
+                    // sx={{
+                    //   pl: "4px",
+                    //   pr: "4px",
+                    //   mb: "4px",
+                    // }}
                     size="small"
                     label={formatNumber(
                       transactions[0].position.monthly_price_delta,
@@ -480,7 +490,7 @@ const Transactions = () => {
           </BasicCard>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-        <BasicCard title="Information">
+          <BasicCard title="Information">
             {transactions.length > 0 && transactions[0]?.position.contract ? (
               <Stack>
                 <Stack
@@ -490,13 +500,15 @@ const Transactions = () => {
                   justifyContent="space-between"
                   mb={1}
                 >
-                  {transactions[0].position.contract.name}
-                  <Avatar
-                alt={transactions[0].position.contract.name}
-                sx={{ width: 24, height: 24 }}
-                src={transactions[0].position.contract.logo_uri || `A`}
-              />
+                  <Typography variant="h5" gutterBottom>
+                    {transactions[0].position.contract.name}
+                  </Typography>
 
+                  <Avatar
+                    alt={transactions[0].position.contract.name}
+                    sx={{ width: 24, height: 24 }}
+                    src={transactions[0].position.contract.logo_uri || `A`}
+                  />
                 </Stack>
                 {/* <Stack
                   direction="row"
@@ -506,10 +518,10 @@ const Transactions = () => {
                   mb={1}
                 > */}
                 <Typography color="textSecondary" fontSize="12px">
-                {transactions[0].position.contract.description}
-                    </Typography>
-                  
-                  <Grid container spacing={3} mb={1} mt={1}>
+                  {transactions[0].position.contract.description}
+                </Typography>
+
+                <Grid container spacing={3} mb={1} mt={1}>
                   <Grid size={{ xs: 6, sm: 4 }}>
                     <Typography
                       variant="subtitle2"
@@ -519,7 +531,10 @@ const Transactions = () => {
                       Supply Total
                     </Typography>
                     <Typography color="textSecondary" fontSize="12px">
-                      {formatNumber(transactions[0].position.contract.supply_total, "quantity_rounded")}
+                      {formatNumber(
+                        transactions[0].position.contract.supply_total,
+                        "quantity_rounded"
+                      )}
                     </Typography>
                   </Grid>
                   <Grid size={{ xs: 6, sm: 4 }}>
@@ -531,7 +546,10 @@ const Transactions = () => {
                       Supply Locked
                     </Typography>
                     <Typography color="textSecondary" fontSize="12px">
-                      {formatNumber(transactions[0].position.contract.supply_locked, "quantity_rounded")}
+                      {formatNumber(
+                        transactions[0].position.contract.supply_locked,
+                        "quantity_rounded"
+                      )}
                     </Typography>
                   </Grid>
                   <Grid size={{ xs: 6, sm: 4 }}>
@@ -543,7 +561,10 @@ const Transactions = () => {
                       Supply Burnt
                     </Typography>
                     <Typography color="textSecondary" fontSize="12px">
-                      {formatNumber(transactions[0].position.contract.supply_burnt, "quantity_rounded")}
+                      {formatNumber(
+                        transactions[0].position.contract.supply_burnt,
+                        "quantity_rounded"
+                      )}
                     </Typography>
                   </Grid>
                 </Grid>
