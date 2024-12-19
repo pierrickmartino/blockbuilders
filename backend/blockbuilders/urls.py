@@ -25,6 +25,7 @@ from app.utils.bsc import view_bsc
 from app.views.views_api import (
     FiatViewSet,
     LogoutView,
+    MarketDataLastView,
     PositionTopView,
     PositionView,
     TransactionLastView,
@@ -68,6 +69,7 @@ market_data_list = MarketDataViewSet.as_view({"get": "list", "post": "create"})
 market_data_detail = MarketDataViewSet.as_view(
     {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
 )
+market_data_last_list = MarketDataLastView.as_view()
 user_setting_list = UserSettingViewSet.as_view({"get": "list", "post": "create"})
 user_setting_detail = UserSettingViewSet.as_view(
     {"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}
@@ -293,6 +295,7 @@ urlpatterns = [
         # FROM MARKETDATA OBJECT #
         path("api/marketdatas/", market_data_list, name="marketdata-list"),
         path("api/marketdatas/<uuid:pk>/", market_data_detail, name="marketdata-detail"),
+        path("api/marketdatas/<str:symbol>/<str:reference>/<int:last>", market_data_last_list, name="marketdata-last-list"),
         # FROM USER_SETTING OBJECT #
         path("api/usersettings/", user_setting_list, name="usersetting-list"),
         path("api/usersettings/<uuid:pk>/", user_setting_detail, name="usersetting-detail"),

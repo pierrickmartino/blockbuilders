@@ -1,4 +1,4 @@
-from rest_framework import viewsets, generics, filters, permissions
+from rest_framework import viewsets, generics, filters, permissions, pagination
 from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -30,6 +30,11 @@ from app.models import (
     Wallet,
 )
 
+class MonthlyResultsSetPagination(pagination.PageNumberPagination):
+    page_size = 30
+    page_size_query_param = 'limit'
+    max_page_size = 30
+
 ##################
 # AUTHENTICATION #
 ##################
@@ -38,9 +43,10 @@ class UserView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
     def retrieve(self, request, pk=None):
-        if request.user and pk == 'me':
+        if request.user and pk == "me":
             return Response(UserSerializer(request.user).data)
         return super(UserView, self).retrieve(request, pk)
+
 
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
@@ -85,6 +91,7 @@ class LogoutView(APIView):
 ################
 # ModelViewSet #
 ################
+
 
 class WalletViewSet(viewsets.ModelViewSet):
     queryset = Wallet.objects.all()
@@ -180,6 +187,17 @@ class PositionTopView(generics.ListAPIView):
         max = self.kwargs["max"]
         return Position.objects.order_by("-amount")[:max]
 
+
+class MarketDataLastView(generics.ListAPIView):
+    serializer_class = MarketDataSerializer
+    pagination_class = MonthlyResultsSetPagination
+
+    def get_queryset(self):
+        symbol = self.kwargs["symbol"]
+        reference = self.kwargs["reference"]
+        last = self.kwargs["last"]
+        return MarketData.objects.filter(symbol=symbol, reference=reference).order_by("-time")[:last]
+     
 
 class BlockchainTopView(generics.ListAPIView):
     serializer_class = BlockchainSerializer

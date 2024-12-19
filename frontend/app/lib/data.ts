@@ -4,6 +4,7 @@ import {
   Transaction,
   Blockchain,
   Contract,
+  MarketData,
 } from "./definition";
 import { fetcher } from "./fetcher";
 
@@ -298,6 +299,26 @@ export const fetchContractsAll = async (
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
     setContracts([]); // Set empty transactions if fetching fails
+    throw new Error("Failed to fetch all transactions.");
+  }
+};
+
+export const fetchContractMarketPriceHisto = async (
+  offset: number,
+  symbol: string,
+  reference: string,
+  setMarketDataHisto: React.Dispatch<React.SetStateAction<MarketData[]>>,
+): Promise<void> => {
+
+  try {
+    const response = await fetcher(`/api/marketdatas/${symbol}/${reference}/${offset}`);
+    
+    if (response.results) {
+      setMarketDataHisto(response.results);
+    }
+  } catch (err) {
+    console.error("Error fetching data from transaction API:", err);
+    setMarketDataHisto([]); // Set empty transactions if fetching fails
     throw new Error("Failed to fetch all transactions.");
   }
 };

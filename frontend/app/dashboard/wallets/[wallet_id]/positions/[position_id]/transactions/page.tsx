@@ -11,9 +11,14 @@ import {
 } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
+import { useTheme } from "@mui/material/styles";
 import { Fragment, useEffect, useState, useCallback } from "react";
-import { Transaction } from "@/app/lib/definition";
-import { fetchTransactions, fetchTransactionsWithSearch } from "@/app/lib/data";
+import { MarketData, Transaction } from "@/app/lib/definition";
+import {
+  fetchContractMarketPriceHisto,
+  fetchTransactions,
+  fetchTransactionsWithSearch,
+} from "@/app/lib/data";
 import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
@@ -27,15 +32,44 @@ import {
 import StatCard, {
   StatCardProps,
 } from "@/app/dashboard/components/dashboard/StatCard";
-import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
 import BasicCard from "@/app/dashboard/components/shared/BasicCard";
+import { SparkLineChart } from "@mui/x-charts/SparkLineChart";
+import { areaElementClasses } from "@mui/x-charts/LineChart";
+
+function AreaGradient({ color, id }: { color: string; id: string }) {
+  return (
+    <defs>
+      <linearGradient id={id} x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" stopColor={color} stopOpacity={0.3} />
+        <stop offset="100%" stopColor={color} stopOpacity={0} />
+      </linearGradient>
+    </defs>
+  );
+}
+
+function getDaysInMonth(month: number, year: number) {
+  const date = new Date(year, month, 0);
+  const monthName = date.toLocaleDateString("en-US", {
+    month: "short",
+  });
+  const daysInMonth = date.getDate();
+  const days = [];
+  let i = 1;
+  while (days.length < daysInMonth) {
+    days.push(`${monthName} ${i}`);
+    i += 1;
+  }
+  return days;
+}
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [market_data, setMarketDataHisto] = useState<MarketData[]>([]);
   const [page, setPage] = useState(0); // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(25); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
 
+  const theme = useTheme();
   const params = useParams();
   const wallet_id = params.wallet_id;
   const position_id = params.position_id;
@@ -54,9 +88,28 @@ const Transactions = () => {
     }
   }, [position_id, wallet_id, page, rowsPerPage]); // Add dependencies used within the function
 
+  // Fetch market price data
+  const fetchContractMarketPriceHistoData = useCallback(async () => {
+    if (transactions.length > 0 && transactions[0]?.position) {
+      console.log("fetchContractMarketPriceHistoData");
+      await fetchContractMarketPriceHisto(
+        30,
+        transactions[0].position.contract.symbol,
+        "USD",
+        setMarketDataHisto
+      );
+    } else {
+      console.warn("No transactions or position data available");
+    }
+  }, [transactions, fetchContractMarketPriceHisto, setMarketDataHisto]);
+
   useEffect(() => {
     fetchTransactionData();
   }, [page, rowsPerPage, fetchTransactionData]); // Include fetchTransactionData as a dependency
+
+  useEffect(() => {
+    fetchContractMarketPriceHistoData();
+  }, [fetchContractMarketPriceHistoData]);
 
   // const fetchTransactionDataWithSearch = async (searchTerm: string) => {
   //   if (position_id && wallet_id) {
@@ -87,6 +140,11 @@ const Transactions = () => {
   //   // Implement your search logic here, such as making API calls
   //   fetchTransactionDataWithSearch(searchTerm);
   // };
+
+  const today = new Date();
+  const month = today.getMonth() + 1;
+  const year = today.getFullYear();
+  const daysInWeek = getDaysInMonth(month, year);
 
   const data: StatCardProps[] = [
     {
@@ -265,26 +323,40 @@ const Transactions = () => {
                     Last 30 days
                   </Typography>
                 </Stack>
-                {/* <Box sx={{ width: '100%', height: 50 }}>
-            <SparkLineChart
-              colors={[chartColor]}
-              data={data}
-              area
-              showHighlight
-              showTooltip
-              xAxis={{
-                scaleType: 'band',
-                data: daysInWeek, // Use the correct property 'data' for xAxis
-              }}
-              sx={{
-                [`& .${areaElementClasses.root}`]: {
-                  fill: `url(#area-gradient-${value})`,
-                },
-              }}
-            >
-              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
-            </SparkLineChart>
-          </Box> */}
+                <Box sx={{ width: "100%", height: 50 }}>
+                  {market_data.length > 0 && market_data[0]?.close ? (
+                    <SparkLineChart
+                      colors={[theme.palette.grey[400]]}
+                      // colors={[chartColor]}
+                      data={market_data.map((item) => item.close).reverse()}
+                      area
+                      showHighlight
+                      showTooltip
+                      xAxis={{
+                        scaleType: "band",
+                        data: daysInWeek, // Use the correct property 'data' for xAxis
+                      }}
+                      sx={{
+                        [`& .${areaElementClasses.root}`]: {
+                          fill: `url(#area-gradient-${market_data[0].close})`,
+                        },
+                      }}
+                      // sx={{
+                      //   [`& .${areaElementClasses.root}`]: {
+                      //     fill: `url(#area-gradient-325)`,
+                      //   },
+                      // }}
+                    >
+                      {/* <AreaGradient color={theme.palette.grey[400]} id={`area-gradient-325`} /> */}
+                      <AreaGradient
+                        color={theme.palette.grey[400]}
+                        id={`area-gradient-${market_data[0].close}`}
+                      />
+                    </SparkLineChart>
+                  ) : (
+                    <Typography>No data available</Typography> // Fallback if transactions are not available
+                  )}
+                </Box>
               </Stack>
             </CardContent>
           </Card>

@@ -93,3 +93,14 @@ export type Transaction = {
   status: string;
   status_value: number;
 };
+
+export type MarketData = {
+  id: string;
+  symbol: string;
+  reference: string;
+  time: string;
+  high: number;
+  low: number;
+  open: number;
+  close: number;
+}

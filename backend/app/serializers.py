@@ -62,7 +62,7 @@ class ContractSerializer(serializers.ModelSerializer):
 class MarketDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarketData
-        fields = "__all__"
+        fields = ["time", "close"]
 
 
 class UserSettingSerializer(serializers.ModelSerializer):

@@ -51,7 +51,10 @@ export default function StatCard({
   data,
 }: StatCardProps) {
   const theme = useTheme();
-  const daysInWeek = getDaysInMonth(4, 2024);
+  const today = new Date();
+  const month = today.getMonth() + 1;
+  const year = today.getFullYear();
+  const daysInWeek = getDaysInMonth(month, year);
 
   const trendColors = {
     up:
