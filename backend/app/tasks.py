@@ -10,7 +10,11 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.db.models import F, Q, Sum, Count
 from datetime import timezone as dt_timezone
-from app.utils.cryptocompare.view_cryptocompare import get_daily_pair_ohlcv, get_multiple_symbols_price, get_asset_by_symbol
+from app.utils.cryptocompare.view_cryptocompare import (
+    get_daily_pair_ohlcv,
+    get_multiple_symbols_price,
+    get_asset_by_symbol,
+)
 from app.utils.polygon.view_polygon import (
     account_balance_by_address as polygon_account_balance_by_address,
     erc20_transactions_by_wallet as polygon_erc20_transactions_by_wallet,
@@ -26,6 +30,10 @@ from app.utils.optimism.view_optimism import (
 from app.utils.bsc.view_bsc import (
     account_balance_by_address as bsc_account_balance_by_address,
     bep20_transactions_by_wallet,
+)
+from app.utils.base.view_base import (
+    account_balance_by_address as base_account_balance_by_address,
+    erc20_transactions_by_wallet as base_erc20_transactions_by_wallet,
 )
 
 from app.models import (
@@ -53,7 +61,19 @@ logger = logging.getLogger("blockbuilders")
 
 
 def is_contract_suspicious(contract_name, contract_symbol):
-    suspicious_startswith_keywords = ["$", "claim ", "(e", "http", "use just", "visit ", "www.", "@", "!", "#", "NO_NAME"]
+    suspicious_startswith_keywords = [
+        "$",
+        "claim ",
+        "(e",
+        "http",
+        "use just",
+        "visit ",
+        "www.",
+        "@",
+        "!",
+        "#",
+        "NO_NAME",
+    ]
 
     suspicious_endswith_keywords = [
         ".com",
@@ -177,8 +197,8 @@ def create_transactions(wallet, transactions, blockchain_name):
         contract, created = Contract.objects.get_or_create(
             blockchain_id=blockchain.id,
             address=contract_address,
-            name=contract_name if contract_name else "NO_NAME",
-            symbol=contract_symbol if contract_symbol else "NO_SYMBOL",
+            # name=contract_name if contract_name else "NO_NAME",
+            # symbol=contract_symbol if contract_symbol else "NO_SYMBOL",
             defaults={
                 "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
                 "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
@@ -186,11 +206,14 @@ def create_transactions(wallet, transactions, blockchain_name):
             },
         )
 
+        contract.name=contract_name if contract_name else "NO_NAME"
+        contract.symbol=contract_symbol if contract_symbol else "NO_SYMBOL"
+        contract.save()
+
         # Mark as suspicious if criteria are met
         if is_contract_suspicious(contract_name, contract_symbol):
             contract.category = CategoryContractChoices.SUSPICIOUS
-            contract.save() # Save immediately if suspicious, to ensure it's marked
-        
+            contract.save()  # Save immediately if suspicious, to ensure it's marked
 
         if contract.category != CategoryContractChoices.SUSPICIOUS:
             position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
@@ -199,12 +222,12 @@ def create_transactions(wallet, transactions, blockchain_name):
                 TypeTransactionChoices.IN if tx["to"].upper() == wallet.address.upper() else TypeTransactionChoices.OUT
             )
             transactions_to_create.append(
-            Transaction(
-                position=position,
-                type=transaction_type,
-                quantity=int(tx["value"]) / (10 ** int(tx["tokenDecimal"])),
-                date=timezone.make_aware(datetime.fromtimestamp(int(tx["timeStamp"])), dt_timezone.utc),
-                hash=tx["hash"],
+                Transaction(
+                    position=position,
+                    type=transaction_type,
+                    quantity=int(tx["value"]) / (10 ** int(tx["tokenDecimal"])),
+                    date=timezone.make_aware(datetime.fromtimestamp(int(tx["timeStamp"])), dt_timezone.utc),
+                    hash=tx["hash"],
                 )
             )
 
@@ -291,6 +314,34 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: uuid):
     except Exception as e:
         logger.error(
             f"An error occurred while creating transactions from ERC20 (Arbitrum) for wallet id {wallet_id}: {str(e)}"
+        )
+
+    return wallet_id
+
+
+@shared_task
+def create_transactions_from_base_erc20_task(wallet_id: uuid):
+    """
+    Task to create transactions from ERC20 (Base) data for a wallet.
+    """
+    start_time = time.time()
+    logger.info(f"Task started [create_transactions_from_base_erc20_task] with ({wallet_id})")
+
+    try:
+        wallet = get_object_or_404(Wallet, id=wallet_id)
+        transactions = base_erc20_transactions_by_wallet(wallet.address)
+        create_transactions(wallet, transactions, "Base")
+
+        end_time = time.time()
+        logger.info(
+            f"Task completed [create_transactions_from_base_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})"
+        )
+
+    except Wallet.DoesNotExist:
+        logger.error(f"Wallet with id {wallet_id} does not exist")
+    except Exception as e:
+        logger.error(
+            f"An error occurred while creating transactions from ERC20 (Base) for wallet id {wallet_id}: {str(e)}"
         )
 
     return wallet_id
@@ -457,6 +508,50 @@ def get_arbitrum_token_balance(wallet_id: uuid):
 
 
 @shared_task
+def get_base_token_balance(wallet_id: uuid):
+    """
+    Task to get the ETH (Base) balance for a wallet.
+    """
+    start_time = time.time()
+    logger.info(f"Task started [get_base_token_balance] with ({wallet_id})")
+
+    try:
+        blockchain = Blockchain.objects.filter(name="Base").first()
+        wallet = get_object_or_404(Wallet, id=wallet_id)
+        contract_address = "0x0000000000000000000000000000000000001010"
+        contract_name = "ETH"
+        contract_symbol = "ETH"
+        balance = base_account_balance_by_address(wallet.address)
+        contract, created = Contract.objects.get_or_create(
+            blockchain_id=blockchain.id,
+            address=contract_address,
+            name=contract_name,
+            symbol=contract_symbol,
+            defaults={
+                "decimals": 18,
+                "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
+            },
+        )
+        position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
+        position.quantity = int(balance) / int(1000000000000000000)
+        position.save()
+
+        end_time = time.time()
+        logger.info(f"Task completed [get_base_token_balance] in {(end_time - start_time)} seconds ({wallet_id})")
+
+    except Contract.DoesNotExist:
+        logger.error(f"Contract with address {contract_address} does not exist")
+    except Wallet.DoesNotExist:
+        logger.error(f"Wallet with id {wallet_id} does not exist")
+    except Exception as e:
+        logger.error(f"An error occurred while getting ETH (Base) balance for wallet id {wallet_id}: {str(e)}")
+
+    return wallet_id
+
+
+@shared_task
 def get_optimism_token_balance(wallet_id: uuid):
     """
     Task to get the ETH (Optimism) balance for a wallet.
@@ -511,30 +606,47 @@ def download_contract_info_task(contract_id: uuid):
     try:
         contract = get_object_or_404(Contract, id=contract_id)
         info = get_asset_by_symbol(contract.symbol)
-        
+
         # logger.info(f"{info}")
-                    
+
         contract.logo_uri = info.get("Data", {}).get("LOGO_URL")
         contract.description = info.get("Data", {}).get("ASSET_DESCRIPTION_SNIPPET")
-        contract.name = info.get("Data", {}).get("NAME")
-        contract.market_cap = info.get("Data", {}).get("TOTAL_MKT_CAP_USD") if info.get("Data", {}).get("TOTAL_MKT_CAP_USD") else 0
+        # contract.name = info.get("Data", {}).get("NAME")
+        contract.market_cap = (
+            info.get("Data", {}).get("TOTAL_MKT_CAP_USD") if info.get("Data", {}).get("TOTAL_MKT_CAP_USD") else 0
+        )
 
-        contract.supply_total = info.get("Data", {}).get("SUPPLY_TOTAL") if info.get("Data", {}).get("SUPPLY_TOTAL") else 0
-        contract.supply_circulating = info.get("Data", {}).get("SUPPLY_CIRCULATING") if info.get("Data", {}).get("SUPPLY_CIRCULATING") else 0
-        contract.supply_issued = info.get("Data", {}).get("SUPPLY_ISSUED") if info.get("Data", {}).get("SUPPLY_ISSUED") else 0
-        contract.supply_locked = info.get("Data", {}).get("SUPPLY_LOCKED") if info.get("Data", {}).get("SUPPLY_LOCKED") else 0
-        contract.supply_burnt = info.get("Data", {}).get("SUPPLY_BURNT") if info.get("Data", {}).get("SUPPLY_BURNT") else 0
-        contract.supply_staked = info.get("Data", {}).get("SUPPLY_STAKED") if info.get("Data", {}).get("SUPPLY_STAKED") else 0
+        contract.supply_total = (
+            info.get("Data", {}).get("SUPPLY_TOTAL") if info.get("Data", {}).get("SUPPLY_TOTAL") else 0
+        )
+        contract.supply_circulating = (
+            info.get("Data", {}).get("SUPPLY_CIRCULATING") if info.get("Data", {}).get("SUPPLY_CIRCULATING") else 0
+        )
+        contract.supply_issued = (
+            info.get("Data", {}).get("SUPPLY_ISSUED") if info.get("Data", {}).get("SUPPLY_ISSUED") else 0
+        )
+        contract.supply_locked = (
+            info.get("Data", {}).get("SUPPLY_LOCKED") if info.get("Data", {}).get("SUPPLY_LOCKED") else 0
+        )
+        contract.supply_burnt = (
+            info.get("Data", {}).get("SUPPLY_BURNT") if info.get("Data", {}).get("SUPPLY_BURNT") else 0
+        )
+        contract.supply_staked = (
+            info.get("Data", {}).get("SUPPLY_STAKED") if info.get("Data", {}).get("SUPPLY_STAKED") else 0
+        )
 
         contract.save()
 
         end_time = time.time()
-        logger.info(f"Task completed [download_contract_info_task] in {(end_time - start_time)} seconds ({contract_id})")
+        logger.info(
+            f"Task completed [download_contract_info_task] in {(end_time - start_time)} seconds ({contract_id})"
+        )
 
     except Exception as e:
         logger.error(f"An error occurred while getting contract info for contract id {contract_id}: {str(e)}")
 
     return contract_id
+
 
 @shared_task
 def aggregate_transactions_task(previous_return: int, wallet_id: uuid):
@@ -560,7 +672,10 @@ def aggregate_transactions_task(previous_return: int, wallet_id: uuid):
 
         if transactions_to_aggregate.count() >= 2:
 
-            if DEBUG == True and transaction.hash == "0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb":
+            if (
+                DEBUG == True
+                and transaction.hash == "0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb"
+            ):
                 logger.info(f"Transaction : {transactions_to_aggregate}")
 
             transaction_agg = Transaction.objects.create(
@@ -577,7 +692,8 @@ def aggregate_transactions_task(previous_return: int, wallet_id: uuid):
 
             transaction_agg.type = TypeTransactionChoices.IN if quantity_agg > 0 else TypeTransactionChoices.OUT
             transaction_agg.quantity = abs(quantity_agg)
-            if DEBUG == True : logger.info(f"Transaction with hash {transaction_agg.hash} has been aggregated")
+            if DEBUG == True:
+                logger.info(f"Transaction with hash {transaction_agg.hash} has been aggregated")
             transaction_agg.save()
 
     end_time = time.time()
@@ -685,7 +801,7 @@ def calculate_cost_transaction_task(wallet_id: uuid):
                 ):
                     # 0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb
                     calculate_cost_transaction_task_debug(transaction, symbol)
-        
+
         # Save all-in-one bulk the transactions
         Transaction.objects.bulk_update(
             transactions_to_update,
@@ -711,6 +827,7 @@ def calculate_cost_transaction_task(wallet_id: uuid):
     except Exception as e:
         logger.error(f"An error occurred while calculating transaction costs for wallet id {wallet_id} : {str(e)}")
 
+
 @shared_task
 def start_contract_download_task(contract_id: uuid):
     """
@@ -729,6 +846,7 @@ def start_contract_download_task(contract_id: uuid):
 
     return contract_id
 
+
 @shared_task
 def finish_contract_download_task(previous_return: list, contract_id: uuid):
     """
@@ -746,6 +864,7 @@ def finish_contract_download_task(previous_return: list, contract_id: uuid):
     logger.info(f"Task completed [finish_contract_download_task] in {(end_time - start_time)} seconds ({contract_id})")
 
     return contract_id
+
 
 @shared_task
 def start_wallet_resync_task(wallet_id: uuid):
@@ -938,7 +1057,8 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
             price_fiat_based = 0
             price = 0
 
-            if DEBUG == True : logger.info(f"Calculating running quantities for position id {position.id}.")
+            if DEBUG == True:
+                logger.info(f"Calculating running quantities for position id {position.id}.")
 
             for transaction in transactions:
 
@@ -975,8 +1095,11 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
                 elif transaction.type == TypeTransactionChoices.OUT:
                     running_quantity -= transaction.quantity
                     sell_quantity += transaction.quantity
-                    transaction.status = StatusTransactionChoices.CLOSE if (running_quantity * price) < 1 else StatusTransactionChoices.DIMINUTION
-                    
+                    transaction.status = (
+                        StatusTransactionChoices.CLOSE
+                        if (running_quantity * price) < 1
+                        else StatusTransactionChoices.DIMINUTION
+                    )
 
                 price_contract_based = transaction.price_contract_based
                 price = transaction.price
@@ -994,10 +1117,19 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
                 transaction.sell_quantity = sell_quantity
                 transaction.total_cost = total_cost
 
-                quantity_to_consider = transaction.quantity if transaction.status == StatusTransactionChoices.INCREASE else -transaction.quantity 
-                transaction.status_value = transaction.quantity / (transaction.running_quantity - quantity_to_consider) * 100 if transaction.status == StatusTransactionChoices.DIMINUTION or transaction.status == StatusTransactionChoices.INCREASE else 0
-                 
-                # Save the transaction 
+                quantity_to_consider = (
+                    transaction.quantity
+                    if transaction.status == StatusTransactionChoices.INCREASE
+                    else -transaction.quantity
+                )
+                transaction.status_value = (
+                    transaction.quantity / (transaction.running_quantity - quantity_to_consider) * 100
+                    if transaction.status == StatusTransactionChoices.DIMINUTION
+                    or transaction.status == StatusTransactionChoices.INCREASE
+                    else 0
+                )
+
+                # Save the transaction
                 transaction.save()
 
                 calculator = TransactionCalculator(transaction)
@@ -1032,12 +1164,13 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
     logger.info(f"Task started [get_price_from_market_task] with ({','.join(symbol_list)})")
 
     try:
-        
-        # Get contracts with a relative symbol in the symbol_list
-        relative_contracts = Contract.objects.filter(relative_symbol__in=symbol_list)  
 
-        # Remove them from the symbol list 
-        for contract in relative_contracts: symbol_list.remove(contract.symbol)
+        # Get contracts with a relative symbol in the symbol_list
+        relative_contracts = Contract.objects.filter(relative_symbol__in=symbol_list)
+
+        # Remove them from the symbol list
+        for contract in relative_contracts:
+            symbol_list.remove(contract.symbol)
 
         # Get the price for each of the symbols in the list
         prices = get_multiple_symbols_price(symbol_list)

@@ -37,7 +37,7 @@
         "name": "Metis",
         "icon": "metis_logo.svg",
         "is_active": true,
-        "gecko_id": "polygon-pos",
+        "gecko_id": "metis-pos",
         "gecko_chain_identifier": 137,
         "gecko_name": "Polygon POS",
         "gecko_shortname": "MATIC",
@@ -52,7 +52,7 @@
         "name": "Optimism",
         "icon": "optimism_logo.svg",
         "is_active": true,
-        "gecko_id": "polygon-pos",
+        "gecko_id": "optimism-pos",
         "gecko_chain_identifier": 137,
         "gecko_name": "Polygon POS",
         "gecko_shortname": "MATIC",
@@ -67,12 +67,27 @@
         "name": "Arbitrum",
         "icon": "arbitrum_logo.svg",
         "is_active": true,
-        "gecko_id": "polygon-pos",
+        "gecko_id": "arbitrum-pos",
         "gecko_chain_identifier": 137,
         "gecko_name": "Polygon POS",
         "gecko_shortname": "MATIC",
         "gecko_native_coin_id": "matic-network",
         "transaction_link":"https://arbiscan.io/tx/"
+      }
+    },
+    {
+      "model": "app.blockchain",
+      "pk": 6,
+      "fields": {
+        "name": "Base",
+        "icon": "basescan_logo.svg",
+        "is_active": true,
+        "gecko_id": "base-pos",
+        "gecko_chain_identifier": 137,
+        "gecko_name": "Polygon POS",
+        "gecko_shortname": "MATIC",
+        "gecko_native_coin_id": "matic-network",
+        "transaction_link":"https://basescan.org/tx/"
       }
     }
   ]

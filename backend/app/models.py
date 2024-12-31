@@ -53,6 +53,7 @@ class BlockchainChoices(models.TextChoices):
     METIS = "Metis", "Metis"
     ARBITRUM = "Arbitrum", "Arbitrum"
     OPTIMISTIC = "Optimism", "Optimism"
+    BASE = "Base", "Base"
 
 
 class TypeTransactionChoices(models.TextChoices):
