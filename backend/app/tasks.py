@@ -35,6 +35,10 @@ from app.utils.base.view_base import (
     account_balance_by_address as base_account_balance_by_address,
     erc20_transactions_by_wallet as base_erc20_transactions_by_wallet,
 )
+from app.utils.metis.view_metis import (
+    account_balance_by_address as metis_account_balance_by_address,
+    erc20_transactions_by_wallet as metis_erc20_transactions_by_wallet,
+)
 
 from app.models import (
     Blockchain,
@@ -318,6 +322,33 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: uuid):
 
     return wallet_id
 
+@shared_task
+def create_transactions_from_metis_erc20_task(wallet_id: uuid):
+    """
+    Task to create transactions from ERC20 (Metis) data for a wallet.
+    """
+    start_time = time.time()
+    logger.info(f"Task started [create_transactions_from_metis_erc20_task] with ({wallet_id})")
+
+    try:
+        wallet = get_object_or_404(Wallet, id=wallet_id)
+        transactions = metis_erc20_transactions_by_wallet(wallet.address)
+        create_transactions(wallet, transactions, "Metis")
+
+        end_time = time.time()
+        logger.info(
+            f"Task completed [create_transactions_from_metis_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})"
+        )
+
+    except Wallet.DoesNotExist:
+        logger.error(f"Wallet with id {wallet_id} does not exist")
+    except Exception as e:
+        logger.error(
+            f"An error occurred while creating transactions from ERC20 (Metis) for wallet id {wallet_id}: {str(e)}"
+        )
+
+    return wallet_id
+
 
 @shared_task
 def create_transactions_from_base_erc20_task(wallet_id: uuid):
@@ -503,6 +534,49 @@ def get_arbitrum_token_balance(wallet_id: uuid):
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
         logger.error(f"An error occurred while getting ETH (Arbitrum) balance for wallet id {wallet_id}: {str(e)}")
+
+    return wallet_id
+
+@shared_task
+def get_metis_token_balance(wallet_id: uuid):
+    """
+    Task to get the METIS (Metis) balance for a wallet.
+    """
+    start_time = time.time()
+    logger.info(f"Task started [get_metis_token_balance] with ({wallet_id})")
+
+    try:
+        blockchain = Blockchain.objects.filter(name="Metis").first()
+        wallet = get_object_or_404(Wallet, id=wallet_id)
+        contract_address = "0x0000000000000000000000000000000000001010"
+        contract_name = "Metis"
+        contract_symbol = "METIS"
+        balance = metis_account_balance_by_address(wallet.address)
+        contract, created = Contract.objects.get_or_create(
+            blockchain_id=blockchain.id,
+            address=contract_address,
+            name=contract_name,
+            symbol=contract_symbol,
+            defaults={
+                "decimals": 18,
+                "previous_day": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_week": timezone.make_aware(datetime.now(), dt_timezone.utc),
+                "previous_month": timezone.make_aware(datetime.now(), dt_timezone.utc),
+            },
+        )
+        position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
+        position.quantity = int(balance) / int(1000000000000000000)
+        position.save()
+
+        end_time = time.time()
+        logger.info(f"Task completed [get_metis_token_balance] in {(end_time - start_time)} seconds ({wallet_id})")
+
+    except Contract.DoesNotExist:
+        logger.error(f"Contract with address {contract_address} does not exist")
+    except Wallet.DoesNotExist:
+        logger.error(f"Wallet with id {wallet_id} does not exist")
+    except Exception as e:
+        logger.error(f"An error occurred while getting METIS (Metis) balance for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
 

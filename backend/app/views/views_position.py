@@ -28,11 +28,13 @@ from app.tasks import (
     clean_transaction_task,
     create_transactions_from_base_erc20_task,
     create_transactions_from_arbitrum_erc20_task,
+    create_transactions_from_metis_erc20_task,
     create_transactions_from_bsc_bep20_task,
     create_transactions_from_optimism_erc20_task,
     create_transactions_from_polygon_erc20_task,
     get_arbitrum_token_balance,
     get_base_token_balance,
+    get_metis_token_balance,
     get_bsc_token_balance,
     get_optimism_token_balance,
     get_polygon_token_balance,
@@ -196,6 +198,7 @@ def download_wallet(request, wallet_id: uuid):
             create_transactions_from_optimism_erc20_task.s(),
             create_transactions_from_arbitrum_erc20_task.s(),
             create_transactions_from_base_erc20_task.s(),
+            create_transactions_from_metis_erc20_task.s(),
         ),
         aggregate_transactions_task.s(wallet_id),  # Callback task
     )
@@ -213,6 +216,7 @@ def download_wallet(request, wallet_id: uuid):
             get_optimism_token_balance.s(),
             get_arbitrum_token_balance.s(),
             get_base_token_balance.s(),
+            get_metis_token_balance.s()
         ),
         finish_wallet_download_task.s(wallet_id),
     )()

@@ -31,7 +31,7 @@ BASESCAN_API_KEY = config("BASESCAN_API_KEY")
 OPTIMISM_API_KEY = config("OPTIMISM_API_KEY")
 BSCSCAN_API_KEY = config("BSCSCAN_API_KEY")
 CCOMPARE_API_KEY = config("CCOMPARE_API_KEY")
-
+METISSCAN_API_KEY = config("METISSCAN_API_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)
