@@ -827,7 +827,8 @@ def calculate_cost_transaction_task(wallet_id: uuid):
                 transaction.cost_contract_based = transaction_ref[0].quantity
 
                 # Normalize the symbol for the contract
-                symbol = position_ref.contract.symbol.replace("WETH", "ETH")
+                # symbol = position_ref.contract.symbol.replace("WETH", "ETH")
+                symbol = position_ref.contract.relative_symbol if position_ref.contract.relative_symbol else position_ref.contract.symbol
 
                 # Calculate the price based on the quantity
                 if transaction.quantity == 0:
