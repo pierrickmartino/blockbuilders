@@ -23,10 +23,8 @@
  
 - transaction - déplacer le MarketPrice sur un widget graphique montrant l'évolution du prix 
 - transaction - fix - augmentation sans limite sur la page générique
-- transaction - reprendre l'historique des market price dans le graph
 - transaction - faire la somme des capital gain daily pour afficher dans le graph
 
-- backend - reconnaitre les contrats qui sont des "utilities" en ne plus les valoriser
 - backend - mettre en suspicious une position doit supprimer les transactions associées au contract
 - backend - revoir les logs tasks pour trouver la source de lenteur
 - backend - optimiser les traitements

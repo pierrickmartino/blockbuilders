@@ -1449,7 +1449,6 @@ def update_contract_information(previous_return: int, symbol: str):
     logger.info(f"Task started [update_contract_information] with ({symbol})")
 
     try:
-
         contracts = Contract.objects.filter(Q(symbol=symbol) | Q(relative_symbol=symbol))
 
         # Get the current time
@@ -1473,17 +1472,23 @@ def update_contract_information(previous_return: int, symbol: str):
         )
 
         for contract in contracts:
-            # previous day
-            contract.previous_day_price = previous_day_price.close if previous_day_price else 0
-            contract.previous_day = one_day_ago if previous_day_price else 0
-            # previous week
-            contract.previous_week_price = previous_week_price.close if previous_week_price else 0
-            contract.previous_week = one_week_ago if previous_week_price else 0
-            # previous month
-            contract.previous_month_price = previous_month_price.close if previous_month_price else 0
-            contract.previous_month = one_month_ago if previous_month_price else 0
-            # save
-            contract.save()
+            # usecase : WETH is the symbol but ETH is the relative symbol
+            # we only want to use ETH price
+            if (contract.symbol == symbol and contract.relative_symbol != ""):
+                # save
+                contract.save()
+            else:
+                # previous day
+                contract.previous_day_price = previous_day_price.close if previous_day_price else 0
+                contract.previous_day = one_day_ago if previous_day_price else 0
+                # previous week
+                contract.previous_week_price = previous_week_price.close if previous_week_price else 0
+                contract.previous_week = one_week_ago if previous_week_price else 0
+                # previous month
+                contract.previous_month_price = previous_month_price.close if previous_month_price else 0
+                contract.previous_month = one_month_ago if previous_month_price else 0
+                # save
+                contract.save()
 
     except Contract.DoesNotExist:
         logger.error(f"Contract with symbol {symbol} does not exist")

@@ -103,15 +103,15 @@ const PositionTable: React.FC<PositionTableProps> = ({
   };
 
   const handleContractInfoDownload = async (contract_id: string) => {
-      if (contract_id !== null) {
-        const response = await downloadContractInfo(contract_id.toString());
-        if (response.task_id) {
-          onContractInfoDownloaded(response.task_id); // Notify the parent component with the task ID
-        } else {
-          console.error("Error: Task ID not found in the response.");
-        }
+    if (contract_id !== null) {
+      const response = await downloadContractInfo(contract_id.toString());
+      if (response.task_id) {
+        onContractInfoDownloaded(response.task_id); // Notify the parent component with the task ID
+      } else {
+        console.error("Error: Task ID not found in the response.");
       }
-    };
+    }
+  };
 
   // Handle navigation to wallet details
   const handleNavigateToDetails = (selectedPositionId: string) => {
@@ -131,7 +131,10 @@ const PositionTable: React.FC<PositionTableProps> = ({
     const input = amount ?? "";
     return (
       <Box>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem"  }}>
+        <Typography
+          color="textSecondary"
+          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
+        >
           {formatNumber(input, type)}
         </Typography>
       </Box>
@@ -155,10 +158,10 @@ const PositionTable: React.FC<PositionTableProps> = ({
     token_symbol: string,
     blockchain_name: string,
     blockchain_icon: string,
-    token_icon: string,
+    token_icon: string
   ) {
     return (
-      <Stack alignItems="center" direction="row" spacing={2}>
+      <Stack alignItems="baseline" direction="row" spacing={2}>
         <Avatar
           alt={blockchain_name}
           sx={{ width: 24, height: 24 }}
@@ -171,19 +174,39 @@ const PositionTable: React.FC<PositionTableProps> = ({
     );
   }
 
-  function renderTokenName(
-    token_name: string,
-  ) {
-    return (      
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
-          {truncateText(token_name, 22)}
+  function renderTokenName(token_name: string) {
+    return (
+      <Typography
+        color="textSecondary"
+        sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
+      >
+        {truncateText(token_name, 22)}
+      </Typography>
+    );
+  }
+
+  function renderPrice(price: string, daily_price_delta: number) {
+    return (
+      <Stack alignItems="baseline" justifyContent="flex-end" direction="row" spacing={1}>
+        <Typography
+          color="textSecondary"
+          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
+        >
+          {formatNumber(price, "currency")}
         </Typography>
+        <Typography
+          color={daily_price_delta < 0 ? "error" : daily_price_delta > 0 ? "success" : "textSecondary"}
+          sx={{ lineHeight: "inherit", fontSize: "0.7rem" }}
+        >
+          ({formatNumber(daily_price_delta, "percentage")})
+        </Typography>
+      </Stack>
     );
   }
 
   function renderButtons(contract_category: string, contract_id: string) {
     return (
-      <Stack height="100%" alignItems="center" direction="row" spacing={1}>
+      <Stack height="100%" alignItems="baseline" direction="row" spacing={1}>
         <Checkbox
           icon={<Payment />}
           checkedIcon={<CreditScore />}
@@ -219,29 +242,27 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerName: "Name",
       flex: 1.2,
       minWidth: 150,
-      renderCell: (params) =>
-        renderTokenName(
-          params.row.contract.name,
-        ),
+      renderCell: (params) => renderTokenName(params.row.contract.name),
     },
-    {
-      field: "daily_price_delta",
-      headerName: "Perf Daily",
-      headerAlign: "right",
-      align: "right",
-      flex: 0.8,
-      minWidth: 100,
-      renderCell: (params) => renderChipAmount(params.value, "percentage"),
-    },
+    // {
+    //   field: "daily_price_delta",
+    //   headerName: "Perf Daily",
+    //   headerAlign: "right",
+    //   align: "right",
+    //   flex: 0.8,
+    //   minWidth: 100,
+    //   renderCell: (params) => renderChipAmount(params.value, "percentage"),
+    // },
     {
       field: "price",
-      headerName: "Price",
+      headerName: "Price / Delta",
       headerAlign: "right",
       align: "right",
       flex: 0.8,
       minWidth: 100,
       renderCell: (params) =>
-        renderGreyNumber(params.row.contract.price, "currency"),
+        renderPrice(params.row.contract.price, params.row.daily_price_delta),
+      // renderGreyNumber(params.row.contract.price, "currency"),
     },
     {
       field: "quantity",
@@ -302,12 +323,14 @@ const PositionTable: React.FC<PositionTableProps> = ({
           showInMenu
         />,
         <GridActionsCellItem
-                  key="contract-download-info"
-                  label="Download info"
-                  icon={<Download fontSize="small" />}
-                  onClick={() => handleContractInfoDownload(cell.row.contract.id.toString())}
-                  showInMenu
-                />,
+          key="contract-download-info"
+          label="Download info"
+          icon={<Download fontSize="small" />}
+          onClick={() =>
+            handleContractInfoDownload(cell.row.contract.id.toString())
+          }
+          showInMenu
+        />,
       ],
     },
   ];
