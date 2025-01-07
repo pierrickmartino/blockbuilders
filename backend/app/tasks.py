@@ -117,6 +117,19 @@ def is_contract_suspicious(contract_name, contract_symbol):
 
     return False
 
+def is_contract_collateral(contract_name, contract_symbol):
+    collateral_startswith_keywords = [
+        "aPol",
+        "am",
+    ]
+
+    # Check if contract symbol starts with any collateral keywords
+    for keyword in collateral_startswith_keywords:
+        if contract_symbol.startswith(keyword):
+            return True
+
+    return False
+
 
 def get_market_data(symbol, transaction_date):
     # Define a mapping of prefixes to their transformations
@@ -218,6 +231,11 @@ def create_transactions(wallet, transactions, blockchain_name):
         if is_contract_suspicious(contract_name, contract_symbol):
             contract.category = CategoryContractChoices.SUSPICIOUS
             contract.save()  # Save immediately if suspicious, to ensure it's marked
+
+        # Mark as collateral if criteria are met
+        if is_contract_collateral(contract_name, contract_symbol):
+            contract.category = CategoryContractChoices.COLLATERAL
+            contract.save()  # Save immediately if collateral, to ensure it's marked
 
         if contract.category != CategoryContractChoices.SUSPICIOUS:
             position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
