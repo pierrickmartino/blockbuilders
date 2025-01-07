@@ -153,7 +153,6 @@ const PositionTable: React.FC<PositionTableProps> = ({
 
   function renderToken(
     token_symbol: string,
-    token_name: string,
     blockchain_name: string,
     blockchain_icon: string,
     token_icon: string,
@@ -168,10 +167,17 @@ const PositionTable: React.FC<PositionTableProps> = ({
         <Typography sx={{ lineHeight: "inherit" }}>
           {truncateText(token_symbol, 8)}
         </Typography>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
-          {truncateText(token_name, 18)}
-        </Typography>
       </Stack>
+    );
+  }
+
+  function renderTokenName(
+    token_name: string,
+  ) {
+    return (      
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
+          {truncateText(token_name, 22)}
+        </Typography>
     );
   }
 
@@ -198,15 +204,24 @@ const PositionTable: React.FC<PositionTableProps> = ({
     {
       field: "token",
       headerName: "Token",
-      flex: 1.5,
+      flex: 1,
       minWidth: 150,
       renderCell: (params) =>
         renderToken(
           params.row.contract.symbol,
-          params.row.contract.name,
           params.row.contract.blockchain.name,
           params.row.contract.blockchain.icon,
           params.row.contract.logo_uri
+        ),
+    },
+    {
+      field: "name",
+      headerName: "Name",
+      flex: 1.2,
+      minWidth: 150,
+      renderCell: (params) =>
+        renderTokenName(
+          params.row.contract.name,
         ),
     },
     {
@@ -214,7 +229,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerName: "Perf Daily",
       headerAlign: "right",
       align: "right",
-      flex: 1,
+      flex: 0.8,
       minWidth: 100,
       renderCell: (params) => renderChipAmount(params.value, "percentage"),
     },
@@ -223,7 +238,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerName: "Price",
       headerAlign: "right",
       align: "right",
-      flex: 1,
+      flex: 0.8,
       minWidth: 100,
       renderCell: (params) =>
         renderGreyNumber(params.row.contract.price, "currency"),
@@ -234,7 +249,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerAlign: "right",
       type: "number",
       align: "right",
-      flex: 1,
+      flex: 0.8,
       minWidth: 100,
       renderCell: (params) =>
         renderGreyNumber(params.value, "quantity_precise"),
@@ -245,7 +260,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerAlign: "right",
       type: "number",
       align: "right",
-      flex: 1,
+      flex: 0.8,
       minWidth: 100,
       renderCell: (params) => renderGreyNumber(params.value, "currency"),
     },
@@ -254,7 +269,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerName: "Capital Gain",
       headerAlign: "right",
       align: "right",
-      flex: 1,
+      flex: 0.8,
       minWidth: 100,
       renderCell: (params) => renderChipAmount(params.value, "currency"),
     },
@@ -263,7 +278,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerName: "Unrealized Gain",
       headerAlign: "right",
       align: "right",
-      flex: 1,
+      flex: 0.8,
       minWidth: 100,
       renderCell: (params) => renderChipAmount(params.value, "percentage"),
     },
