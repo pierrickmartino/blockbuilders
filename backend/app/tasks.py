@@ -121,6 +121,9 @@ def is_contract_collateral(contract_name, contract_symbol):
     collateral_startswith_keywords = [
         "aPol",
         "am",
+        "moo",
+        "imx",
+        "crv",
     ]
 
     # Check if contract symbol starts with any collateral keywords
@@ -1280,11 +1283,11 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
         for symbol, value in prices.items():
             try:
                 if symbol == "USDC":
-                    contracts = Contract.objects.filter(symbol__startswith=symbol)
+                    contracts = Contract.objects.filter(category=CategoryContractChoices.STABLE).filter(symbol__startswith=symbol)
                 elif symbol == "ETH":
-                    contracts = Contract.objects.filter(symbol__endswith=symbol)
+                    contracts = Contract.objects.filter(category=CategoryContractChoices.STANDARD).filter(symbol__endswith=symbol)
                 else:
-                    contracts = Contract.objects.filter(symbol=symbol)
+                    contracts = Contract.objects.filter(category=CategoryContractChoices.STANDARD).filter(symbol=symbol)
 
                 if contracts.exists():
                     for contract in contracts:
@@ -1292,6 +1295,12 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
                         contract.save()
             except Contract.DoesNotExist:
                 print(f"Contract with symbol {symbol} does not exist.")
+
+        # Finally update price for Collateral token
+        contracts_collateral = Contract.objects.filter(category=CategoryContractChoices.COLLATERAL)
+        for contract in contracts_collateral:
+            contract.price = 0
+            contract.save()
 
     except Exception as e:
         logger.error(
