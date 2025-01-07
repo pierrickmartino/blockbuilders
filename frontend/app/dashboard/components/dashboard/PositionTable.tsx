@@ -161,7 +161,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
     token_icon: string
   ) {
     return (
-      <Stack alignItems="baseline" direction="row" spacing={2}>
+      <Stack alignItems="center" direction="row" spacing={2}>
         <Avatar
           alt={blockchain_name}
           sx={{ width: 24, height: 24 }}
@@ -196,7 +196,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
         </Typography>
         <Typography
           color={daily_price_delta < 0 ? "error" : daily_price_delta > 0 ? "success" : "textSecondary"}
-          sx={{ lineHeight: "inherit", fontSize: "0.7rem" }}
+          sx={{ lineHeight: "inherit", fontSize: "0.725rem" }}
         >
           ({formatNumber(daily_price_delta, "percentage")})
         </Typography>
@@ -204,9 +204,28 @@ const PositionTable: React.FC<PositionTableProps> = ({
     );
   }
 
+  function renderAmount(amount: number, percentage: number) {
+    return (
+      <Stack alignItems="baseline" justifyContent="flex-end" direction="row" spacing={1}>
+        <Typography
+          color="textSecondary"
+          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
+        >
+          {formatNumber(amount, "currency")}
+        </Typography>
+        <Typography
+          color="textSecondary"
+          sx={{ lineHeight: "inherit", fontSize: "0.725rem" }}
+        >
+          ({formatNumber(percentage, "percentage")})
+        </Typography>
+      </Stack>
+    );
+  }
+
   function renderButtons(contract_category: string, contract_id: string) {
     return (
-      <Stack height="100%" alignItems="baseline" direction="row" spacing={1}>
+      <Stack height="100%" alignItems="center" direction="row" spacing={1}>
         <Checkbox
           icon={<Payment />}
           checkedIcon={<CreditScore />}
@@ -283,7 +302,20 @@ const PositionTable: React.FC<PositionTableProps> = ({
       align: "right",
       flex: 0.8,
       minWidth: 100,
-      renderCell: (params) => renderGreyNumber(params.value, "currency"),
+      renderCell: (params) => 
+        // renderAmount(params.row.amount, params.row.progress_percentage),
+        renderGreyNumber(params.value, "currency"),
+    },
+    {
+      field: "progress_percentage",
+      headerName: "Percentage",
+      headerAlign: "right",
+      type: "number",
+      align: "right",
+      flex: 0.6,
+      minWidth: 100,
+      renderCell: (params) => 
+        renderGreyNumber(params.value, "percentage"),
     },
     {
       field: "capital_gain",
