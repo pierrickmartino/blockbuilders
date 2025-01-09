@@ -1152,6 +1152,7 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
             price_contract_based = 0
             price_fiat_based = 0
             price = 0
+            average_cost = 0
 
             if DEBUG == True:
                 logger.info(f"Calculating running quantities for position id {position.id}.")
@@ -1229,13 +1230,16 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
                 transaction.save()
 
                 calculator = TransactionCalculator(transaction)
-                transaction.average_cost = calculator.calculate_average_cost()
+                average_cost = calculator.calculate_average_cost()
+                transaction.average_cost = average_cost
                 transaction.cost = calculator.calculate_cost()
                 transaction.cost_fiat_based = calculator.calculate_cost_fiat_based()
                 transaction.capital_gain = calculator.calculate_capital_gain()
                 transaction.save()
 
             position.quantity = running_quantity
+            position.total_cost = total_cost
+            position.average_cost = average_cost
             position.save()
 
     except Wallet.DoesNotExist:

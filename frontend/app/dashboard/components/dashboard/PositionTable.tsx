@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 
 import { Typography, Chip, Checkbox, Avatar, Stack, Box } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
@@ -141,6 +141,23 @@ const PositionTable: React.FC<PositionTableProps> = ({
     );
   }
 
+  function renderGain(gain: number, gain_amount: number) {
+    if (gain != 0 || gain_amount != 0) {
+      return (
+        <Chip
+          label={`${formatNumber(gain_amount, "currency")} (${formatNumber(
+            gain,
+            "percentage"
+          )})`}
+          color={gain < 0 || gain_amount < 0 ? "error" : gain > 0 || gain_amount > 0 ? "success" : "default"}
+          size="small"
+        />
+      );
+    } else {
+      return <Fragment></Fragment>;
+    }
+  }
+
   function renderChipAmount(
     amount: number,
     type: "currency" | "quantity_precise" | "quantity" | "percentage"
@@ -187,7 +204,12 @@ const PositionTable: React.FC<PositionTableProps> = ({
 
   function renderPrice(price: string, daily_price_delta: number) {
     return (
-      <Stack alignItems="baseline" justifyContent="flex-end" direction="row" spacing={1}>
+      <Stack
+        alignItems="baseline"
+        justifyContent="flex-end"
+        direction="row"
+        spacing={1}
+      >
         <Typography
           color="textSecondary"
           sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
@@ -195,7 +217,13 @@ const PositionTable: React.FC<PositionTableProps> = ({
           {formatNumber(price, "currency")}
         </Typography>
         <Typography
-          color={daily_price_delta < 0 ? "error" : daily_price_delta > 0 ? "success" : "textSecondary"}
+          color={
+            daily_price_delta < 0
+              ? "error"
+              : daily_price_delta > 0
+              ? "success"
+              : "textSecondary"
+          }
           sx={{ lineHeight: "inherit", fontSize: "0.725rem" }}
         >
           ({formatNumber(daily_price_delta, "percentage")})
@@ -206,7 +234,12 @@ const PositionTable: React.FC<PositionTableProps> = ({
 
   function renderAmount(amount: number, percentage: number) {
     return (
-      <Stack alignItems="baseline" justifyContent="flex-end" direction="row" spacing={1}>
+      <Stack
+        alignItems="baseline"
+        justifyContent="flex-end"
+        direction="row"
+        spacing={1}
+      >
         <Typography
           color="textSecondary"
           sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
@@ -302,7 +335,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       align: "right",
       flex: 0.8,
       minWidth: 100,
-      renderCell: (params) => 
+      renderCell: (params) =>
         // renderAmount(params.row.amount, params.row.progress_percentage),
         renderGreyNumber(params.value, "currency"),
     },
@@ -314,8 +347,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       align: "right",
       flex: 0.6,
       minWidth: 100,
-      renderCell: (params) => 
-        renderGreyNumber(params.value, "percentage"),
+      renderCell: (params) => renderGreyNumber(params.value, "percentage"),
     },
     {
       field: "capital_gain",
@@ -324,7 +356,13 @@ const PositionTable: React.FC<PositionTableProps> = ({
       align: "right",
       flex: 0.8,
       minWidth: 100,
-      renderCell: (params) => renderChipAmount(params.value, "currency"),
+      renderCell: (params) => {
+        const capitalGain = Number(params.row.capital_gain) || 0; // Default to 0 if invalid
+        return renderGain(
+          0,
+          capitalGain === 0 ? 0 : capitalGain
+        );
+      }
     },
     {
       field: "unrealized_gain",
@@ -333,7 +371,23 @@ const PositionTable: React.FC<PositionTableProps> = ({
       align: "right",
       flex: 0.8,
       minWidth: 100,
-      renderCell: (params) => renderChipAmount(params.value, "percentage"),
+      renderCell: (params) => {
+        console.log("symbol:", params.row.contract.symbol);
+        console.log("unrealized_gain:", params.row.unrealized_gain);
+        console.log("price:", params.row.contract.price);
+        console.log("average_cost:", params.row.average_cost);
+        console.log("quantity:", params.row.quantity);
+
+        const unrealizedGain = Number(params.row.unrealized_gain) || 0; // Default to 0 if invalid
+        const averageCost = Number(params.row.average_cost) || 0; // Default to 0 if invalid
+        const price = Number(params.row.contract.price) || 0; // Default to 0 if invalid
+        const quantity = Number(params.row.quantity) || 0; // Default to 0 if invalid
+
+        return renderGain(
+          unrealizedGain,
+          unrealizedGain === 0 ? 0 : (price - averageCost) * quantity
+        );
+      },
     },
     {
       field: "buttons",
