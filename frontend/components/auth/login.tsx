@@ -196,21 +196,7 @@ const Login = () => {
           </Typography>
         </Box>
       </Card>
-      {/* <Box sx={{ mt: 2 }}>
-            <Stack>
-            Don&apos;t have an account?&nbsp;
-            <Link href="/signup">Sign Up</Link> */}
-      {/* <Link
-            href={`${apiUrl}/api/auth/password/reset-password`}
-            // className="text-sm text-blue-600 hover:underline"
-          >
-            Forgot password?
-          </Link> */}
-      {/* </Stack> */}
-
-      {/* </Box> */}
     </SignInContainer>
-    // </Box>
   );
 };
 

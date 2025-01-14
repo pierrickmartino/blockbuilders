@@ -156,6 +156,23 @@ const WalletTable: React.FC<WalletTableProps> = ({
     );
   }
 
+  function renderGreyNumber(
+    amount: number,
+    type: "currency" | "quantity_precise" | "quantity" | "percentage"
+  ) {
+    const input = amount ?? "";
+    return (
+      <Box>
+        <Typography
+          color="textSecondary"
+          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
+        >
+          {formatNumber(input, type)}
+        </Typography>
+      </Box>
+    );
+  }
+
   const columns: GridColDef[] = [
     { field: "name", headerName: "Name", flex: 1, minWidth: 150 },
     {
@@ -184,7 +201,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
       align: "right",
       flex: 1,
       minWidth: 100,
-      renderCell: (params) => renderChipAmount(params.value, "currency"),
+      renderCell: (params) => renderGreyNumber(params.value, "currency"),
     },
     {
       field: "capital_gain",

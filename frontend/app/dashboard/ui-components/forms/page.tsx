@@ -1,118 +1,191 @@
-'use client';
+"use client";
 import {
-    // Paper,
-    Grid,
-    Stack,
-    TextField,
-    Checkbox,
-    FormGroup,
-    FormControlLabel,
-    RadioGroup,
-    Radio,
-    FormLabel,
-    FormControl,
-    Button,
-} from '@mui/material'
-import { Fragment } from 'react';
-import BasicCard from '../../components/shared/BasicCard';
+  // Paper,
+  Stack,
+  TextField,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+  RadioGroup,
+  Radio,
+  FormLabel,
+  FormControl,
+  Button,
+  Box,
+} from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import { Fragment } from "react";
+import BasicCard from "../../components/shared/BasicCard";
+import { Height } from "@mui/icons-material";
 
 const Forms = () => {
-    return (
-      <Grid container spacing={3}>
-        <Grid item xs={12} lg={12}>
-          <BasicCard title="Form Layout">
-            <Fragment>
-            <Stack spacing={3}>
+  return (
+    <Grid container spacing={3}>
+      <Grid size={{ xs: 12, lg: 12 }}>
+        <BasicCard title="Form Layout">
+          <Box
+            component="form"
+            // onSubmit={handleSubmit(onSubmit)}
+            // noValidate
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              gap: 2,
+            }}
+          >
+            <FormControl>
+              <FormLabel htmlFor="name">Name</FormLabel>
               <TextField
-                id="name-basic"
-                label="Name"
+                // error={errors.email ? true : false}
+                // helperText={errors.email?.message}
+                id="name"
+                type="text"
+                // name="email"
+                placeholder="Nirav Joshi"
+                autoFocus
+                required
+                fullWidth
                 variant="outlined"
-                defaultValue="Nirav Joshi"
+                // {...register("email", { required: "Email is required" })}
+                // color={errors.email ? "error" : "primary"}
               />
-              <TextField id="email-basic" label="Email" variant="outlined" />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
-                id="pass-basic"
-                label="Password"
+                // error={errors.email ? true : false}
+                // helperText={errors.email?.message}
+                id="email"
+                type="email"
+                // name="email"
+                placeholder="your@email.com"
+                autoComplete="email"
+                autoFocus
+                required
+                fullWidth
+                variant="outlined"
+                // {...register("email", { required: "Email is required" })}
+                // color={errors.email ? "error" : "primary"}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="password">Password</FormLabel>
+              <TextField
+                // error={passwordError}
+                // helperText={passwordErrorMessage}
+                // name="password"
+                placeholder="••••••"
                 type="password"
+                id="password"
+                autoComplete="current-password"
+                autoFocus
+                required
+                fullWidth
                 variant="outlined"
+                // {...register("password", { required: "Password is required" })}
+                // color={passwordError ? 'error' : 'primary'}
               />
-              <TextField
-                id="outlined-multiline-static"
-                label="Text Area"
-                multiline
-                rows={4}
-                defaultValue="Default Value"
-              />
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="error">Error</FormLabel>
               <TextField
                 error
-                id="er-basic"
-                label="Error"
-                defaultValue="ad1avi"
+                helperText="Error message"
+                id="error"
+                type="text"
+                // name="email"
+                fullWidth
                 variant="outlined"
+                // {...register("email", { required: "Email is required" })}
+                // color={errors.email ? "error" : "primary"}
               />
-              <FormGroup>
-                <FormControlLabel
-                  control={<Checkbox defaultChecked />}
-                  label="Terms & Condition"
-                />
-                <FormControlLabel
-                  disabled
-                  control={<Checkbox />}
-                  label="Disabled"
-                />
-              </FormGroup>
-              <FormControl>
-                <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-                <RadioGroup
-                  aria-labelledby="demo-radio-buttons-group-label"
-                  defaultValue="female"
-                  name="radio-buttons-group"
-                >
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor="multiline">Multiline</FormLabel>
+              <TextField
+                multiline
+                id="multiline"
+                rows={4}
+                // name="email"
+                defaultValue="Default Value"
+                fullWidth
+                variant="outlined"
+                // {...register("email", { required: "Email is required" })}
+                // color={errors.email ? "error" : "primary"}
+              />
+            </FormControl>
+
+            <Fragment>
+              <Stack spacing={3}>
+                <FormGroup>
                   <FormControlLabel
-                    value="female"
-                    control={<Radio />}
-                    label="Female"
+                    control={<Checkbox defaultChecked />}
+                    label="Terms & Condition"
                   />
                   <FormControlLabel
-                    value="male"
-                    control={<Radio />}
-                    label="Male"
+                    disabled
+                    control={<Checkbox />}
+                    label="Disabled"
                   />
-                  <FormControlLabel
-                    value="other"
-                    control={<Radio />}
-                    label="Other"
-                  />
-                </RadioGroup>
-              </FormControl>
-            </Stack>
-            <br />
-            <Button>
-              Submit
-            </Button>
+                </FormGroup>
+                <FormControl>
+                  <FormLabel id="demo-radio-buttons-group-label">
+                    Gender
+                  </FormLabel>
+                  <RadioGroup
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    defaultValue="female"
+                    name="radio-buttons-group"
+                  >
+                    <FormControlLabel
+                      value="female"
+                      control={<Radio />}
+                      label="Female"
+                    />
+                    <FormControlLabel
+                      value="male"
+                      control={<Radio />}
+                      label="Male"
+                    />
+                    <FormControlLabel
+                      value="other"
+                      control={<Radio />}
+                      label="Other"
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Stack>
+              <br />
+              <Button>Submit</Button>
             </Fragment>
-          </BasicCard>
-        </Grid>
-  
-        <Grid item xs={12} lg={12}>
-          <BasicCard title="Form Design Type">
-            <Stack spacing={3} direction="row">
-              <TextField
-                id="outlined-basic"
-                label="Outlined"
-                variant="outlined"
-              />
-              <TextField id="filled-basic" label="Filled" variant="filled" />
-              <TextField
-                id="standard-basic"
-                label="Standard"
-                variant="standard"
-              />
-            </Stack>
-          </BasicCard>
-        </Grid>
+          </Box>
+        </BasicCard>
       </Grid>
-    );
-  };
-  
-  export default Forms;
+
+      <Grid size={{ xs: 12, lg: 12 }}>
+        <BasicCard title="Form Design Type">
+          <Stack spacing={3} direction="row">
+            <TextField
+              id="outlined-basic"
+              placeholder="Outlined"
+              variant="outlined"
+            />
+            <TextField
+              id="filled-basic"
+              placeholder="Filled"
+              variant="filled"
+            />
+            <TextField
+              id="standard-basic"
+              placeholder="Standard"
+              variant="standard"
+            />
+          </Stack>
+        </BasicCard>
+      </Grid>
+    </Grid>
+  );
+};
+
+export default Forms;

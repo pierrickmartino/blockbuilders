@@ -324,7 +324,7 @@ const Wallets = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+        <Grid size={{ xs: 12, sm: 12, lg: 3 }}>
           <BasicCard
             title="Activity"
             subtitle="Latest transactions across the various blockchains"

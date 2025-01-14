@@ -7,11 +7,13 @@ import {
   IconButton,
   Fab,
   ButtonGroup,
+  Chip,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 // import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { IconHome, IconTrash, IconUser } from "@tabler/icons-react";
 import BasicCard from "../../components/shared/BasicCard";
+import formatNumber from "@/app/utils/formatNumber";
 
 // const Item = styled(Paper)(({ theme }) => ({
 //   ...theme.typography.body1,
@@ -218,6 +220,32 @@ const Buttons = () => {
               <Button>Two</Button>
               <Button>Three</Button>
             </ButtonGroup>
+          </BasicCard>
+        </Grid>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <BasicCard title="Chips">
+            <Stack spacing={2} direction="row">
+            <Chip
+              label={formatNumber(-123456, "currency")}
+              color="error"
+              size="small"
+            />
+            <Chip
+              label={formatNumber(14.41, "percentage")}
+              color="success"
+              size="small"
+            />
+            <Chip
+              label={formatNumber(-123456, "currency")}
+              color="error"
+              size="medium"
+            />
+            <Chip
+              label={formatNumber(14.41, "percentage")}
+              color="success"
+              size="medium"
+            />
+            </Stack>
           </BasicCard>
         </Grid>
       </Grid>
