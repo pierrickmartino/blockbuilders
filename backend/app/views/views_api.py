@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken, TokenError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from app.serializers import (
@@ -94,10 +95,19 @@ class LogoutView(APIView):
 
 
 class WalletViewSet(viewsets.ModelViewSet):
-    queryset = Wallet.objects.all()
+    """
+    ViewSet for Wallets that restricts access to only the authenticated user's wallets.
+    """
+    # queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+
+    def get_queryset(self):
+        # Restrict the queryset to only wallets belonging to the authenticated user
+        return Wallet.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
+        # Automatically associate the wallet with the authenticated user during creation
         serializer.save(user=self.request.user)
 
 
@@ -170,13 +180,18 @@ class ContractView(generics.ListAPIView):
 
 class TransactionLastView(generics.ListAPIView):
     serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        max = self.kwargs["max"]
+        # Get the max number of transactions to return from the URL kwargs
+        max = int(self.kwargs.get("max", 1))  # Default to 1 if not provided
+
+        # Filter transactions to include only those belonging to wallets owned by the authenticated user
         return (
-            Transaction.objects.exclude(position__contract__category=CategoryContractChoices.STABLE)
-            .exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS)
-            .order_by("-date")[:max]
+            Transaction.objects.filter(position__wallet__user=self.request.user)  # Restrict to user's wallets
+            .exclude(position__contract__category=CategoryContractChoices.STABLE) # Exclude STABLE contracts
+            .exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS) # Exclude SUSPICIOUS contracts
+            .order_by("-date")[:max] # Order by date and limit to the max specified
         )
 
 
