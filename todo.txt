@@ -32,4 +32,4 @@
     - Task completed [calculate_cost_transaction_task] in 7.057481527328491 seconds
     - Task completed [calculate_running_quantity_transaction_task] in 5.284175634384155 seconds
 - backend - migrer vers etherscan API V2
-- backend - un utilisateur ne doit pas voir les données d'un autre
+- backend - un utilisateur ne doit pas voir les données d'un autre (à finir au niveau de toutes les vues)

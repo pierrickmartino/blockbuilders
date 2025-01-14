@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, generics, filters, permissions, pagination
 from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
@@ -153,6 +154,7 @@ class UserSettingViewSet(viewsets.ModelViewSet):
 
 class TransactionView(generics.ListAPIView):
     serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ["against_contract__name", "against_contract__symbol"]
 
@@ -162,6 +164,7 @@ class TransactionView(generics.ListAPIView):
 
 class PositionView(generics.ListAPIView):
     serializer_class = PositionSerializer
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ["contract__name", "contract__symbol"]
 
@@ -197,11 +200,17 @@ class TransactionLastView(generics.ListAPIView):
 
 class PositionTopView(generics.ListAPIView):
     serializer_class = PositionSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        max = self.kwargs["max"]
-        return Position.objects.order_by("-amount")[:max]
+        # Get the max number of positions to return from the URL kwargs
+        max = int(self.kwargs.get("max", 1))  # Default to 1 if not provided
 
+        # Filter positions to include only those belonging to wallets owned by the authenticated user
+        return (
+            Position.objects.filter(wallet__user=self.request.user)  # Restrict to user's wallets
+            .order_by("-amount")[:max]  # Order by amount and limit to the max specified
+        )
 
 class MarketDataLastView(generics.ListAPIView):
     serializer_class = MarketDataSerializer
@@ -216,14 +225,18 @@ class MarketDataLastView(generics.ListAPIView):
 
 class BlockchainTopView(generics.ListAPIView):
     serializer_class = BlockchainSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        max = self.kwargs["max"]
+        # Get the max number of blockchains to return from the URL kwargs
+        max = int(self.kwargs.get("max", 1))  # Default to 1 if not provided
+
         return Blockchain.objects.order_by("-balance")[:max]
 
 
 class WalletPositionView(generics.ListAPIView):
     serializer_class = PositionSerializer
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ["contract__name", "contract__symbol"]
 
@@ -231,7 +244,11 @@ class WalletPositionView(generics.ListAPIView):
         wallet_id = self.kwargs["wallet_id"]
 
         try:
-            return Position.objects.filter(wallet_id=wallet_id).order_by("-amount")
+            return (
+                Position.objects.filter(wallet__user=self.request.user)  # Restrict to user's wallets
+                .filter(wallet_id=wallet_id) # Restrict to the selected wallet
+                .order_by("-amount") # Order by amount
+            )
 
         except Wallet.DoesNotExist:
             raise NotFound("Wallet does not exist")
@@ -239,6 +256,7 @@ class WalletPositionView(generics.ListAPIView):
 
 class WalletPositionDetailView(generics.RetrieveAPIView):
     serializer_class = PositionSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         wallet_id = self.kwargs["wallet_id"]
@@ -256,6 +274,7 @@ class WalletPositionDetailView(generics.RetrieveAPIView):
 
 class WalletPositionTransactionView(generics.ListAPIView):
     serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = ["against_contract__name", "against_contract__symbol"]
 
@@ -264,8 +283,12 @@ class WalletPositionTransactionView(generics.ListAPIView):
         position_id = self.kwargs["position_id"]
 
         try:
+            # Ensure the position belongs to the given wallet
             wallet = Wallet.objects.get(id=wallet_id)
-            return Transaction.objects.filter(position_id=position_id)
+            return (
+                Transaction.objects.filter(position__wallet__user=self.request.user)  # Restrict to user's wallets
+                .filter(position_id=position_id)
+            )
         except Position.DoesNotExist:
             raise NotFound("Position not found for this wallet")
         except Wallet.DoesNotExist:
@@ -274,6 +297,7 @@ class WalletPositionTransactionView(generics.ListAPIView):
 
 class WalletPositionTransactionDetailView(generics.RetrieveAPIView):
     serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         wallet_id = self.kwargs["wallet_id"]

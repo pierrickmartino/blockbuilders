@@ -17,8 +17,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from app.models import (
     Contract,
@@ -306,7 +307,9 @@ def get_Transactions_by_Position(position):
     return transaction_result
 
 
-@api_view()
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
 def count_transactions(request):
-    counter = Transaction.objects.all().count()
+     # Count transactions only for wallets owned by the authenticated user
+    counter = Transaction.objects.filter(position__wallet__user=request.user).count()
     return Response({"counter": counter})
