@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { Box, Avatar, Stack, Typography, Button, Chip } from "@mui/material";
+import { Box, Avatar, Stack, Typography, Button, Chip, Tooltip } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
@@ -13,6 +13,8 @@ import { Transaction } from "@/app/lib/definition";
 import formatNumber from "@/app/utils/formatNumber";
 import formatDate from "@/app/utils/formatDate";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
+
+import { formatDistanceToNow, format } from 'date-fns';
 
 // Define the props type that will be passed into WalletTable
 interface LastTransactionsProps {
@@ -105,9 +107,14 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({
                     )}
                   ></Chip>
                 </Stack>
-                <Typography variant="caption" color="textSecondary">
+                {/* <Typography variant="caption" color="textSecondary">
                   {formatDate(transaction.date)}
-                </Typography>
+                </Typography> */}
+                <Tooltip title={format(new Date(transaction.date), 'PPpp')}>
+                  <Typography variant="caption" color="textSecondary">
+                    {formatDistanceToNow(new Date(transaction.date), { addSuffix: true })}
+                  </Typography>
+                </Tooltip>
 
                 <Grid container spacing={3} mb={5} mt={1}>
                   <Grid size={{ xs: 12, sm: 3 }}>

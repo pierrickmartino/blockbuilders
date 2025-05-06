@@ -31,6 +31,7 @@
     "@typescript-eslint/parser": "^8.12.1",
     "apexcharts": "^4.1.0",
     "autoprefixer": "^10.4.20",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "eslint": "^9.13.0",
     "eslint-config-next": "^15.0.1",
