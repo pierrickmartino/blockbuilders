@@ -1,7 +1,7 @@
 // AddressCell.tsx
 import React from "react";
 import { Tooltip, IconButton, Typography, Box } from "@mui/material";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+// import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 type Props = { address: string };
 

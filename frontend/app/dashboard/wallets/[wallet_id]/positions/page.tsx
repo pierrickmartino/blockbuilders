@@ -19,7 +19,11 @@ import {
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
 import { Position } from "@/app/lib/definition";
-import { fetchPositions, fetchPositionsWithSearch, fetchTaskStatus } from "@/app/lib/data";
+import {
+  fetchPositions,
+  fetchPositionsWithSearch,
+  fetchTaskStatus,
+} from "@/app/lib/data";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
@@ -42,8 +46,8 @@ const Positions = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("info");
 
   const [taskPolling, setTaskPolling] = useState<{
-      [taskId: string]: NodeJS.Timeout;
-    }>({}); // New state for task polling
+    [taskId: string]: NodeJS.Timeout;
+  }>({}); // New state for task polling
 
   const params = useParams();
   const wallet_id = params.wallet_id;
@@ -78,16 +82,16 @@ const Positions = () => {
   };
 
   const handleClose = (
-      event: React.SyntheticEvent | Event,
-      reason?: SnackbarCloseReason
-    ) => {
-      if (reason === "clickaway") {
-        return;
-      }
-  
-      setOpen(false);
-    };
-  
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
   // New function to poll task status
   const pollTaskStatus = (taskId: string) => {
     const intervalId = setInterval(async () => {
@@ -236,9 +240,6 @@ const Positions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
             <CardContent>
-              <Typography component="h2" variant="subtitle2" gutterBottom>
-                Total amount
-              </Typography>
               <Stack
                 direction="column"
                 sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
@@ -264,7 +265,7 @@ const Positions = () => {
                     variant="caption"
                     sx={{ color: "text.secondary" }}
                   >
-                    Last 30 days
+                    Total amount
                   </Typography>
                 </Stack>
                 {/* <Box sx={{ width: '100%', height: 50 }}>
@@ -294,9 +295,6 @@ const Positions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
             <CardContent>
-              <Typography component="h2" variant="subtitle2" gutterBottom>
-                Total capital gain
-              </Typography>
               <Stack
                 direction="column"
                 sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
@@ -325,7 +323,7 @@ const Positions = () => {
                     variant="caption"
                     sx={{ color: "text.secondary" }}
                   >
-                    Last 30 days
+                    Total capital gain
                   </Typography>
                 </Stack>
                 {/* <Box sx={{ width: '100%', height: 50 }}>
@@ -355,9 +353,6 @@ const Positions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
             <CardContent>
-              <Typography component="h2" variant="subtitle2" gutterBottom>
-                Total unrealized
-              </Typography>
               <Stack
                 direction="column"
                 sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
@@ -386,7 +381,7 @@ const Positions = () => {
                     variant="caption"
                     sx={{ color: "text.secondary" }}
                   >
-                    Last 30 days
+                    Total unrealized
                   </Typography>
                 </Stack>
                 {/* <Box sx={{ width: '100%', height: 50 }}>
@@ -459,16 +454,21 @@ const Positions = () => {
           )}
         </Grid>
       </Grid>
-      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical:'top', horizontal:'right' }}>
-              <Alert
-                severity={snackbarSeverity}
-                onClose={handleClose}
-                sx={{ width: "100%" }}
-              >
-                <AlertTitle>{snackbarTitle}</AlertTitle>
-                {snackbarMessage}
-              </Alert>
-            </Snackbar>
+      <Snackbar
+        open={open}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          severity={snackbarSeverity}
+          onClose={handleClose}
+          sx={{ width: "100%" }}
+        >
+          <AlertTitle>{snackbarTitle}</AlertTitle>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

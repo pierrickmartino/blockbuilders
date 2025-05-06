@@ -84,9 +84,6 @@ export default function StatCard({
   return (
     <Card variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
       <CardContent>
-        <Typography component="h2" variant="subtitle2" gutterBottom>
-          {title}
-        </Typography>
         <Stack
           direction="column"
           sx={{ justifyContent: 'space-between', flexGrow: '1', gap: 1 }}
@@ -102,10 +99,10 @@ export default function StatCard({
               <Chip size="small" color={color} label={trendValues[trend]} />
             </Stack>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {interval}
+            {title}
             </Typography>
           </Stack>
-          <Box sx={{ width: '100%', height: 50 }}>
+          <Box sx={{ width: '100%', height: 100 }}>
             <SparkLineChart
               colors={[chartColor]}
               data={data}

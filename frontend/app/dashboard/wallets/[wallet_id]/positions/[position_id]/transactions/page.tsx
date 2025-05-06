@@ -157,9 +157,6 @@ const Transactions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
             <CardContent>
-              <Typography component="h2" variant="subtitle2" gutterBottom>
-                Total amount
-              </Typography>
               <Stack
                 direction="column"
                 sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
@@ -188,7 +185,7 @@ const Transactions = () => {
                     variant="caption"
                     sx={{ color: "text.secondary" }}
                   >
-                    Last 30 days
+                    Total amount
                   </Typography>
                 </Stack>
                 {/* <Box sx={{ width: '100%', height: 50 }}>
@@ -218,9 +215,6 @@ const Transactions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
             <CardContent>
-              <Typography component="h2" variant="subtitle2" gutterBottom>
-                Market price
-              </Typography>
               <Stack
                 direction="column"
                 sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
@@ -249,10 +243,10 @@ const Transactions = () => {
                     variant="caption"
                     sx={{ color: "text.secondary" }}
                   >
-                    Last 30 days
+                    Market price
                   </Typography>
                 </Stack>
-                <Box sx={{ width: "100%", height: 80 }}>
+                <Box sx={{ width: "100%", height: 100 }}>
                   {market_data.length > 0 && market_data[0]?.close ? (
                     <SparkLineChart
                       colors={[theme.palette.grey[400]]}
