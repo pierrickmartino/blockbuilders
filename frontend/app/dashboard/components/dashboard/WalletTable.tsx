@@ -1,14 +1,15 @@
 import React, { Fragment } from "react";
 
-import {
-  Typography,
-  Box,
-  Chip,
-  Button,
-} from "@mui/material";
+import { Typography, Box, Chip, Button } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 import { Wallet } from "@/app/lib/definition";
-import { Add, Edit, EventRepeat, Refresh, Visibility } from "@mui/icons-material";
+import {
+  Add,
+  Edit,
+  EventRepeat,
+  Refresh,
+  Visibility,
+} from "@mui/icons-material";
 import { Download } from "@mui/icons-material";
 import { Delete } from "@mui/icons-material";
 import {
@@ -24,6 +25,7 @@ import {
   GridRenderCellParams,
 } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
+import AddressCell from "./AddressCell";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
@@ -57,7 +59,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
     pageSize: rowsPerPage,
     page: page,
   });
-  
+
   const handlePaginationModelChange = (model: {
     page: number;
     pageSize: number;
@@ -136,18 +138,31 @@ const WalletTable: React.FC<WalletTableProps> = ({
     const input = params.value ?? "";
     return (
       <Box>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
+        <Typography
+          color="textSecondary"
+          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
+        >
           {input}
         </Typography>
       </Box>
     );
   }
 
+  const isZero = (n: number | null | undefined) => Number(n) === 0;
+
   function renderChipAmount(
     amount: number,
     type: "currency" | "quantity_precise" | "quantity" | "percentage"
   ) {
-    return (
+    return isZero(amount) ? (
+      <Typography
+        variant="body2"
+        color="text.disabled"
+        sx={{ lineHeight: "inherit", fontSize: "0.79rem", textAlign: "right", width: "100%" }}
+      >
+        —{/* em‑dash improves readability */}
+      </Typography>
+    ) : (
       <Chip
         label={formatNumber(amount, type)}
         color={amount < 0 ? "error" : amount > 0 ? "success" : "default"}
@@ -160,16 +175,25 @@ const WalletTable: React.FC<WalletTableProps> = ({
     amount: number,
     type: "currency" | "quantity_precise" | "quantity" | "percentage"
   ) {
-    const input = amount ?? "";
-    return (
-      <Box>
+    if (isZero(amount)) {
+      return (
         <Typography
-          color="textSecondary"
-          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
+          variant="body2"
+          color="text.disabled"
+          sx={{ lineHeight: "inherit", fontSize: "0.79rem", textAlign: "right", width: "100%" }}
         >
-          {formatNumber(input, type)}
+          —
         </Typography>
-      </Box>
+      );
+    }
+    return (
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={{ lineHeight: "inherit", fontSize: "0.79rem", textAlign: "right", width: "100%" }}
+      >
+        {formatNumber(amount, type)}
+      </Typography>
     );
   }
 
@@ -187,12 +211,8 @@ const WalletTable: React.FC<WalletTableProps> = ({
       headerName: "Address",
       flex: 1,
       minWidth: 150,
-      valueFormatter: (value?: string) => {
-        if (!value || typeof value !== "string") {
-          return value;
-        }
-        return `${truncateText(value, 15)}`;
-      },
+      renderCell: (params) =>
+        params.value ? <AddressCell address={params.value} /> : "",
     },
     {
       field: "balance",
