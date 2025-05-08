@@ -1,15 +1,17 @@
 import React, { Fragment } from "react";
 
-import { Typography, Box, Stack, Button, Chip } from "@mui/material";
+import { Typography, Box, Stack, Button, Chip, Tooltip } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 import formatDate from "@/app/utils/formatDate";
 import { Transaction } from "../../../lib/definition";
-import { Add, Download, Link as LinkIcon, Remove, TrendingDown, TrendingUp } from "@mui/icons-material";
+import { Download, Link as LinkIcon } from "@mui/icons-material";
 import { exportTransactions } from "@/app/lib/export-transaction";
 import { saveAs } from "file-saver";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
 import capitalizeFirstLetter from "@/app/utils/capitalizeFirstLetter";
+
+import { formatDistanceToNow, format } from 'date-fns';
 
 // Define the props type that will be passed into WalletTable
 interface TransactionTableProps {
@@ -116,9 +118,11 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     const input = date ?? "";
     return (
       <Box>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
-          {formatDate(input)}
-        </Typography>
+        <Tooltip title={format(new Date(input), 'PPpp')}>
+          <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
+            {formatDistanceToNow(new Date(input), { addSuffix: true })}
+          </Typography>
+        </Tooltip>
       </Box>
     );
   }
@@ -256,8 +260,8 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     {
       field: "date",
       headerName: "Date",
-      flex: 1.5,
-      minWidth: 150,
+      flex: 1.2,
+      minWidth: 120,
       renderCell: (params) => renderGreyDate(params.value),
     },
     {
