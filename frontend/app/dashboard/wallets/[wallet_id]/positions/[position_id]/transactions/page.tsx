@@ -21,10 +21,7 @@ import {
 import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTable";
 import { useParams } from "next/navigation";
 import formatNumber from "@/app/utils/formatNumber";
-import {
-  ArrowDropDown,
-  ArrowDropUp,
-} from "@mui/icons-material";
+import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import BasicCard from "@/app/dashboard/components/shared/BasicCard";
 import { SparkLineChart } from "@mui/x-charts/SparkLineChart";
 import { areaElementClasses } from "@mui/x-charts/LineChart";
@@ -49,7 +46,7 @@ function getLast30Days(): string[] {
     pastDate.setDate(today.getDate() - i);
 
     const day = pastDate.getDate(); // Numéro du jour
-    const monthName = pastDate.toLocaleDateString('en-US', { month: 'short' }); // Mois au format abrégé
+    const monthName = pastDate.toLocaleDateString("en-US", { month: "short" }); // Mois au format abrégé
 
     labels.push(`${monthName} ${day}`);
   }
@@ -237,7 +234,36 @@ const Transactions = () => {
                     ) : (
                       <Typography>No data available</Typography> // Fallback if transactions are not available
                     )}
-                    <Chip size="small" color={"success"} label={"+25%"} />
+                    {market_data.length > 1 ? (
+                      (() => {
+                        const closes = market_data
+                          .map((item) => item.close)
+                          .reverse(); // from oldest to latest
+                        const firstClose = closes[0];
+                        const lastClose = closes[closes.length - 1];
+
+                        const delta =
+                          ((lastClose - firstClose) / firstClose) * 100;
+                        const roundedDelta = delta.toFixed(2); // e.g., 24.57
+
+                        let chipColor: "success" | "error" | "default" =
+                          "default";
+                        if (delta > 0) chipColor = "success";
+                        else if (delta < 0) chipColor = "error";
+
+                        const sign = delta >= 0 ? "+" : "-";
+
+                        return (
+                          <Chip
+                            size="small"
+                            color={chipColor}
+                            label={`${sign}${roundedDelta}%`}
+                          />
+                        );
+                      })()
+                    ) : (
+                      <Typography>N/A</Typography>
+                    )}
                   </Stack>
                   <Typography
                     variant="caption"
@@ -248,31 +274,52 @@ const Transactions = () => {
                 </Stack>
                 <Box sx={{ width: "100%", height: 100 }}>
                   {market_data.length > 0 && market_data[0]?.close ? (
-                    <SparkLineChart
-                      colors={[theme.palette.grey[400]]}
-                      // colors={[chartColor]}
-                      data={market_data.map((item) => item.close).reverse()}
-                      area
-                      showHighlight
-                      showTooltip
-                      xAxis={{
-                        scaleType: "band",
-                        data: last30Days, // Use the correct property 'data' for xAxis
-                      }}
-                      sx={{
-                        [`& .${areaElementClasses.root}`]: {
-                          fill: `url(#area-gradient-${market_data[0].close})`,
-                        },
-                      }}
-                    >
-                      {/* <AreaGradient color={theme.palette.grey[400]} id={`area-gradient-325`} /> */}
-                      <AreaGradient
-                        color={theme.palette.grey[400]}
-                        id={`area-gradient-${market_data[0].close}`}
-                      />
-                    </SparkLineChart>
+                    (() => {
+                      const closes = market_data
+                        .map((item) => item.close)
+                        .reverse(); // earliest to latest
+                      const firstClose = closes[0];
+                      const lastClose = closes[closes.length - 1];
+                      const lowestClose = Math.min(...closes);
+                      const highestClose = Math.max(...closes);
+
+                      let chartColor = theme.palette.grey[400];
+                      if (firstClose < lastClose) {
+                        chartColor = theme.palette.success.main; // green
+                      } else if (firstClose > lastClose) {
+                        chartColor = theme.palette.error.main; // red
+                      }
+
+                      return (
+                        <SparkLineChart
+                          colors={[chartColor]}
+                          data={closes}
+                          area
+                          showHighlight
+                          showTooltip
+                          yAxis={{
+                            min: lowestClose * 0.95,
+                            max: highestClose * 1.05,
+                          }}
+                          xAxis={{
+                            scaleType: "band",
+                            data: last30Days,
+                          }}
+                          sx={{
+                            [`& .${areaElementClasses.root}`]: {
+                              fill: `url(#area-gradient-${firstClose})`,
+                            },
+                          }}
+                        >
+                          <AreaGradient
+                            color={chartColor}
+                            id={`area-gradient-${firstClose}`}
+                          />
+                        </SparkLineChart>
+                      );
+                    })()
                   ) : (
-                    <Typography>No data available</Typography> // Fallback if transactions are not available
+                    <Typography>No data available</Typography>
                   )}
                 </Box>
               </Stack>
