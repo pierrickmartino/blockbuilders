@@ -18,8 +18,9 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
-import { Position } from "@/app/lib/definition";
+import { MarketData, Position } from "@/app/lib/definition";
 import {
+  fetchContractMarketPriceHisto,
   fetchPositions,
   fetchPositionsWithSearch,
   fetchTaskStatus,
@@ -28,17 +29,28 @@ import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
 import formatNumber from "@/app/utils/formatNumber";
-import StatCard, {
-  StatCardProps,
-} from "@/app/dashboard/components/dashboard/StatCard";
+import getLast30Days from "@/app/utils/getLast30Days";
 import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
-import BasicCard from "@/app/dashboard/components/shared/BasicCard";
+import { areaElementClasses, SparkLineChart } from "@mui/x-charts";
+import { useTheme } from "@mui/material/styles";
+
+function AreaGradient({ color, id }: { color: string; id: string }) {
+  return (
+    <defs>
+      <linearGradient id={id} x1="50%" y1="0%" x2="50%" y2="100%">
+        <stop offset="0%" stopColor={color} stopOpacity={0.3} />
+        <stop offset="100%" stopColor={color} stopOpacity={0} />
+      </linearGradient>
+    </defs>
+  );
+}
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
   const [page, setPage] = useState(0); // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(25); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
+  const [market_data, setMarketDataHisto] = useState<MarketData[]>([]);
 
   const [open, setOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -49,8 +61,20 @@ const Positions = () => {
     [taskId: string]: NodeJS.Timeout;
   }>({}); // New state for task polling
 
+  const theme = useTheme();
   const params = useParams();
   const wallet_id = params.wallet_id;
+
+  //TODO : MOCK-UP
+  // Fetch market price data
+  const fetchContractMarketPriceHistoData = useCallback(async () => {
+    await fetchContractMarketPriceHisto(30, "WBTC", "USD", setMarketDataHisto);
+  }, [fetchContractMarketPriceHisto, setMarketDataHisto]);
+
+  //TODO : MOCK-UP
+  useEffect(() => {
+    fetchContractMarketPriceHistoData();
+  }, [fetchContractMarketPriceHistoData]);
 
   const fetchPositionData = useCallback(async () => {
     if (wallet_id) {
@@ -166,6 +190,8 @@ const Positions = () => {
     };
   }, [taskPolling]);
 
+  const last30Days = getLast30Days();
+
   const breadcrumbs = [
     <Link underline="hover" key="1" color="inherit" href="/dashboard">
       Dashboard
@@ -180,42 +206,6 @@ const Positions = () => {
         Loading Positions...
       </Typography>
     ),
-  ];
-
-  const data: StatCardProps[] = [
-    {
-      title: "Total amount",
-      value: "14k",
-      interval: "Last 30 days",
-      trend: "up",
-      data: [
-        200, 24, 220, 260, 240, 380, 100, 240, 280, 240, 300, 340, 320, 360,
-        340, 380, 360, 400, 380, 420, 400, 640, 340, 460, 440, 480, 460, 600,
-        880, 920,
-      ],
-    },
-    {
-      title: "Total capital gain",
-      value: "325",
-      interval: "Last 30 days",
-      trend: "down",
-      data: [
-        1640, 1250, 970, 1130, 1050, 900, 720, 1080, 900, 450, 920, 820, 840,
-        600, 820, 780, 800, 760, 380, 740, 660, 620, 840, 500, 520, 480, 400,
-        360, 300, 220,
-      ],
-    },
-    {
-      title: "Total unrealized",
-      value: "200k",
-      interval: "Last 30 days",
-      trend: "neutral",
-      data: [
-        500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620,
-        510, 530, 520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430,
-        520, 510,
-      ],
-    },
   ];
 
   return (
@@ -268,26 +258,56 @@ const Positions = () => {
                     Total amount
                   </Typography>
                 </Stack>
-                {/* <Box sx={{ width: '100%', height: 50 }}>
-            <SparkLineChart
-              colors={[chartColor]}
-              data={data}
-              area
-              showHighlight
-              showTooltip
-              xAxis={{
-                scaleType: 'band',
-                data: daysInWeek, // Use the correct property 'data' for xAxis
-              }}
-              sx={{
-                [`& .${areaElementClasses.root}`]: {
-                  fill: `url(#area-gradient-${value})`,
-                },
-              }}
-            >
-              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
-            </SparkLineChart>
-          </Box> */}
+                <Box sx={{ width: "100%", height: 100 }}>
+                  {market_data.length > 0 && market_data[0]?.close ? (
+                    (() => {
+                      const closes = market_data
+                        .map((item) => item.close)
+                        .reverse(); // earliest to latest
+                      const firstClose = closes[0];
+                      const lastClose = closes[closes.length - 1];
+                      const lowestClose = Math.min(...closes);
+                      const highestClose = Math.max(...closes);
+
+                      let chartColor = theme.palette.grey[400];
+                      if (firstClose < lastClose) {
+                        chartColor = theme.palette.success.main; // green
+                      } else if (firstClose > lastClose) {
+                        chartColor = theme.palette.error.main; // red
+                      }
+
+                      return (
+                        <SparkLineChart
+                          colors={[chartColor]}
+                          data={closes}
+                          area
+                          showHighlight
+                          showTooltip
+                          yAxis={{
+                            min: lowestClose * 0.95,
+                            max: highestClose * 1.05,
+                          }}
+                          xAxis={{
+                            scaleType: "band",
+                            data: last30Days,
+                          }}
+                          sx={{
+                            [`& .${areaElementClasses.root}`]: {
+                              fill: `url(#area-gradient-${firstClose})`,
+                            },
+                          }}
+                        >
+                          <AreaGradient
+                            color={chartColor}
+                            id={`area-gradient-${firstClose}`}
+                          />
+                        </SparkLineChart>
+                      );
+                    })()
+                  ) : (
+                    <Typography>No data available</Typography>
+                  )}
+                </Box>
               </Stack>
             </CardContent>
           </Card>
@@ -326,26 +346,54 @@ const Positions = () => {
                     Total capital gain
                   </Typography>
                 </Stack>
-                {/* <Box sx={{ width: '100%', height: 50 }}>
-            <SparkLineChart
-              colors={[chartColor]}
-              data={data}
-              area
-              showHighlight
-              showTooltip
-              xAxis={{
-                scaleType: 'band',
-                data: daysInWeek, // Use the correct property 'data' for xAxis
-              }}
-              sx={{
-                [`& .${areaElementClasses.root}`]: {
-                  fill: `url(#area-gradient-${value})`,
-                },
-              }}
-            >
-              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
-            </SparkLineChart>
-          </Box> */}
+                <Box sx={{ width: "100%", height: 100 }}>
+                  {market_data.length > 0 && market_data[0]?.close ? (
+                    (() => {
+                      const closes = market_data.map((item) => item.close); // earliest to latest
+                      const firstClose = closes[0];
+                      const lastClose = closes[closes.length - 1];
+                      const lowestClose = Math.min(...closes);
+                      const highestClose = Math.max(...closes);
+
+                      let chartColor = theme.palette.grey[400];
+                      if (firstClose < lastClose) {
+                        chartColor = theme.palette.success.main; // green
+                      } else if (firstClose > lastClose) {
+                        chartColor = theme.palette.error.main; // red
+                      }
+
+                      return (
+                        <SparkLineChart
+                          colors={[chartColor]}
+                          data={closes}
+                          area
+                          showHighlight
+                          showTooltip
+                          yAxis={{
+                            min: lowestClose * 0.95,
+                            max: highestClose * 1.05,
+                          }}
+                          xAxis={{
+                            scaleType: "band",
+                            data: last30Days,
+                          }}
+                          sx={{
+                            [`& .${areaElementClasses.root}`]: {
+                              fill: `url(#area-gradient-${firstClose})`,
+                            },
+                          }}
+                        >
+                          <AreaGradient
+                            color={chartColor}
+                            id={`area-gradient-${firstClose}`}
+                          />
+                        </SparkLineChart>
+                      );
+                    })()
+                  ) : (
+                    <Typography>No data available</Typography>
+                  )}
+                </Box>
               </Stack>
             </CardContent>
           </Card>
@@ -384,26 +432,54 @@ const Positions = () => {
                     Total unrealized
                   </Typography>
                 </Stack>
-                {/* <Box sx={{ width: '100%', height: 50 }}>
-            <SparkLineChart
-              colors={[chartColor]}
-              data={data}
-              area
-              showHighlight
-              showTooltip
-              xAxis={{
-                scaleType: 'band',
-                data: daysInWeek, // Use the correct property 'data' for xAxis
-              }}
-              sx={{
-                [`& .${areaElementClasses.root}`]: {
-                  fill: `url(#area-gradient-${value})`,
-                },
-              }}
-            >
-              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
-            </SparkLineChart>
-          </Box> */}
+                <Box sx={{ width: "100%", height: 100 }}>
+                  {market_data.length > 0 && market_data[0]?.close ? (
+                    (() => {
+                      const closes = market_data.map((item) => item.close); // earliest to latest
+                      const firstClose = closes[0];
+                      const lastClose = closes[closes.length - 1];
+                      const lowestClose = Math.min(...closes);
+                      const highestClose = Math.max(...closes);
+
+                      let chartColor = theme.palette.grey[400];
+                      if (firstClose < lastClose) {
+                        chartColor = theme.palette.success.main; // green
+                      } else if (firstClose > lastClose) {
+                        chartColor = theme.palette.error.main; // red
+                      }
+
+                      return (
+                        <SparkLineChart
+                          colors={[chartColor]}
+                          data={closes}
+                          area
+                          showHighlight
+                          showTooltip
+                          yAxis={{
+                            min: lowestClose * 0.95,
+                            max: highestClose * 1.05,
+                          }}
+                          xAxis={{
+                            scaleType: "band",
+                            data: last30Days,
+                          }}
+                          sx={{
+                            [`& .${areaElementClasses.root}`]: {
+                              fill: `url(#area-gradient-${firstClose})`,
+                            },
+                          }}
+                        >
+                          <AreaGradient
+                            color={chartColor}
+                            id={`area-gradient-${firstClose}`}
+                          />
+                        </SparkLineChart>
+                      );
+                    })()
+                  ) : (
+                    <Typography>No data available</Typography>
+                  )}
+                </Box>
               </Stack>
             </CardContent>
           </Card>

@@ -25,6 +25,7 @@ import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import BasicCard from "@/app/dashboard/components/shared/BasicCard";
 import { SparkLineChart } from "@mui/x-charts/SparkLineChart";
 import { areaElementClasses } from "@mui/x-charts/LineChart";
+import getLast30Days from "@/app/utils/getLast30Days";
 
 function AreaGradient({ color, id }: { color: string; id: string }) {
   return (
@@ -35,23 +36,6 @@ function AreaGradient({ color, id }: { color: string; id: string }) {
       </linearGradient>
     </defs>
   );
-}
-
-function getLast30Days(): string[] {
-  const labels = [];
-  const today = new Date();
-
-  for (let i = 0; i < 30; i++) {
-    const pastDate = new Date();
-    pastDate.setDate(today.getDate() - i);
-
-    const day = pastDate.getDate(); // Numéro du jour
-    const monthName = pastDate.toLocaleDateString("en-US", { month: "short" }); // Mois au format abrégé
-
-    labels.push(`${monthName} ${day}`);
-  }
-
-  return labels.reverse(); // Inverser pour avoir du plus ancien au plus récent
 }
 
 const Transactions = () => {
