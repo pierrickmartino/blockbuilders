@@ -192,22 +192,6 @@ const Positions = () => {
 
   const last30Days = getLast30Days();
 
-  const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/dashboard">
-      Dashboard
-    </Link>,
-
-    positions.length > 0 ? (
-      <Typography key="2" color="textPrimary">
-        Positions in wallet {positions[0].wallet.name}
-      </Typography>
-    ) : (
-      <Typography key="2" color="textPrimary">
-        Loading Positions...
-      </Typography>
-    ),
-  ];
-
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>

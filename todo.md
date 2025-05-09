@@ -37,7 +37,6 @@
 - [Fix] Augmentation sans limite sur la page générique
 - Faire la somme des *capital gain daily* pour afficher dans le graphique
 - Ouvrir un drawer au clic sur une transaction avec des infos à déterminer
-- Limiter la taille des informations en montrant la totalité via un *tooltip*
 
 ## Backend
 - Mettre une position en "suspicious" doit supprimer les transactions associées au contract

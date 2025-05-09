@@ -5,9 +5,9 @@ import {
   Stack,
   Typography,
   Chip,
-  Link,
   CardContent,
   Avatar,
+  Tooltip,
 } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
@@ -100,29 +100,10 @@ const Transactions = () => {
 
   const last30Days = getLast30Days();
 
-  const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/dashboard">
-      Dashboard
-    </Link>,
+  const truncateText = (text: string, maxLength: number) => {
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
 
-    <Link
-      underline="hover"
-      key="2"
-      color="inherit"
-      href={`/dashboard/wallets/${wallet_id}/positions`}
-    >
-      Positions
-    </Link>,
-    transactions.length > 0 ? (
-      <Typography key="3" sx={{ color: "text.primary" }}>
-        Transactions related to {transactions[0].position.contract.name}
-      </Typography>
-    ) : (
-      <Typography key="3" sx={{ color: "text.primary" }}>
-        Loading Transactions...
-      </Typography>
-    ),
-  ];
 
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
@@ -538,10 +519,12 @@ const Transactions = () => {
                   justifyContent="space-between"
                   mb={1}
                 > */}
-                <Typography color="textSecondary" fontSize="12px">
-                  {transactions[0].position.contract.description}
-                </Typography>
-
+                <Tooltip title={transactions[0].position.contract.description}>
+                  <Typography color="textSecondary" fontSize="12px">
+                    {truncateText(transactions[0].position.contract.description, 160)}
+                  </Typography>
+                </Tooltip>
+                
                 <Grid container spacing={3} mb={1} mt={1}>
                   <Grid size={{ xs: 6, sm: 4 }}>
                     <Typography
