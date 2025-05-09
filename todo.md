@@ -11,7 +11,6 @@
 - Améliorer les couleurs
 - Ajouter un contour aux alertes
 - Utiliser un bleu foncé (ou autre) pour couleur principale
-- Revoir le fonctionnement du breadcrumbs
 - Le nom d'utilisateur n'est pas sauvegardé lors de l'enregistrement
 - Corriger le problème de gradient sur les graphes
 - Revoir le CSS du bouton d'action dans les tableaux
