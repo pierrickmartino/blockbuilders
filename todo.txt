@@ -9,21 +9,30 @@
 - frontend - utiliser un bleu foncé (ou autre) pour couleur principal
 - frontend - revoir le fonctionnement du breadcrumbs
 - frontend - username non sauvegardé lors du register 
+- frontend - fix le problème de gradient sur les graph
+- frontend - revoir le css du bouton d'action dans les table
 
 - dashboard - ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois 
 - dashboard - ajouter un calendrier du mois avec le nombre de trade sur chaque journée
 - dashboard - ajouter la fonctionalité d'édition d'un wallet
 - dashboard - ajuster la position des Chip dans le WalletTable
+- dashboard - repenser l'affichage du widget Activity pour les écrans mobiles
+- dashboard - ouvrir un drawer au clic sur un wallet avec les infos de positions
 
 - position - déplacer le filtrage pour mieux l'intégrer au reste de la page
 - position - ajouter les indicateurs tels que EMA, RSI, etc...
 - position - fix - augmentation sans limite sur la page générique
 - position - mettre à jour les widgets de Stats
 - position - faire la somme des capital gain daily pour afficher dans le graph
- 
+- position - repositionner les % dans le tableau pour diminuer la taille de la ligne
+- position - ouvrir un drawer au clic sur une position avec les infos de transactions
+
 - transaction - déplacer le MarketPrice sur un widget graphique montrant l'évolution du prix 
 - transaction - fix - augmentation sans limite sur la page générique
 - transaction - faire la somme des capital gain daily pour afficher dans le graph
+- transaction - utiliser ETH pour le graph du token WETH
+- transaction - ouvrir un drawer au clic sur une transaction avec des ingos à déterminer
+- transaction - limiter la taille des informations en montrant la totalité en tooltip
 
 - backend - mettre en suspicious une position doit supprimer les transactions associées au contract
 - backend - revoir les logs tasks pour trouver la source de lenteur
