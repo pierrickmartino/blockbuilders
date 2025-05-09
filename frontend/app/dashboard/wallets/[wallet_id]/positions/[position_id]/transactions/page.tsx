@@ -272,13 +272,13 @@ const Transactions = () => {
                           }}
                           sx={{
                             [`& .${areaElementClasses.root}`]: {
-                              fill: `url(#area-gradient-${firstClose})`,
+                              fill: `url(#area-gradient-${Math.round(lowestClose)})`,
                             },
                           }}
                         >
                           <AreaGradient
                             color={chartColor}
-                            id={`area-gradient-${firstClose}`}
+                            id={`area-gradient-${Math.round(lowestClose)}`}
                           />
                         </SparkLineChart>
                       );

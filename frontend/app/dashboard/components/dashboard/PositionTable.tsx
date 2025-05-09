@@ -102,6 +102,10 @@ const PositionTable: React.FC<PositionTableProps> = ({
     }
   };
 
+  const handleRowClick = () => {
+    console.log("Row click");
+  };
+
   const handleContractInfoDownload = async (contract_id: string) => {
     if (contract_id !== null) {
       const response = await downloadContractInfo(contract_id.toString());
@@ -438,9 +442,11 @@ const PositionTable: React.FC<PositionTableProps> = ({
         rowCount={totalCount}
         paginationModel={{ page: page, pageSize: rowsPerPage }}
         onPaginationModelChange={handlePaginationModelChange}
+        onRowClick={handleRowClick}
         paginationMode="server"
         disableColumnResize
         disableColumnSorting
+        disableRowSelectionOnClick
         density="compact"
         slotProps={{
           filterPanel: {

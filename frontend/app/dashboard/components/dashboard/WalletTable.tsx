@@ -60,6 +60,10 @@ const WalletTable: React.FC<WalletTableProps> = ({
     page: page,
   });
 
+  const handleRowClick = () => {
+    console.log("Row click");
+  };
+
   const handlePaginationModelChange = (model: {
     page: number;
     pageSize: number;
@@ -324,9 +328,11 @@ const WalletTable: React.FC<WalletTableProps> = ({
         rowCount={totalCount}
         paginationModel={{ page: page, pageSize: rowsPerPage }}
         onPaginationModelChange={handlePaginationModelChange}
+        onRowClick={handleRowClick}
         paginationMode="server"
         disableColumnResize
         disableColumnSorting
+        disableRowSelectionOnClick
         density="compact"
         slotProps={{
           filterPanel: {

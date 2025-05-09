@@ -59,6 +59,10 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     window.location.href = `${url}${id}`;
   };
 
+  const handleRowClick = () => {
+    console.log("Row click");
+  };
+
   const handleExportTransactions = async (position_id: string) => {
     console.log("Export function called"); // Debug log
 
@@ -319,9 +323,11 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         rowCount={totalCount}
         paginationModel={{ page: page, pageSize: rowsPerPage }}
         onPaginationModelChange={handlePaginationModelChange}
+        onRowClick={handleRowClick}
         paginationMode="server"
         disableColumnResize
         disableColumnSorting
+        disableRowSelectionOnClick
         density="compact"
         slotProps={{
           filterPanel: {
