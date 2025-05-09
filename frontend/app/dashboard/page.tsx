@@ -64,6 +64,15 @@ const Wallets = () => {
     toggleDrawer(true);
   };
 
+  /* Drawer for wallet detail */
+    const [drawerWalletOpen, setDrawerWalletOpen] = useState(false);
+    const toggleWalletDrawer = (open: boolean) => {
+      setDrawerWalletOpen(open);
+    };
+    const handleShowWalletDrawer = () => {
+      toggleWalletDrawer(true);
+    };
+
   // const handleClick = (message: string, title: string, severity: AlertColor) => {
   //   setSnackbarMessage(message);
   //   setSnackbarSeverity(severity);
@@ -212,6 +221,12 @@ const Wallets = () => {
     </Box>
   );
 
+  const DrawerWallet = (
+    <Box sx={{ width: 350, height: "100%" }} role="presentation">
+      {/* <CreateWalletForm /> */}
+    </Box>
+  );
+
   const data: StatCardProps[] = [
     {
       title: "Users",
@@ -287,6 +302,7 @@ const Wallets = () => {
                 onWalletRefreshed={handleWalletRefreshed}
                 onWalletFullRefreshed={handleWalletFullRefreshed}
                 onCreateWallet={handleAddWalletClick}
+                onWalletClick={handleShowWalletDrawer}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
@@ -359,6 +375,13 @@ const Wallets = () => {
         onClose={() => toggleDrawer(false)}
       >
         {DrawerList}
+      </Drawer>
+      <Drawer
+        anchor="right"
+        open={drawerWalletOpen}
+        onClose={() => toggleWalletDrawer(false)}
+      >
+        {DrawerWallet}
       </Drawer>
     </Box>
   );

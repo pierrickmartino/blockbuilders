@@ -21,6 +21,7 @@ interface TransactionTableProps {
   totalCount: number;
   onPageChange: (newPage: number) => void;
   onRowsPerPageChange: (newRowsPerPage: number) => void;
+  onTransactionClick: () => void;
 }
 
 const TransactionTable: React.FC<TransactionTableProps> = ({
@@ -30,6 +31,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   totalCount,
   onPageChange,
   onRowsPerPageChange,
+  onTransactionClick,
 }) => {
   const [paginationModel, setPaginationModel] = React.useState({
     pageSize: rowsPerPage,
@@ -323,7 +325,9 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         rowCount={totalCount}
         paginationModel={{ page: page, pageSize: rowsPerPage }}
         onPaginationModelChange={handlePaginationModelChange}
-        onRowClick={handleRowClick}
+        onRowClick={() => {
+          onTransactionClick();
+        }}
         paginationMode="server"
         disableColumnResize
         disableColumnSorting

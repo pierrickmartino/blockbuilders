@@ -21,7 +21,9 @@
 - Ajouter la fonctionnalité d'édition d'un wallet
 - Ajuster la position des `Chip` dans le `WalletTable`
 - Repenser l'affichage du widget *Activity* pour les écrans mobiles
-- Ouvrir un drawer au clic sur un wallet avec les infos de positions
+- [ **In progress** ] Ouvrir un drawer au clic sur un wallet avec les infos de positions
+- Fix ajout d'un wallet avec refresh de la page
+- Fix suppression d'un wallet avec refresh de la page
 
 ## Position
 - Déplacer le filtrage pour mieux l’intégrer au reste de la page

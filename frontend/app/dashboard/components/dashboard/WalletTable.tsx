@@ -40,6 +40,7 @@ interface WalletTableProps {
   onWalletRefreshed: (response: string) => void;
   onWalletFullRefreshed: (response: string) => void;
   onCreateWallet: () => void;
+  onWalletClick: () => void;
 }
 
 const WalletTable: React.FC<WalletTableProps> = ({
@@ -54,15 +55,12 @@ const WalletTable: React.FC<WalletTableProps> = ({
   onWalletRefreshed,
   onWalletFullRefreshed,
   onCreateWallet,
+  onWalletClick,
 }) => {
   const [paginationModel, setPaginationModel] = React.useState({
     pageSize: rowsPerPage,
     page: page,
   });
-
-  const handleRowClick = () => {
-    console.log("Row click");
-  };
 
   const handlePaginationModelChange = (model: {
     page: number;
@@ -162,7 +160,12 @@ const WalletTable: React.FC<WalletTableProps> = ({
       <Typography
         variant="body2"
         color="text.disabled"
-        sx={{ lineHeight: "inherit", fontSize: "0.79rem", textAlign: "right", width: "100%" }}
+        sx={{
+          lineHeight: "inherit",
+          fontSize: "0.79rem",
+          textAlign: "right",
+          width: "100%",
+        }}
       >
         —{/* em‑dash improves readability */}
       </Typography>
@@ -184,7 +187,12 @@ const WalletTable: React.FC<WalletTableProps> = ({
         <Typography
           variant="body2"
           color="text.disabled"
-          sx={{ lineHeight: "inherit", fontSize: "0.79rem", textAlign: "right", width: "100%" }}
+          sx={{
+            lineHeight: "inherit",
+            fontSize: "0.79rem",
+            textAlign: "right",
+            width: "100%",
+          }}
         >
           —
         </Typography>
@@ -194,7 +202,12 @@ const WalletTable: React.FC<WalletTableProps> = ({
       <Typography
         variant="body2"
         color="text.secondary"
-        sx={{ lineHeight: "inherit", fontSize: "0.79rem", textAlign: "right", width: "100%" }}
+        sx={{
+          lineHeight: "inherit",
+          fontSize: "0.79rem",
+          textAlign: "right",
+          width: "100%",
+        }}
       >
         {formatNumber(amount, type)}
       </Typography>
@@ -328,7 +341,9 @@ const WalletTable: React.FC<WalletTableProps> = ({
         rowCount={totalCount}
         paginationModel={{ page: page, pageSize: rowsPerPage }}
         onPaginationModelChange={handlePaginationModelChange}
-        onRowClick={handleRowClick}
+        onRowClick={() => {
+          onWalletClick();
+        }}
         paginationMode="server"
         disableColumnResize
         disableColumnSorting

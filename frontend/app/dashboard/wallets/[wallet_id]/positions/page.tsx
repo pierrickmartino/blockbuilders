@@ -15,6 +15,7 @@ import {
   AlertTitle,
   AlertColor,
   SnackbarCloseReason,
+  Drawer,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
@@ -56,6 +57,15 @@ const Positions = () => {
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarTitle, setSnackbarTitle] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("info");
+
+  /* Drawer for position detail */
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const toggleDrawer = (open: boolean) => {
+    setDrawerOpen(open);
+  };
+  const handleShowPositionDrawer = () => {
+    toggleDrawer(true);
+  };
 
   const [taskPolling, setTaskPolling] = useState<{
     [taskId: string]: NodeJS.Timeout;
@@ -179,6 +189,12 @@ const Positions = () => {
     // handleClick("Refresh in progress for " + taskId, "Info", "info");
     pollTaskStatus(taskId); // Start polling task status
   };
+  
+  const DrawerList = (
+      <Box sx={{ width: 350, height: "100%" }} role="presentation">
+        {/* <CreateWalletForm /> */}
+      </Box>
+    );
 
   // Handle cleanup on component unmount
   useEffect(() => {
@@ -508,6 +524,7 @@ const Positions = () => {
               onContractSetAsStable={handleContractSetAsStable}
               onContractSetAsSuspicious={handleContractSetAsSuspicious}
               onContractInfoDownloaded={handleContractInfoDownloaded}
+              onPositionClick={handleShowPositionDrawer}
             />
           ) : (
             <Typography>No data available</Typography> // Fallback if positions are not available
@@ -529,6 +546,13 @@ const Positions = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => toggleDrawer(false)}
+      >
+        {DrawerList}
+      </Drawer>
     </Box>
   );
 };

@@ -8,6 +8,7 @@ import {
   CardContent,
   Avatar,
   Tooltip,
+  Drawer,
 } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
@@ -44,6 +45,15 @@ const Transactions = () => {
   const [page, setPage] = useState(0); // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(25); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
+  
+  /* Drawer for transaction detail */
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const toggleDrawer = (open: boolean) => {
+      setDrawerOpen(open);
+    };
+    const handleShowTransactionDrawer = () => {
+      toggleDrawer(true);
+    };
 
   const theme = useTheme();
   const params = useParams();
@@ -104,6 +114,11 @@ const Transactions = () => {
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
 
+  const DrawerList = (
+    <Box sx={{ width: 350, height: "100%" }} role="presentation">
+      {/* <CreateWalletForm /> */}
+    </Box>
+  );
 
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
@@ -609,9 +624,17 @@ const Transactions = () => {
             totalCount={totalCount}
             onPageChange={handlePageChange}
             onRowsPerPageChange={handleRowsPerPageChange}
+            onTransactionClick={handleShowTransactionDrawer}
           />
         </Grid>
       </Grid>
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => toggleDrawer(false)}
+      >
+        {DrawerList}
+      </Drawer>
     </Box>
   );
 };

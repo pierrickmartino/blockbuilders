@@ -33,6 +33,7 @@ interface PositionTableProps {
   onContractSetAsSuspicious: () => void;
   onContractSetAsStable: () => void;
   onContractInfoDownloaded: (response: string) => void;
+  onPositionClick: () => void;
 }
 
 const PositionTable: React.FC<PositionTableProps> = ({
@@ -47,6 +48,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
   onContractSetAsSuspicious,
   onContractSetAsStable,
   onContractInfoDownloaded,
+  onPositionClick,
 }) => {
   const [paginationModel, setPaginationModel] = React.useState({
     pageSize: rowsPerPage,
@@ -442,7 +444,9 @@ const PositionTable: React.FC<PositionTableProps> = ({
         rowCount={totalCount}
         paginationModel={{ page: page, pageSize: rowsPerPage }}
         onPaginationModelChange={handlePaginationModelChange}
-        onRowClick={handleRowClick}
+        onRowClick={() => {
+          onPositionClick();
+        }}
         paginationMode="server"
         disableColumnResize
         disableColumnSorting
