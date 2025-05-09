@@ -220,7 +220,8 @@ class MarketDataLastView(generics.ListAPIView):
         symbol = self.kwargs["symbol"]
         reference = self.kwargs["reference"]
         last = self.kwargs["last"]
-        return MarketData.objects.filter(symbol=symbol, reference=reference).order_by("-time")[:last]
+        symbol_for_query = symbol.replace("WETH", "ETH")
+        return MarketData.objects.filter(symbol=symbol_for_query, reference=reference).order_by("-time")[:last]
      
 
 class BlockchainTopView(generics.ListAPIView):
