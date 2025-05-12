@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { Typography, Chip, Checkbox, Avatar, Stack, Box } from "@mui/material";
+import { Typography, Chip, Checkbox, Avatar, Stack, Box, Tooltip } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 import { Position, Wallet } from "../../../lib/definition";
 import {
@@ -109,7 +109,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
   };
 
   const isZero = (n: number | null | undefined) => Number(n) === 0;
-  const cellWrapperSx = {
+  const cellWrapperSx_right = {
     width: "100%",
     height: "100%", // occupy full cell height
     display: "flex",
@@ -117,10 +117,17 @@ const PositionTable: React.FC<PositionTableProps> = ({
     justifyContent: "flex-end", // keep numbers/chips right-aligned
   };
 
+  const cellWrapperSx_left = {
+    width: "100%",
+    height: "100%", // occupy full cell height
+    display: "flex",
+    alignItems: "center", // vertical centering ✅
+  };
+
   function renderGreyNumber(amount: number, type: "currency" | "quantity_precise" | "quantity" | "percentage") {
     const input = amount ?? "";
     return (
-      <Box>
+      <Box sx={cellWrapperSx_right}>
         <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
           {formatNumber(input, type)}
         </Typography>
@@ -128,52 +135,77 @@ const PositionTable: React.FC<PositionTableProps> = ({
     );
   }
 
+  function renderToken(token_symbol: string, blockchain_name: string, blockchain_icon: string, token_icon: string) {
+    return (
+      <Box sx={cellWrapperSx_left}>
+        <Stack alignItems="center" direction="row" spacing={2}>
+          <Avatar alt={blockchain_name} sx={{ width: 24, height: 24 }} src={token_icon || `/images/logos/${blockchain_icon}`} />
+          <Typography sx={{ lineHeight: "inherit" }}>{truncateText(token_symbol, 8)}</Typography>
+        </Stack>
+      </Box>
+    );
+  }
+
+  function renderTokenName(token_name: string) {
+    return (
+      <Box sx={cellWrapperSx_left}>
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
+          {truncateText(token_name, 22)}
+        </Typography>
+      </Box>
+    );
+  }
+
   function renderGain(gain: number, gain_amount: number) {
     if (gain != 0 || gain_amount != 0) {
+      const f_gain_amount = formatNumber(gain_amount, "currency");
+      const f_gain = formatNumber(gain, "percentage");
       return (
-        <Box sx={cellWrapperSx}>
-          <Chip
-            label={`${formatNumber(gain_amount, "currency")} (${formatNumber(gain, "percentage")})`}
-            color={gain < 0 || gain_amount < 0 ? "error" : gain > 0 || gain_amount > 0 ? "success" : "default"}
-            size="small"
-          />
-        </Box>
+        <Tooltip arrow title={f_gain}>
+          <Box sx={cellWrapperSx_right}>
+            <Chip label={`${f_gain_amount}`} color={gain_amount < 0 ? "error" : gain_amount > 0 ? "success" : "default"} size="small" />
+          </Box>
+        </Tooltip>
       );
     } else {
       return <Fragment></Fragment>;
     }
   }
 
-  function renderToken(token_symbol: string, blockchain_name: string, blockchain_icon: string, token_icon: string) {
-    return (
-      <Stack alignItems="center" direction="row" spacing={2}>
-        <Avatar alt={blockchain_name} sx={{ width: 24, height: 24 }} src={token_icon || `/images/logos/${blockchain_icon}`} />
-        <Typography sx={{ lineHeight: "inherit" }}>{truncateText(token_symbol, 8)}</Typography>
-      </Stack>
-    );
-  }
-
-  function renderTokenName(token_name: string) {
-    return (
-      <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
-        {truncateText(token_name, 22)}
-      </Typography>
-    );
-  }
-
   function renderPrice(price: string, daily_price_delta: number) {
+    const f_daily_price_delta = formatNumber(daily_price_delta, "percentage");
+    const f_price = formatNumber(price, "currency");
     return (
-      <Stack alignItems="baseline" justifyContent="flex-end" direction="row" spacing={1}>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
-          {formatNumber(price, "currency")}
-        </Typography>
-        <Typography
-          color={daily_price_delta < 0 ? "error" : daily_price_delta > 0 ? "success" : "textSecondary"}
-          sx={{ lineHeight: "inherit", fontSize: "0.725rem" }}
-        >
-          ({formatNumber(daily_price_delta, "percentage")})
-        </Typography>
-      </Stack>
+      <Box sx={cellWrapperSx_right}>
+        <Stack spacing={0}>
+          <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem", mt: 0.5 }}>
+            {f_price}
+          </Typography>
+          <Typography
+            color={daily_price_delta < 0 ? "error" : daily_price_delta > 0 ? "success" : "textSecondary"}
+            sx={{ lineHeight: "inherit", fontSize: "0.725rem", mb: 0.5 }}
+          >
+            {f_daily_price_delta}
+          </Typography>
+        </Stack>
+      </Box>
+    );
+  }
+
+  function renderAmount(amount: number, percentage: number) {
+    const f_amount = formatNumber(amount, "currency");
+    const f_percentage = formatNumber(percentage, "percentage");
+    return (
+      <Box sx={cellWrapperSx_right}>
+        <Stack spacing={0}>
+          <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem", mt: 0.5 }}>
+            {f_amount}
+          </Typography>
+          <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.725rem", mb: 0.5 }}>
+            {f_percentage}
+          </Typography>
+        </Stack>
+      </Box>
     );
   }
 
@@ -228,7 +260,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
     // },
     {
       field: "price",
-      headerName: "Price / Delta",
+      headerName: "Price / Δ",
       headerAlign: "right",
       align: "right",
       flex: 0.8,
@@ -248,26 +280,25 @@ const PositionTable: React.FC<PositionTableProps> = ({
     },
     {
       field: "amount",
-      headerName: "Amount",
+      headerName: "Amount / %",
       headerAlign: "right",
       type: "number",
       align: "right",
       flex: 0.8,
       minWidth: 100,
-      renderCell: (params) =>
-        // renderAmount(params.row.amount, params.row.progress_percentage),
-        renderGreyNumber(params.value, "currency"),
+      renderCell: (params) => renderAmount(params.row.amount, params.row.progress_percentage),
+      // renderGreyNumber(params.value, "currency"),
     },
-    {
-      field: "progress_percentage",
-      headerName: "Percentage",
-      headerAlign: "right",
-      type: "number",
-      align: "right",
-      flex: 0.6,
-      minWidth: 100,
-      renderCell: (params) => renderGreyNumber(params.value, "percentage"),
-    },
+    // {
+    //   field: "progress_percentage",
+    //   headerName: "Percentage",
+    //   headerAlign: "right",
+    //   type: "number",
+    //   align: "right",
+    //   flex: 0.6,
+    //   minWidth: 100,
+    //   renderCell: (params) => renderGreyNumber(params.value, "percentage"),
+    // },
     {
       field: "capital_gain",
       headerName: "Capital Gain",
@@ -338,6 +369,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
         rows={positions}
         columns={columns}
         getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
+        getRowHeight={() => "auto"}
         pagination
         pageSizeOptions={[10, 25, 50]}
         rowCount={totalCount}
@@ -350,7 +382,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
         disableColumnResize
         disableColumnSorting
         disableRowSelectionOnClick
-        density="compact"
+        // density="compact"
         slotProps={{
           filterPanel: {
             filterFormProps: {

@@ -23,7 +23,7 @@ const AddressCell: React.FC<Props> = ({ address }) => {
         <Typography
           variant="body2"
           color="text.secondary"
-          sx={{ lineHeight: "inherit", fontFamily: "monospace" }}
+          sx={{ lineHeight: "inherit", fontFamily: "monospace", fontSize: "0.79rem" }}
         >
           {truncate(address)}
         </Typography>
