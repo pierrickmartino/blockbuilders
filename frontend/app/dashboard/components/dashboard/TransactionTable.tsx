@@ -11,7 +11,7 @@ import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
 import capitalizeFirstLetter from "@/app/utils/capitalizeFirstLetter";
 
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNow, format } from "date-fns";
 
 // Define the props type that will be passed into WalletTable
 interface TransactionTableProps {
@@ -38,10 +38,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     page: page,
   });
 
-  const handlePaginationModelChange = (model: {
-    page: number;
-    pageSize: number;
-  }) => {
+  const handlePaginationModelChange = (model: { page: number; pageSize: number }) => {
     // console.log(
     //   "Child paginationModelChange:",
     //   model.page,
@@ -61,10 +58,6 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     window.location.href = `${url}${id}`;
   };
 
-  const handleRowClick = () => {
-    console.log("Row click");
-  };
-
   const handleExportTransactions = async (position_id: string) => {
     console.log("Export function called"); // Debug log
 
@@ -81,10 +74,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         const blob = new Blob([response], {
           type: "text/csv;charset=utf-8;",
         });
-        saveAs(
-          blob,
-          `transactions_${new Date().toISOString().replace(/[:.-]/g, "")}.csv`
-        );
+        saveAs(blob, `transactions_${new Date().toISOString().replace(/[:.-]/g, "")}.csv`);
       } catch (error) {
         console.error("An error occurred while exporting transactions:", error);
       }
@@ -93,23 +83,30 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     }
   };
 
-  function renderChipAmount(
-    amount: number,
-    type: "currency" | "quantity_precise" | "quantity" | "percentage"
-  ) {
+  const isZero = (n: number | null | undefined) => Number(n) === 0;
+  const cellWrapperSx = {
+    width: "100%",
+    height: "100%", // occupy full cell height
+    display: "flex",
+    alignItems: "center", // vertical centering ✅
+    justifyContent: "flex-end", // keep numbers/chips right-aligned
+  };
+
+  function renderChipAmount(amount: number, type: "currency" | "quantity_precise" | "quantity" | "percentage") {
     return (
-      <Chip
-        label={formatNumber(amount, type)}
-        color={amount < 0 ? "error" : amount > 0 ? "success" : "default"}
-        size="small"
-      />
+      <Box sx={cellWrapperSx}>
+        {isZero(amount) ? (
+          <Typography variant="body2" color="text.disabled" sx={{ fontSize: "0.79rem" }}>
+            —{/* em-dash improves readability */}
+          </Typography>
+        ) : (
+          <Chip label={formatNumber(amount, type)} color={amount < 0 ? "error" : amount > 0 ? "success" : "default"} size="small" />
+        )}
+      </Box>
     );
   }
 
-  function renderGreyNumber(
-    amount: number,
-    type: "currency" | "quantity_precise" | "quantity" | "percentage"
-  ) {
+  function renderGreyNumber(amount: number, type: "currency" | "quantity_precise" | "quantity" | "percentage") {
     const input = amount ?? "";
     return (
       <Box>
@@ -124,7 +121,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     const input = date ?? "";
     return (
       <Box>
-        <Tooltip title={format(new Date(input), 'PPpp')}>
+        <Tooltip title={format(new Date(input), "PPpp")}>
           <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
             {formatDistanceToNow(new Date(input), { addSuffix: true })}
           </Typography>
@@ -133,43 +130,38 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
     );
   }
 
-  function renderPosition(
-    contract_symbol: string,
-    against_contract_symbol?: string
-  ) {
+  function renderPosition(contract_symbol: string, against_contract_symbol?: string) {
     return (
       <Stack alignItems="center" direction="row" spacing={2}>
-        <Typography sx={{ lineHeight: "inherit" }}>
-          {contract_symbol}
-        </Typography>
-        <Typography
-          color="textSecondary"
-          variant="body2"
-          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
-        >
+        <Typography sx={{ lineHeight: "inherit" }}>{contract_symbol}</Typography>
+        <Typography color="textSecondary" variant="body2" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
           {against_contract_symbol || ""}
         </Typography>
       </Stack>
     );
   }
 
-  function renderStatus(
-    status_label: string,
-    status_value: number
-  ) {
-
-    const label = status_label == "close" || status_label == "open" ? capitalizeFirstLetter(status_label) : formatNumber(status_value, "percentage")
-    const sign = status_label == "diminution" ? "-" : status_label == "increase" ? "+" : ""
-    const color = status_label == "close" || status_label == "diminution" ? "error" : status_label == "open" || status_label == "increase" ? "success" : "default"
+  function renderStatus(status_label: string, status_value: number) {
+    const label =
+      status_label == "close" || status_label == "open" ? capitalizeFirstLetter(status_label) : formatNumber(status_value, "percentage");
+    const sign = status_label == "diminution" ? "-" : status_label == "increase" ? "+" : "";
+    const color =
+      status_label == "close" || status_label == "diminution"
+        ? "error"
+        : status_label == "open" || status_label == "increase"
+        ? "success"
+        : "default";
 
     return (
-      <Chip
-        // {...(status_label === "increase" && { icon: <TrendingUp /> })}
-        // {...(status_label === "diminution" && { icon: <TrendingDown /> })}
-        label={sign + " " + label}
-        color={color}
-        size="small"
-      />
+      <Box sx={cellWrapperSx}>
+        <Chip
+          // {...(status_label === "increase" && { icon: <TrendingUp /> })}
+          // {...(status_label === "diminution" && { icon: <TrendingDown /> })}
+          label={sign + " " + label}
+          color={color}
+          size="small"
+        />
+      </Box>
     );
   }
 
@@ -179,11 +171,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
       headerName: "Position",
       flex: 1,
       minWidth: 100,
-      renderCell: (params) =>
-        renderPosition(
-          params.row.position.contract.symbol,
-          params.row.against_contract?.symbol
-        ),
+      renderCell: (params) => renderPosition(params.row.position.contract.symbol, params.row.against_contract?.symbol),
     },
     {
       field: "status",
@@ -192,11 +180,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
       align: "right",
       flex: 1,
       minWidth: 100,
-      renderCell: (params) =>
-        renderStatus(
-          params.row.status,
-          params.row.status_value
-        ),
+      renderCell: (params) => renderStatus(params.row.status, params.row.status_value),
     },
     {
       field: "quantity",
@@ -205,8 +189,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
       align: "right",
       flex: 1,
       minWidth: 100,
-      renderCell: (params) =>
-        renderGreyNumber(params.value, "quantity_precise"),
+      renderCell: (params) => renderGreyNumber(params.value, "quantity_precise"),
     },
     {
       field: "running_quantity",
@@ -215,8 +198,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
       align: "right",
       flex: 1,
       minWidth: 100,
-      renderCell: (params) =>
-        renderGreyNumber(params.value, "quantity_precise"),
+      renderCell: (params) => renderGreyNumber(params.value, "quantity_precise"),
     },
     {
       field: "price",
@@ -279,12 +261,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
           key="transaction-explorer"
           label="See explorer"
           icon={<LinkIcon fontSize="small" />}
-          onClick={() =>
-            handleNavigateToExplorer(
-              cell.row.position.contract.blockchain.transaction_link,
-              cell.row.hash
-            )
-          }
+          onClick={() => handleNavigateToExplorer(cell.row.position.contract.blockchain.transaction_link, cell.row.hash)}
           showInMenu
         />,
       ],
@@ -308,18 +285,12 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   );
 
   return (
-    <BasicCard
-      title="Transaction History"
-      subtitle="A detailed log of all recent transactions and movements"
-      action={action}
-    >
+    <BasicCard title="Transaction History" subtitle="A detailed log of all recent transactions and movements" action={action}>
       <DataGrid
         checkboxSelection
         rows={transactions}
         columns={columns}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
-        }
+        getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
         pagination
         pageSizeOptions={[10, 25, 50]}
         rowCount={totalCount}

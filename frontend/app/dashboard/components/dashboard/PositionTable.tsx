@@ -12,11 +12,7 @@ import {
   Edit,
   Download,
 } from "@mui/icons-material";
-import {
-  downloadContractInfo,
-  setContractAsStable,
-  setContractAsSuspicious,
-} from "@/app/lib/actions";
+import { downloadContractInfo, setContractAsStable, setContractAsSuspicious } from "@/app/lib/actions";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
 
@@ -58,10 +54,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
   const [checkedStable, setCheckedStable] = React.useState(true);
   const [checkedSuspicious, setCheckedSuspicious] = React.useState(true);
 
-  const handlePaginationModelChange = (model: {
-    page: number;
-    pageSize: number;
-  }) => {
+  const handlePaginationModelChange = (model: { page: number; pageSize: number }) => {
     // console.log(
     //   "Child paginationModelChange:",
     //   model.page,
@@ -77,35 +70,20 @@ const PositionTable: React.FC<PositionTableProps> = ({
     }
   };
 
-  const handleChangeSuspicious = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    contract_id: string
-  ) => {
+  const handleChangeSuspicious = async (event: React.ChangeEvent<HTMLInputElement>, contract_id: string) => {
     setCheckedSuspicious(event.target.checked);
     const response = await setContractAsSuspicious(contract_id.toString());
-    if (
-      response.message !==
-      "Database Error: Failed to set contract as suspicious."
-    ) {
+    if (response.message !== "Database Error: Failed to set contract as suspicious.") {
       onContractSetAsSuspicious(); // Notify parent to refresh
     }
   };
 
-  const handleChangeStable = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    contract_id: string
-  ) => {
+  const handleChangeStable = async (event: React.ChangeEvent<HTMLInputElement>, contract_id: string) => {
     setCheckedStable(event.target.checked);
     const response = await setContractAsStable(contract_id.toString());
-    if (
-      response.message !== "Database Error: Failed to set contract as stable."
-    ) {
+    if (response.message !== "Database Error: Failed to set contract as stable.") {
       onContractSetAsStable(); // Notify parent to refresh
     }
-  };
-
-  const handleRowClick = () => {
-    console.log("Row click");
   };
 
   const handleContractInfoDownload = async (contract_id: string) => {
@@ -130,17 +108,20 @@ const PositionTable: React.FC<PositionTableProps> = ({
     return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
   };
 
-  function renderGreyNumber(
-    amount: number,
-    type: "currency" | "quantity_precise" | "quantity" | "percentage"
-  ) {
+  const isZero = (n: number | null | undefined) => Number(n) === 0;
+  const cellWrapperSx = {
+    width: "100%",
+    height: "100%", // occupy full cell height
+    display: "flex",
+    alignItems: "center", // vertical centering ✅
+    justifyContent: "flex-end", // keep numbers/chips right-aligned
+  };
+
+  function renderGreyNumber(amount: number, type: "currency" | "quantity_precise" | "quantity" | "percentage") {
     const input = amount ?? "";
     return (
       <Box>
-        <Typography
-          color="textSecondary"
-          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
-        >
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
           {formatNumber(input, type)}
         </Typography>
       </Box>
@@ -150,59 +131,31 @@ const PositionTable: React.FC<PositionTableProps> = ({
   function renderGain(gain: number, gain_amount: number) {
     if (gain != 0 || gain_amount != 0) {
       return (
-        <Chip
-          label={`${formatNumber(gain_amount, "currency")} (${formatNumber(
-            gain,
-            "percentage"
-          )})`}
-          color={gain < 0 || gain_amount < 0 ? "error" : gain > 0 || gain_amount > 0 ? "success" : "default"}
-          size="small"
-        />
+        <Box sx={cellWrapperSx}>
+          <Chip
+            label={`${formatNumber(gain_amount, "currency")} (${formatNumber(gain, "percentage")})`}
+            color={gain < 0 || gain_amount < 0 ? "error" : gain > 0 || gain_amount > 0 ? "success" : "default"}
+            size="small"
+          />
+        </Box>
       );
     } else {
       return <Fragment></Fragment>;
     }
   }
 
-  function renderChipAmount(
-    amount: number,
-    type: "currency" | "quantity_precise" | "quantity" | "percentage"
-  ) {
-    return (
-      <Chip
-        label={formatNumber(amount, type)}
-        color={amount < 0 ? "error" : amount > 0 ? "success" : "default"}
-        size="small"
-      />
-    );
-  }
-
-  function renderToken(
-    token_symbol: string,
-    blockchain_name: string,
-    blockchain_icon: string,
-    token_icon: string
-  ) {
+  function renderToken(token_symbol: string, blockchain_name: string, blockchain_icon: string, token_icon: string) {
     return (
       <Stack alignItems="center" direction="row" spacing={2}>
-        <Avatar
-          alt={blockchain_name}
-          sx={{ width: 24, height: 24 }}
-          src={token_icon || `/images/logos/${blockchain_icon}`}
-        />
-        <Typography sx={{ lineHeight: "inherit" }}>
-          {truncateText(token_symbol, 8)}
-        </Typography>
+        <Avatar alt={blockchain_name} sx={{ width: 24, height: 24 }} src={token_icon || `/images/logos/${blockchain_icon}`} />
+        <Typography sx={{ lineHeight: "inherit" }}>{truncateText(token_symbol, 8)}</Typography>
       </Stack>
     );
   }
 
   function renderTokenName(token_name: string) {
     return (
-      <Typography
-        color="textSecondary"
-        sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
-      >
+      <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
         {truncateText(token_name, 22)}
       </Typography>
     );
@@ -210,53 +163,15 @@ const PositionTable: React.FC<PositionTableProps> = ({
 
   function renderPrice(price: string, daily_price_delta: number) {
     return (
-      <Stack
-        alignItems="baseline"
-        justifyContent="flex-end"
-        direction="row"
-        spacing={1}
-      >
-        <Typography
-          color="textSecondary"
-          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
-        >
+      <Stack alignItems="baseline" justifyContent="flex-end" direction="row" spacing={1}>
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
           {formatNumber(price, "currency")}
         </Typography>
         <Typography
-          color={
-            daily_price_delta < 0
-              ? "error"
-              : daily_price_delta > 0
-              ? "success"
-              : "textSecondary"
-          }
+          color={daily_price_delta < 0 ? "error" : daily_price_delta > 0 ? "success" : "textSecondary"}
           sx={{ lineHeight: "inherit", fontSize: "0.725rem" }}
         >
           ({formatNumber(daily_price_delta, "percentage")})
-        </Typography>
-      </Stack>
-    );
-  }
-
-  function renderAmount(amount: number, percentage: number) {
-    return (
-      <Stack
-        alignItems="baseline"
-        justifyContent="flex-end"
-        direction="row"
-        spacing={1}
-      >
-        <Typography
-          color="textSecondary"
-          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
-        >
-          {formatNumber(amount, "currency")}
-        </Typography>
-        <Typography
-          color="textSecondary"
-          sx={{ lineHeight: "inherit", fontSize: "0.725rem" }}
-        >
-          ({formatNumber(percentage, "percentage")})
         </Typography>
       </Stack>
     );
@@ -318,8 +233,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       align: "right",
       flex: 0.8,
       minWidth: 100,
-      renderCell: (params) =>
-        renderPrice(params.row.contract.price, params.row.daily_price_delta),
+      renderCell: (params) => renderPrice(params.row.contract.price, params.row.daily_price_delta),
       // renderGreyNumber(params.row.contract.price, "currency"),
     },
     {
@@ -330,8 +244,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       align: "right",
       flex: 0.8,
       minWidth: 100,
-      renderCell: (params) =>
-        renderGreyNumber(params.value, "quantity_precise"),
+      renderCell: (params) => renderGreyNumber(params.value, "quantity_precise"),
     },
     {
       field: "amount",
@@ -364,11 +277,8 @@ const PositionTable: React.FC<PositionTableProps> = ({
       minWidth: 100,
       renderCell: (params) => {
         const capitalGain = Number(params.row.capital_gain) || 0; // Default to 0 if invalid
-        return renderGain(
-          0,
-          capitalGain === 0 ? 0 : capitalGain
-        );
-      }
+        return renderGain(0, capitalGain === 0 ? 0 : capitalGain);
+      },
     },
     {
       field: "unrealized_gain",
@@ -389,18 +299,14 @@ const PositionTable: React.FC<PositionTableProps> = ({
         const price = Number(params.row.contract.price) || 0; // Default to 0 if invalid
         const quantity = Number(params.row.quantity) || 0; // Default to 0 if invalid
 
-        return renderGain(
-          unrealizedGain,
-          unrealizedGain === 0 ? 0 : (price - averageCost) * quantity
-        );
+        return renderGain(unrealizedGain, unrealizedGain === 0 ? 0 : (price - averageCost) * quantity);
       },
     },
     {
       field: "buttons",
       headerName: "",
       width: 70,
-      renderCell: (params) =>
-        renderButtons(params.row.contract.category, params.row.contract.id),
+      renderCell: (params) => renderButtons(params.row.contract.category, params.row.contract.id),
     },
     {
       field: "actions",
@@ -418,9 +324,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
           key="contract-download-info"
           label="Download info"
           icon={<Download fontSize="small" />}
-          onClick={() =>
-            handleContractInfoDownload(cell.row.contract.id.toString())
-          }
+          onClick={() => handleContractInfoDownload(cell.row.contract.id.toString())}
           showInMenu
         />,
       ],
@@ -428,17 +332,12 @@ const PositionTable: React.FC<PositionTableProps> = ({
   ];
 
   return (
-    <BasicCard
-      title="Wallet Positions"
-      subtitle="Detailed view of asset quantities and performance"
-    >
+    <BasicCard title="Wallet Positions" subtitle="Detailed view of asset quantities and performance">
       <DataGrid
         checkboxSelection
         rows={positions}
         columns={columns}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
-        }
+        getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
         pagination
         pageSizeOptions={[10, 25, 50]}
         rowCount={totalCount}

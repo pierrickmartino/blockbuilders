@@ -32,13 +32,12 @@
 - Mettre à jour les widgets de *Stats*
 - Faire la somme des *capital gain daily* pour afficher dans le graphique
 - Repositionner les % dans le tableau pour diminuer la taille des lignes
-- Ouvrir un drawer au clic sur une position avec les infos de transactions
+- [ **In progress** ] Ouvrir un drawer au clic sur une position avec les infos de transactions
 
 ## Transaction
-- Déplacer le *MarketPrice* sur un widget graphique montrant l’évolution du prix
 - [Fix] Augmentation sans limite sur la page générique
 - Faire la somme des *capital gain daily* pour afficher dans le graphique
-- Ouvrir un drawer au clic sur une transaction avec des infos à déterminer
+- [ **In progress** ] Ouvrir un drawer au clic sur une transaction avec des infos à déterminer
 
 ## Backend
 - Mettre une position en "suspicious" doit supprimer les transactions associées au contract

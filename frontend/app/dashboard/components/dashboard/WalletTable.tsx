@@ -3,27 +3,11 @@ import React, { Fragment } from "react";
 import { Typography, Box, Chip, Button } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
 import { Wallet } from "@/app/lib/definition";
-import {
-  Add,
-  Edit,
-  EventRepeat,
-  Refresh,
-  Visibility,
-} from "@mui/icons-material";
+import { Add, Edit, EventRepeat, Refresh, Visibility } from "@mui/icons-material";
 import { Download } from "@mui/icons-material";
 import { Delete } from "@mui/icons-material";
-import {
-  deleteWallet,
-  downloadWallet,
-  refreshWallet,
-  refreshFullWallet,
-} from "@/app/lib/actions";
-import {
-  DataGrid,
-  GridActionsCellItem,
-  GridColDef,
-  GridRenderCellParams,
-} from "@mui/x-data-grid";
+import { deleteWallet, downloadWallet, refreshWallet, refreshFullWallet } from "@/app/lib/actions";
+import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
 import AddressCell from "./AddressCell";
 
@@ -62,10 +46,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
     page: page,
   });
 
-  const handlePaginationModelChange = (model: {
-    page: number;
-    pageSize: number;
-  }) => {
+  const handlePaginationModelChange = (model: { page: number; pageSize: number }) => {
     // console.log(
     //   "Child paginationModelChange:",
     //   model.page,
@@ -132,18 +113,11 @@ const WalletTable: React.FC<WalletTableProps> = ({
     }
   };
 
-  const truncateText = (text: string, maxLength: number) => {
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  };
-
   function renderGreyString(params: GridRenderCellParams<any, string, any>) {
     const input = params.value ?? "";
     return (
       <Box>
-        <Typography
-          color="textSecondary"
-          sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}
-        >
+        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
           {input}
         </Typography>
       </Box>
@@ -151,37 +125,29 @@ const WalletTable: React.FC<WalletTableProps> = ({
   }
 
   const isZero = (n: number | null | undefined) => Number(n) === 0;
+  const cellWrapperSx = {
+    width: "100%",
+    height: "100%", // occupy full cell height
+    display: "flex",
+    alignItems: "center", // vertical centering ✅
+    justifyContent: "flex-end", // keep numbers/chips right-aligned
+  };
 
-  function renderChipAmount(
-    amount: number,
-    type: "currency" | "quantity_precise" | "quantity" | "percentage"
-  ) {
-    return isZero(amount) ? (
-      <Typography
-        variant="body2"
-        color="text.disabled"
-        sx={{
-          lineHeight: "inherit",
-          fontSize: "0.79rem",
-          textAlign: "right",
-          width: "100%",
-        }}
-      >
-        —{/* em‑dash improves readability */}
-      </Typography>
-    ) : (
-      <Chip
-        label={formatNumber(amount, type)}
-        color={amount < 0 ? "error" : amount > 0 ? "success" : "default"}
-        size="small"
-      />
+  function renderChipAmount(amount: number, type: "currency" | "quantity_precise" | "quantity" | "percentage") {
+    return (
+      <Box sx={cellWrapperSx}>
+        {isZero(amount) ? (
+          <Typography variant="body2" color="text.disabled" sx={{ fontSize: "0.79rem" }}>
+            —{/* em-dash improves readability */}
+          </Typography>
+        ) : (
+          <Chip label={formatNumber(amount, type)} color={amount < 0 ? "error" : amount > 0 ? "success" : "default"} size="small" />
+        )}
+      </Box>
     );
   }
 
-  function renderGreyNumber(
-    amount: number,
-    type: "currency" | "quantity_precise" | "quantity" | "percentage"
-  ) {
+  function renderGreyNumber(amount: number, type: "currency" | "quantity_precise" | "quantity" | "percentage") {
     if (isZero(amount)) {
       return (
         <Typography
@@ -228,8 +194,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
       headerName: "Address",
       flex: 1,
       minWidth: 150,
-      renderCell: (params) =>
-        params.value ? <AddressCell address={params.value} /> : "",
+      renderCell: (params) => (params.value ? <AddressCell address={params.value} /> : ""),
     },
     {
       field: "balance",
@@ -324,18 +289,12 @@ const WalletTable: React.FC<WalletTableProps> = ({
   );
 
   return (
-    <BasicCard
-      title="Wallet Overview"
-      subtitle="Track balances, performance, and key metrics across your wallets"
-      action={action}
-    >
+    <BasicCard title="Wallet Overview" subtitle="Track balances, performance, and key metrics across your wallets" action={action}>
       <DataGrid
         checkboxSelection
         rows={wallets}
         columns={columns}
-        getRowClassName={(params) =>
-          params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
-        }
+        getRowClassName={(params) => (params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd")}
         pagination
         pageSizeOptions={[10, 25, 50]}
         rowCount={totalCount}
