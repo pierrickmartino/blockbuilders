@@ -341,11 +341,26 @@ const Transactions = () => {
               </Stack>
             ) : (
               <Stack>
-                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}><Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} /></Stack>
-                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}><Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} /></Stack>
-                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}><Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} /></Stack>
-                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}><Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} /></Stack>
-                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={0}><Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} /></Stack>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}>
+                  <Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} />
+                  <Skeleton variant="text" width={50} sx={{ fontSize: "0.875rem" }} />
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}>
+                  <Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} />
+                  <Skeleton variant="text" width={50} sx={{ fontSize: "0.875rem" }} />
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}>
+                  <Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} />
+                  <Skeleton variant="text" width={50} sx={{ fontSize: "0.875rem" }} />
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}>
+                  <Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} />
+                  <Skeleton variant="text" width={50} sx={{ fontSize: "0.875rem" }} />
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={0}>
+                  <Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} />
+                  <Skeleton variant="text" width={50} sx={{ fontSize: "0.875rem" }} />
+                </Stack>
               </Stack> // Fallback if transactions are not available
             )}
             {/* </Stack> */}
@@ -367,50 +382,51 @@ const Transactions = () => {
                     src={transactions[0].position.contract.logo_uri || `A`}
                   />
                 </Stack>
-                {/* <Stack
-                  direction="row"
-                  alignItems="center"
-                  spacing={2}
-                  justifyContent="space-between"
-                  mb={1}
-                > */}
                 <Tooltip title={transactions[0].position.contract.description}>
                   <Typography color="textSecondary" fontSize="12px">
                     {truncateText(transactions[0].position.contract.description, 160)}
                   </Typography>
                 </Tooltip>
 
-                <Grid container spacing={3} mb={1} mt={1}>
-                  <Grid size={{ xs: 6, sm: 4 }}>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mt={1}>
+                  <Stack>
                     <Typography variant="subtitle2" fontWeight="500" fontSize="13px">
-                      Supply Total
-                    </Typography>
-                    <Typography color="textSecondary" fontSize="12px">
                       {formatNumber(transactions[0].position.contract.supply_total, "quantity_rounded")}
                     </Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6, sm: 4 }}>
-                    <Typography variant="subtitle2" fontWeight="500" fontSize="13px">
-                      Supply Locked
+                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                      Supply total
                     </Typography>
-                    <Typography color="textSecondary" fontSize="12px">
+                  </Stack>
+                  <Stack>
+                    <Typography variant="subtitle2" fontWeight="500" fontSize="13px">
                       {formatNumber(transactions[0].position.contract.supply_locked, "quantity_rounded")}
                     </Typography>
-                  </Grid>
-                  <Grid size={{ xs: 6, sm: 4 }}>
-                    <Typography variant="subtitle2" fontWeight="500" fontSize="13px">
-                      Supply Burnt
+                    <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                      Supply locked
                     </Typography>
-                    <Typography color="textSecondary" fontSize="12px">
-                      {formatNumber(transactions[0].position.contract.supply_burnt, "quantity_rounded")}
-                    </Typography>
-                  </Grid>
-                </Grid>
+                  </Stack>
+                </Stack>
+
                 {/* </Stack> */}
               </Stack>
             ) : (
               <Stack>
-                <Typography>No data available</Typography>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}>
+                  <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
+                  <Skeleton variant="circular" width={24} height={24} />
+                </Stack>
+                <Skeleton variant="text" width={100} />
+                <Skeleton variant="text" width={100} />
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mt={1}>
+                  <Stack>
+                    <Skeleton variant="text" width={50} />
+                    <Skeleton variant="text" width={50} />
+                  </Stack>
+                  <Stack>
+                    <Skeleton variant="text" width={50} />
+                    <Skeleton variant="text" width={50} />
+                  </Stack>
+                </Stack>
               </Stack> // Fallback if transactions are not available
             )}
             {/* </Stack> */}
