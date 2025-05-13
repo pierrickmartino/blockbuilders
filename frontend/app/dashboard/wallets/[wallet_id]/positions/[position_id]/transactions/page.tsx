@@ -1,5 +1,5 @@
 "use client";
-import { Box, Card, Stack, Typography, Chip, CardContent, Avatar, Tooltip, Drawer } from "@mui/material";
+import { Box, Card, Stack, Typography, Chip, CardContent, Avatar, Tooltip, Drawer, Skeleton } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
 import { useTheme } from "@mui/material/styles";
@@ -106,7 +106,7 @@ const Transactions = () => {
                         {formatNumber(transactions[0].position.amount, "currency")}
                       </Typography>
                     ) : (
-                      <Typography>No data available</Typography> // Fallback if transactions are not available
+                      <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                     )}
                     <Chip size="small" color={"success"} label={"+25%"} />
                   </Stack>
@@ -155,7 +155,7 @@ const Transactions = () => {
                         {formatNumber(transactions[0].position.contract.price, "currency")}
                       </Typography>
                     ) : (
-                      <Typography>No data available</Typography> // Fallback if transactions are not available
+                      <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                     )}
                     {market_data.length > 1 ? (
                       (() => {
@@ -175,7 +175,7 @@ const Transactions = () => {
                         return <Chip size="small" color={chipColor} label={`${sign}${roundedDelta}%`} />;
                       })()
                     ) : (
-                      <Typography>N/A</Typography>
+                      <Skeleton variant="text" width={50} />
                     )}
                   </Stack>
                   <Typography variant="caption" sx={{ color: "text.secondary" }}>
@@ -186,7 +186,7 @@ const Transactions = () => {
                   {market_data.length > 0 && market_data[0]?.close ? (
                     <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
                   ) : (
-                    <Typography>No data available</Typography>
+                    <Skeleton variant="rounded" height={100} />
                   )}
                 </Box>
               </Stack>
@@ -341,7 +341,11 @@ const Transactions = () => {
               </Stack>
             ) : (
               <Stack>
-                <Typography>No data available</Typography>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}><Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} /></Stack>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}><Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} /></Stack>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}><Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} /></Stack>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}><Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} /></Stack>
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={0}><Skeleton variant="text" width={100} sx={{ fontSize: "0.875rem" }} /></Stack>
               </Stack> // Fallback if transactions are not available
             )}
             {/* </Stack> */}
