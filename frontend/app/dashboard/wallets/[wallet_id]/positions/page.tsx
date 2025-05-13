@@ -7,7 +7,6 @@ import {
   Switch,
   FormGroup,
   FormControlLabel,
-  Link,
   CardContent,
   Chip,
   Snackbar,
@@ -20,31 +19,15 @@ import {
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
 import { MarketData, Position } from "@/app/lib/definition";
-import {
-  fetchContractMarketPriceHisto,
-  fetchPositions,
-  fetchPositionsWithSearch,
-  fetchTaskStatus,
-} from "@/app/lib/data";
+import { fetchContractMarketPriceHisto, fetchPositions, fetchPositionsWithSearch, fetchTaskStatus } from "@/app/lib/data";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
 import formatNumber from "@/app/utils/formatNumber";
 import getLast30Days from "@/app/utils/getLast30Days";
 import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
-import { areaElementClasses, SparkLineChart } from "@mui/x-charts";
 import { useTheme } from "@mui/material/styles";
-
-function AreaGradient({ color, id }: { color: string; id: string }) {
-  return (
-    <defs>
-      <linearGradient id={id} x1="50%" y1="0%" x2="50%" y2="100%">
-        <stop offset="0%" stopColor={color} stopOpacity={0.3} />
-        <stop offset="100%" stopColor={color} stopOpacity={0} />
-      </linearGradient>
-    </defs>
-  );
-}
+import PriceSparkline from "@/app/dashboard/components/dashboard/PriceSparkline";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -88,13 +71,7 @@ const Positions = () => {
 
   const fetchPositionData = useCallback(async () => {
     if (wallet_id) {
-      await fetchPositions(
-        String(wallet_id),
-        setPositions,
-        setTotalCount,
-        page,
-        rowsPerPage
-      );
+      await fetchPositions(String(wallet_id), setPositions, setTotalCount, page, rowsPerPage);
     }
   }, [wallet_id, page, rowsPerPage]);
 
@@ -104,21 +81,11 @@ const Positions = () => {
 
   const fetchPositionDataWithSearch = async (searchTerm: string) => {
     if (wallet_id) {
-      await fetchPositionsWithSearch(
-        String(wallet_id),
-        String(searchTerm),
-        setPositions,
-        setTotalCount,
-        page,
-        rowsPerPage
-      );
+      await fetchPositionsWithSearch(String(wallet_id), String(searchTerm), setPositions, setTotalCount, page, rowsPerPage);
     }
   };
 
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
     if (reason === "clickaway") {
       return;
     }
@@ -189,20 +156,18 @@ const Positions = () => {
     // handleClick("Refresh in progress for " + taskId, "Info", "info");
     pollTaskStatus(taskId); // Start polling task status
   };
-  
+
   const DrawerList = (
-      <Box sx={{ width: 350, height: "100%" }} role="presentation">
-        {/* <CreateWalletForm /> */}
-      </Box>
-    );
+    <Box sx={{ width: 350, height: "100%" }} role="presentation">
+      {/* <CreateWalletForm /> */}
+    </Box>
+  );
 
   // Handle cleanup on component unmount
   useEffect(() => {
     return () => {
       // Clear all intervals
-      Object.values(taskPolling).forEach((intervalId) =>
-        clearInterval(intervalId)
-      );
+      Object.values(taskPolling).forEach((intervalId) => clearInterval(intervalId));
     };
   }, [taskPolling]);
 
@@ -213,12 +178,7 @@ const Positions = () => {
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Positions
       </Typography>
-      <Grid
-        container
-        spacing={2}
-        columns={12}
-        sx={{ mb: (theme) => theme.spacing(2) }}
-      >
+      <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2) }}>
         {/* {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
             <StatCard {...card} />
@@ -230,10 +190,7 @@ const Positions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
             <CardContent>
-              <Stack
-                direction="column"
-                sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
-              >
+              <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
                 <Stack sx={{ justifyContent: "space-between" }}>
                   <Stack
                     direction="row"
@@ -251,59 +208,13 @@ const Positions = () => {
                     )}
                     <Chip size="small" color={"success"} label={"+25%"} />
                   </Stack>
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "text.secondary" }}
-                  >
+                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
                     Total amount
                   </Typography>
                 </Stack>
                 <Box sx={{ width: "100%", height: 100 }}>
                   {market_data.length > 0 && market_data[0]?.close ? (
-                    (() => {
-                      const closes = market_data
-                        .map((item) => item.close)
-                        .reverse(); // earliest to latest
-                      const firstClose = closes[0];
-                      const lastClose = closes[closes.length - 1];
-                      const lowestClose = Math.min(...closes);
-                      const highestClose = Math.max(...closes);
-
-                      let chartColor = theme.palette.grey[400];
-                      if (firstClose < lastClose) {
-                        chartColor = theme.palette.success.main; // green
-                      } else if (firstClose > lastClose) {
-                        chartColor = theme.palette.error.main; // red
-                      }
-
-                      return (
-                        <SparkLineChart
-                          colors={[chartColor]}
-                          data={closes}
-                          area
-                          showHighlight
-                          showTooltip
-                          yAxis={{
-                            min: lowestClose * 0.95,
-                            max: highestClose * 1.05,
-                          }}
-                          xAxis={{
-                            scaleType: "band",
-                            data: last30Days,
-                          }}
-                          sx={{
-                            [`& .${areaElementClasses.root}`]: {
-                              fill: `url(#area-gradient-${firstClose})`,
-                            },
-                          }}
-                        >
-                          <AreaGradient
-                            color={chartColor}
-                            id={`area-gradient-${firstClose}`}
-                          />
-                        </SparkLineChart>
-                      );
-                    })()
+                    <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
                   ) : (
                     <Typography>No data available</Typography>
                   )}
@@ -315,10 +226,7 @@ const Positions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
             <CardContent>
-              <Stack
-                direction="column"
-                sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
-              >
+              <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
                 <Stack sx={{ justifyContent: "space-between" }}>
                   <Stack
                     direction="row"
@@ -329,67 +237,20 @@ const Positions = () => {
                   >
                     {positions.length > 0 && positions[0]?.wallet ? (
                       <Typography variant="h4" component="p">
-                        {formatNumber(
-                          positions[0].wallet.capital_gain,
-                          "currency"
-                        )}
+                        {formatNumber(positions[0].wallet.capital_gain, "currency")}
                       </Typography>
                     ) : (
                       <Typography>No data available</Typography> // Fallback if transactions are not available
                     )}
                     <Chip size="small" color={"error"} label={"-25%"} />
                   </Stack>
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "text.secondary" }}
-                  >
+                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
                     Total capital gain
                   </Typography>
                 </Stack>
                 <Box sx={{ width: "100%", height: 100 }}>
                   {market_data.length > 0 && market_data[0]?.close ? (
-                    (() => {
-                      const closes = market_data.map((item) => item.close); // earliest to latest
-                      const firstClose = closes[0];
-                      const lastClose = closes[closes.length - 1];
-                      const lowestClose = Math.min(...closes);
-                      const highestClose = Math.max(...closes);
-
-                      let chartColor = theme.palette.grey[400];
-                      if (firstClose < lastClose) {
-                        chartColor = theme.palette.success.main; // green
-                      } else if (firstClose > lastClose) {
-                        chartColor = theme.palette.error.main; // red
-                      }
-
-                      return (
-                        <SparkLineChart
-                          colors={[chartColor]}
-                          data={closes}
-                          area
-                          showHighlight
-                          showTooltip
-                          yAxis={{
-                            min: lowestClose * 0.95,
-                            max: highestClose * 1.05,
-                          }}
-                          xAxis={{
-                            scaleType: "band",
-                            data: last30Days,
-                          }}
-                          sx={{
-                            [`& .${areaElementClasses.root}`]: {
-                              fill: `url(#area-gradient-${firstClose})`,
-                            },
-                          }}
-                        >
-                          <AreaGradient
-                            color={chartColor}
-                            id={`area-gradient-${firstClose}`}
-                          />
-                        </SparkLineChart>
-                      );
-                    })()
+                    <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
                   ) : (
                     <Typography>No data available</Typography>
                   )}
@@ -401,10 +262,7 @@ const Positions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
             <CardContent>
-              <Stack
-                direction="column"
-                sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
-              >
+              <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
                 <Stack sx={{ justifyContent: "space-between" }}>
                   <Stack
                     direction="row"
@@ -415,67 +273,20 @@ const Positions = () => {
                   >
                     {positions.length > 0 && positions[0]?.wallet ? (
                       <Typography variant="h4" component="p">
-                        {formatNumber(
-                          positions[0].wallet.unrealized_gain,
-                          "percentage"
-                        )}
+                        {formatNumber(positions[0].wallet.unrealized_gain, "percentage")}
                       </Typography>
                     ) : (
                       <Typography>No data available</Typography> // Fallback if transactions are not available
                     )}
                     <Chip size="small" color={"default"} label={"+0%"} />
                   </Stack>
-                  <Typography
-                    variant="caption"
-                    sx={{ color: "text.secondary" }}
-                  >
+                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
                     Total unrealized
                   </Typography>
                 </Stack>
                 <Box sx={{ width: "100%", height: 100 }}>
                   {market_data.length > 0 && market_data[0]?.close ? (
-                    (() => {
-                      const closes = market_data.map((item) => item.close); // earliest to latest
-                      const firstClose = closes[0];
-                      const lastClose = closes[closes.length - 1];
-                      const lowestClose = Math.min(...closes);
-                      const highestClose = Math.max(...closes);
-
-                      let chartColor = theme.palette.grey[400];
-                      if (firstClose < lastClose) {
-                        chartColor = theme.palette.success.main; // green
-                      } else if (firstClose > lastClose) {
-                        chartColor = theme.palette.error.main; // red
-                      }
-
-                      return (
-                        <SparkLineChart
-                          colors={[chartColor]}
-                          data={closes}
-                          area
-                          showHighlight
-                          showTooltip
-                          yAxis={{
-                            min: lowestClose * 0.95,
-                            max: highestClose * 1.05,
-                          }}
-                          xAxis={{
-                            scaleType: "band",
-                            data: last30Days,
-                          }}
-                          sx={{
-                            [`& .${areaElementClasses.root}`]: {
-                              fill: `url(#area-gradient-${firstClose})`,
-                            },
-                          }}
-                        >
-                          <AreaGradient
-                            color={chartColor}
-                            id={`area-gradient-${firstClose}`}
-                          />
-                        </SparkLineChart>
-                      );
-                    })()
+                    <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
                   ) : (
                     <Typography>No data available</Typography>
                   )}
@@ -493,19 +304,10 @@ const Positions = () => {
               <Typography variant="h5">Filter</Typography>
             </Box>
             <Box px={0} py={0} mt={3}>
-              <Stack
-                direction="row"
-                alignItems="center"
-                spacing={2}
-                justifyContent="space-between"
-                mb={0}
-              >
+              <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={0}>
                 <SearchForm onSearch={handleSearch} />
                 <FormGroup>
-                  <FormControlLabel
-                    control={<Switch />}
-                    label="Only relevant positions"
-                  />
+                  <FormControlLabel control={<Switch />} label="Only relevant positions" />
                 </FormGroup>
               </Stack>
             </Box>
@@ -531,26 +333,13 @@ const Positions = () => {
           )}
         </Grid>
       </Grid>
-      <Snackbar
-        open={open}
-        autoHideDuration={3000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      >
-        <Alert
-          severity={snackbarSeverity}
-          onClose={handleClose}
-          sx={{ width: "100%" }}
-        >
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+        <Alert severity={snackbarSeverity} onClose={handleClose} sx={{ width: "100%" }}>
           <AlertTitle>{snackbarTitle}</AlertTitle>
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      <Drawer
-        anchor="right"
-        open={drawerOpen}
-        onClose={() => toggleDrawer(false)}
-      >
+      <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
     </Box>

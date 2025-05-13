@@ -19,7 +19,6 @@
 - Ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois
 - Ajouter un calendrier du mois avec le nombre de trades par journée
 - Ajouter la fonctionnalité d'édition d'un wallet
-- Ajuster la position des `Chip` dans le `WalletTable`
 - Repenser l'affichage du widget *Activity* pour les écrans mobiles
 - [ **In progress** ] Ouvrir un drawer au clic sur un wallet avec les infos de positions
 - Fix ajout d'un wallet avec refresh de la page
@@ -31,7 +30,6 @@
 - [Fix] Augmentation sans limite sur la page générique
 - Mettre à jour les widgets de *Stats*
 - Faire la somme des *capital gain daily* pour afficher dans le graphique
-- Repositionner les % dans le tableau pour diminuer la taille des lignes
 - [ **In progress** ] Ouvrir un drawer au clic sur une position avec les infos de transactions
 
 ## Transaction
