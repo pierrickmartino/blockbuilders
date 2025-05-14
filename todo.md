@@ -35,6 +35,8 @@
 ## Transaction
 - [Fix] Augmentation sans limite sur la page générique
 - Faire la somme des *capital gain daily* pour afficher dans le graphique
+- Retirer le titre du widget Information
+- Remplacer le widget Performance par un widget avec la somme des gains
 - [ **In progress** ] Ouvrir un drawer au clic sur une transaction avec des infos à déterminer
 
 ## Backend
