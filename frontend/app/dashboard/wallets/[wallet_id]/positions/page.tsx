@@ -15,6 +15,7 @@ import {
   AlertColor,
   SnackbarCloseReason,
   Drawer,
+  Skeleton,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
@@ -204,7 +205,7 @@ const Positions = () => {
                         {formatNumber(positions[0].wallet.balance, "currency")}
                       </Typography>
                     ) : (
-                      <Typography>No data available</Typography> // Fallback if transactions are not available
+                      <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                     )}
                     <Chip size="small" color={"success"} label={"+25%"} />
                   </Stack>
@@ -216,7 +217,7 @@ const Positions = () => {
                   {market_data.length > 0 && market_data[0]?.close ? (
                     <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
                   ) : (
-                    <Typography>No data available</Typography>
+                    <Skeleton variant="rounded" height={100} />
                   )}
                 </Box>
               </Stack>
@@ -240,7 +241,7 @@ const Positions = () => {
                         {formatNumber(positions[0].wallet.capital_gain, "currency")}
                       </Typography>
                     ) : (
-                      <Typography>No data available</Typography> // Fallback if transactions are not available
+                      <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                     )}
                     <Chip size="small" color={"error"} label={"-25%"} />
                   </Stack>
@@ -252,7 +253,7 @@ const Positions = () => {
                   {market_data.length > 0 && market_data[0]?.close ? (
                     <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
                   ) : (
-                    <Typography>No data available</Typography>
+                    <Skeleton variant="rounded" height={100} />
                   )}
                 </Box>
               </Stack>
@@ -276,7 +277,7 @@ const Positions = () => {
                         {formatNumber(positions[0].wallet.unrealized_gain, "percentage")}
                       </Typography>
                     ) : (
-                      <Typography>No data available</Typography> // Fallback if transactions are not available
+                      <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                     )}
                     <Chip size="small" color={"default"} label={"+0%"} />
                   </Stack>
@@ -288,7 +289,7 @@ const Positions = () => {
                   {market_data.length > 0 && market_data[0]?.close ? (
                     <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
                   ) : (
-                    <Typography>No data available</Typography>
+                    <Skeleton variant="rounded" height={100} />
                   )}
                 </Box>
               </Stack>
