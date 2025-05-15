@@ -1,7 +1,8 @@
 import React, { Fragment } from "react";
 
-import { Typography, Chip, Checkbox, Avatar, Stack, Box, Tooltip } from "@mui/material";
+import { Typography, Chip, Checkbox, Avatar, Stack, Box, Tooltip, Badge } from "@mui/material";
 import formatNumber from "@/app/utils/formatNumber";
+import { useTheme } from "@mui/material/styles";
 import { Position, Wallet } from "../../../lib/definition";
 import {
   CreditScore,
@@ -53,6 +54,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
 
   const [checkedStable, setCheckedStable] = React.useState(true);
   const [checkedSuspicious, setCheckedSuspicious] = React.useState(true);
+  const theme = useTheme();
 
   const handlePaginationModelChange = (model: { page: number; pageSize: number }) => {
     // console.log(
@@ -135,23 +137,30 @@ const PositionTable: React.FC<PositionTableProps> = ({
     );
   }
 
-  function renderToken(token_symbol: string, blockchain_name: string, blockchain_icon: string, token_icon: string) {
+  function renderToken(token_symbol: string, blockchain_name: string, blockchain_icon: string, token_icon: string, token_name: string) {
     return (
       <Box sx={cellWrapperSx_left}>
-        <Stack alignItems="center" direction="row" spacing={2}>
-          <Avatar alt={blockchain_name} sx={{ width: 24, height: 24 }} src={token_icon || `/images/logos/${blockchain_icon}`} />
-          <Typography sx={{ lineHeight: "inherit" }}>{truncateText(token_symbol, 8)}</Typography>
+        <Stack alignItems="center" direction="row" spacing={3}>
+          <Badge
+            overlap="circular"
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            badgeContent={
+              <Avatar
+                alt={blockchain_name}
+                sx={{ width: 16, height: 16, border: `2px solid ${theme.palette.background.paper}` }}
+                src={`/images/logos/${blockchain_icon}`}
+              />
+            }
+          >
+            <Avatar alt={blockchain_name} sx={{ width: 28, height: 28 }} src={token_icon || `/images/logos/${blockchain_icon}`} />
+          </Badge>
+          <Stack spacing={0}>
+            <Typography sx={{ lineHeight: "inherit", fontWeight: 500 }}>{truncateText(token_symbol, 8)}</Typography>
+            <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
+              {truncateText(token_name, 22)}
+            </Typography>
+          </Stack>
         </Stack>
-      </Box>
-    );
-  }
-
-  function renderTokenName(token_name: string) {
-    return (
-      <Box sx={cellWrapperSx_left}>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
-          {truncateText(token_name, 22)}
-        </Typography>
       </Box>
     );
   }
@@ -239,16 +248,17 @@ const PositionTable: React.FC<PositionTableProps> = ({
           params.row.contract.symbol,
           params.row.contract.blockchain.name,
           params.row.contract.blockchain.icon,
-          params.row.contract.logo_uri
+          params.row.contract.logo_uri,
+          params.row.contract.name
         ),
     },
-    {
-      field: "name",
-      headerName: "Name",
-      flex: 1.2,
-      minWidth: 150,
-      renderCell: (params) => renderTokenName(params.row.contract.name),
-    },
+    // {
+    //   field: "name",
+    //   headerName: "Name",
+    //   flex: 1.2,
+    //   minWidth: 150,
+    //   renderCell: (params) => renderTokenName(params.row.contract.name),
+    // },
     // {
     //   field: "daily_price_delta",
     //   headerName: "Perf Daily",
@@ -319,11 +329,11 @@ const PositionTable: React.FC<PositionTableProps> = ({
       flex: 0.8,
       minWidth: 100,
       renderCell: (params) => {
-        console.log("symbol:", params.row.contract.symbol);
-        console.log("unrealized_gain:", params.row.unrealized_gain);
-        console.log("price:", params.row.contract.price);
-        console.log("average_cost:", params.row.average_cost);
-        console.log("quantity:", params.row.quantity);
+        // console.log("symbol:", params.row.contract.symbol);
+        // console.log("unrealized_gain:", params.row.unrealized_gain);
+        // console.log("price:", params.row.contract.price);
+        // console.log("average_cost:", params.row.average_cost);
+        // console.log("quantity:", params.row.quantity);
 
         const unrealizedGain = Number(params.row.unrealized_gain) || 0; // Default to 0 if invalid
         const averageCost = Number(params.row.average_cost) || 0; // Default to 0 if invalid
