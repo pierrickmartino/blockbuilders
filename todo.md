@@ -34,7 +34,7 @@
 
 ## Transaction
 - [Fix] Augmentation sans limite sur la page générique
-- Faire la somme des *capital gain daily* pour afficher dans le graphique
+- Faire la somme des *capital gain daily* pour afficher dans le graphique (à partir du Model PositionDailyStat)
 - Remplacer le widget Performance par un widget avec la somme des gains
 - Ajouter un selecteur de timeframe pour l'affichage des widgets (Last 30 days, Last 90 days, Last 120 days)
 - [ **In progress** ] Ouvrir un drawer au clic sur une transaction avec des infos à déterminer
@@ -48,3 +48,4 @@
   - `calculate_running_quantity_transaction_task` : 5.28s
 - Migrer vers Etherscan API V2
 - Un utilisateur ne doit pas voir les données d’un autre (à finaliser sur toutes les vues)
+- Créer un Model reprenant les stats daily d'une Position (PositionDailyStat) et d'un Wallet (WalletDailyStat) (ex. CapitalGain cumulé, CapitalGain daily, Quantité, Quantité cumulté, Amount) 
