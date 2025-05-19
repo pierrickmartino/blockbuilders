@@ -241,7 +241,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
     {
       field: "token",
       headerName: "Token",
-      flex: 1,
+      flex: 1.5,
       minWidth: 150,
       renderCell: (params) =>
         renderToken(
@@ -273,7 +273,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerName: "Price / Δ",
       headerAlign: "right",
       align: "right",
-      flex: 0.8,
+      flex: 0.7,
       minWidth: 100,
       renderCell: (params) => renderPrice(params.row.contract.price, params.row.daily_price_delta),
       // renderGreyNumber(params.row.contract.price, "currency"),
@@ -284,7 +284,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerAlign: "right",
       type: "number",
       align: "right",
-      flex: 0.8,
+      flex: 0.7,
       minWidth: 100,
       renderCell: (params) => renderGreyNumber(params.value, "quantity_precise"),
     },
@@ -294,7 +294,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerAlign: "right",
       type: "number",
       align: "right",
-      flex: 0.8,
+      flex: 0.7,
       minWidth: 100,
       renderCell: (params) => renderAmount(params.row.amount, params.row.progress_percentage),
       // renderGreyNumber(params.value, "currency"),
@@ -314,7 +314,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerName: "Capital Gain",
       headerAlign: "right",
       align: "right",
-      flex: 0.8,
+      flex: 0.7,
       minWidth: 100,
       renderCell: (params) => {
         const capitalGain = Number(params.row.capital_gain) || 0; // Default to 0 if invalid
@@ -326,7 +326,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       headerName: "Unrealized Gain",
       headerAlign: "right",
       align: "right",
-      flex: 0.8,
+      flex: 0.7,
       minWidth: 100,
       renderCell: (params) => {
         // console.log("symbol:", params.row.contract.symbol);

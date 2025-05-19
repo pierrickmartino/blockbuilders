@@ -5,6 +5,7 @@ import {
   Blockchain,
   Contract,
   MarketData,
+  CapitalGainHisto,
 } from "./definition";
 import { fetcher } from "./fetcher";
 
@@ -215,6 +216,25 @@ export const fetchTransactions = async (
   }
 };
 
+export const fetchPositionCapitalGainHisto = async (
+  offset: number,
+  position_id: string,
+  setPositionCapitalGainHisto: React.Dispatch<React.SetStateAction<CapitalGainHisto[]>>,
+): Promise<void> => {
+
+  try {
+    const response = await fetcher(`/api/positions/${position_id}/capitalgains/${offset}`);
+
+    if (response) {
+      setPositionCapitalGainHisto(response);
+    }
+  } catch (err) {
+    console.error("Error fetching data from capital gain API:", err);
+    setPositionCapitalGainHisto([]); // Set empty transactions if fetching fails
+    throw new Error("Failed to fetch capital gains.");
+  }
+};
+
 export const fetchTransactionsAll = async (
   setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>,
   setTotalCount: React.Dispatch<React.SetStateAction<number>>,
@@ -317,9 +337,9 @@ export const fetchContractMarketPriceHisto = async (
       setMarketDataHisto(response.results);
     }
   } catch (err) {
-    console.error("Error fetching data from transaction API:", err);
+    console.error("Error fetching data from market data API:", err);
     setMarketDataHisto([]); // Set empty transactions if fetching fails
-    throw new Error("Failed to fetch all transactions.");
+    throw new Error("Failed to fetch market data.");
   }
 };
 

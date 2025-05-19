@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from .models import Wallet, Fiat, Blockchain, Contract, Position, Transaction, MarketData, UserSetting, User
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'name', 'email', 'password']
-        
+        fields = ["id", "name", "email", "password"]
+
     def create(self, validated_data):
         password = validated_data.pop("password")
         instance = self.Meta.model(**validated_data)
@@ -13,6 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
 
 class FiatSerializer(serializers.ModelSerializer):
     class Meta:
@@ -133,9 +135,10 @@ class TransactionSerializer(serializers.ModelSerializer):
             "average_cost",
             "total_cost",
             "capital_gain",
+            "running_capital_gain",
             "against_contract",
             "against_fiat",
             "position",
             "status",
-            "status_value"
+            "status_value",
         ]

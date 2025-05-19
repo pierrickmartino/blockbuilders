@@ -45,15 +45,23 @@ logger = logging.getLogger("blockbuilders")
 
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render, redirect
-
 from django.contrib.auth.decorators import login_required
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from app.models import (
     Position,
+    Transaction,
     UserSetting,
     Wallet,
     WalletProcess,
 )
+
+from django.utils import timezone
+from datetime import timedelta, datetime
+import json
+import pytz
 
 
 @login_required
@@ -129,9 +137,7 @@ def refresh_wallet_position_price(request, wallet_id: uuid):
     symbol_set = {
         position.contract.symbol
         for position in positions
-        if not position.contract.symbol[0].islower()
-        and "-" not in position.contract.symbol
-        and "." not in position.contract.symbol
+        if not position.contract.symbol[0].islower() and "-" not in position.contract.symbol and "." not in position.contract.symbol
     }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
     # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)
@@ -162,9 +168,7 @@ def refresh_full_historical_position_price(request, wallet_id: uuid):
     symbol_set = {
         position.contract.symbol
         for position in positions
-        if not position.contract.symbol[0].islower()
-        and "-" not in position.contract.symbol
-        and "." not in position.contract.symbol
+        if not position.contract.symbol[0].islower() and "-" not in position.contract.symbol and "." not in position.contract.symbol
     }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
     # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)
@@ -216,7 +220,7 @@ def download_wallet(request, wallet_id: uuid):
             get_optimism_token_balance.s(),
             get_arbitrum_token_balance.s(),
             get_base_token_balance.s(),
-            get_metis_token_balance.s()
+            get_metis_token_balance.s(),
         ),
         finish_wallet_download_task.s(wallet_id),
     )()
@@ -226,3 +230,68 @@ def download_wallet(request, wallet_id: uuid):
     logger.info(f"Started downloading wallet with id {wallet_id}")
     # return redirect("dashboard")
     return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
+def get_capitalgains(request, position_id, last):
+    logger.info(f"Enter in [get_capitalgains] for position with id {position_id}")
+
+    # Calculate the date 30 days ago from now
+    end_date = timezone.now().date()
+    days_ago = end_date - timedelta(days=last)
+
+    # Get timezone (using Europe/Paris based on your "+02:00" offset)
+    tz = pytz.timezone('Europe/Paris')
+
+    position = Position.objects.filter(id=position_id).first()
+    transactions = Transaction.objects.filter(position=position).filter(date__gte=days_ago).order_by("date")
+
+    # Convert QuerySet to dictionary with date as key
+    data_dict = {}
+    for obj in transactions:
+        date_val = getattr(obj, "date").date()
+        data_dict[date_val] = getattr(obj, "running_capital_gain")
+
+    # Create a complete date range with running values
+    result = []
+    current_value = None
+
+    # Find the last value before our range to initialize (if exists)
+    prev_objects = Transaction.objects.filter(position=position).filter(date__lt=days_ago).order_by(f"-date")
+
+    if prev_objects.exists():
+        current_value = getattr(prev_objects.first(), "running_capital_gain")
+
+    # Fill in all dates with the running value
+    current_date = days_ago
+    while current_date <= end_date:
+        # If we have data for this date, update the current value
+        if current_date in data_dict:
+            current_value = data_dict[current_date]
+
+        # Add to result (only if we have a value)
+        # if current_value is not None:
+        #     result[current_date.strftime("%Y-%m-%d")] = current_value
+        # else:
+        #     result[current_date.strftime("%Y-%m-%d")] = 0  # Or None if you prefer
+        
+        # Create timezone aware datetime at 4:00 AM
+        time_with_tz = tz.localize(datetime.combine(current_date, datetime.min.time()) + timedelta(hours=4))
+
+        # Format the running capital gain as a string with 8 decimal places
+        if isinstance(current_value, (int, float)):
+            formatted_value = f"{current_value:.8f}"
+        else:
+            formatted_value = str(current_value)
+
+        result.append({
+            "time": time_with_tz.isoformat(),
+            "running_capital_gain": formatted_value
+        })
+
+        current_date += timedelta(days=1)
+
+    return Response(result)
+
+    # return Response({"counter": counter})

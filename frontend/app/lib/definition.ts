@@ -104,3 +104,11 @@ export type MarketData = {
   open: number;
   close: number;
 }
+
+export type CapitalGainHisto = {
+  id: string;
+  position: Position;
+  time: string;
+  gain: number;
+  running_capital_gain: number;
+}

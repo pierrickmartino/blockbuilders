@@ -1,11 +1,28 @@
 "use client";
-import { Box, Card, Stack, Typography, Chip, CardContent, Avatar, Tooltip, Drawer, Skeleton } from "@mui/material";
+import {
+  Box,
+  Card,
+  Stack,
+  Typography,
+  Chip,
+  CardContent,
+  Avatar,
+  Tooltip,
+  Drawer,
+  Skeleton,
+  IconButton,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  FormControl,
+} from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
 import { useTheme } from "@mui/material/styles";
 import { Fragment, useEffect, useState, useCallback } from "react";
-import { MarketData, Transaction } from "@/app/lib/definition";
-import { fetchContractMarketPriceHisto, fetchTransactions } from "@/app/lib/data";
+import { CapitalGainHisto, MarketData, Transaction } from "@/app/lib/definition";
+import { fetchContractMarketPriceHisto, fetchPositionCapitalGainHisto, fetchTransactions } from "@/app/lib/data";
 import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTable";
 import { useParams } from "next/navigation";
 import formatNumber from "@/app/utils/formatNumber";
@@ -13,13 +30,20 @@ import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 import BasicCard from "@/app/dashboard/components/shared/BasicCard";
 import getLast30Days from "@/app/utils/getLast30Days";
 import PriceSparkline from "@/app/dashboard/components/dashboard/PriceSparkline";
+import { IconAlarm } from "@tabler/icons-react";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [market_data, setMarketDataHisto] = useState<MarketData[]>([]);
+  const [position_capital_gains, setPositionCapitalGainHisto] = useState<CapitalGainHisto[]>([]);
   const [page, setPage] = useState(0); // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(25); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
+
+  const [age, setAge] = useState("30");
+  const handleChange = (event: SelectChangeEvent) => {
+    setAge(event.target.value);
+  };
 
   /* Drawer for transaction detail */
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -45,16 +69,29 @@ const Transactions = () => {
   // Fetch market price data
   const fetchContractMarketPriceHistoData = useCallback(async () => {
     if (transactions.length > 0 && transactions[0]?.position) {
-      console.log("fetchContractMarketPriceHistoData");
+      // console.log("fetchContractMarketPriceHistoData");
       await fetchContractMarketPriceHisto(30, transactions[0].position.contract.symbol, "USD", setMarketDataHisto);
     } else {
       console.warn("No transactions or position data available");
     }
   }, [transactions, fetchContractMarketPriceHisto, setMarketDataHisto]);
 
+  const fetchPositionCapitalGainHistoData = useCallback(async () => {
+    if (position_id) {
+      console.log("fetchPositionCapitalGainHistoData");
+      await fetchPositionCapitalGainHisto(30, String(position_id), setPositionCapitalGainHisto);
+    } else {
+      console.warn("No position data available");
+    }
+  }, [position_id, fetchPositionCapitalGainHisto, setPositionCapitalGainHisto]);
+
   useEffect(() => {
     fetchTransactionData();
   }, [page, rowsPerPage, fetchTransactionData]); // Include fetchTransactionData as a dependency
+
+  useEffect(() => {
+    fetchPositionCapitalGainHistoData();
+  }, [fetchPositionCapitalGainHistoData]);
 
   useEffect(() => {
     fetchContractMarketPriceHistoData();
@@ -85,9 +122,25 @@ const Transactions = () => {
 
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
-      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        Transactions
-      </Typography>
+      <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
+        <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+          Transactions
+        </Typography>
+        <FormControl sx={{ minWidth: 120 }} size="small">
+          <InputLabel id="demo-simple-select-standard-label"></InputLabel>
+          <Select
+            labelId="demo-simple-select-standard-label"
+            id="demo-simple-select-standard"
+            value={age}
+            onChange={handleChange}
+            label="Filter"
+          >
+            <MenuItem value={"30"}>Last 30 days</MenuItem>
+            <MenuItem value={"60"}>Last 60 days</MenuItem>
+            <MenuItem value={"90"}>Last 90 days</MenuItem>
+          </Select>
+        </FormControl>
+      </Stack>
       <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2) }}>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
@@ -163,7 +216,7 @@ const Transactions = () => {
                         const firstClose = closes[0];
                         const lastClose = closes[closes.length - 1];
 
-                        const delta = ((lastClose - firstClose) / firstClose) * 100;
+                        const delta = ((lastClose - firstClose) / Math.abs(firstClose)) * 100;
                         const roundedDelta = delta.toFixed(2); // e.g., 24.57
 
                         let chipColor: "success" | "error" | "default" = "default";
@@ -194,7 +247,61 @@ const Transactions = () => {
           </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <BasicCard title="Performance">
+          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
+            <CardContent>
+              <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
+                <Stack sx={{ justifyContent: "space-between" }}>
+                  <Stack
+                    direction="row"
+                    sx={{
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {transactions.length > 0 && transactions[0]?.position ? (
+                      <Typography variant="h4" component="p">
+                        {formatNumber(transactions[0].position.capital_gain, "currency")}
+                      </Typography>
+                    ) : (
+                      <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
+                    )}
+                    {position_capital_gains.length > 1 ? (
+                      (() => {
+                        console.log("position capital gain length > 1")
+                        const closes = position_capital_gains.map((item) => item.running_capital_gain); // from oldest to latest
+                        const firstClose = closes[0];
+                        const lastClose = closes[closes.length - 1];
+
+                        const delta = ((lastClose - firstClose) / Math.abs(firstClose)) * 100;
+                        const roundedDelta = delta.toFixed(2); // e.g., 24.57
+
+                        let chipColor: "success" | "error" | "default" = "default";
+                        if (delta > 0) chipColor = "success";
+                        else if (delta < 0) chipColor = "error";
+
+                        const sign = delta >= 0 ? "+" : "";
+
+                        return <Chip size="small" color={chipColor} label={`${sign}${roundedDelta}%`} />;
+                      })()
+                    ) : (
+                      <Skeleton variant="text" width={50} />
+                    )}
+                  </Stack>
+                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                    Capital gain
+                  </Typography>
+                </Stack>
+                <Box sx={{ width: "100%", height: 100 }}>
+                  {position_capital_gains.length > 0 && position_capital_gains[0]?.running_capital_gain ? (
+                    <PriceSparkline data={position_capital_gains.map((m) => m.running_capital_gain)} days={last30Days} />
+                  ) : (
+                    <Skeleton variant="rounded" height={100} />
+                  )}
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+          {/* <BasicCard title="Performance">
             {transactions.length > 0 && transactions[0]?.position ? (
               <Stack>
                 <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={1}>
@@ -363,9 +470,7 @@ const Transactions = () => {
                 </Stack>
               </Stack> // Fallback if transactions are not available
             )}
-            {/* </Stack> */}
-            {/* </Stack> */}
-          </BasicCard>
+          </BasicCard> */}
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>

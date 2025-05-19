@@ -84,12 +84,8 @@ class TaskStatusChoices(models.TextChoices):
 
 # Abstract model for timestamp fields
 class TimeStampModel(models.Model):
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )  # Automatically set the field to now when the object is first created
-    updated_at = models.DateTimeField(
-        auto_now=True
-    )  # Automatically set the field to now every time the object is saved
+    created_at = models.DateTimeField(auto_now_add=True)  # Automatically set the field to now when the object is first created
+    updated_at = models.DateTimeField(auto_now=True)  # Automatically set the field to now every time the object is saved
 
     class Meta:
         abstract = True  # This model will not be used to create any database table
@@ -100,12 +96,8 @@ class Fiat(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, unique=True)  # Unique name of the fiat currency
     symbol = models.CharField(max_length=50, unique=True)  # Unique symbol of the fiat currency
-    short_symbol = models.CharField(
-        max_length=3, default=""
-    )  # Unique short symbol of the fiat currency ($, €, etc...)
-    exchange_rate = models.DecimalField(
-        max_digits=15, decimal_places=8, default=1
-    )  # Exchange rate of the fiat currency
+    short_symbol = models.CharField(max_length=3, default="")  # Unique short symbol of the fiat currency ($, €, etc...)
+    exchange_rate = models.DecimalField(max_digits=15, decimal_places=8, default=1)  # Exchange rate of the fiat currency
 
     class Meta:
         verbose_name = "Fiat"
@@ -118,9 +110,7 @@ class Fiat(models.Model):
 # Model to represent a cryptocurrency wallet
 class Wallet(TimeStampModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="wallets"
-    )  # Reference to the user who owns the wallet
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wallets")  # Reference to the user who owns the wallet
     address = models.CharField(max_length=255, unique=True)  # Unique address of the wallet
     name = models.CharField(max_length=255)  # Name of the wallet
     balance = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Balance of the wallet
@@ -151,27 +141,19 @@ class WalletProcess(TimeStampModel):
 
     download_task = models.UUIDField(default=uuid.uuid4)  # UUID for download task
     download_task_date = models.DateTimeField(default=datetime.now)
-    download_task_status = models.CharField(
-        max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING
-    )
+    download_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
 
     resync_task = models.UUIDField(default=uuid.uuid4)  # UUID for resync task
     resync_task_date = models.DateTimeField(default=datetime.now)
-    resync_task_status = models.CharField(
-        max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING
-    )
+    resync_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
 
     delete_task = models.UUIDField(default=uuid.uuid4)  # UUID for delete task
     delete_task_date = models.DateTimeField(default=datetime.now)
-    delete_task_status = models.CharField(
-        max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING
-    )
+    delete_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
 
     full_download_task = models.UUIDField(default=uuid.uuid4)  # UUID for download task
     full_download_task_date = models.DateTimeField(default=datetime.now)
-    full_download_task_status = models.CharField(
-        max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING
-    )
+    full_download_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
 
     class Meta:
         verbose_name = "Wallet Process"
@@ -214,9 +196,7 @@ class Blockchain(models.Model):
 # Model to represent a smart contract
 class Contract(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    blockchain = models.ForeignKey(
-        Blockchain, on_delete=models.CASCADE, related_name="contracts"
-    )  # Reference to the blockchain
+    blockchain = models.ForeignKey(Blockchain, on_delete=models.CASCADE, related_name="contracts")  # Reference to the blockchain
     name = models.CharField(max_length=255)  # Name of the contract
     symbol = models.CharField(max_length=50)  # Symbol of the contract
     relative_symbol = models.CharField(max_length=50, default="", blank=True)  # Symbol of the contract
@@ -234,9 +214,7 @@ class Contract(models.Model):
     previous_week = models.DateTimeField(default=datetime.now)
     previous_month = models.DateTimeField(default=datetime.now)
 
-    category = models.CharField(
-        max_length=20, choices=CategoryContractChoices.choices, default=CategoryContractChoices.STANDARD
-    )
+    category = models.CharField(max_length=20, choices=CategoryContractChoices.choices, default=CategoryContractChoices.STANDARD)
 
     market_cap = models.DecimalField(max_digits=24, decimal_places=6, default=0)
     # volume = models.DecimalField(max_digits=20, decimal_places=10, default=0) # type: ignore
@@ -259,6 +237,7 @@ class Contract(models.Model):
     def __str__(self):
         return f"{self.name} ({self.symbol})"
 
+
 # Model to manage processes related to a contract
 class ContractProcess(TimeStampModel):
     contract = models.OneToOneField(
@@ -269,9 +248,7 @@ class ContractProcess(TimeStampModel):
 
     download_task = models.UUIDField(default=uuid.uuid4)  # UUID for download task
     download_task_date = models.DateTimeField(default=datetime.now)
-    download_task_status = models.CharField(
-        max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING
-    )
+    download_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
 
     class Meta:
         verbose_name = "Contract Process"
@@ -279,6 +256,7 @@ class ContractProcess(TimeStampModel):
 
     def __str__(self):
         return f"{self.contract} processes"
+
 
 # Utility class for calculating contract details
 class ContractCalculator:
@@ -314,9 +292,7 @@ class ContractCalculator:
 class Position(TimeStampModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name="positions")  # Reference to the wallet
-    contract = models.ForeignKey(
-        Contract, on_delete=models.CASCADE, related_name="positions"
-    )  # Reference to the contract
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="positions")  # Reference to the contract
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)  # Quantity of the position
     average_cost = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Average cost of the position
     amount = models.DecimalField(max_digits=15, decimal_places=2, default=0)  # Amount of the position
@@ -377,12 +353,8 @@ class PositionCalculator:
 # Model to represent a transaction
 class Transaction(TimeStampModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    position = models.ForeignKey(
-        Position, on_delete=models.CASCADE, related_name="transactions"
-    )  # Reference to the position
-    type = models.CharField(
-        max_length=3, choices=TypeTransactionChoices.choices
-    )  # Type of the transaction (IN or OUT)
+    position = models.ForeignKey(Position, on_delete=models.CASCADE, related_name="transactions")  # Reference to the position
+    type = models.CharField(max_length=3, choices=TypeTransactionChoices.choices)  # Type of the transaction (IN or OUT)
     quantity = models.DecimalField(max_digits=32, decimal_places=18, default=0)  # Quantity of the transaction
     date = models.DateTimeField(db_index=True)  # Date of the transaction
     comment = models.TextField(default="", blank=True)  # Comment about the transaction
@@ -409,6 +381,7 @@ class Transaction(TimeStampModel):
     average_cost_fiat_based = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     capital_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)
+    running_capital_gain = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
     against_contract = models.ForeignKey(
         Contract,
@@ -447,26 +420,17 @@ class TransactionCalculator:
 
     def calculate_average_cost_fiat_based(self):
         # Calculate the average cost of the position based on fiat price
-        return (
-            self.transaction.total_cost_fiat_based / self.transaction.buy_quantity
-            if self.transaction.buy_quantity != 0
-            else 0
-        )
+        return self.transaction.total_cost_fiat_based / self.transaction.buy_quantity if self.transaction.buy_quantity != 0 else 0
 
     def calculate_average_cost_contract_based(self):
         # Calculate the average cost of the position based on contract price
-        return (
-            self.transaction.total_cost_contract_based / self.transaction.buy_quantity
-            if self.transaction.buy_quantity != 0
-            else 0
-        )
+        return self.transaction.total_cost_contract_based / self.transaction.buy_quantity if self.transaction.buy_quantity != 0 else 0
 
     def calculate_average_cost(self):
         # Calculate the average cost of the position based on price
         return (
             self.transaction.total_cost / self.transaction.buy_quantity
-            if self.transaction.buy_quantity != 0
-            and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
+            if self.transaction.buy_quantity != 0 and self.transaction.position.contract.category == CategoryContractChoices.STANDARD
             else 0
         )
 
@@ -538,18 +502,12 @@ class MarketData(TimeStampModel):
     symbol = models.CharField(max_length=50, db_index=True)  # Symbol of interest
     reference = models.CharField(max_length=50, db_index=True)  # The currency symbol to convert into
     time = models.DateTimeField(db_index=True)  # Date for the start of this data point
-    high = models.DecimalField(
-        max_digits=24, decimal_places=8, default=0
-    )  # Highest price of the requested pair during this period of time
-    low = models.DecimalField(
-        max_digits=24, decimal_places=8, default=0
-    )  # lowest price of the requested pair during this period of time.
+    high = models.DecimalField(max_digits=24, decimal_places=8, default=0)  # Highest price of the requested pair during this period of time
+    low = models.DecimalField(max_digits=24, decimal_places=8, default=0)  # lowest price of the requested pair during this period of time.
     open = models.DecimalField(
         max_digits=24, decimal_places=8, default=0
     )  # Price of the requested pair at the start of this period of time
-    close = models.DecimalField(
-        max_digits=24, decimal_places=8, default=0
-    )  # Price of the requested pair at the end of this period of time
+    close = models.DecimalField(max_digits=24, decimal_places=8, default=0)  # Price of the requested pair at the end of this period of time
     volume_from = models.DecimalField(
         max_digits=24, decimal_places=4, default=0
     )  # Total amount of the base currency traded into the quote currency during this period of time
@@ -571,15 +529,9 @@ class MarketData(TimeStampModel):
 # Model to store user-specific settings
 class UserSetting(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, related_name="settings"
-    )  # One-to-one relationship with User
-    show_positions_above_threshold = models.BooleanField(
-        default=False
-    )  # Whether to show positions above a certain threshold
-    show_only_secure_contracts = models.BooleanField(
-        default=True
-    )  # Whether to show only contracts that are not identified as scam
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="settings")  # One-to-one relationship with User
+    show_positions_above_threshold = models.BooleanField(default=False)  # Whether to show positions above a certain threshold
+    show_only_secure_contracts = models.BooleanField(default=True)  # Whether to show only contracts that are not identified as scam
 
     class Meta:
         verbose_name = "User Setting"

@@ -25,13 +25,13 @@ export default function PriceSparkline({ data, days }: Props) {
   /* derive numbers only once */
   const first = Number(data[0]);
   const last = Number(data[data.length - 1]);
-  const minY = Math.min(...data) * 0.95;
-  const maxY = Math.max(...data) * 1.05;
+  // const minY = Math.min(...data) * 0.95;
+  // const maxY = Math.max(...data) * 1.05;
  
   const color = first < last ? theme.palette.success.main : first > last ? theme.palette.error.main : theme.palette.grey[400];
-  console.log("first: " + first);
-  console.log("last: " + last);
-  console.log("color: " + color);
+  // console.log("first: " + first);
+  // console.log("last: " + last);
+  // console.log("color: " + color);
   return (
     <SparkLineChart
       data={data}
@@ -40,7 +40,7 @@ export default function PriceSparkline({ data, days }: Props) {
       area
       showHighlight
       showTooltip
-      yAxis={{ min: minY, max: maxY }}
+      // yAxis={{ min: minY, max: maxY }}
       xAxis={{ scaleType: "band", data: days }}
       sx={{
         [`& .${areaElementClasses.root}`]: {

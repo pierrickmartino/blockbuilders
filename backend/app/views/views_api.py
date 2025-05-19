@@ -32,10 +32,12 @@ from app.models import (
     Wallet,
 )
 
+
 class MonthlyResultsSetPagination(pagination.PageNumberPagination):
     page_size = 30
-    page_size_query_param = 'limit'
+    page_size_query_param = "limit"
     max_page_size = 30
+
 
 ##################
 # AUTHENTICATION #
@@ -99,6 +101,7 @@ class WalletViewSet(viewsets.ModelViewSet):
     """
     ViewSet for Wallets that restricts access to only the authenticated user's wallets.
     """
+
     # queryset = Wallet.objects.all()
     serializer_class = WalletSerializer
     permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
@@ -192,9 +195,9 @@ class TransactionLastView(generics.ListAPIView):
         # Filter transactions to include only those belonging to wallets owned by the authenticated user
         return (
             Transaction.objects.filter(position__wallet__user=self.request.user)  # Restrict to user's wallets
-            .exclude(position__contract__category=CategoryContractChoices.STABLE) # Exclude STABLE contracts
-            .exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS) # Exclude SUSPICIOUS contracts
-            .order_by("-date")[:max] # Order by date and limit to the max specified
+            .exclude(position__contract__category=CategoryContractChoices.STABLE)  # Exclude STABLE contracts
+            .exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS)  # Exclude SUSPICIOUS contracts
+            .order_by("-date")[:max]  # Order by date and limit to the max specified
         )
 
 
@@ -207,10 +210,10 @@ class PositionTopView(generics.ListAPIView):
         max = int(self.kwargs.get("max", 1))  # Default to 1 if not provided
 
         # Filter positions to include only those belonging to wallets owned by the authenticated user
-        return (
-            Position.objects.filter(wallet__user=self.request.user)  # Restrict to user's wallets
-            .order_by("-amount")[:max]  # Order by amount and limit to the max specified
-        )
+        return Position.objects.filter(wallet__user=self.request.user).order_by("-amount")[  # Restrict to user's wallets
+            :max
+        ]  # Order by amount and limit to the max specified
+
 
 class MarketDataLastView(generics.ListAPIView):
     serializer_class = MarketDataSerializer
@@ -222,7 +225,7 @@ class MarketDataLastView(generics.ListAPIView):
         last = self.kwargs["last"]
         symbol_for_query = symbol.replace("WETH", "ETH")
         return MarketData.objects.filter(symbol=symbol_for_query, reference=reference).order_by("-time")[:last]
-     
+
 
 class BlockchainTopView(generics.ListAPIView):
     serializer_class = BlockchainSerializer
@@ -247,8 +250,8 @@ class WalletPositionView(generics.ListAPIView):
         try:
             return (
                 Position.objects.filter(wallet__user=self.request.user)  # Restrict to user's wallets
-                .filter(wallet_id=wallet_id) # Restrict to the selected wallet
-                .order_by("-amount") # Order by amount
+                .filter(wallet_id=wallet_id)  # Restrict to the selected wallet
+                .order_by("-amount")  # Order by amount
             )
 
         except Wallet.DoesNotExist:
@@ -286,14 +289,36 @@ class WalletPositionTransactionView(generics.ListAPIView):
         try:
             # Ensure the position belongs to the given wallet
             wallet = Wallet.objects.get(id=wallet_id)
-            return (
-                Transaction.objects.filter(position__wallet__user=self.request.user)  # Restrict to user's wallets
-                .filter(position_id=position_id)
+            return Transaction.objects.filter(position__wallet__user=self.request.user).filter(  # Restrict to user's wallets
+                position_id=position_id
             )
         except Position.DoesNotExist:
             raise NotFound("Position not found for this wallet")
         except Wallet.DoesNotExist:
             raise NotFound("Wallet does not exist")
+
+
+# class WalletPositionCapitalGainLastView(generics.ListAPIView):
+#     serializer_class = TransactionSerializer
+#     permission_classes = [IsAuthenticated]
+
+#     def get_queryset(self):
+#         wallet_id = self.kwargs["wallet_id"]
+#         position_id = self.kwargs["position_id"]
+#         last = self.kwargs["last"]
+
+#         try:
+#             # Ensure the position belongs to the given wallet
+#             wallet = Wallet.objects.get(id=wallet_id)
+#             return Transaction.objects.filter(position__wallet__user=self.request.user).filter(  # Restrict to user's wallets
+#                 position_id=position_id
+#             )
+#         except Position.DoesNotExist:
+#             raise NotFound("Position not found for this wallet")
+#         except Wallet.DoesNotExist:
+#             raise NotFound("Wallet does not exist")
+
+# TODO : Récupérer une vue Historique au niveau Transaction avec une valeur par jour et les statistiques cumulées et daily
 
 
 class WalletPositionTransactionDetailView(generics.RetrieveAPIView):

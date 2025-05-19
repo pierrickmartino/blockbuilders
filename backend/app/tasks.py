@@ -77,6 +77,7 @@ def is_contract_suspicious(contract_name, contract_symbol):
         "!",
         "#",
         "NO_NAME",
+        "✅"
     ]
 
     suspicious_endswith_keywords = [
@@ -114,8 +115,14 @@ def is_contract_suspicious(contract_name, contract_symbol):
     for keyword in suspicious_endswith_keywords:
         if contract_name.lower().endswith(keyword):
             return True
+        
+    # Check if contract name starts with any suspicious keywords
+    for keyword in suspicious_startswith_keywords:
+        if contract_name.lower().startswith(keyword):
+            return True
 
     return False
+
 
 def is_contract_collateral(contract_name, contract_symbol):
     collateral_startswith_keywords = [
@@ -146,11 +153,7 @@ def get_market_data(symbol, transaction_date):
             break
 
     # Retrieve market data
-    data = (
-        MarketData.objects.filter(symbol=new_symbol, reference="USD", time__lte=transaction_date)
-        .order_by("-time")
-        .first()
-    )
+    data = MarketData.objects.filter(symbol=new_symbol, reference="USD", time__lte=transaction_date).order_by("-time").first()
 
     return data
 
@@ -181,9 +184,7 @@ def delete_wallet_task(wallet_id, sleep_duration: float):
     result = wallet.delete()
     time.sleep(sleep_duration)
     end_time = time.time()
-    logger.info(
-        f"Task completed [delete_wallet_task] in {(end_time - start_time)} seconds ({wallet_id}, {sleep_duration})"
-    )
+    logger.info(f"Task completed [delete_wallet_task] in {(end_time - start_time)} seconds ({wallet_id}, {sleep_duration})")
     return result
 
 
@@ -198,9 +199,7 @@ def delete_position_task(position_id, sleep_duration: float):
     result = position.delete()
     time.sleep(sleep_duration)
     end_time = time.time()
-    logger.info(
-        f"Task completed [delete_position_task] in {(end_time - start_time)} seconds ({position_id}, {sleep_duration})"
-    )
+    logger.info(f"Task completed [delete_position_task] in {(end_time - start_time)} seconds ({position_id}, {sleep_duration})")
     return result
 
 
@@ -226,8 +225,8 @@ def create_transactions(wallet, transactions, blockchain_name):
             },
         )
 
-        contract.name=contract_name if contract_name else "NO_NAME"
-        contract.symbol=contract_symbol if contract_symbol else "NO_SYMBOL"
+        contract.name = contract_name if contract_name else "NO_NAME"
+        contract.symbol = contract_symbol if contract_symbol else "NO_SYMBOL"
         contract.save()
 
         # Mark as suspicious if criteria are met
@@ -243,9 +242,7 @@ def create_transactions(wallet, transactions, blockchain_name):
         if contract.category != CategoryContractChoices.SUSPICIOUS:
             position, created = Position.objects.get_or_create(wallet=wallet, contract=contract)
 
-            transaction_type = (
-                TypeTransactionChoices.IN if tx["to"].upper() == wallet.address.upper() else TypeTransactionChoices.OUT
-            )
+            transaction_type = TypeTransactionChoices.IN if tx["to"].upper() == wallet.address.upper() else TypeTransactionChoices.OUT
             transactions_to_create.append(
                 Transaction(
                     position=position,
@@ -274,16 +271,12 @@ def create_transactions_from_bsc_bep20_task(wallet_id: uuid):
         create_transactions(wallet, transactions, "BSC")
 
         end_time = time.time()
-        logger.info(
-            f"Task completed [create_transactions_from_bsc_bep20_task] in {(end_time - start_time)} seconds ({wallet_id})"
-        )
+        logger.info(f"Task completed [create_transactions_from_bsc_bep20_task] in {(end_time - start_time)} seconds ({wallet_id})")
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(
-            f"An error occurred while creating transactions from BEP20 (BSC) for wallet id {wallet_id}: {str(e)}"
-        )
+        logger.error(f"An error occurred while creating transactions from BEP20 (BSC) for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
 
@@ -302,16 +295,12 @@ def create_transactions_from_polygon_erc20_task(wallet_id: uuid):
         create_transactions(wallet, transactions, "Polygon")
 
         end_time = time.time()
-        logger.info(
-            f"Task completed [create_transactions_from_polygon_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})"
-        )
+        logger.info(f"Task completed [create_transactions_from_polygon_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})")
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(
-            f"An error occurred while creating transactions from ERC20 (Polygon) for wallet id {wallet_id}: {str(e)}"
-        )
+        logger.error(f"An error occurred while creating transactions from ERC20 (Polygon) for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
 
@@ -330,18 +319,15 @@ def create_transactions_from_arbitrum_erc20_task(wallet_id: uuid):
         create_transactions(wallet, transactions, "Arbitrum")
 
         end_time = time.time()
-        logger.info(
-            f"Task completed [create_transactions_from_arbitrum_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})"
-        )
+        logger.info(f"Task completed [create_transactions_from_arbitrum_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})")
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(
-            f"An error occurred while creating transactions from ERC20 (Arbitrum) for wallet id {wallet_id}: {str(e)}"
-        )
+        logger.error(f"An error occurred while creating transactions from ERC20 (Arbitrum) for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
+
 
 @shared_task
 def create_transactions_from_metis_erc20_task(wallet_id: uuid):
@@ -357,16 +343,12 @@ def create_transactions_from_metis_erc20_task(wallet_id: uuid):
         create_transactions(wallet, transactions, "Metis")
 
         end_time = time.time()
-        logger.info(
-            f"Task completed [create_transactions_from_metis_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})"
-        )
+        logger.info(f"Task completed [create_transactions_from_metis_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})")
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(
-            f"An error occurred while creating transactions from ERC20 (Metis) for wallet id {wallet_id}: {str(e)}"
-        )
+        logger.error(f"An error occurred while creating transactions from ERC20 (Metis) for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
 
@@ -385,16 +367,12 @@ def create_transactions_from_base_erc20_task(wallet_id: uuid):
         create_transactions(wallet, transactions, "Base")
 
         end_time = time.time()
-        logger.info(
-            f"Task completed [create_transactions_from_base_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})"
-        )
+        logger.info(f"Task completed [create_transactions_from_base_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})")
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(
-            f"An error occurred while creating transactions from ERC20 (Base) for wallet id {wallet_id}: {str(e)}"
-        )
+        logger.error(f"An error occurred while creating transactions from ERC20 (Base) for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
 
@@ -413,16 +391,12 @@ def create_transactions_from_optimism_erc20_task(wallet_id: uuid):
         create_transactions(wallet, transactions, "Optimism")
 
         end_time = time.time()
-        logger.info(
-            f"Task completed [create_transactions_from_optimism_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})"
-        )
+        logger.info(f"Task completed [create_transactions_from_optimism_erc20_task] in {(end_time - start_time)} seconds ({wallet_id})")
 
     except Wallet.DoesNotExist:
         logger.error(f"Wallet with id {wallet_id} does not exist")
     except Exception as e:
-        logger.error(
-            f"An error occurred while creating transactions from ERC20 (Optimism) for wallet id {wallet_id}: {str(e)}"
-        )
+        logger.error(f"An error occurred while creating transactions from ERC20 (Optimism) for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
 
@@ -557,6 +531,7 @@ def get_arbitrum_token_balance(wallet_id: uuid):
         logger.error(f"An error occurred while getting ETH (Arbitrum) balance for wallet id {wallet_id}: {str(e)}")
 
     return wallet_id
+
 
 @shared_task
 def get_metis_token_balance(wallet_id: uuid):
@@ -707,35 +682,21 @@ def download_contract_info_task(contract_id: uuid):
         contract.logo_uri = info.get("Data", {}).get("LOGO_URL")
         contract.description = info.get("Data", {}).get("ASSET_DESCRIPTION_SNIPPET")
         # contract.name = info.get("Data", {}).get("NAME")
-        contract.market_cap = (
-            info.get("Data", {}).get("TOTAL_MKT_CAP_USD") if info.get("Data", {}).get("TOTAL_MKT_CAP_USD") else 0
-        )
+        contract.market_cap = info.get("Data", {}).get("TOTAL_MKT_CAP_USD") if info.get("Data", {}).get("TOTAL_MKT_CAP_USD") else 0
 
-        contract.supply_total = (
-            info.get("Data", {}).get("SUPPLY_TOTAL") if info.get("Data", {}).get("SUPPLY_TOTAL") else 0
-        )
+        contract.supply_total = info.get("Data", {}).get("SUPPLY_TOTAL") if info.get("Data", {}).get("SUPPLY_TOTAL") else 0
         contract.supply_circulating = (
             info.get("Data", {}).get("SUPPLY_CIRCULATING") if info.get("Data", {}).get("SUPPLY_CIRCULATING") else 0
         )
-        contract.supply_issued = (
-            info.get("Data", {}).get("SUPPLY_ISSUED") if info.get("Data", {}).get("SUPPLY_ISSUED") else 0
-        )
-        contract.supply_locked = (
-            info.get("Data", {}).get("SUPPLY_LOCKED") if info.get("Data", {}).get("SUPPLY_LOCKED") else 0
-        )
-        contract.supply_burnt = (
-            info.get("Data", {}).get("SUPPLY_BURNT") if info.get("Data", {}).get("SUPPLY_BURNT") else 0
-        )
-        contract.supply_staked = (
-            info.get("Data", {}).get("SUPPLY_STAKED") if info.get("Data", {}).get("SUPPLY_STAKED") else 0
-        )
+        contract.supply_issued = info.get("Data", {}).get("SUPPLY_ISSUED") if info.get("Data", {}).get("SUPPLY_ISSUED") else 0
+        contract.supply_locked = info.get("Data", {}).get("SUPPLY_LOCKED") if info.get("Data", {}).get("SUPPLY_LOCKED") else 0
+        contract.supply_burnt = info.get("Data", {}).get("SUPPLY_BURNT") if info.get("Data", {}).get("SUPPLY_BURNT") else 0
+        contract.supply_staked = info.get("Data", {}).get("SUPPLY_STAKED") if info.get("Data", {}).get("SUPPLY_STAKED") else 0
 
         contract.save()
 
         end_time = time.time()
-        logger.info(
-            f"Task completed [download_contract_info_task] in {(end_time - start_time)} seconds ({contract_id})"
-        )
+        logger.info(f"Task completed [download_contract_info_task] in {(end_time - start_time)} seconds ({contract_id})")
 
     except Exception as e:
         logger.error(f"An error occurred while getting contract info for contract id {contract_id}: {str(e)}")
@@ -761,16 +722,11 @@ def aggregate_transactions_task(previous_return: int, wallet_id: uuid):
 
     for transaction in transactions_by_wallet_to_aggregate:
 
-        transactions_to_aggregate = Transaction.objects.filter(hash=transaction.hash).filter(
-            position=transaction.position
-        )
+        transactions_to_aggregate = Transaction.objects.filter(hash=transaction.hash).filter(position=transaction.position)
 
         if transactions_to_aggregate.count() >= 2:
 
-            if (
-                DEBUG == True
-                and transaction.hash == "0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb"
-            ):
+            if DEBUG == True and transaction.hash == "0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb":
                 logger.info(f"Transaction : {transactions_to_aggregate}")
 
             transaction_agg = Transaction.objects.create(
@@ -869,8 +825,7 @@ def calculate_cost_transaction_task(wallet_id: uuid):
 
                 # Debug logging for a specific transaction hash
                 if (
-                    DEBUG == True
-                    and transaction.hash == "0x9a59d837769a45950af2bb4dffa11c05dc6f76ae8b7ecb542bf80eca36c82e12"
+                    DEBUG == True and transaction.hash == "0x9a59d837769a45950af2bb4dffa11c05dc6f76ae8b7ecb542bf80eca36c82e12"
                 ):  # "0xe9ca6a317ef1f07f7560d459368dc73ae354d6ae8224b9877e29bb0d6f6f04f3":
                     calculate_cost_transaction_task_debug(transaction, symbol)
 
@@ -891,10 +846,7 @@ def calculate_cost_transaction_task(wallet_id: uuid):
 
                 # Debug logging for a specific transaction hash
                 # logger.info(f"Multi-part transaction for {transaction}")
-                if (
-                    DEBUG == True
-                    and transaction.hash == "0xf9746d44db326689f36d6851f5fcda84109d518437f6fb6943231094ddbeb7ed"
-                ):
+                if DEBUG == True and transaction.hash == "0xf9746d44db326689f36d6851f5fcda84109d518437f6fb6943231094ddbeb7ed":
                     # 0xff0a0c538e5ef106214bd0817af441e4ee9c468d35cc5e397f85bc852e40ffcb
                     calculate_cost_transaction_task_debug(transaction, symbol)
 
@@ -913,9 +865,7 @@ def calculate_cost_transaction_task(wallet_id: uuid):
         )
 
         end_time = time.time()
-        logger.info(
-            f"Task completed [calculate_cost_transaction_task] in {(end_time - start_time)} seconds ({wallet_id})"
-        )
+        logger.info(f"Task completed [calculate_cost_transaction_task] in {(end_time - start_time)} seconds ({wallet_id})")
         return wallet_id
 
     except Wallet.DoesNotExist:
@@ -1115,9 +1065,7 @@ def clean_transaction_task(wallet_id: uuid):
     except Position.DoesNotExist:
         logger.info(f"Position does not exist for wallet id {wallet_id}.")
     except Exception as error:
-        logger.error(
-            f"An error occurred while cleaning transactions for wallet id {wallet_id}: {type(error).__name__}"
-        )
+        logger.error(f"An error occurred while cleaning transactions for wallet id {wallet_id}: {type(error).__name__}")
 
     end_time = time.time()
     logger.info(f"Task completed [clean_transaction_task] in {(end_time - start_time)} seconds ({wallet_id})")
@@ -1146,6 +1094,7 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
             # DEBUG_LINK = True if position.contract.address == "0x53e0bca35ec356bd5dddfebbd1fc0fd03fabad39" else False
 
             running_quantity = 0
+            running_capital_gain = 0
             buy_quantity = 0
             sell_quantity = 0
             total_cost = 0
@@ -1193,9 +1142,7 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
                     running_quantity -= transaction.quantity
                     sell_quantity += transaction.quantity
                     transaction.status = (
-                        StatusTransactionChoices.CLOSE
-                        if (running_quantity * price) < 1
-                        else StatusTransactionChoices.DIMINUTION
+                        StatusTransactionChoices.CLOSE if (running_quantity * price) < 1 else StatusTransactionChoices.DIMINUTION
                     )
 
                 price_contract_based = transaction.price_contract_based
@@ -1215,14 +1162,11 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
                 transaction.total_cost = total_cost
 
                 quantity_to_consider = (
-                    transaction.quantity
-                    if transaction.status == StatusTransactionChoices.INCREASE
-                    else -transaction.quantity
+                    transaction.quantity if transaction.status == StatusTransactionChoices.INCREASE else -transaction.quantity
                 )
                 transaction.status_value = (
                     transaction.quantity / (transaction.running_quantity - quantity_to_consider) * 100
-                    if transaction.status == StatusTransactionChoices.DIMINUTION
-                    or transaction.status == StatusTransactionChoices.INCREASE
+                    if transaction.status == StatusTransactionChoices.DIMINUTION or transaction.status == StatusTransactionChoices.INCREASE
                     else 0
                 )
 
@@ -1234,12 +1178,18 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
                 transaction.average_cost = average_cost
                 transaction.cost = calculator.calculate_cost()
                 transaction.cost_fiat_based = calculator.calculate_cost_fiat_based()
+                
+                # Capital Gain and Running Capital Gain calculation
                 transaction.capital_gain = calculator.calculate_capital_gain()
+                running_capital_gain += transaction.capital_gain
+                transaction.running_capital_gain = running_capital_gain
+
                 transaction.save()
 
             position.quantity = running_quantity
             position.total_cost = total_cost
             position.average_cost = average_cost
+            position.capital_gain = running_capital_gain
             position.save()
 
     except Wallet.DoesNotExist:
@@ -1248,9 +1198,7 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
         logger.error(f"An error occurred while calculating running quantities for wallet id {wallet_id}: {str(e)}")
 
     end_time = time.time()
-    logger.info(
-        f"Task completed [calculate_running_quantity_transaction_task] in {(end_time - start_time)} seconds ({wallet_id})"
-    )
+    logger.info(f"Task completed [calculate_running_quantity_transaction_task] in {(end_time - start_time)} seconds ({wallet_id})")
 
     return wallet_id
 
@@ -1307,14 +1255,10 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
             contract.save()
 
     except Exception as e:
-        logger.error(
-            f"An error occurred while getting the market price of a list of symbols {','.join(symbol_list)}: {str(e)}"
-        )
+        logger.error(f"An error occurred while getting the market price of a list of symbols {','.join(symbol_list)}: {str(e)}")
 
     end_time = time.time()
-    logger.info(
-        f"Task completed [get_price_from_market_task] in {(end_time - start_time)} seconds ({','.join(symbol_list)})"
-    )
+    logger.info(f"Task completed [get_price_from_market_task] in {(end_time - start_time)} seconds ({','.join(symbol_list)})")
 
     return symbol_list
 
@@ -1378,9 +1322,7 @@ def get_historical_price_from_market_task(previous_return: list, symbol: str):
         logger.error(f"An error occurred while getting the historical market price of a symbol {symbol}: {str(e)}")
 
     end_time = time.time()
-    logger.info(
-        f"Task completed [get_historical_price_from_market_task] in {(end_time - start_time)} seconds ({symbol})"
-    )
+    logger.info(f"Task completed [get_historical_price_from_market_task] in {(end_time - start_time)} seconds ({symbol})")
 
     return symbol
 
@@ -1463,22 +1405,14 @@ def update_contract_information(previous_return: int, symbol: str):
         one_week_ago = now - relativedelta(weeks=1)
         one_month_ago = now - relativedelta(months=1)
 
-        previous_day_price = (
-            MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_day_ago).order_by("-time").first()
-        )
-        previous_week_price = (
-            MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_week_ago).order_by("-time").first()
-        )
-        previous_month_price = (
-            MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_month_ago)
-            .order_by("-time")
-            .first()
-        )
+        previous_day_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_day_ago).order_by("-time").first()
+        previous_week_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_week_ago).order_by("-time").first()
+        previous_month_price = MarketData.objects.filter(symbol=symbol, reference="USD", time__lte=one_month_ago).order_by("-time").first()
 
         for contract in contracts:
             # usecase : WETH is the symbol but ETH is the relative symbol
             # we only want to use ETH price
-            if (contract.symbol == symbol and contract.relative_symbol != ""):
+            if contract.symbol == symbol and contract.relative_symbol != "":
                 # save
                 contract.save()
             else:
@@ -1497,9 +1431,7 @@ def update_contract_information(previous_return: int, symbol: str):
     except Contract.DoesNotExist:
         logger.error(f"Contract with symbol {symbol} does not exist")
     except Exception as e:
-        logger.error(
-            f"An error occurred while updating contract information based on market data for {symbol}: {str(e)}"
-        )
+        logger.error(f"An error occurred while updating contract information based on market data for {symbol}: {str(e)}")
 
     end_time = time.time()
     logger.info(f"Task completed [update_contract_information] in {(end_time - start_time)} seconds ({symbol})")
@@ -1520,9 +1452,7 @@ def calculate_blockchain_balance_task(previous_return: int, wallet_id: uuid):
         blockchains = Blockchain.objects.all()
 
         # Calculate the total balance of all positions
-        total_balance = (
-            Position.objects.aggregate(total_balance=Sum(F("quantity") * F("contract__price")))["total_balance"] or 0
-        )
+        total_balance = Position.objects.aggregate(total_balance=Sum(F("quantity") * F("contract__price")))["total_balance"] or 0
 
         # Calculate the total balance for each blockchain
         blockchain_totals = (
@@ -1539,9 +1469,7 @@ def calculate_blockchain_balance_task(previous_return: int, wallet_id: uuid):
             for blockchain_calcul in blockchain_totals:
                 if blockchain.id == blockchain_calcul["blockchain_id"]:
                     blockchain.balance = blockchain_calcul["total_amount"]
-                    blockchain.progress_percentage = (
-                        (blockchain_calcul["total_amount"] / total_balance * 100) if total_balance != 0 else 0
-                    )
+                    blockchain.progress_percentage = (blockchain_calcul["total_amount"] / total_balance * 100) if total_balance != 0 else 0
                     blockchain.save()
 
     except Wallet.DoesNotExist:
@@ -1550,9 +1478,7 @@ def calculate_blockchain_balance_task(previous_return: int, wallet_id: uuid):
         logger.error(f"An error occurred while calculating blockchain balance for wallet id {wallet_id}: {str(e)}")
 
     end_time = time.time()
-    logger.info(
-        f"Task completed [calculate_blockchain_balance_task] in {(end_time - start_time)} seconds ({wallet_id})"
-    )
+    logger.info(f"Task completed [calculate_blockchain_balance_task] in {(end_time - start_time)} seconds ({wallet_id})")
 
     return wallet_id
 
@@ -1591,9 +1517,7 @@ def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
                 else 0
             )
 
-            position.progress_percentage = (
-                position_amount / position.wallet.balance * 100 if position.wallet.balance != 0 else 0
-            )
+            position.progress_percentage = position_amount / position.wallet.balance * 100 if position.wallet.balance != 0 else 0
 
             unrealized_gain = (
                 (position.contract.price - reference_average_cost) / reference_average_cost * 100
@@ -1603,13 +1527,18 @@ def calculate_wallet_balance_task(previous_return: int, wallet_id: uuid):
             total_unrealized_gain += unrealized_gain
             position.unrealized_gain = unrealized_gain
 
+            # OBSOLETE : Is now calculated on Transaction directly
+            #
             # Calculate realized gain for the position
-            capital_gain = sum(
-                TransactionCalculator(transaction).calculate_capital_gain()
-                for transaction in Transaction.objects.filter(position=position)
-            )
-            total_capital_gain += capital_gain
-            position.capital_gain = capital_gain
+            # capital_gain = sum(
+            #     TransactionCalculator(transaction).calculate_capital_gain() for transaction in Transaction.objects.filter(position=position)
+            # )
+            # total_capital_gain += capital_gain
+            # position.capital_gain = capital_gain
+            #
+            # REPLACED BY
+            #
+            total_capital_gain += position.capital_gain
 
             position.save()
             balance += position_amount
