@@ -12,12 +12,12 @@
 - Ajouter un contour aux alertes
 - Utiliser un bleu foncé (ou autre) pour couleur principale
 - Le nom d'utilisateur n'est pas sauvegardé lors de l'enregistrement
-- Corriger le problème de gradient sur les graphes
 - Revoir le CSS du bouton d'action dans les tableaux
 
 ## Dashboard
 - Ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois
 - Ajouter un calendrier du mois avec le nombre de trades par journée
+- Ajouter un widget présentant les inflow/outflow
 - Ajouter la fonctionnalité d'édition d'un wallet
 - Repenser l'affichage du widget *Activity* pour les écrans mobiles
 - [ **In progress** ] Ouvrir un drawer au clic sur un wallet avec les infos de positions
