@@ -10,7 +10,6 @@ import {
   Tooltip,
   Drawer,
   Skeleton,
-  IconButton,
   InputLabel,
   Select,
   MenuItem,
@@ -19,18 +18,15 @@ import {
 } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
-import { useTheme } from "@mui/material/styles";
 import { Fragment, useEffect, useState, useCallback } from "react";
 import { CapitalGainHisto, MarketData, Transaction } from "@/app/lib/definition";
 import { fetchContractMarketPriceHisto, fetchPositionCapitalGainHisto, fetchTransactions } from "@/app/lib/data";
 import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTable";
 import { useParams } from "next/navigation";
 import formatNumber from "@/app/utils/formatNumber";
-import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
-import BasicCard from "@/app/dashboard/components/shared/BasicCard";
 import getLast30Days from "@/app/utils/getLast30Days";
 import PriceSparkline from "@/app/dashboard/components/dashboard/PriceSparkline";
-import { IconAlarm } from "@tabler/icons-react";
+import DeltaChip from "@/app/dashboard/components/dashboard/DeltaChip";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -54,7 +50,6 @@ const Transactions = () => {
     toggleDrawer(true);
   };
 
-  const theme = useTheme();
   const params = useParams();
   const wallet_id = params.wallet_id;
   const position_id = params.position_id;
@@ -211,22 +206,7 @@ const Transactions = () => {
                       <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                     )}
                     {market_data.length > 1 ? (
-                      (() => {
-                        const closes = market_data.map((item) => item.close).reverse(); // from oldest to latest
-                        const firstClose = closes[0];
-                        const lastClose = closes[closes.length - 1];
-
-                        const delta = ((lastClose - firstClose) / Math.abs(firstClose)) * 100;
-                        const roundedDelta = delta.toFixed(2); // e.g., 24.57
-
-                        let chipColor: "success" | "error" | "default" = "default";
-                        if (delta > 0) chipColor = "success";
-                        else if (delta < 0) chipColor = "error";
-
-                        const sign = delta >= 0 ? "+" : "-";
-
-                        return <Chip size="small" color={chipColor} label={`${sign}${roundedDelta}%`} />;
-                      })()
+                      <DeltaChip data={market_data.map((m) => m.close).reverse()} />
                     ) : (
                       <Skeleton variant="text" width={50} />
                     )}
@@ -266,23 +246,7 @@ const Transactions = () => {
                       <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                     )}
                     {position_capital_gains.length > 1 ? (
-                      (() => {
-                        console.log("position capital gain length > 1")
-                        const closes = position_capital_gains.map((item) => item.running_capital_gain); // from oldest to latest
-                        const firstClose = closes[0];
-                        const lastClose = closes[closes.length - 1];
-
-                        const delta = ((lastClose - firstClose) / Math.abs(firstClose)) * 100;
-                        const roundedDelta = delta.toFixed(2); // e.g., 24.57
-
-                        let chipColor: "success" | "error" | "default" = "default";
-                        if (delta > 0) chipColor = "success";
-                        else if (delta < 0) chipColor = "error";
-
-                        const sign = delta >= 0 ? "+" : "";
-
-                        return <Chip size="small" color={chipColor} label={`${sign}${roundedDelta}%`} />;
-                      })()
+                      <DeltaChip data={position_capital_gains.map((m) => m.running_capital_gain).reverse()} />
                     ) : (
                       <Skeleton variant="text" width={50} />
                     )}
