@@ -242,7 +242,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       field: "token",
       headerName: "Token",
       flex: 1.5,
-      minWidth: 150,
+      minWidth: 250,
       renderCell: (params) =>
         renderToken(
           params.row.contract.symbol,

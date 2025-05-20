@@ -1,3 +1,4 @@
+from collections import defaultdict
 import logging
 import uuid
 
@@ -40,6 +41,7 @@ from app.tasks import (
     get_polygon_token_balance,
 )
 from app.views.calculators.calculators_position import calculate_wallet_positions
+from app.views.views_transaction import get_Transactions_by_Wallet
 
 logger = logging.getLogger("blockbuilders")
 
@@ -60,8 +62,8 @@ from app.models import (
 
 from django.utils import timezone
 from datetime import timedelta, datetime
-import json
 import pytz
+from decimal import Decimal
 
 
 @login_required
@@ -234,15 +236,15 @@ def download_wallet(request, wallet_id: uuid):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
-def get_capitalgains(request, position_id, last):
-    logger.info(f"Enter in [get_capitalgains] for position with id {position_id}")
+def get_position_capitalgains(request, position_id, last):
+    # logger.info(f"Enter in [get_position_capitalgains] for position with id {position_id}")
 
     # Calculate the date 30 days ago from now
     end_date = timezone.now().date()
     days_ago = end_date - timedelta(days=last)
 
     # Get timezone (using Europe/Paris based on your "+02:00" offset)
-    tz = pytz.timezone('Europe/Paris')
+    tz = pytz.timezone("Europe/Paris")
 
     position = Position.objects.filter(id=position_id).first()
     transactions = Transaction.objects.filter(position=position).filter(date__gte=days_ago).order_by("date")
@@ -270,28 +272,64 @@ def get_capitalgains(request, position_id, last):
         if current_date in data_dict:
             current_value = data_dict[current_date]
 
-        # Add to result (only if we have a value)
-        # if current_value is not None:
-        #     result[current_date.strftime("%Y-%m-%d")] = current_value
-        # else:
-        #     result[current_date.strftime("%Y-%m-%d")] = 0  # Or None if you prefer
-        
         # Create timezone aware datetime at 4:00 AM
         time_with_tz = tz.localize(datetime.combine(current_date, datetime.min.time()) + timedelta(hours=4))
 
         # Format the running capital gain as a string with 8 decimal places
-        if isinstance(current_value, (int, float)):
-            formatted_value = f"{current_value:.8f}"
-        else:
-            formatted_value = str(current_value)
+        formatted_value = f"{current_value:.8f}" if isinstance(current_value, (int, float)) else str(current_value)
 
-        result.append({
-            "time": time_with_tz.isoformat(),
-            "running_capital_gain": formatted_value
-        })
+        result.append({"time": time_with_tz.isoformat(), "running_capital_gain": formatted_value})
 
         current_date += timedelta(days=1)
 
     return Response(result)
 
-    # return Response({"counter": counter})
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
+def get_wallet_capitalgains(request, wallet_id, last):
+    # logger.info(f"Enter in [get_wallet_capitalgains] for wallet with id {wallet_id}")
+
+    # Calculate the date 30 days ago from now
+    end_date = timezone.now().date()
+    days_ago = end_date - timedelta(days=last)
+
+    # Get timezone (using Europe/Paris based on your "+02:00" offset)
+    tz = pytz.timezone("Europe/Paris")
+
+    wallet = get_object_or_404(Wallet, id=wallet_id)
+    transactions = get_Transactions_by_Wallet(wallet)
+    transactions_in_scope = [t for t in transactions if t.date.date() >= days_ago]
+
+    # Step 1: Group transactions by date and sum gains for each date
+    gains_by_date = defaultdict(Decimal)
+    for t in transactions_in_scope:
+        gains_by_date[t.date.date()] += getattr(t, "capital_gain", Decimal("0"))
+
+    # Step 2: Build running sum of future transaction gains
+    # For each date, we need the sum of gains for dates AFTER this date
+    # So, we precompute the cumulative sum from future to past
+
+    date_list = []
+    current_date = end_date
+    while current_date >= days_ago:
+        date_list.append(current_date)
+        current_date -= timedelta(days=1)
+
+    # To get "future sum" as of each date, iterate date_list in reverse
+    future_sum = 0
+    future_sums = {}  # date -> sum of capital_gain for transactions after this date
+    for date in date_list:
+        future_sums[date] = future_sum
+        future_sum += gains_by_date.get(date, Decimal("0"))
+
+    # Step 3: For each day, calculate the capital gain as of the end of that day
+    result = []
+    for date in date_list:
+        capital_gain_at_date = wallet.capital_gain - future_sums[date]
+        # Create timezone-aware datetime at 4:00 AM
+        time_with_tz = tz.localize(datetime.combine(date, datetime.min.time()) + timedelta(hours=4))
+        formatted_value = f"{capital_gain_at_date:.8f}"
+        result.append({"time": time_with_tz.isoformat(), "running_capital_gain": formatted_value})    
+
+    return Response(result)

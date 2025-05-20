@@ -19,8 +19,14 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
-import { MarketData, Position } from "@/app/lib/definition";
-import { fetchContractMarketPriceHisto, fetchPositions, fetchPositionsWithSearch, fetchTaskStatus } from "@/app/lib/data";
+import { CapitalGainHisto, MarketData, Position } from "@/app/lib/definition";
+import {
+  fetchContractMarketPriceHisto,
+  fetchPositions,
+  fetchPositionsWithSearch,
+  fetchTaskStatus,
+  fetchWalletCapitalGainHisto,
+} from "@/app/lib/data";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
 import { SearchForm } from "@/app/ui/shared/SearchForm";
@@ -29,6 +35,7 @@ import getLast30Days from "@/app/utils/getLast30Days";
 import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
 import { useTheme } from "@mui/material/styles";
 import PriceSparkline from "@/app/dashboard/components/dashboard/PriceSparkline";
+import DeltaChip from "@/app/dashboard/components/dashboard/DeltaChip";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -36,6 +43,7 @@ const Positions = () => {
   const [rowsPerPage, setRowsPerPage] = useState(25); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
   const [market_data, setMarketDataHisto] = useState<MarketData[]>([]);
+  const [wallet_capital_gains, setWalletCapitalGainHisto] = useState<CapitalGainHisto[]>([]);
 
   const [open, setOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -55,7 +63,6 @@ const Positions = () => {
     [taskId: string]: NodeJS.Timeout;
   }>({}); // New state for task polling
 
-  const theme = useTheme();
   const params = useParams();
   const wallet_id = params.wallet_id;
 
@@ -69,6 +76,19 @@ const Positions = () => {
   useEffect(() => {
     fetchContractMarketPriceHistoData();
   }, [fetchContractMarketPriceHistoData]);
+
+  const fetchWalletCapitalGainHistoData = useCallback(async () => {
+    if (wallet_id) {
+      // console.log("fetchPositionCapitalGainHistoData");
+      await fetchWalletCapitalGainHisto(30, String(wallet_id), setWalletCapitalGainHisto);
+    } else {
+      console.warn("No position data available");
+    }
+  }, [wallet_id, fetchWalletCapitalGainHisto, setWalletCapitalGainHisto]);
+
+  useEffect(() => {
+    fetchWalletCapitalGainHistoData();
+  }, [fetchWalletCapitalGainHistoData]);
 
   const fetchPositionData = useCallback(async () => {
     if (wallet_id) {
@@ -243,15 +263,19 @@ const Positions = () => {
                     ) : (
                       <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                     )}
-                    <Chip size="small" color={"error"} label={"-25%"} />
+                    {wallet_capital_gains.length > 1 ? (
+                      <DeltaChip data={wallet_capital_gains.map((m) => m.running_capital_gain).reverse()} />
+                    ) : (
+                      <Skeleton variant="text" width={50} />
+                    )}
                   </Stack>
                   <Typography variant="caption" sx={{ color: "text.secondary" }}>
                     Total capital gain
                   </Typography>
                 </Stack>
                 <Box sx={{ width: "100%", height: 100 }}>
-                  {market_data.length > 0 && market_data[0]?.close ? (
-                    <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
+                  {wallet_capital_gains.length > 0 && wallet_capital_gains[0]?.running_capital_gain ? (
+                    <PriceSparkline data={wallet_capital_gains.map((m) => m.running_capital_gain).reverse()} days={last30Days} />
                   ) : (
                     <Skeleton variant="rounded" height={100} />
                   )}
@@ -299,22 +323,7 @@ const Positions = () => {
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <HighlightedCard />
         </Grid>
-        <Grid size={{ xs: 12, lg: 12 }}>
-          <Card variant="outlined" sx={{ p: 3 }}>
-            <Box px={0} py={0} mb="-15px">
-              <Typography variant="h5">Filter</Typography>
-            </Box>
-            <Box px={0} py={0} mt={3}>
-              <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={0}>
-                <SearchForm onSearch={handleSearch} />
-                <FormGroup>
-                  <FormControlLabel control={<Switch />} label="Only relevant positions" />
-                </FormGroup>
-              </Stack>
-            </Box>
-          </Card>
-        </Grid>
-        <Grid size={{ xs: 12, lg: 12 }}>
+        <Grid size={{ xs: 12, lg: 9 }}>
           {positions.length > 0 && positions[0]?.wallet ? (
             <PositionTable
               positions={positions}
@@ -332,6 +341,19 @@ const Positions = () => {
           ) : (
             <Typography>No data available</Typography> // Fallback if positions are not available
           )}
+        </Grid>
+        <Grid size={{ xs: 12, lg: 3 }}>
+          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
+            <CardContent>
+              <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
+                <Typography variant="h5">Filter</Typography>
+                <SearchForm onSearch={handleSearch} />
+                <FormGroup>
+                  <FormControlLabel control={<Switch />} label="Only relevant positions" />
+                </FormGroup>
+              </Stack>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
       <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "right" }}>

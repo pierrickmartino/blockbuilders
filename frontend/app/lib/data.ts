@@ -235,6 +235,25 @@ export const fetchPositionCapitalGainHisto = async (
   }
 };
 
+export const fetchWalletCapitalGainHisto = async (
+  offset: number,
+  wallet_id: string,
+  setWalletCapitalGainHisto: React.Dispatch<React.SetStateAction<CapitalGainHisto[]>>,
+): Promise<void> => {
+
+  try {
+    const response = await fetcher(`/api/wallets/${wallet_id}/capitalgains/${offset}`);
+
+    if (response) {
+      setWalletCapitalGainHisto(response);
+    }
+  } catch (err) {
+    console.error("Error fetching data from capital gain API:", err);
+    setWalletCapitalGainHisto([]); // Set empty transactions if fetching fails
+    throw new Error("Failed to fetch capital gains.");
+  }
+};
+
 export const fetchTransactionsAll = async (
   setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>,
   setTotalCount: React.Dispatch<React.SetStateAction<number>>,

@@ -29,7 +29,6 @@
 - Ajouter les indicateurs tels que EMA, RSI, etc.
 - [Fix] Augmentation sans limite sur la page générique
 - Mettre à jour les widgets de *Stats*
-- Faire la somme des *capital gain daily* pour afficher dans le graphique
 - [ **In progress** ] Ouvrir un drawer au clic sur une position avec les infos de transactions
 
 ## Transaction

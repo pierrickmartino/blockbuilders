@@ -292,8 +292,13 @@ urlpatterns = [
     path("api/positions/top/<int:max>", position_top_list, name="position-top-list"),
     path(
         "api/positions/<uuid:position_id>/capitalgains/<int:last>",
-        views_position.get_capitalgains,
-        name="get_capitalgains",
+        views_position.get_position_capitalgains,
+        name="get_position_capitalgains",
+    ),
+    path(
+        "api/wallets/<uuid:wallet_id>/capitalgains/<int:last>",
+        views_position.get_wallet_capitalgains,
+        name="get_wallet_capitalgains",
     ),
     path(
         "api/positions/<uuid:position_id>/export/csv/",

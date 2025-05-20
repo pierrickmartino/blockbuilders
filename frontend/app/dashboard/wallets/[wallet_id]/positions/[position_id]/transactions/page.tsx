@@ -73,7 +73,7 @@ const Transactions = () => {
 
   const fetchPositionCapitalGainHistoData = useCallback(async () => {
     if (position_id) {
-      console.log("fetchPositionCapitalGainHistoData");
+      // console.log("fetchPositionCapitalGainHistoData");
       await fetchPositionCapitalGainHisto(30, String(position_id), setPositionCapitalGainHisto);
     } else {
       console.warn("No position data available");
@@ -117,7 +117,7 @@ const Transactions = () => {
 
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
-      <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "center" }}>
+      <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
         <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
           Transactions
         </Typography>
