@@ -33,7 +33,6 @@ import { SearchForm } from "@/app/ui/shared/SearchForm";
 import formatNumber from "@/app/utils/formatNumber";
 import getLast30Days from "@/app/utils/getLast30Days";
 import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
-import { useTheme } from "@mui/material/styles";
 import PriceSparkline from "@/app/dashboard/components/dashboard/PriceSparkline";
 import DeltaChip from "@/app/dashboard/components/dashboard/DeltaChip";
 

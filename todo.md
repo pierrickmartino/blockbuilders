@@ -25,14 +25,11 @@
 - Fix suppression d'un wallet avec refresh de la page
 
 ## Position
-- Déplacer le filtrage pour mieux l’intégrer au reste de la page
 - Ajouter les indicateurs tels que EMA, RSI, etc.
-- [Fix] Augmentation sans limite sur la page générique
 - Mettre à jour les widgets de *Stats*
 - [ **In progress** ] Ouvrir un drawer au clic sur une position avec les infos de transactions
 
 ## Transaction
-- [Fix] Augmentation sans limite sur la page générique
 - Ajouter un selecteur de timeframe pour l'affichage des widgets (Last 30 days, Last 90 days, Last 120 days)
 - [ **In progress** ] Ouvrir un drawer au clic sur une transaction avec des infos à déterminer
 

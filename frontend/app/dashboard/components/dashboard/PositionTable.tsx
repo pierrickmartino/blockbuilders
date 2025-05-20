@@ -17,10 +17,10 @@ import { downloadContractInfo, setContractAsStable, setContractAsSuspicious } fr
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
 
-// Define the props type that will be passed into WalletTable
+// Define the props type that will be passed into PositionTable
 interface PositionTableProps {
   positions: Position[];
-  wallet: Wallet;
+  wallet?: Wallet;
   page: number;
   rowsPerPage: number;
   totalCount: number;
@@ -101,7 +101,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
 
   // Handle navigation to wallet details
   const handleNavigateToDetails = (selectedPositionId: string) => {
-    if (selectedPositionId !== null) {
+    if (selectedPositionId !== null && wallet) {
       window.location.href = `/dashboard/wallets/${wallet.id}/positions/${selectedPositionId}/transactions`;
     }
   };

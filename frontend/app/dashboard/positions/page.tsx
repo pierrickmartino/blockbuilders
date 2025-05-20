@@ -1,25 +1,11 @@
 "use client";
-import {
-  Grid,
-  Box,
-  Stack,
-  Card,
-  Typography,
-  Switch,
-  FormGroup,
-  FormControlLabel,
-  Button,
-  Link,
-  Breadcrumbs,
-} from "@mui/material";
+import { Box, Stack, Typography, Drawer, AlertColor, Snackbar, AlertTitle, Alert, SnackbarCloseReason } from "@mui/material";
 // components
+import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
 import { Position } from "@/app/lib/definition";
-import { fetchPositionsAll, fetchPositionsAllWithSearch } from "@/app/lib/data";
-import PageContainer from "@/app/dashboard/components/container/PageContainer";
+import { fetchPositionsAll, fetchPositionsAllWithSearch, fetchTaskStatus } from "@/app/lib/data";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
-import { SearchForm } from "@/app/ui/shared/SearchForm";
-import { NavigateNext } from "@mui/icons-material";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -27,10 +13,19 @@ const Positions = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
 
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarTitle, setSnackbarTitle] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("info");
+
   // Memoize fetchPositionData using useCallback
   const fetchPositionData = useCallback(async () => {
     await fetchPositionsAll(setPositions, setTotalCount, page, rowsPerPage);
   }, [page, rowsPerPage]); // Dependencies include page and rowsPerPage
+
+  const [taskPolling, setTaskPolling] = useState<{
+    [taskId: string]: NodeJS.Timeout;
+  }>({}); // New state for task polling
 
   // Use useEffect to call fetchPositionData
   useEffect(() => {
@@ -39,13 +34,48 @@ const Positions = () => {
   }, [fetchPositionData]); // Include fetchPositionData as a dependency
 
   const fetchPositionDataWithSearch = async (searchTerm: string) => {
-    await fetchPositionsAllWithSearch(
-      String(searchTerm),
-      setPositions,
-      setTotalCount,
-      page,
-      rowsPerPage
-    );
+    await fetchPositionsAllWithSearch(String(searchTerm), setPositions, setTotalCount, page, rowsPerPage);
+  };
+
+  const handleClose = (event: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
+  // New function to poll task status
+  const pollTaskStatus = (taskId: string) => {
+    const intervalId = setInterval(async () => {
+      try {
+        const status = await fetchTaskStatus(taskId);
+        console.log("Task result in pollTaskStatus:", status);
+        if (status === "SUCCESS") {
+          setSnackbarMessage(`Task ${taskId} finished successfully.`);
+          setSnackbarTitle("Great News !");
+          setSnackbarSeverity("success");
+          setOpen(true);
+          clearInterval(taskPolling[taskId]);
+          setTaskPolling((prev) => {
+            const { [taskId]: _, ...remainingPolling } = prev; // Remove the completed task
+            return remainingPolling;
+          });
+        }
+      } catch (error) {
+        console.error("Error polling task status:", error);
+        clearInterval(intervalId);
+        setTaskPolling((prev) => {
+          const { [taskId]: _, ...remainingPolling } = prev; // Remove the errored task
+          return remainingPolling;
+        });
+      }
+    }, 3000); // Poll every 3 seconds
+
+    setTaskPolling((prev) => ({
+      ...prev,
+      [taskId]: intervalId,
+    }));
   };
 
   const handlePageChange = (newPage: number) => {
@@ -70,81 +100,59 @@ const Positions = () => {
     fetchPositionDataWithSearch(searchTerm);
   };
 
-  const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/dashboard">
-      Dashboard
-    </Link>,
+  const handleContractInfoDownloaded = (taskId: string) => {
+    // handleClick("Refresh in progress for " + taskId, "Info", "info");
+    pollTaskStatus(taskId); // Start polling task status
+  };
 
-    positions.length > 0 ? (
-      <Typography key="2" sx={{ color: "text.primary" }}>
-        Positions
-      </Typography>
-    ) : (
-      <Typography key="2" sx={{ color: "text.primary" }}>
-        Loading Positions...
-      </Typography>
-    ),
-  ];
+  /* Drawer for transaction detail */
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const toggleDrawer = (open: boolean) => {
+    setDrawerOpen(open);
+  };
+  const handleShowPositionDrawer = () => {
+    toggleDrawer(true);
+  };
+
+  const DrawerList = (
+    <Box sx={{ width: 350, height: "100%" }} role="presentation">
+      {/* <CreateWalletForm /> */}
+    </Box>
+  );
 
   return (
-    <PageContainer title="Positions" description="this is Positions">
-      <Box mt={1}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} lg={12}>
-            <Stack direction="row" justifyContent="space-between">
-              <Typography color="textSecondary" variant="h4">
-                Positions
-              </Typography>
-              <Button variant="outlined" size="small" href="/dashboard">
-                Back
-              </Button>
-            </Stack>
-            <Breadcrumbs
-              separator={<NavigateNext fontSize="small" />}
-              aria-label="breadcrumb"
-            >
-              {breadcrumbs}
-            </Breadcrumbs>
-          </Grid>
-          <Grid item xs={12} lg={12}>
-            <Card variant="outlined" sx={{ p: 3 }}>
-              <Box px={0} py={0} mb="-15px">
-                <Typography variant="h5">Filter</Typography>
-              </Box>
-              <Box px={0} py={0} mt={3}>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  spacing={2}
-                  justifyContent="space-between"
-                  mb={0}
-                >
-                  <SearchForm onSearch={handleSearch} />
-                  <FormGroup>
-                    <FormControlLabel
-                      control={<Switch />}
-                      label="Only relevant positions"
-                    />
-                  </FormGroup>
-                </Stack>
-              </Box>
-            </Card>
-          </Grid>
-          <Grid item xs={12} lg={12}>
-            {/* <PositionTable
-              positions={positions}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              totalCount={totalCount}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              onContractSetAsStable={handleContractSetAsStable}
-              onContractSetAsSuspicious={handleContractSetAsSuspicious}
-            /> */}
-          </Grid>
+    <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
+      <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
+        <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+          Positions
+        </Typography>
+      </Stack>
+      <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2) }}>
+        <Grid size={{ xs: 12, lg: 12 }}>
+          <PositionTable
+            positions={positions}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            totalCount={totalCount}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+            onContractSetAsStable={handleContractSetAsStable}
+            onContractSetAsSuspicious={handleContractSetAsSuspicious}
+            onContractInfoDownloaded={handleContractInfoDownloaded}
+            onPositionClick={handleShowPositionDrawer}
+          />
         </Grid>
-      </Box>
-    </PageContainer>
+      </Grid>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
+        <Alert severity={snackbarSeverity} onClose={handleClose} sx={{ width: "100%" }}>
+          <AlertTitle>{snackbarTitle}</AlertTitle>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+      <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
+        {DrawerList}
+      </Drawer>
+    </Box>
   );
 };
 

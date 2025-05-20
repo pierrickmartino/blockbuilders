@@ -8,10 +8,10 @@ This document outlines the tasks and substasks required for the development of t
 - [ ] Create GitHub repository with README and licensing
   - [ ] Draft comprehensive README with project overview, setup instructions, and contribution guidelines
   - [ ] Select and add appropriate open-source license (MIT, Apache, etc.)
-  - [ ] Set up .gitignore for both Next.js and Django environments
+  - [X] Set up .gitignore for both Next.js and Django environments
   - [ ] Configure branch protection rules for main/develop branches
 - [ ] Set up project structure for frontend and backend
-  - [ ] Create monorepo structure or separate repositories for frontend and backend
+  - [X] Create monorepo structure or separate repositories for frontend and backend
   - [ ] Establish folder organization for shared code/utilities
   - [ ] Define project-wide naming conventions and coding standards
 - [ ] Configure development environments
