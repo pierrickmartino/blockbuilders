@@ -32,6 +32,7 @@
 
 ## Transaction
 - Ajouter un selecteur de timeframe pour l'affichage des widgets (Last 30 days, Last 90 days, Last 120 days)
+- Fix delta capital gain on WBTC token
 - [ **In progress** ] Ouvrir un drawer au clic sur une transaction avec des infos à déterminer
 
 ## Backend
