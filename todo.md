@@ -19,6 +19,7 @@
 - Ajouter un calendrier du mois avec le nombre de trades par journée
 - Ajouter un widget présentant les inflow/outflow
 - Ajouter la fonctionnalité d'édition d'un wallet
+- Ajouter un graph avec l'historique des capital gain sur les 6 derniers mois
 - Repenser l'affichage du widget *Activity* pour les écrans mobiles
 - [ **In progress** ] Ouvrir un drawer au clic sur un wallet avec les infos de positions
 - Fix ajout d'un wallet avec refresh de la page
