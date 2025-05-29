@@ -10,7 +10,7 @@ import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTa
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [page, setPage] = useState(0); // State for current page
-  const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(25); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
 
   // Memoize fetchTransactionData using useCallback

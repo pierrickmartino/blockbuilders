@@ -23,7 +23,6 @@ interface WalletTableProps {
   onWalletDownloaded: (response: string) => void;
   onWalletRefreshed: (response: string) => void;
   onWalletFullRefreshed: (response: string) => void;
-  onCreateWallet: () => void;
   onWalletClick: () => void;
 }
 
@@ -38,7 +37,6 @@ const WalletTable: React.FC<WalletTableProps> = ({
   onWalletDownloaded,
   onWalletRefreshed,
   onWalletFullRefreshed,
-  onCreateWallet,
   onWalletClick,
 }) => {
   const [paginationModel, setPaginationModel] = React.useState({
@@ -272,24 +270,8 @@ const WalletTable: React.FC<WalletTableProps> = ({
     },
   ];
 
-  const action = (
-    <Fragment>
-      <Button
-        variant="contained"
-        size="small"
-        color="secondary"
-        startIcon={<Add />}
-        onClick={() => {
-          onCreateWallet();
-        }}
-      >
-        Add wallet
-      </Button>
-    </Fragment>
-  );
-
   return (
-    <BasicCard title="Wallet Overview" subtitle="Track balances, performance, and key metrics across your wallets" action={action}>
+    <BasicCard title="Wallet Overview" subtitle="Track balances, performance, and key metrics across your wallets">
       <DataGrid
         checkboxSelection
         rows={wallets}

@@ -7,11 +7,17 @@ import {
   AppsRounded,
   ReceiptLongRounded,
   TimelineRounded,
+  WalletRounded,
   WhatshotRounded,
 } from "@mui/icons-material";
 
 const mainListItems = [
   { text: "Home", icon: <HomeRoundedIcon />, href: "/dashboard" },
+  {
+    text: "Wallets",
+    icon: <WalletRounded />,
+    href: "/dashboard/wallets",
+  },
   {
     text: "Positions",
     icon: <AnalyticsRoundedIcon />,

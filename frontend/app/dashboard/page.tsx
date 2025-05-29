@@ -301,7 +301,6 @@ const Wallets = () => {
                 onWalletDownloaded={handleWalletDownloaded}
                 onWalletRefreshed={handleWalletRefreshed}
                 onWalletFullRefreshed={handleWalletFullRefreshed}
-                onCreateWallet={handleAddWalletClick}
                 onWalletClick={handleShowWalletDrawer}
               />
             </Grid>
