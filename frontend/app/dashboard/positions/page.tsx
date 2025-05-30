@@ -3,8 +3,8 @@ import { Box, Stack, Typography, Drawer, AlertColor, Snackbar, AlertTitle, Alert
 // components
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
-import { Position } from "@/app/lib/definition";
-import { fetchPositionsAll, fetchPositionsAllWithSearch, fetchTaskStatus } from "@/app/lib/data";
+import { Position } from "@/lib/definition";
+import { fetchPositionsAll, fetchPositionsAllWithSearch, fetchTaskStatus } from "@/lib/data";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 
 const Positions = () => {

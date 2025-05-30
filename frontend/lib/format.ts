@@ -1,5 +1,16 @@
+export const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(date);
+};
+
 // Function to format a number or string into a specific format type (currency, quantity, quantity_precise, quantity_rounded or percentage).
-const formatNumber = (
+export const formatNumber = (
   value: number | string, // Accepts either a number or string as input.
   type: "currency" | "quantity_precise" | "quantity_rounded" | "quantity" | "percentage" = "quantity" // The format type with a default value of "quantity".
 ) => {
@@ -54,4 +65,7 @@ const formatNumber = (
   }
 };
 
-export default formatNumber;
+export const capitalizeFirstLetter = (string : string) => {
+  if (!string) return ''; // Gérer les cas où la chaîne est vide ou null
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};

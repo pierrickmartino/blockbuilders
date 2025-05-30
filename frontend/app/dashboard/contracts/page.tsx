@@ -4,17 +4,16 @@ import {
   Card,
   Stack,
   Typography,
-  Button,
   Link,
   Breadcrumbs,
 } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
-import { Contract } from "@/app/lib/definition";
-import { fetchContractsAll, fetchContractsAllWithSearch } from "@/app/lib/data";
+import { Contract } from "@/lib/definition";
+import { fetchContractsAll, fetchContractsAllWithSearch } from "@/lib/data";
 import PageContainer from "@/app/dashboard/components/container/PageContainer";
-import { SearchForm } from "@/app/ui/shared/SearchForm";
+import { SearchForm } from "@/components/shared/SearchForm";
 import { NavigateNext } from "@mui/icons-material";
 import ContractTable from "../components/dashboard/ContractTable";
 
@@ -82,9 +81,6 @@ const Contracts = () => {
               <Typography color="textSecondary" variant="h4">
                 Contracts
               </Typography>
-              <Button variant="outlined" size="small" href="/dashboard">
-                Back
-              </Button>
             </Stack>
             <Breadcrumbs
               separator={<NavigateNext fontSize="small" />}

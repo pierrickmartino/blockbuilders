@@ -1,15 +1,14 @@
 import React, { Fragment } from "react";
 
-import { Typography, Box, Stack, Button, Chip, Tooltip } from "@mui/material";
-import formatNumber from "@/app/utils/formatNumber";
-import formatDate from "@/app/utils/formatDate";
-import { Transaction } from "../../../lib/definition";
-import { Download, Link as LinkIcon } from "@mui/icons-material";
-import { exportTransactions } from "@/app/lib/export-transaction";
+import { Typography, Box, Stack, Chip, Tooltip } from "@mui/material";
+import { formatNumber, formatDate, capitalizeFirstLetter } from "@/lib/format";
+import { Transaction } from "../../../../lib/definition";
+import { Link as LinkIcon } from "@mui/icons-material";
+import { exportTransactions } from "@/lib/export-transaction";
 import { saveAs } from "file-saver";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
-import capitalizeFirstLetter from "@/app/utils/capitalizeFirstLetter";
+import { Button } from "@/components/shared/Button";
 
 import { formatDistanceToNow, format } from "date-fns";
 
@@ -271,14 +270,26 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
   const action = (
     <Fragment>
       <Button
-        variant="contained"
-        size="small"
-        color="secondary"
-        startIcon={<Download />}
+        variant="secondary"
+        className="text-sm h-9"
         onClick={() => {
           handleExportTransactions(transactions[0].position.id);
         }}
       >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          className="w-3.5 h-3.5 me-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+          />
+        </svg>
         Export
       </Button>
     </Fragment>

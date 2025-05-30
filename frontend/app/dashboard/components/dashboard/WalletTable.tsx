@@ -1,12 +1,12 @@
 import React, { Fragment } from "react";
 
 import { Typography, Box, Chip, Button } from "@mui/material";
-import formatNumber from "@/app/utils/formatNumber";
-import { Wallet } from "@/app/lib/definition";
+import { formatNumber } from "@/lib/format";
+import { Wallet } from "@/lib/definition";
 import { Add, Edit, EventRepeat, Refresh, Visibility } from "@mui/icons-material";
 import { Download } from "@mui/icons-material";
 import { Delete } from "@mui/icons-material";
-import { deleteWallet, downloadWallet, refreshWallet, refreshFullWallet } from "@/app/lib/actions";
+import { deleteWallet, downloadWallet, refreshWallet, refreshFullWallet } from "@/lib/actions";
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
 import AddressCell from "./AddressCell";

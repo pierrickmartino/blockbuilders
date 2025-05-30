@@ -1,7 +1,6 @@
 "use client";
 import {
   Typography,
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -17,13 +16,14 @@ import {
 // components
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
-import { Wallet } from "@/app/lib/definition";
-import { fetchWallets } from "@/app/lib/data";
+import { Wallet } from "@/lib/definition";
+import { fetchWallets } from "@/lib/data";
 import { Add, Edit, Delete } from "@mui/icons-material";
-import { deleteWallet } from "@/app/lib/actions";
+import { deleteWallet } from "@/lib/actions";
 import { useRouter } from "next/navigation";
 import { AuthActions } from "@/app/(auth)/utils";
 import WalletTable from "../components/dashboard/WalletTable";
+import { Button } from "@/components/shared/Button";
 
 export default function Wallets() {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -99,7 +99,17 @@ export default function Wallets() {
         <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
           Wallets
         </Typography>
-        <Button size="small" variant="contained" startIcon={<Add />} onClick={() => handleOpen()}>
+        <Button variant="primary" onClick={() => handleOpen()}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            className="w-3.5 h-3.5 me-2"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
           Add Wallet
         </Button>
       </Stack>
@@ -166,8 +176,8 @@ export default function Wallets() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button onClick={handleSave} variant="contained">
+          <Button onClick={() => setOpen(false)} variant="secondary">Cancel</Button>
+          <Button onClick={handleSave} variant="primary">
             Save
           </Button>
         </DialogActions>

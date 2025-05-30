@@ -11,8 +11,8 @@ import {
   TablePagination,
   IconButton,
 } from "@mui/material";
-import { Contract } from "../../../lib/definition";
-import formatNumber from "@/app/utils/formatNumber";
+import { Contract } from "../../../../lib/definition";
+import { formatNumber } from "@/lib/format";
 import { IconDotsVertical } from "@tabler/icons-react";
 import BasicCard from "../shared/BasicCard";
 

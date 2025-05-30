@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
 
 import { Typography, Chip, Checkbox, Avatar, Stack, Box, Tooltip, Badge } from "@mui/material";
-import formatNumber from "@/app/utils/formatNumber";
+import { formatNumber } from "@/lib/format";
 import { useTheme } from "@mui/material/styles";
-import { Position, Wallet } from "../../../lib/definition";
+import { Position, Wallet } from "../../../../lib/definition";
 import {
   CreditScore,
   Payment,
@@ -13,7 +13,7 @@ import {
   Edit,
   Download,
 } from "@mui/icons-material";
-import { downloadContractInfo, setContractAsStable, setContractAsSuspicious } from "@/app/lib/actions";
+import { downloadContractInfo, setContractAsStable, setContractAsSuspicious } from "@/lib/actions";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
 

@@ -19,19 +19,19 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
-import { CapitalGainHisto, MarketData, Position } from "@/app/lib/definition";
+import { CapitalGainHisto, MarketData, Position } from "@/lib/definition";
 import {
   fetchContractMarketPriceHisto,
   fetchPositions,
   fetchPositionsWithSearch,
   fetchTaskStatus,
   fetchWalletCapitalGainHisto,
-} from "@/app/lib/data";
+} from "@/lib/data";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
 import { useParams } from "next/navigation";
-import { SearchForm } from "@/app/ui/shared/SearchForm";
-import formatNumber from "@/app/utils/formatNumber";
-import getLast30Days from "@/app/utils/getLast30Days";
+import { SearchForm } from "@/components/shared/SearchForm";
+import { formatNumber } from "@/lib/format";
+import getLast30Days from "@/lib/getLast30Days";
 import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
 import PriceSparkline from "@/app/dashboard/components/dashboard/PriceSparkline";
 import DeltaChip from "@/app/dashboard/components/dashboard/DeltaChip";

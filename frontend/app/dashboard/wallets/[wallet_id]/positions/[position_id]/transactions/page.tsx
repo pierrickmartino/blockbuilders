@@ -19,12 +19,12 @@ import {
 // components
 import Grid from "@mui/material/Grid2";
 import { Fragment, useEffect, useState, useCallback } from "react";
-import { CapitalGainHisto, MarketData, Transaction } from "@/app/lib/definition";
-import { fetchContractMarketPriceHisto, fetchPositionCapitalGainHisto, fetchTransactions } from "@/app/lib/data";
+import { CapitalGainHisto, MarketData, Transaction } from "@/lib/definition";
+import { fetchContractMarketPriceHisto, fetchPositionCapitalGainHisto, fetchTransactions } from "@/lib/data";
 import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTable";
 import { useParams } from "next/navigation";
-import formatNumber from "@/app/utils/formatNumber";
-import getLast30Days from "@/app/utils/getLast30Days";
+import { formatNumber } from "@/lib/format";
+import getLast30Days from "@/lib/getLast30Days";
 import PriceSparkline from "@/app/dashboard/components/dashboard/PriceSparkline";
 import DeltaChip from "@/app/dashboard/components/dashboard/DeltaChip";
 

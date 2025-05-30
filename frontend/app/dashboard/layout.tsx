@@ -9,11 +9,7 @@ import SideMenu from "./layout/sidebar/SideMenu";
 import AppNavbar from "./components/dashboard/AppNavBar";
 import Header from "./layout/header/Header";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <Box sx={{ display: "flex" }}>
       <SideMenu />

@@ -7,7 +7,6 @@ import {
   Menu,
   Avatar,
   Divider,
-  Button,
   IconButton,
   ListItemButton,
   List,
@@ -18,6 +17,7 @@ import { useRouter } from "next/navigation";
 // import useSWR from "swr";
 // import { fetcher } from "@/app/lib/fetcher";
 import { AuthActions } from "@/app/(auth)/utils";
+import { Button } from "@/components/shared/Button";
 
 // import { Stack } from "@mui/system";
 // import {
@@ -134,7 +134,7 @@ const Profile = () => {
         </Box>
         <Divider />
         <Box mt={2}>
-          <Button fullWidth variant="contained" color="primary" onClick={handleLogout}>
+          <Button variant="primary" className="w-full" onClick={handleLogout}>
             Logout
           </Button>
         </Box>

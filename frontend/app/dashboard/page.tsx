@@ -18,7 +18,7 @@ import {
   Position,
   Blockchain,
   Transaction,
-} from "@/app/lib/definition";
+} from "@/lib/definition";
 import {
   fetchWallets,
   fetchTopPositions,
@@ -26,11 +26,11 @@ import {
   fetchLastTransactions,
   fetchCountTransactions,
   fetchTaskStatus,
-} from "@/app/lib/data";
+} from "@/lib/data";
 import LastTransactions from "./components/dashboard/LastTransactions";
 import TradingCalendar from "./components/dashboard/TradingCalendar";
 import React from "react";
-import CreateWalletForm from "@/app/ui/wallets/CreateWalletForm";
+import CreateWalletForm from "@/components/forms/CreateWalletForm";
 import StatCard, { StatCardProps } from "./components/dashboard/StatCard";
 import HighlightedCard from "./components/dashboard/HighlightedCard";
 import BasicCard from "./components/shared/BasicCard";

@@ -1,7 +1,6 @@
 import { useMediaQuery, Box, Drawer } from "@mui/material";
 import DarkLogo from "../shared/logo/LogoDark";
 import SidebarItems from "./SidebarItems";
-import Upgrade from "./Updrade";
 import { SidebarProfile } from './SidebarProfile';
 
 interface ItemType {
@@ -67,7 +66,6 @@ const Sidebar = ({
               {/* ------------------------------------------- */}
               <SidebarProfile />
               <Box mt={3}><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
-              {/* <Upgrade /> */}
             </Box>
           </Box>
         </Drawer>
@@ -99,7 +97,6 @@ const Sidebar = ({
       {/* ------------------------------------------- */}
       <SidebarProfile />
       <Box mt={3}><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
-      <Upgrade />
     </Drawer>
   );
 };

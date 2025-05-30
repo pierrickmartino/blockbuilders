@@ -1,4 +1,4 @@
-import { Position } from "@/app/lib/definition";
+import { Position } from "@/lib/definition";
 import {
   Box,
   Typography,
@@ -7,7 +7,7 @@ import {
   Skeleton,
   LinearProgress,
 } from "@mui/material";
-import formatNumber from "@/app/utils/formatNumber";
+import { formatNumber } from "@/lib/format";
 
 // Define the props type that will be passed into WalletTable
 interface TopPositionsProps {

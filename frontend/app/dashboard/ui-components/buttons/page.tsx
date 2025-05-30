@@ -1,19 +1,9 @@
 "use client";
-import {
-  // Paper,
-  Button,
-  Box,
-  Stack,
-  IconButton,
-  Fab,
-  ButtonGroup,
-  Chip,
-} from "@mui/material";
+import { Box, Stack, Chip } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-// import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import { IconHome, IconTrash, IconUser } from "@tabler/icons-react";
 import BasicCard from "../../components/shared/BasicCard";
-import formatNumber from "@/app/utils/formatNumber";
+import { formatNumber } from "@/lib/format";
+import { Button } from "@/components/shared/Button";
 
 // const Item = styled(Paper)(({ theme }) => ({
 //   ...theme.typography.body1,
@@ -28,56 +18,53 @@ import formatNumber from "@/app/utils/formatNumber";
 const Buttons = () => {
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
-      <Grid
-        container
-        spacing={2}
-        columns={12}
-        sx={{ mb: (theme) => theme.spacing(2) }}
-      >
+      <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2) }}>
         <Grid size={{ xs: 12, lg: 6 }}>
           <BasicCard title="Color Buttons">
             <Box sx={{ "& button": { mr: 1 } }}>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ marginBottom: "5px" }}
-              >
-                Contained
+              <Button variant="primary">Primary</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="light">Light</Button>
+              <Button variant="ghost">Ghost</Button>
+              <Button variant="destructive">Destructive</Button>
+            </Box>
+          </BasicCard>
+        </Grid>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <BasicCard title="Outlined Buttons">
+            <Box sx={{ "& button": { mr: 1 } }}>
+              <Button className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800 bg-white dark:bg-gray-950">
+                Default
               </Button>
               <Button
-                variant="contained"
-                color="error"
-                sx={{ marginBottom: "5px" }}
+                type="button"
+                className="text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-center me-2 mb-2 dark:border-gray-600 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-800 bg-white dark:bg-gray-950"
               >
-                Contained
+                Dark
               </Button>
               <Button
-                variant="contained"
-                color="secondary"
-                sx={{ marginBottom: "5px" }}
+                type="button"
+                className="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-center me-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800 bg-white dark:bg-gray-950"
               >
-                Contained
+                Green
               </Button>
               <Button
-                variant="contained"
-                color="info"
-                sx={{ marginBottom: "5px" }}
+                type="button"
+                className="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-center me-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 bg-white dark:bg-gray-950"
               >
-                Contained
+                Red
               </Button>
               <Button
-                variant="contained"
-                color="success"
-                sx={{ marginBottom: "5px" }}
+                type="button"
+                className="text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-center me-2 mb-2 dark:border-yellow-300 dark:text-yellow-300 dark:hover:text-white dark:hover:bg-yellow-400 dark:focus:ring-yellow-900 bg-white dark:bg-gray-950 "
               >
-                Contained
+                Yellow
               </Button>
               <Button
-                variant="contained"
-                color="warning"
-                sx={{ marginBottom: "5px" }}
+                type="button"
+                className="text-purple-700 hover:text-white border border-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-center me-2 mb-2 dark:border-purple-400 dark:text-purple-400 dark:hover:text-white dark:hover:bg-purple-500 dark:focus:ring-purple-900 bg-white dark:bg-gray-950"
               >
-                Contained
+                Purple
               </Button>
             </Box>
           </BasicCard>
@@ -85,166 +72,20 @@ const Buttons = () => {
         <Grid size={{ xs: 12, lg: 6 }}>
           <BasicCard title="Text Buttons">
             <Box sx={{ "& button": { mr: 1 } }}>
-              <Button
-                variant="text"
-                color="primary"
-                sx={{ marginBottom: "5px" }}
-              >
-                Text
-              </Button>
-              <Button variant="text" color="error" sx={{ marginBottom: "5px" }}>
-                Text
-              </Button>
-              <Button
-                variant="text"
-                color="secondary"
-                sx={{ marginBottom: "5px" }}
-              >
-                Text
-              </Button>
-              <Button
-                variant="text"
-                color="success"
-                sx={{ marginBottom: "5px" }}
-              >
-                Text
-              </Button>
-              <Button
-                variant="text"
-                color="warning"
-                sx={{ marginBottom: "5px" }}
-              >
-                Text
+              <Button isLoading>Primary</Button>
+              <Button isLoading loadingText="Loading text">
+                Primary
               </Button>
             </Box>
-          </BasicCard>
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <BasicCard title="Outline Buttons">
-            <Box sx={{ "& button": { mr: 1 } }}>
-              <Button
-                variant="outlined"
-                color="primary"
-                sx={{ marginBottom: "5px" }}
-              >
-                outlined
-              </Button>
-              <Button
-                variant="outlined"
-                color="error"
-                sx={{ marginBottom: "5px" }}
-              >
-                outlined
-              </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                sx={{ marginBottom: "5px" }}
-              >
-                outlined
-              </Button>
-              <Button
-                variant="outlined"
-                color="success"
-                sx={{ marginBottom: "5px" }}
-              >
-                outlined
-              </Button>
-              <Button variant="outlined" color="warning">
-                outlined
-              </Button>
-            </Box>
-          </BasicCard>
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <BasicCard title="Size Buttons">
-            <Box sx={{ "& button": { mx: 1 } }}>
-              <Button color="primary" size="small" variant="contained">
-                small
-              </Button>
-              <Button color="error" size="medium" variant="contained">
-                medium
-              </Button>
-              <Button color="secondary" size="large" variant="contained">
-                large
-              </Button>
-            </Box>
-          </BasicCard>
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <BasicCard title="Icon Buttons">
-            <Stack spacing={2} direction="row">
-              <IconButton aria-label="delete" color="success">
-                <IconHome />
-              </IconButton>
-              <IconButton aria-label="delete" color="error">
-                <IconTrash />
-              </IconButton>
-              <IconButton aria-label="user" color="warning">
-                <IconUser />
-              </IconButton>
-            </Stack>
-          </BasicCard>
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <BasicCard title="Fab Buttons">
-            <Stack spacing={2} direction="row">
-              <Fab color="primary" aria-label="add">
-                <IconHome />
-              </Fab>
-              <Fab color="secondary" aria-label="add">
-                <IconTrash />
-              </Fab>
-              <Fab color="secondary" disabled aria-label="add">
-                <IconUser />
-              </Fab>
-            </Stack>
-          </BasicCard>
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <BasicCard title="Group Buttons">
-            <ButtonGroup
-              variant="contained"
-              aria-label="outlined primary button group"
-            >
-              <Button>One</Button>
-              <Button>Two</Button>
-              <Button>Three</Button>
-            </ButtonGroup>
-          </BasicCard>
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <BasicCard title="Group Outline Buttons">
-            <ButtonGroup variant="outlined" aria-label="outlined button group">
-              <Button>One</Button>
-              <Button>Two</Button>
-              <Button>Three</Button>
-            </ButtonGroup>
           </BasicCard>
         </Grid>
         <Grid size={{ xs: 12, lg: 6 }}>
           <BasicCard title="Chips">
             <Stack spacing={2} direction="row">
-            <Chip
-              label={formatNumber(-123456, "currency")}
-              color="error"
-              size="small"
-            />
-            <Chip
-              label={formatNumber(14.41, "percentage")}
-              color="success"
-              size="small"
-            />
-            <Chip
-              label={formatNumber(-123456, "currency")}
-              color="error"
-              size="medium"
-            />
-            <Chip
-              label={formatNumber(14.41, "percentage")}
-              color="success"
-              size="medium"
-            />
+              <Chip label={formatNumber(-123456, "currency")} color="error" size="small" />
+              <Chip label={formatNumber(14.41, "percentage")} color="success" size="small" />
+              <Chip label={formatNumber(-123456, "currency")} color="error" size="medium" />
+              <Chip label={formatNumber(14.41, "percentage")} color="success" size="medium" />
             </Stack>
           </BasicCard>
         </Grid>

@@ -3,8 +3,8 @@ import { Box, Stack, Typography, Drawer } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
-import { Transaction } from "@/app/lib/definition";
-import { fetchTransactionsAll, fetchTransactionsAllWithSearch } from "@/app/lib/data";
+import { Transaction } from "@/lib/definition";
+import { fetchTransactionsAll, fetchTransactionsAllWithSearch } from "@/lib/data";
 import TransactionTable from "@/app/dashboard/components/dashboard/TransactionTable";
 
 const Transactions = () => {

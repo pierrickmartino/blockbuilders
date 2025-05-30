@@ -1,12 +1,6 @@
 import { Box } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 
-export default function AuthLayout({
-  children,
-}: {
-  readonly children: React.ReactNode;
-}) {
-    
+export default function AuthLayout({ children }: { readonly children: React.ReactNode }) {
   return (
     <Box
       display="flex"

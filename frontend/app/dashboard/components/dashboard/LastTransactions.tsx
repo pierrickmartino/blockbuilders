@@ -9,8 +9,8 @@ import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
 
-import { Transaction } from "@/app/lib/definition";
-import formatNumber from "@/app/utils/formatNumber";
+import { Transaction } from "@/lib/definition";
+import { formatNumber } from "@/lib/format";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 
 import { formatDistanceToNow, format } from "date-fns";

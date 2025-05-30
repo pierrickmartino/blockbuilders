@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 import { useTheme } from "@mui/material/styles";
 import React from "react";
-import { Blockchain } from "@/app/lib/definition";
+import { Blockchain } from "@/lib/definition";
 import { Box, Skeleton, Typography } from "@mui/material";
 
 // Define the props type that will be passed into WalletTable

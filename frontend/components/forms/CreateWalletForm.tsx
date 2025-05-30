@@ -2,7 +2,6 @@
 
 import {
   Box,
-  Button,
   Divider,
   Stack,
   TextField,
@@ -13,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { SaveButton } from "@/components/custom/save-button";
 import { AuthActions } from "@/app/(auth)/utils";
 import { Fragment } from "react";
+import { Button } from "@/components/shared/Button";
 
 type FormData = {
   address: string;
@@ -130,7 +130,7 @@ const CreateWalletForm = () => {
             <Divider />
             <Box px={3} py={2}>
               <Stack direction="row" spacing={2} justifyContent={"flex-end"}>
-                <Button size="small" variant="outlined" color="primary">
+                <Button variant="secondary">
                   Cancel
                 </Button>
                 <SaveButton text="Save" loadingText="Loading" />

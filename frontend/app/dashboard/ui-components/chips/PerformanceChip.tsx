@@ -1,4 +1,4 @@
-import formatNumber from "@/app/utils/formatNumber";
+import { formatNumber } from "@/lib/format";
 import { Chip } from "@mui/material"
 
 interface PerformanceChipProps {
