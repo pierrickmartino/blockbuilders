@@ -1,5 +1,5 @@
 "use client";
-import { Box, Stack, Card, Typography, Switch, FormGroup, FormControlLabel, CardContent, Drawer, Skeleton } from "@mui/material";
+import { Box, Stack, Typography, Switch, FormGroup, FormControlLabel, Drawer, Skeleton } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
 import { CapitalGainHisto, MarketData, Position } from "@/lib/definition";
@@ -21,6 +21,7 @@ import DeltaChip from "@/app/dashboard/components/dashboard/DeltaChip";
 import { Badge1 } from "@/components/shared/Badge";
 import { useToast } from "@/lib/useToast";
 import { Toaster } from "@/components/shared/Toaster";
+import { Card } from "@/components/shared/Card";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -185,115 +186,109 @@ const Positions = () => {
           <HighlightedCard />
         </Grid>  */}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
-            <CardContent>
-              <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
-                <Stack sx={{ justifyContent: "space-between" }}>
-                  <Stack
-                    direction="row"
-                    sx={{
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    {positions.length > 0 && positions[0]?.wallet ? (
-                      <Typography variant="h4" component="p">
-                        {formatNumber(positions[0].wallet.balance, "currency")}
-                      </Typography>
-                    ) : (
-                      <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
-                    )}
-                    <Badge1 color={"success"} label={"+25%"} />
-                  </Stack>
-                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    Total amount
-                  </Typography>
-                </Stack>
-                <Box sx={{ width: "100%", height: 100 }}>
-                  {market_data.length > 0 && market_data[0]?.close ? (
-                    <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
+          <Card>
+            <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
+              <Stack sx={{ justifyContent: "space-between" }}>
+                <Stack
+                  direction="row"
+                  sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  {positions.length > 0 && positions[0]?.wallet ? (
+                    <Typography variant="h4" component="p">
+                      {formatNumber(positions[0].wallet.balance, "currency")}
+                    </Typography>
                   ) : (
-                    <Skeleton variant="rounded" height={100} />
+                    <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                   )}
-                </Box>
+                  <Badge1 color={"success"} label={"+25%"} />
+                </Stack>
+                <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                  Total amount
+                </Typography>
               </Stack>
-            </CardContent>
+              <Box sx={{ width: "100%", height: 100 }}>
+                {market_data.length > 0 && market_data[0]?.close ? (
+                  <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
+                ) : (
+                  <Skeleton variant="rounded" height={100} />
+                )}
+              </Box>
+            </Stack>
           </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
-            <CardContent>
-              <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
-                <Stack sx={{ justifyContent: "space-between" }}>
-                  <Stack
-                    direction="row"
-                    sx={{
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    {positions.length > 0 && positions[0]?.wallet ? (
-                      <Typography variant="h4" component="p">
-                        {formatNumber(positions[0].wallet.capital_gain, "currency")}
-                      </Typography>
-                    ) : (
-                      <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
-                    )}
-                    {wallet_capital_gains.length > 1 ? (
-                      <DeltaChip data={wallet_capital_gains.map((m) => m.running_capital_gain).reverse()} />
-                    ) : (
-                      <Skeleton variant="text" width={50} />
-                    )}
-                  </Stack>
-                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    Total capital gain
-                  </Typography>
-                </Stack>
-                <Box sx={{ width: "100%", height: 100 }}>
-                  {wallet_capital_gains.length > 0 && wallet_capital_gains[0]?.running_capital_gain ? (
-                    <PriceSparkline data={wallet_capital_gains.map((m) => m.running_capital_gain).reverse()} days={last30Days} />
+          <Card>
+            <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
+              <Stack sx={{ justifyContent: "space-between" }}>
+                <Stack
+                  direction="row"
+                  sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  {positions.length > 0 && positions[0]?.wallet ? (
+                    <Typography variant="h4" component="p">
+                      {formatNumber(positions[0].wallet.capital_gain, "currency")}
+                    </Typography>
                   ) : (
-                    <Skeleton variant="rounded" height={100} />
+                    <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                   )}
-                </Box>
+                  {wallet_capital_gains.length > 1 ? (
+                    <DeltaChip data={wallet_capital_gains.map((m) => m.running_capital_gain).reverse()} />
+                  ) : (
+                    <Skeleton variant="text" width={50} />
+                  )}
+                </Stack>
+                <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                  Total capital gain
+                </Typography>
               </Stack>
-            </CardContent>
+              <Box sx={{ width: "100%", height: 100 }}>
+                {wallet_capital_gains.length > 0 && wallet_capital_gains[0]?.running_capital_gain ? (
+                  <PriceSparkline data={wallet_capital_gains.map((m) => m.running_capital_gain).reverse()} days={last30Days} />
+                ) : (
+                  <Skeleton variant="rounded" height={100} />
+                )}
+              </Box>
+            </Stack>
           </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
-            <CardContent>
-              <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
-                <Stack sx={{ justifyContent: "space-between" }}>
-                  <Stack
-                    direction="row"
-                    sx={{
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    {positions.length > 0 && positions[0]?.wallet ? (
-                      <Typography variant="h4" component="p">
-                        {formatNumber(positions[0].wallet.unrealized_gain, "percentage")}
-                      </Typography>
-                    ) : (
-                      <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
-                    )}
-                    <Badge1 color={"neutral"} label={"+0%"} />
-                  </Stack>
-                  <Typography variant="caption" sx={{ color: "text.secondary" }}>
-                    Total unrealized
-                  </Typography>
-                </Stack>
-                <Box sx={{ width: "100%", height: 100 }}>
-                  {market_data.length > 0 && market_data[0]?.close ? (
-                    <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
+          <Card>
+            <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
+              <Stack sx={{ justifyContent: "space-between" }}>
+                <Stack
+                  direction="row"
+                  sx={{
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  {positions.length > 0 && positions[0]?.wallet ? (
+                    <Typography variant="h4" component="p">
+                      {formatNumber(positions[0].wallet.unrealized_gain, "percentage")}
+                    </Typography>
                   ) : (
-                    <Skeleton variant="rounded" height={100} />
+                    <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                   )}
-                </Box>
+                  <Badge1 color={"neutral"} label={"+0%"} />
+                </Stack>
+                <Typography variant="caption" sx={{ color: "text.secondary" }}>
+                  Total unrealized
+                </Typography>
               </Stack>
-            </CardContent>
+              <Box sx={{ width: "100%", height: 100 }}>
+                {market_data.length > 0 && market_data[0]?.close ? (
+                  <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
+                ) : (
+                  <Skeleton variant="rounded" height={100} />
+                )}
+              </Box>
+            </Stack>
           </Card>
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -319,16 +314,14 @@ const Positions = () => {
           )}
         </Grid>
         <Grid size={{ xs: 12, lg: 3 }}>
-          <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
-            <CardContent>
-              <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
-                <Typography variant="h5">Filter</Typography>
-                <SearchForm onSearch={handleSearch} />
-                <FormGroup>
-                  <FormControlLabel control={<Switch />} label="Only relevant positions" />
-                </FormGroup>
-              </Stack>
-            </CardContent>
+          <Card>
+            <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
+              <Typography variant="h5">Filter</Typography>
+              <SearchForm onSearch={handleSearch} />
+              <FormGroup>
+                <FormControlLabel control={<Switch />} label="Only relevant positions" />
+              </FormGroup>
+            </Stack>
           </Card>
         </Grid>
       </Grid>

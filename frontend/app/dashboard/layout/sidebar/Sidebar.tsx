@@ -1,7 +1,7 @@
 import { useMediaQuery, Box, Drawer } from "@mui/material";
 import DarkLogo from "../shared/logo/LogoDark";
 import SidebarItems from "./SidebarItems";
-import { SidebarProfile } from './SidebarProfile';
+import { SidebarProfile } from "./SidebarProfile";
 
 interface ItemType {
   isMobileSidebarOpen: boolean;
@@ -9,11 +9,7 @@ interface ItemType {
   isSidebarOpen: boolean;
 }
 
-const Sidebar = ({
-  isMobileSidebarOpen,
-  onSidebarClose,
-  isSidebarOpen,
-}: ItemType) => {
+const Sidebar = ({ isMobileSidebarOpen, onSidebarClose, isSidebarOpen }: ItemType) => {
   const lgUp = useMediaQuery((theme: any) => theme.breakpoints.up("lg"));
 
   const sidebarWidth = "270px";
@@ -55,17 +51,20 @@ const Sidebar = ({
             sx={{
               height: "100%",
             }}
-
           >
-            <Box sx={{
-               height: "calc(100vh - 70px)",
-               overflow: "auto", 
-            }}>
+            <Box
+              sx={{
+                height: "calc(100vh - 70px)",
+                overflow: "auto",
+              }}
+            >
               {/* ------------------------------------------- */}
               {/* Sidebar Items */}
               {/* ------------------------------------------- */}
               <SidebarProfile />
-              <Box mt={3}><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
+              <Box mt={3}>
+                <SidebarItems toggleMobileSidebar={handleToggleSidebar} />
+              </Box>
             </Box>
           </Box>
         </Drawer>
@@ -96,7 +95,9 @@ const Sidebar = ({
       {/* Sidebar For Mobile */}
       {/* ------------------------------------------- */}
       <SidebarProfile />
-      <Box mt={3}><SidebarItems toggleMobileSidebar={handleToggleSidebar} /></Box>
+      <Box mt={3}>
+        <SidebarItems toggleMobileSidebar={handleToggleSidebar} />
+      </Box>
     </Drawer>
   );
 };

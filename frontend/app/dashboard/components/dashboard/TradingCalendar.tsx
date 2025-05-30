@@ -1,21 +1,9 @@
-import {
-  Badge,
-  Box,
-  Card,
-  CardContent,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Badge, Box, Stack, Typography } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import {
-  DateCalendar,
-  DayCalendarSkeleton,
-  LocalizationProvider,
-  PickersDay,
-  PickersDayProps,
-} from "@mui/x-date-pickers";
+import { DateCalendar, DayCalendarSkeleton, LocalizationProvider, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import React from "react";
+import { Card } from "@/components/shared/Card";
 
 function getRandomNumber(min: number, max: number) {
   return Math.round(Math.random() * (max - min) + min);
@@ -29,9 +17,7 @@ function fakeFetch(date: Dayjs, { signal }: { signal: AbortSignal }) {
   return new Promise<{ daysToHighlight: number[] }>((resolve, reject) => {
     const timeout = setTimeout(() => {
       const daysInMonth = date.daysInMonth();
-      const daysToHighlight = [1, 2, 3].map(() =>
-        getRandomNumber(1, daysInMonth)
-      );
+      const daysToHighlight = [1, 2, 3].map(() => getRandomNumber(1, daysInMonth));
 
       resolve({ daysToHighlight });
     }, 500);
@@ -45,27 +31,14 @@ function fakeFetch(date: Dayjs, { signal }: { signal: AbortSignal }) {
 
 const initialValue = dayjs();
 
-function ServerDay(
-  props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }
-) {
+function ServerDay(props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }) {
   const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
 
-  const isSelected =
-    !props.outsideCurrentMonth &&
-    highlightedDays.indexOf(props.day.date()) >= 0;
+  const isSelected = !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
 
   return (
-    <Badge
-      key={props.day.toString()}
-      overlap="circular"
-      badgeContent={isSelected ? "🌚" : undefined}
-      max={9}
-    >
-      <PickersDay
-        {...other}
-        outsideCurrentMonth={outsideCurrentMonth}
-        day={day}
-      />
+    <Badge key={props.day.toString()} overlap="circular" badgeContent={isSelected ? "🌚" : undefined} max={9}>
+      <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
     </Badge>
   );
 }
@@ -113,42 +86,37 @@ const TradingCalendar = () => {
   };
 
   return (
-    <Card variant="outlined" sx={{ height: "100%", flexGrow: 1 }}>
-      <CardContent>
-        <Typography component="h2" variant="subtitle2" gutterBottom>
-          Trading calendar
-        </Typography>
-        <Stack
-          direction="column"
-          sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}
-        >
-          <Stack sx={{ justifyContent: "space-between" }}>
-            <Typography variant="caption" sx={{ color: "text.secondary" }}>
-              Track trading habits during the month
-            </Typography>
-          </Stack>
-
-          <Box sx={{ width: "100%" }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateCalendar
-                readOnly
-                defaultValue={initialValue}
-                loading={isLoading}
-                onMonthChange={handleMonthChange}
-                renderLoading={() => <DayCalendarSkeleton />}
-                slots={{
-                  day: ServerDay,
-                }}
-                slotProps={{
-                  day: {
-                    highlightedDays,
-                  } as any,
-                }}
-              />
-            </LocalizationProvider>
-          </Box>
+    <Card>
+      <Typography component="h2" variant="subtitle2" gutterBottom>
+        Trading calendar
+      </Typography>
+      <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
+        <Stack sx={{ justifyContent: "space-between" }}>
+          <Typography variant="caption" sx={{ color: "text.secondary" }}>
+            Track trading habits during the month
+          </Typography>
         </Stack>
-      </CardContent>
+
+        <Box sx={{ width: "100%" }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateCalendar
+              readOnly
+              defaultValue={initialValue}
+              loading={isLoading}
+              onMonthChange={handleMonthChange}
+              renderLoading={() => <DayCalendarSkeleton />}
+              slots={{
+                day: ServerDay,
+              }}
+              slotProps={{
+                day: {
+                  highlightedDays,
+                } as any,
+              }}
+            />
+          </LocalizationProvider>
+        </Box>
+      </Stack>
     </Card>
   );
 };

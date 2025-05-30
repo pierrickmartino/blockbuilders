@@ -2,31 +2,10 @@
 
 import React, { Fragment, useState } from "react";
 // import { useTheme } from "@mui/material/styles";
-import {
-  Box,
-  Menu,
-  Avatar,
-  Divider,
-  IconButton,
-  ListItemButton,
-  List,
-  ListItemText,
-  Typography,
-} from "@mui/material";
+import { Box, Menu, Avatar, Divider, IconButton, ListItemButton, List, ListItemText, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-// import useSWR from "swr";
-// import { fetcher } from "@/app/lib/fetcher";
 import { AuthActions } from "@/app/(auth)/utils";
 import { Button } from "@/components/shared/Button";
-
-// import { Stack } from "@mui/system";
-// import {
-//   IconChevronDown,
-//   IconCreditCard,
-//   IconCurrencyDollar,
-//   IconMail,
-//   IconShield,
-// } from "@tabler/icons-react";
 
 const Profile = () => {
   const [anchorEl2, setAnchorEl2] = useState(null);
@@ -102,20 +81,18 @@ const Profile = () => {
             width: "360px",
             p: 2,
             pb: 2,
-            pt:0
+            pt: 0,
           },
         }}
       >
-        
         {/* <Fragment>
           <Box mb={2}>
             <Typography>{user?.email}</Typography>
           </Box>
           <Divider />
         </Fragment> */}
-        
-        <Box pt={0}>
 
+        <Box pt={0}>
           <List>
             <ListItemButton component="a" href="#">
               <ListItemText primary="My Profile" />
@@ -130,7 +107,6 @@ const Profile = () => {
               <ListItemText primary="My Task" />
             </ListItemButton> */}
           </List>
-
         </Box>
         <Divider />
         <Box mt={2}>
@@ -138,7 +114,6 @@ const Profile = () => {
             Logout
           </Button>
         </Box>
-
       </Menu>
     </Box>
   );

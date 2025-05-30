@@ -1,16 +1,6 @@
 import React from "react";
-import {
-  Typography,
-  Avatar,
-  Box,
-  Card,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  ListItemButton,
-  Badge,
-} from "@mui/material";
+import { Typography, Avatar, Box, List, ListItem, ListItemAvatar, ListItemText, ListItemButton, Badge } from "@mui/material";
+import { Card } from "@/components/shared/Card";
 
 const contacts = [
   {
@@ -42,15 +32,8 @@ const contacts = [
 const MyContacts = () => {
   return (
     <>
-      <Card variant="outlined" sx={{ p: 0 }}>
-        <Box
-          px={3}
-          py={2}
-          bgcolor="primary.main"
-          color="white"
-          borderRadius="0 !important"
-          mb="-15px"
-        >
+      <Card>
+        <Box px={3} py={2} bgcolor="primary.main" color="white" borderRadius="0 !important" mb="-15px">
           <Typography variant="h5">My Contacts</Typography>
           <Typography variant="subtitle1">Checkout my contacts here</Typography>
         </Box>

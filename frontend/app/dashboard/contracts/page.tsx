@@ -1,12 +1,5 @@
 "use client";
-import {
-  Box,
-  Card,
-  Stack,
-  Typography,
-  Link,
-  Breadcrumbs,
-} from "@mui/material";
+import { Box, Stack, Typography, Link, Breadcrumbs } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
@@ -16,6 +9,7 @@ import PageContainer from "@/app/dashboard/components/container/PageContainer";
 import { SearchForm } from "@/components/shared/SearchForm";
 import { NavigateNext } from "@mui/icons-material";
 import ContractTable from "../components/dashboard/ContractTable";
+import { Card } from "@/components/shared/Card";
 
 const Contracts = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -34,13 +28,7 @@ const Contracts = () => {
   }, [fetchContractData]); // Include fetchContractData as a dependency
 
   const fetchContractDataWithSearch = async (searchTerm: string) => {
-    await fetchContractsAllWithSearch(
-      String(searchTerm),
-      setContracts,
-      setTotalCount,
-      page,
-      rowsPerPage
-    );
+    await fetchContractsAllWithSearch(String(searchTerm), setContracts, setTotalCount, page, rowsPerPage);
   };
 
   const handlePageChange = (newPage: number) => {
@@ -82,26 +70,17 @@ const Contracts = () => {
                 Contracts
               </Typography>
             </Stack>
-            <Breadcrumbs
-              separator={<NavigateNext fontSize="small" />}
-              aria-label="breadcrumb"
-            >
+            <Breadcrumbs separator={<NavigateNext fontSize="small" />} aria-label="breadcrumb">
               {breadcrumbs}
             </Breadcrumbs>
           </Grid>
           <Grid size={{ xs: 12, lg: 12 }}>
-            <Card variant="outlined" sx={{ p: 3 }}>
+            <Card>
               <Box px={0} py={0} mb="-15px">
                 <Typography variant="h5">Filter</Typography>
               </Box>
               <Box px={0} py={0} mt={3}>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  spacing={2}
-                  justifyContent="space-between"
-                  mb={0}
-                >
+                <Stack direction="row" alignItems="center" spacing={2} justifyContent="space-between" mb={0}>
                   <SearchForm onSearch={handleSearch} />
                 </Stack>
               </Box>
