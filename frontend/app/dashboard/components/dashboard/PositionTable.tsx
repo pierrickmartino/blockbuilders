@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { Typography, Chip, Checkbox, Avatar, Stack, Box, Tooltip, Badge } from "@mui/material";
+import { Typography, Checkbox, Avatar, Stack, Box, Tooltip, Badge } from "@mui/material";
 import { formatNumber } from "@/lib/format";
 import { useTheme } from "@mui/material/styles";
 import { Position, Wallet } from "../../../../lib/definition";
@@ -16,6 +16,7 @@ import {
 import { downloadContractInfo, setContractAsStable, setContractAsSuspicious } from "@/lib/actions";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
+import { Badge1 } from "@/components/shared/Badge";
 
 // Define the props type that will be passed into PositionTable
 interface PositionTableProps {
@@ -172,7 +173,7 @@ const PositionTable: React.FC<PositionTableProps> = ({
       return (
         <Tooltip arrow title={f_gain}>
           <Box sx={cellWrapperSx_right}>
-            <Chip label={`${f_gain_amount}`} color={gain_amount < 0 ? "error" : gain_amount > 0 ? "success" : "default"} size="small" />
+            <Badge1 label={`${f_gain_amount}`} color={gain_amount < 0 ? "error" : gain_amount > 0 ? "success" : "neutral"} />
           </Box>
         </Tooltip>
       );

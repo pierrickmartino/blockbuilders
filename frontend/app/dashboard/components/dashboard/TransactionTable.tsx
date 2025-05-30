@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { Typography, Box, Stack, Chip, Tooltip } from "@mui/material";
+import { Typography, Box, Stack, Tooltip } from "@mui/material";
 import { formatNumber, formatDate, capitalizeFirstLetter } from "@/lib/format";
 import { Transaction } from "../../../../lib/definition";
 import { Link as LinkIcon } from "@mui/icons-material";
@@ -11,6 +11,7 @@ import BasicCard from "../shared/BasicCard";
 import { Button } from "@/components/shared/Button";
 
 import { formatDistanceToNow, format } from "date-fns";
+import { Badge1 } from "@/components/shared/Badge";
 
 // Define the props type that will be passed into WalletTable
 interface TransactionTableProps {
@@ -99,7 +100,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
             —{/* em-dash improves readability */}
           </Typography>
         ) : (
-          <Chip label={formatNumber(amount, type)} color={amount < 0 ? "error" : amount > 0 ? "success" : "default"} size="small" />
+          <Badge1 label={formatNumber(amount, type)} color={amount < 0 ? "error" : amount > 0 ? "success" : "neutral"} />
         )}
       </Box>
     );
@@ -149,16 +150,15 @@ const TransactionTable: React.FC<TransactionTableProps> = ({
         ? "error"
         : status_label == "open" || status_label == "increase"
         ? "success"
-        : "default";
+        : "neutral";
 
     return (
       <Box sx={cellWrapperSx}>
-        <Chip
+        <Badge1
           // {...(status_label === "increase" && { icon: <TrendingUp /> })}
           // {...(status_label === "diminution" && { icon: <TrendingDown /> })}
           label={sign + " " + label}
           color={color}
-          size="small"
         />
       </Box>
     );

@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { Typography, Box, Chip, Button } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { formatNumber } from "@/lib/format";
 import { Wallet } from "@/lib/definition";
 import { Add, Edit, EventRepeat, Refresh, Visibility } from "@mui/icons-material";
@@ -10,6 +10,7 @@ import { deleteWallet, downloadWallet, refreshWallet, refreshFullWallet } from "
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
 import AddressCell from "./AddressCell";
+import { Badge1 } from "@/components/shared/Badge";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
@@ -139,7 +140,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
             —{/* em-dash improves readability */}
           </Typography>
         ) : (
-          <Chip label={formatNumber(amount, type)} color={amount < 0 ? "error" : amount > 0 ? "success" : "default"} size="small" />
+          <Badge1 label={formatNumber(amount, type)} color={amount < 0 ? "error" : amount > 0 ? "success" : "neutral"} />
         )}
       </Box>
     );

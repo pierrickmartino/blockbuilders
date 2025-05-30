@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Chip } from "@mui/material";
+import { Badge1 } from "@/components/shared/Badge";
 
 type Props = {
   data: number[];
@@ -13,11 +13,11 @@ export default function DeltaChip({ data }: Props) {
   const delta = ((lastClose - firstClose) / Math.abs(firstClose)) * 100;
   const roundedDelta = delta.toFixed(2); // e.g., 24.57
 
-  let chipColor: "success" | "error" | "default" = "default";
+  let chipColor: "success" | "error" | "neutral" = "neutral";
   if (delta > 0) chipColor = "success";
   else if (delta < 0) chipColor = "error";
 
-  const sign = delta >= 0 ? "+" : "-";
+  // const sign = delta >= 0 ? "+" : "-";
 
-  return <Chip size="small" color={chipColor} label={`${sign}${roundedDelta}%`} />;
+  return <Badge1 color={chipColor} label={`${roundedDelta}%`} />;
 }

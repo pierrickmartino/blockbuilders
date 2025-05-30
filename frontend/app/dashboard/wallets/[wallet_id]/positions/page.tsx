@@ -8,7 +8,6 @@ import {
   FormGroup,
   FormControlLabel,
   CardContent,
-  Chip,
   Snackbar,
   Alert,
   AlertTitle,
@@ -35,6 +34,7 @@ import getLast30Days from "@/lib/getLast30Days";
 import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCard";
 import PriceSparkline from "@/app/dashboard/components/dashboard/PriceSparkline";
 import DeltaChip from "@/app/dashboard/components/dashboard/DeltaChip";
+import { Badge1 } from "@/components/shared/Badge";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -226,7 +226,7 @@ const Positions = () => {
                     ) : (
                       <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                     )}
-                    <Chip size="small" color={"success"} label={"+25%"} />
+                    <Badge1 color={"success"} label={"+25%"} />
                   </Stack>
                   <Typography variant="caption" sx={{ color: "text.secondary" }}>
                     Total amount
@@ -302,7 +302,7 @@ const Positions = () => {
                     ) : (
                       <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                     )}
-                    <Chip size="small" color={"default"} label={"+0%"} />
+                    <Badge1 color={"neutral"} label={"+0%"} />
                   </Stack>
                   <Typography variant="caption" sx={{ color: "text.secondary" }}>
                     Total unrealized

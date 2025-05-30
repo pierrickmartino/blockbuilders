@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { Avatar, Stack, Typography, Chip, Tooltip, Badge } from "@mui/material";
+import { Avatar, Stack, Typography, Tooltip, Badge } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import Timeline from "@mui/lab/Timeline";
 import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
@@ -15,6 +15,7 @@ import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
 
 import { formatDistanceToNow, format } from "date-fns";
 import { useTheme } from "@mui/material/styles";
+import { Badge1 } from "@/components/shared/Badge";
 
 // Define the props type that will be passed into WalletTable
 interface LastTransactionsProps {
@@ -82,20 +83,10 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
                     {transaction.against_contract ? transaction.against_contract.symbol : ""}
                   </Typography>
                 </Stack>
-                <Chip
-                  icon={
-                    transaction.type == "IN" ? (
-                      <ArrowDropUp sx={{ color: "success.main" }} />
-                    ) : transaction.type == "OUT" ? (
-                      <ArrowDropDown sx={{ color: "error.main" }} />
-                    ) : (
-                      <Fragment></Fragment>
-                    )
-                  }
-                  color={transaction.type == "OUT" ? "error" : transaction.type == "IN" ? "success" : "default"}
-                  size="small"
+                <Badge1
+                  color={transaction.type == "OUT" ? "error" : transaction.type == "IN" ? "success" : "neutral"}
                   label={formatNumber(transaction.quantity, "quantity_precise")}
-                ></Chip>
+                ></Badge1>
               </Stack>
               {/* <Typography variant="caption" color="textSecondary">
                   {formatDate(transaction.date)}

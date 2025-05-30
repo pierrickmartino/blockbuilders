@@ -1,9 +1,11 @@
 "use client";
-import { Box, Stack, Chip } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import BasicCard from "../../components/shared/BasicCard";
 import { formatNumber } from "@/lib/format";
 import { Button } from "@/components/shared/Button";
+import { Badge1, Badge2, Badge3, Badge4 } from "@/components/shared/Badge";
+import { Fragment } from "react";
 
 // const Item = styled(Paper)(({ theme }) => ({
 //   ...theme.typography.body1,
@@ -80,13 +82,29 @@ const Buttons = () => {
           </BasicCard>
         </Grid>
         <Grid size={{ xs: 12, lg: 6 }}>
-          <BasicCard title="Chips">
-            <Stack spacing={2} direction="row">
-              <Chip label={formatNumber(-123456, "currency")} color="error" size="small" />
-              <Chip label={formatNumber(14.41, "percentage")} color="success" size="small" />
-              <Chip label={formatNumber(-123456, "currency")} color="error" size="medium" />
-              <Chip label={formatNumber(14.41, "percentage")} color="success" size="medium" />
-            </Stack>
+          <BasicCard title="Badges">
+            <Fragment>
+              <div className="flex flex-wrap justify-start gap-4 mb-4">
+                <Badge1 label={formatNumber(9.5, "percentage")} color="success" />
+                <Badge1 label={formatNumber(-12.56, "percentage")} color="error" />
+                <Badge1 label={formatNumber(0.0, "percentage")} color="neutral" />
+              </div>
+              <div className="flex flex-wrap justify-start gap-4 mb-4">
+                <Badge2 label={formatNumber(9.5, "percentage")} color="success" />
+                <Badge2 label={formatNumber(-12.56, "percentage")} color="error" />
+                <Badge2 label={formatNumber(0.0, "percentage")} color="neutral" />
+              </div>
+              <div className="flex flex-wrap justify-start gap-4 mb-4">
+                <Badge3 label={formatNumber(9.5, "percentage")} color="success" />
+                <Badge3 label={formatNumber(-12.56, "percentage")} color="error" />
+                <Badge3 label={formatNumber(0.0, "percentage")} color="neutral" />
+              </div>
+              <div className="flex flex-wrap justify-start gap-4">
+                <Badge4 label={formatNumber(9.5, "percentage")} color="success" />
+                <Badge4 label={formatNumber(-12.56, "percentage")} color="error" />
+                <Badge4 label={formatNumber(0.0, "percentage")} color="neutral" />
+              </div>
+            </Fragment>
           </BasicCard>
         </Grid>
       </Grid>
