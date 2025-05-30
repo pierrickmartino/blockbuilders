@@ -1,21 +1,5 @@
 "use client";
-import {
-  Box,
-  Stack,
-  Card,
-  Typography,
-  Switch,
-  FormGroup,
-  FormControlLabel,
-  CardContent,
-  Snackbar,
-  Alert,
-  AlertTitle,
-  AlertColor,
-  SnackbarCloseReason,
-  Drawer,
-  Skeleton,
-} from "@mui/material";
+import { Box, Stack, Card, Typography, Switch, FormGroup, FormControlLabel, CardContent, Drawer, Skeleton } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
 import { CapitalGainHisto, MarketData, Position } from "@/lib/definition";
@@ -35,6 +19,8 @@ import HighlightedCard from "@/app/dashboard/components/dashboard/HighlightedCar
 import PriceSparkline from "@/app/dashboard/components/dashboard/PriceSparkline";
 import DeltaChip from "@/app/dashboard/components/dashboard/DeltaChip";
 import { Badge1 } from "@/components/shared/Badge";
+import { useToast } from "@/lib/useToast";
+import { Toaster } from "@/components/shared/Toaster";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
@@ -43,11 +29,6 @@ const Positions = () => {
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
   const [market_data, setMarketDataHisto] = useState<MarketData[]>([]);
   const [wallet_capital_gains, setWalletCapitalGainHisto] = useState<CapitalGainHisto[]>([]);
-
-  const [open, setOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarTitle, setSnackbarTitle] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("info");
 
   /* Drawer for position detail */
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -105,13 +86,7 @@ const Positions = () => {
     }
   };
 
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
-  };
+  const { toast } = useToast();
 
   // New function to poll task status
   const pollTaskStatus = (taskId: string) => {
@@ -120,10 +95,12 @@ const Positions = () => {
         const status = await fetchTaskStatus(taskId);
         console.log("Task result in pollTaskStatus:", status);
         if (status === "SUCCESS") {
-          setSnackbarMessage(`Task ${taskId} finished successfully.`);
-          setSnackbarTitle("Great News !");
-          setSnackbarSeverity("success");
-          setOpen(true);
+          toast({
+            title: "Great News !",
+            description: `Task ${taskId} finished successfully.`,
+            variant: "success",
+            duration: 3000,
+          });
           clearInterval(taskPolling[taskId]);
           setTaskPolling((prev) => {
             const { [taskId]: _, ...remainingPolling } = prev; // Remove the completed task
@@ -355,12 +332,7 @@ const Positions = () => {
           </Card>
         </Grid>
       </Grid>
-      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
-        <Alert severity={snackbarSeverity} onClose={handleClose} sx={{ width: "100%" }}>
-          <AlertTitle>{snackbarTitle}</AlertTitle>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      <Toaster />
       <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
         {DrawerList}
       </Drawer>

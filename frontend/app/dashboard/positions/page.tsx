@@ -1,22 +1,19 @@
 "use client";
-import { Box, Stack, Typography, Drawer, AlertColor, Snackbar, AlertTitle, Alert, SnackbarCloseReason } from "@mui/material";
+import { Box, Stack, Typography, Drawer } from "@mui/material";
 // components
 import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
 import { Position } from "@/lib/definition";
 import { fetchPositionsAll, fetchPositionsAllWithSearch, fetchTaskStatus } from "@/lib/data";
 import PositionTable from "@/app/dashboard/components/dashboard/PositionTable";
+import { useToast } from "@/lib/useToast";
+import { Toaster } from "@/components/shared/Toaster";
 
 const Positions = () => {
   const [positions, setPositions] = useState<Position[]>([]);
   const [page, setPage] = useState(0); // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(25); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
-
-  const [open, setOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarTitle, setSnackbarTitle] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("info");
 
   // Memoize fetchPositionData using useCallback
   const fetchPositionData = useCallback(async () => {
@@ -37,13 +34,7 @@ const Positions = () => {
     await fetchPositionsAllWithSearch(String(searchTerm), setPositions, setTotalCount, page, rowsPerPage);
   };
 
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
-  };
+  const { toast } = useToast();
 
   // New function to poll task status
   const pollTaskStatus = (taskId: string) => {
@@ -52,10 +43,12 @@ const Positions = () => {
         const status = await fetchTaskStatus(taskId);
         console.log("Task result in pollTaskStatus:", status);
         if (status === "SUCCESS") {
-          setSnackbarMessage(`Task ${taskId} finished successfully.`);
-          setSnackbarTitle("Great News !");
-          setSnackbarSeverity("success");
-          setOpen(true);
+          toast({
+            title: "Great News !",
+            description: `Task ${taskId} finished successfully.`,
+            variant: "success",
+            duration: 3000,
+          });
           clearInterval(taskPolling[taskId]);
           setTaskPolling((prev) => {
             const { [taskId]: _, ...remainingPolling } = prev; // Remove the completed task
@@ -143,12 +136,7 @@ const Positions = () => {
           />
         </Grid>
       </Grid>
-      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
-        <Alert severity={snackbarSeverity} onClose={handleClose} sx={{ width: "100%" }}>
-          <AlertTitle>{snackbarTitle}</AlertTitle>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      <Toaster />
       <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
         {DrawerList}
       </Drawer>

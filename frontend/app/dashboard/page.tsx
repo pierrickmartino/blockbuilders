@@ -1,24 +1,9 @@
 "use client";
-import {
-  Box,
-  Snackbar,
-  SnackbarCloseReason,
-  Typography,
-  Alert,
-  AlertTitle,
-  AlertColor,
-  Drawer,
-  IconButton,
-} from "@mui/material";
+import { Box, Typography, Drawer, IconButton } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import WalletTable from "./components/dashboard/WalletTable";
 import { useEffect, useState, useCallback, Fragment } from "react";
-import {
-  Wallet,
-  Position,
-  Blockchain,
-  Transaction,
-} from "@/lib/definition";
+import { Wallet, Position, Blockchain, Transaction } from "@/lib/definition";
 import {
   fetchWallets,
   fetchTopPositions,
@@ -37,6 +22,8 @@ import BasicCard from "./components/shared/BasicCard";
 import TopPositions from "./components/dashboard/TopPositions";
 import TopBlockchains from "./components/dashboard/TopBlockchains";
 import { ReadMoreOutlined } from "@mui/icons-material";
+import { Toaster } from "@/components/shared/Toaster";
+import { useToast } from "@/lib/useToast";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -44,10 +31,6 @@ const Wallets = () => {
   const [top_blockchains, setTopBlockchains] = useState<Blockchain[]>([]);
   const [last_transactions, setLastTransactions] = useState<Transaction[]>([]);
   const [count_transactions, setCountTransactions] = useState(0);
-  const [open, setOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarTitle, setSnackbarTitle] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor>("info");
   const [page, setPage] = useState(0); // State for current page
   const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
   const [totalCount, setTotalCount] = useState(0); // State for total number of items
@@ -65,31 +48,15 @@ const Wallets = () => {
   };
 
   /* Drawer for wallet detail */
-    const [drawerWalletOpen, setDrawerWalletOpen] = useState(false);
-    const toggleWalletDrawer = (open: boolean) => {
-      setDrawerWalletOpen(open);
-    };
-    const handleShowWalletDrawer = () => {
-      toggleWalletDrawer(true);
-    };
-
-  // const handleClick = (message: string, title: string, severity: AlertColor) => {
-  //   setSnackbarMessage(message);
-  //   setSnackbarSeverity(severity);
-  //   setSnackbarTitle(title);
-  //   setOpen(true);
-  // };
-
-  const handleClose = (
-    event: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
+  const [drawerWalletOpen, setDrawerWalletOpen] = useState(false);
+  const toggleWalletDrawer = (open: boolean) => {
+    setDrawerWalletOpen(open);
   };
+  const handleShowWalletDrawer = () => {
+    toggleWalletDrawer(true);
+  };
+
+  const { toast } = useToast();
 
   // New function to poll task status
   const pollTaskStatus = (taskId: string) => {
@@ -98,10 +65,12 @@ const Wallets = () => {
         const status = await fetchTaskStatus(taskId);
         console.log("Task result in pollTaskStatus:", status);
         if (status === "SUCCESS") {
-          setSnackbarMessage(`Task ${taskId} finished successfully.`);
-          setSnackbarTitle("Great News !");
-          setSnackbarSeverity("success");
-          setOpen(true);
+          toast({
+            title: "Great News !",
+            description: `Task ${taskId} finished successfully.`,
+            variant: "success",
+            duration: 3000,
+          });
           clearInterval(taskPolling[taskId]);
           setTaskPolling((prev) => {
             const { [taskId]: _, ...remainingPolling } = prev; // Remove the completed task
@@ -209,9 +178,7 @@ const Wallets = () => {
   useEffect(() => {
     return () => {
       // Clear all intervals
-      Object.values(taskPolling).forEach((intervalId) =>
-        clearInterval(intervalId)
-      );
+      Object.values(taskPolling).forEach((intervalId) => clearInterval(intervalId));
     };
   }, [taskPolling]);
 
@@ -234,9 +201,8 @@ const Wallets = () => {
       interval: "Last 30 days",
       trend: "up",
       data: [
-        200, 24, 220, 260, 240, 380, 100, 240, 280, 240, 300, 340, 320, 360,
-        340, 380, 360, 400, 380, 420, 400, 640, 340, 460, 440, 480, 460, 600,
-        880, 920,
+        200, 24, 220, 260, 240, 380, 100, 240, 280, 240, 300, 340, 320, 360, 340, 380, 360, 400, 380, 420, 400, 640, 340, 460, 440, 480,
+        460, 600, 880, 920,
       ],
     },
     {
@@ -245,9 +211,8 @@ const Wallets = () => {
       interval: "Last 30 days",
       trend: "down",
       data: [
-        1640, 1250, 970, 1130, 1050, 900, 720, 1080, 900, 450, 920, 820, 840,
-        600, 820, 780, 800, 760, 380, 740, 660, 620, 840, 500, 520, 480, 400,
-        360, 300, 220,
+        1640, 1250, 970, 1130, 1050, 900, 720, 1080, 900, 450, 920, 820, 840, 600, 820, 780, 800, 760, 380, 740, 660, 620, 840, 500, 520,
+        480, 400, 360, 300, 220,
       ],
     },
     {
@@ -256,9 +221,8 @@ const Wallets = () => {
       interval: "Last 30 days",
       trend: "neutral",
       data: [
-        500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620,
-        510, 530, 520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430,
-        520, 510,
+        500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620, 510, 530, 520, 410, 530, 520, 610, 530, 520, 610, 530, 420,
+        510, 430, 520, 510,
       ],
     },
   ];
@@ -268,12 +232,7 @@ const Wallets = () => {
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         Overview
       </Typography>
-      <Grid
-        container
-        spacing={2}
-        columns={12}
-        sx={{ mb: (theme) => theme.spacing(2) }}
-      >
+      <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2) }}>
         {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
             <StatCard {...card} />
@@ -351,35 +310,15 @@ const Wallets = () => {
               </Fragment>
             }
           >
-            <LastTransactions
-              transactions={last_transactions}
-              count={count_transactions}
-            />
+            <LastTransactions transactions={last_transactions} count={count_transactions} />
           </BasicCard>
         </Grid>
       </Grid>
-      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose} anchorOrigin={{ vertical:'top', horizontal:'right' }}>
-        <Alert
-          severity={snackbarSeverity}
-          onClose={handleClose}
-          sx={{ width: "100%" }}
-        >
-          <AlertTitle>{snackbarTitle}</AlertTitle>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-      <Drawer
-        anchor="right"
-        open={drawerOpen}
-        onClose={() => toggleDrawer(false)}
-      >
+      <Toaster />
+      <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
-      <Drawer
-        anchor="right"
-        open={drawerWalletOpen}
-        onClose={() => toggleWalletDrawer(false)}
-      >
+      <Drawer anchor="right" open={drawerWalletOpen} onClose={() => toggleWalletDrawer(false)}>
         {DrawerWallet}
       </Drawer>
     </Box>
