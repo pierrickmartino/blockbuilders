@@ -1,19 +1,19 @@
 import * as React from "react";
-import Typography from "@mui/material/Typography";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import { Button } from "@/components/shared/Button";
 import { Card } from "@/components/shared/Card";
+import { Heading } from "@/components/shared/Heading";
 
 export default function CardAlert() {
   return (
     <Card>
       <AutoAwesomeRoundedIcon fontSize="small" />
-      <Typography gutterBottom sx={{ fontWeight: 600 }}>
+      <Heading variant="body" className="mb-1 font-medium">
         Plan about to expire
-      </Typography>
-      <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
+      </Heading>
+      <Heading variant="subtitle" className="mb-3">
         Enjoy 10% off when renewing your plan today.
-      </Typography>
+      </Heading>
       <Button variant="primary" className="w-full text-sm">
         Get the discount
       </Button>

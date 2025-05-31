@@ -5,12 +5,12 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import MuiToolbar from '@mui/material/Toolbar';
 import { tabsClasses } from '@mui/material/Tabs';
-import Typography from '@mui/material/Typography';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import SideMenuMobile from '../../layout/sidebar/SideMenuMobile';
 import MenuButton from './MenuButton';
 import ColorModeIconDropdown from '../../layout/header/ColorModeIconDropdown';
+import { Heading } from '@/components/shared/Heading';
 
 const Toolbar = styled(MuiToolbar)({
   width: '100%',
@@ -64,9 +64,9 @@ export default function AppNavbar() {
             sx={{ justifyContent: 'center', mr: 'auto' }}
           >
             <CustomIcon />
-            <Typography variant="h4" component="h1" sx={{ color: 'text.primary' }}>
+            <Heading variant="h4">
               Dashboard
-            </Typography>
+            </Heading>
           </Stack>
           <ColorModeIconDropdown />
           <MenuButton aria-label="menu" onClick={toggleDrawer(true)}>

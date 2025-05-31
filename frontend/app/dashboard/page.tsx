@@ -1,5 +1,5 @@
 "use client";
-import { Box, Typography, Drawer, IconButton } from "@mui/material";
+import { Box, Drawer, IconButton } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import WalletTable from "./components/dashboard/WalletTable";
 import { useEffect, useState, useCallback, Fragment } from "react";
@@ -24,6 +24,7 @@ import TopBlockchains from "./components/dashboard/TopBlockchains";
 import { ReadMoreOutlined } from "@mui/icons-material";
 import { Toaster } from "@/components/shared/Toaster";
 import { useToast } from "@/lib/useToast";
+import { Heading } from "@/components/shared/Heading";
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -229,9 +230,9 @@ const Wallets = () => {
 
   return (
     <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
-      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+      <Heading variant="h6" className="mb-2">
         Overview
-      </Typography>
+      </Heading>
       <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2) }}>
         {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
@@ -242,9 +243,9 @@ const Wallets = () => {
           <HighlightedCard />
         </Grid>
       </Grid>
-      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+      <Heading variant="h6" className="mb-2">
         Details
-      </Typography>
+      </Heading>
       <Grid container spacing={2} columns={12}>
         <Grid size={{ xs: 12, lg: 9 }}>
           <Grid container spacing={2}>

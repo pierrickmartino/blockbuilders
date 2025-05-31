@@ -1,6 +1,7 @@
 import React from "react";
-import { Typography, Stack, Box } from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import { Card } from "@/components/shared/Card";
+import { Heading } from "@/components/shared/Heading";
 
 type Props = {
   title?: string;
@@ -16,16 +17,16 @@ const BasicCard = ({ title, subtitle, children, action }: Props) => {
         <Stack direction="row" sx={{ justifyContent: "space-between" }}>
           <Stack direction="column" sx={{ justifyContent: "space-between" }}>
             {title ? (
-              <Typography variant="subtitle2" gutterBottom>
+              <Heading variant="subtitle2" className="mb-2">
                 {title}
-              </Typography>
+              </Heading>
             ) : (
               ""
             )}
             {subtitle ? (
-              <Typography variant="caption" sx={{ color: "text.secondary" }} mb={2} gutterBottom>
+              <Heading variant="caption2" className="mb-2">
                 {subtitle}
-              </Typography>
+              </Heading>
             ) : (
               ""
             )}
