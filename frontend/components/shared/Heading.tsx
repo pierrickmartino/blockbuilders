@@ -13,7 +13,8 @@ type HeadingVariant =
   | 'subtitle2'
   | 'caption'
   | 'caption2'
-  | 'body';
+  | 'body'
+  | 'body2';
 
 interface HeadingProps {
   variant: HeadingVariant;
@@ -33,6 +34,7 @@ const baseStyles: Record<HeadingVariant, string> = {
   caption: 'text-sm text-gray-500',
   caption2: 'text-xs text-gray-500 font-medium',
   body: 'text-sm',
+  body2: 'text-xs',
 };
 
 export const Heading = ({ variant, children, className }: HeadingProps) => {

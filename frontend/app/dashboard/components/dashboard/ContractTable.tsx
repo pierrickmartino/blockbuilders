@@ -1,20 +1,11 @@
 import React, { Fragment } from "react";
 
-import {
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableContainer,
-  TablePagination,
-  IconButton,
-} from "@mui/material";
+import { Table, TableBody, TableCell, TableHead, TableRow, TableContainer, TablePagination, IconButton } from "@mui/material";
 import { Contract } from "../../../../lib/definition";
 import { formatNumber } from "@/lib/format";
 import { IconDotsVertical } from "@tabler/icons-react";
 import BasicCard from "../shared/BasicCard";
+import { Heading } from "@/components/shared/Heading";
 
 // Define the props type that will be passed into WalletTable
 interface ContractTableProps {
@@ -26,24 +17,12 @@ interface ContractTableProps {
   onRowsPerPageChange: (newRowsPerPage: number) => void;
 }
 
-const ContractTable: React.FC<ContractTableProps> = ({
-  contracts,
-  page,
-  rowsPerPage,
-  totalCount,
-  onPageChange,
-  onRowsPerPageChange,
-}) => {
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number
-  ) => {
+const ContractTable: React.FC<ContractTableProps> = ({ contracts, page, rowsPerPage, totalCount, onPageChange, onRowsPerPageChange }) => {
+  const handleChangePage = (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
     onPageChange(newPage); // Call the passed prop to update the page state in the parent
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onRowsPerPageChange(parseInt(event.target.value, 10)); // Call the passed prop to update the rows per page state
   };
 
@@ -52,10 +31,7 @@ const ContractTable: React.FC<ContractTableProps> = ({
   };
 
   return (
-    <BasicCard
-      title="Contract History"
-      subtitle="A detailed log of all recent contracts"
-    >
+    <BasicCard title="Contract History" subtitle="A detailed log of all recent contracts">
       <Fragment>
         <TableContainer
           sx={{
@@ -76,22 +52,22 @@ const ContractTable: React.FC<ContractTableProps> = ({
             <TableHead>
               <TableRow>
                 <TableCell>
-                  <Typography variant="h6">Blockchain</Typography>
+                  <Heading variant="h6">Blockchain</Heading>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6">Name</Typography>
+                  <Heading variant="h6">Name</Heading>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6">Symbol</Typography>
+                  <Heading variant="h6">Symbol</Heading>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6">Address</Typography>
+                  <Heading variant="h6">Address</Heading>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6">Category</Typography>
+                  <Heading variant="h6">Category</Heading>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">Price</Typography>
+                  <Heading variant="h6">Price</Heading>
                 </TableCell>
                 <TableCell></TableCell>
               </TableRow>
@@ -100,34 +76,34 @@ const ContractTable: React.FC<ContractTableProps> = ({
               {contracts.map((contract: Contract) => (
                 <TableRow key={contract.id}>
                   <TableCell>
-                    <Typography color="textSecondary">
+                    <Heading variant="body" className="text-gray-700">
                       {contract.blockchain.name}
-                    </Typography>
+                    </Heading>
                   </TableCell>
                   <TableCell>
-                    <Typography color="textSecondary">
+                    <Heading variant="body" className="text-gray-700">
                       {contract.name}
-                    </Typography>
+                    </Heading>
                   </TableCell>
                   <TableCell>
-                    <Typography color="textSecondary">
+                    <Heading variant="body" className="text-gray-700">
                       {contract.symbol}
-                    </Typography>
+                    </Heading>
                   </TableCell>
                   <TableCell>
-                    <Typography color="textSecondary">
+                    <Heading variant="body" className="text-gray-700">
                       {truncateText(contract.address, 15)}
-                    </Typography>
+                    </Heading>
                   </TableCell>
                   <TableCell>
-                    <Typography color="textSecondary">
+                    <Heading variant="body" className="text-gray-700">
                       {contract.category}
-                    </Typography>
+                    </Heading>
                   </TableCell>
                   <TableCell align="right">
-                    <Typography color="textSecondary">
+                    <Heading variant="body" className="text-gray-700">
                       {formatNumber(contract.price, "currency")}
-                    </Typography>
+                    </Heading>
                   </TableCell>
                   <TableCell>
                     <IconButton>

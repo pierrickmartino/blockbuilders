@@ -1,17 +1,19 @@
 import * as React from "react";
-import Typography from "@mui/material/Typography";
 import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 import { Button } from "@/components/shared/Button";
 import { Card } from "@/components/shared/Card";
+import { Heading } from "@/components/shared/Heading";
 
 export default function HighlightedCard() {
   return (
     <Card>
       <InsightsRoundedIcon />
-      <Typography component="h2" variant="subtitle2" gutterBottom sx={{ fontWeight: "600" }}>
+      <Heading variant="body" className="mb-1 font-medium">
         Explore your data
-      </Typography>
-      <Typography sx={{ color: "text.secondary", mb: "8px" }}>Uncover performance and visitor insights with our data wizardry.</Typography>
+      </Heading>
+      <Heading variant="subtitle" className="mb-3">
+        Uncover performance and visitor insights with our data wizardry.
+      </Heading>
       <Button variant="primary" className="w-full md:w-auto text-sm">
         Get insights
         <svg

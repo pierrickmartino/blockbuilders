@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { Typography, Checkbox, Avatar, Stack, Box, Tooltip, Badge } from "@mui/material";
+import { Checkbox, Avatar, Stack, Box, Tooltip, Badge } from "@mui/material";
 import { formatNumber } from "@/lib/format";
 import { useTheme } from "@mui/material/styles";
 import { Position, Wallet } from "../../../../lib/definition";
@@ -17,6 +17,7 @@ import { downloadContractInfo, setContractAsStable, setContractAsSuspicious } fr
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import BasicCard from "../shared/BasicCard";
 import { Badge1 } from "@/components/shared/Badge";
+import { Heading } from "@/components/shared/Heading";
 
 // Define the props type that will be passed into PositionTable
 interface PositionTableProps {
@@ -131,9 +132,9 @@ const PositionTable: React.FC<PositionTableProps> = ({
     const input = amount ?? "";
     return (
       <Box sx={cellWrapperSx_right}>
-        <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
+        <Heading variant="caption2">
           {formatNumber(input, type)}
-        </Typography>
+        </Heading>
       </Box>
     );
   }
@@ -156,10 +157,10 @@ const PositionTable: React.FC<PositionTableProps> = ({
             <Avatar alt={blockchain_name} sx={{ width: 28, height: 28 }} src={token_icon || `/images/logos/${blockchain_icon}`} />
           </Badge>
           <Stack spacing={0}>
-            <Typography sx={{ lineHeight: "inherit", fontWeight: 500 }}>{truncateText(token_symbol, 8)}</Typography>
-            <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem" }}>
+            <Heading variant="subtitle2">{truncateText(token_symbol, 8)}</Heading>
+            <Heading variant="caption2">
               {truncateText(token_name, 22)}
-            </Typography>
+            </Heading>
           </Stack>
         </Stack>
       </Box>
@@ -188,15 +189,13 @@ const PositionTable: React.FC<PositionTableProps> = ({
     return (
       <Box sx={cellWrapperSx_right}>
         <Stack spacing={0}>
-          <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem", mt: 0.5 }}>
+          <Heading variant="body2">
             {f_price}
-          </Typography>
-          <Typography
-            color={daily_price_delta < 0 ? "error" : daily_price_delta > 0 ? "success" : "textSecondary"}
-            sx={{ lineHeight: "inherit", fontSize: "0.725rem", mb: 0.5 }}
+          </Heading>
+          <Heading variant="body2"
           >
             {f_daily_price_delta}
-          </Typography>
+          </Heading>
         </Stack>
       </Box>
     );
@@ -208,12 +207,12 @@ const PositionTable: React.FC<PositionTableProps> = ({
     return (
       <Box sx={cellWrapperSx_right}>
         <Stack spacing={0}>
-          <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.79rem", mt: 0.5 }}>
+          <Heading variant="caption2">
             {f_amount}
-          </Typography>
-          <Typography color="textSecondary" sx={{ lineHeight: "inherit", fontSize: "0.725rem", mb: 0.5 }}>
+          </Heading>
+          <Heading variant="body2">
             {f_percentage}
-          </Typography>
+          </Heading>
         </Stack>
       </Box>
     );

@@ -24,11 +24,21 @@ const Buttons = () => {
         <Grid size={{ xs: 12, lg: 6 }}>
           <BasicCard title="Color Buttons">
             <Box sx={{ "& button": { mr: 1 } }}>
-              <Button variant="primary">Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Button variant="light">Light</Button>
-              <Button variant="ghost">Ghost</Button>
-              <Button variant="destructive">Destructive</Button>
+              <Button variant="primary" className="me-2 mb-2">
+                Primary
+              </Button>
+              <Button variant="secondary" className="me-2 mb-2">
+                Secondary
+              </Button>
+              <Button variant="light" className="me-2 mb-2">
+                Light
+              </Button>
+              <Button variant="ghost" className="me-2 mb-2">
+                Ghost
+              </Button>
+              <Button variant="destructive" className="me-2 mb-2">
+                Destructive
+              </Button>
             </Box>
           </BasicCard>
         </Grid>

@@ -88,9 +88,7 @@ const LastTransaction: React.FC<LastTransactionsProps> = ({ transactions, count 
                   label={formatNumber(transaction.quantity, "quantity_precise")}
                 ></Badge1>
               </Stack>
-              {/* <Typography variant="caption" color="textSecondary">
-                  {formatDate(transaction.date)}
-                </Typography> */}
+
               <Tooltip title={format(new Date(transaction.date), "PPpp")}>
                 <Typography variant="caption" color="textSecondary">
                   {formatDistanceToNow(new Date(transaction.date), { addSuffix: true })}
