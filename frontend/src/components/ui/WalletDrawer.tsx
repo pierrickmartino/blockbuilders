@@ -10,16 +10,16 @@ import { Label } from "../Label";
 import { Textarea } from "../Textarea";
 import { Wallet } from "@/lib/definition";
 
-type TicketFormData = Partial<Wallet>;
+type WalletFormData = Partial<Wallet>;
 
-interface TicketDrawerProps {
+interface WalletDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
 interface FormPageProps {
-  formData: TicketFormData;
-  onUpdateForm: (updates: Partial<TicketFormData>) => void;
+  formData: WalletFormData;
+  onUpdateForm: (updates: Partial<WalletFormData>) => void;
 }
 
 const SummaryItem = ({ label, value }: { label: string; value: string | number | null | undefined }) => (
@@ -38,14 +38,41 @@ const FormField = ({ label, children }: { label: string; children: React.ReactNo
 
 const FirstPage = ({ formData, onUpdateForm }: FormPageProps) => (
   <>
-    {/* <DrawerHeader>
+    <DrawerHeader>
       <DrawerTitle>
-        <p>Create Support Ticket</p>
-        <span className="text-sm font-normal text-gray-500 dark:text-gray-500">Ticket Type & Category</span>
+        <p>Create Wallet</p>
+        <span className="text-sm font-normal text-gray-500 dark:text-gray-500">Wallet Type & Category</span>
       </DrawerTitle>
     </DrawerHeader>
     <DrawerBody className="-mx-6 space-y-6 overflow-y-scroll border-t border-gray-200 px-6 dark:border-gray-800">
-      <FormField label="Contact Type">
+      <FormField label="Wallet Name">
+        <Input
+          name="walletName"
+          value={formData.name}
+          onChange={(e) => onUpdateForm({ name: e.target.value })}
+          placeholder="Name"
+        />
+      </FormField>
+      
+      <FormField label="Wallet Address">
+        <Input
+          name="walletAddress"
+          value={formData.address}
+          onChange={(e) => onUpdateForm({ address: e.target.value })}
+          placeholder="Address"
+        />
+      </FormField>
+
+      <FormField label="Wallet Description">
+        <Textarea
+          name="walletDescription"
+          value={formData.description}
+          onChange={(e) => onUpdateForm({ description: e.target.value })}
+          placeholder="Description"
+        />
+      </FormField>
+
+      {/* <FormField label="Contact Type">
         <RadioCardGroup
           defaultValue={formData.type}
           className="grid grid-cols-2 gap-2 text-sm"
@@ -62,9 +89,9 @@ const FirstPage = ({ formData, onUpdateForm }: FormPageProps) => (
             </RadioCardItem>
           ))}
         </RadioCardGroup>
-      </FormField>
+      </FormField> */}
 
-      <FormField label="Category">
+      {/* <FormField label="Category">
         <Select value={formData.category} onValueChange={(value: Category) => onUpdateForm({ category: value })}>
           <SelectTrigger>
             <SelectValue placeholder="Select Category" />
@@ -75,9 +102,9 @@ const FirstPage = ({ formData, onUpdateForm }: FormPageProps) => (
             ))}
           </SelectContent>
         </Select>
-      </FormField>
+      </FormField> */}
 
-      <FormField label="Policy Type">
+      {/* <FormField label="Policy Type">
         <Select value={formData.policyType} onValueChange={(value: PolicyType) => onUpdateForm({ policyType: value })}>
           <SelectTrigger>
             <SelectValue placeholder="Select Policy Type" />
@@ -88,9 +115,9 @@ const FirstPage = ({ formData, onUpdateForm }: FormPageProps) => (
             ))}
           </SelectContent>
         </Select>
-      </FormField>
+      </FormField> */}
 
-      <FormField label="Policy Number">
+      {/* <FormField label="Policy Number">
         <Input
           disabled
           name="policyNumber"
@@ -98,8 +125,8 @@ const FirstPage = ({ formData, onUpdateForm }: FormPageProps) => (
           onChange={(e) => onUpdateForm({ policyNumber: e.target.value })}
           placeholder="Auto generated"
         />
-      </FormField>
-    </DrawerBody> */}
+      </FormField> */}
+    </DrawerBody>
   </>
 );
 
@@ -107,7 +134,7 @@ const SecondPage = ({ formData, onUpdateForm }: FormPageProps) => (
   <>
     {/* <DrawerHeader>
       <DrawerTitle>
-        <p>Ticket Details</p>
+        <p>Wallet Details</p>
         <span className="text-sm font-normal text-gray-500 dark:text-gray-500">Priority & Description</span>
       </DrawerTitle>
     </DrawerHeader>
@@ -160,26 +187,25 @@ const SecondPage = ({ formData, onUpdateForm }: FormPageProps) => (
   </>
 );
 
-const SummaryPage = ({ formData }: { formData: TicketFormData }) => (
+const SummaryPage = ({ formData }: { formData: WalletFormData }) => (
   <>
-    {/* <DrawerHeader>
+    <DrawerHeader>
       <DrawerTitle>
-        <p>Review Ticket</p>
+        <p>Review Wallet</p>
         <span className="text-sm font-normal text-gray-500 dark:text-gray-500">Please review all details before submitting</span>
       </DrawerTitle>
     </DrawerHeader>
     <DrawerBody className="-mx-6 space-y-4 overflow-y-scroll border-t border-gray-200 px-6 dark:border-gray-800">
       <div className="rounded-md border border-gray-200 dark:border-gray-800">
         <div className="border-b border-gray-200 p-4 dark:border-gray-800">
-          <h3 className="font-medium">Ticket Information</h3>
+          <h3 className="font-medium">Wallet Information</h3>
           <div className="mt-4 space-y-4">
-            <SummaryItem label="Type" value={ticketTypes.find((t) => t.value === formData.type)?.name ?? undefined} />
-            <SummaryItem label="Category" value={categoryTypes.find((c) => c.value === formData.category)?.name ?? undefined} />
-            <SummaryItem label="Policy Type" value={policyTypes.find((p) => p.value === formData.policyType)?.name ?? undefined} />
-            <SummaryItem label="Priority" value={priorities.find((p) => p.value === formData.priority)?.label ?? undefined} />
+            <SummaryItem label="Name" value={formData.name || undefined} />
+            <SummaryItem label="Address" value={formData.address || undefined} />
+            <SummaryItem label="Description" value={formData.description || undefined} />
           </div>
         </div>
-        <div className="p-4">
+        {/* <div className="p-4">
           <h3 className="font-medium">Details</h3>
           <div className="mt-4 space-y-4">
             <SummaryItem label="Priority" value={priorities.find((p) => p.value === formData.priority)?.label ?? undefined} />
@@ -190,19 +216,21 @@ const SummaryPage = ({ formData }: { formData: TicketFormData }) => (
             />
             <SummaryItem label="Created" value={formData.created ? new Date(formData.created).toLocaleString() : undefined} />
           </div>
-        </div>
+        </div> */}
       </div>
-    </DrawerBody> */}
+    </DrawerBody>
   </>
 );
 
-export function TicketDrawer({ open, onOpenChange }: TicketDrawerProps) {
-  const [formData, setFormData] = React.useState<TicketFormData>({
+export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
+  const [formData, setFormData] = React.useState<WalletFormData>({
     // status: "in-progress",
     // category: categoryTypes[0].value,
     // type: ticketTypes[0].value,
     // policyType: policyTypes[0].value,
     // priority: priorities[0].value,
+    name: "",
+    address: "",
     description: "",
     // policyNumber: "",
     // duration: "0",
@@ -211,12 +239,12 @@ export function TicketDrawer({ open, onOpenChange }: TicketDrawerProps) {
 
   const [currentPage, setCurrentPage] = React.useState(1);
 
-  const handleUpdateForm = (updates: Partial<TicketFormData>) => {
+  const handleUpdateForm = (updates: Partial<WalletFormData>) => {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
   const handleSubmit = () => {
-    console.log("Ticket created:", formData);
+    console.log("Wallet created:", formData);
     onOpenChange(false);
   };
 
@@ -240,26 +268,26 @@ export function TicketDrawer({ open, onOpenChange }: TicketDrawerProps) {
           <DrawerClose asChild>
             <Button variant="secondary">Cancel</Button>
           </DrawerClose>
-          <Button onClick={() => setCurrentPage(2)}>Continue</Button>
-        </>
-      );
-    }
-    if (currentPage === 2) {
-      return (
-        <>
-          <Button variant="secondary" onClick={() => setCurrentPage(1)}>
-            Back
-          </Button>
           <Button onClick={() => setCurrentPage(3)}>Review</Button>
         </>
       );
     }
+    // if (currentPage === 2) {
+    //   return (
+    //     <>
+    //       <Button variant="secondary" onClick={() => setCurrentPage(1)}>
+    //         Back
+    //       </Button>
+    //       <Button onClick={() => setCurrentPage(3)}>Review</Button>
+    //     </>
+    //   );
+    // }
     return (
       <>
-        <Button variant="secondary" onClick={() => setCurrentPage(2)}>
+        <Button variant="secondary" onClick={() => setCurrentPage(1)}>
           Back
         </Button>
-        <Button onClick={handleSubmit}>Create Ticket</Button>
+        <Button onClick={handleSubmit}>Create Wallet</Button>
       </>
     );
   };

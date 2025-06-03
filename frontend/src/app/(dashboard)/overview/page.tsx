@@ -25,7 +25,7 @@ import { DataTable } from "@/components/ui/data-table-support/DataTable";
 import { LineChartSupport } from "@/components/LineChartSupport";
 import { ProgressCircle } from "@/components/ProgressCircle";
 import { CategoryBar } from "@/components/CategoryBar";
-import { TicketDrawer } from "@/components/ui/TicketDrawer";
+import { WalletDrawer } from "@/components/ui/WalletDrawer";
 import { Divider } from "@/components/Divider";
 import { Button } from "@/components/Button";
 import { RiAddLine } from "@remixicon/react";
@@ -218,7 +218,7 @@ const Wallets = () => {
           Add Wallet
           <RiAddLine className="-mr-0.5 size-5 shrink-0" aria-hidden="true" />
         </Button>
-        <TicketDrawer open={isOpen} onOpenChange={setIsOpen} />
+        <WalletDrawer open={isOpen} onOpenChange={setIsOpen} />
       </div>
       <Divider />
       <dl className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
