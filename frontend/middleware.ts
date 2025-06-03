@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Define an array of protected routes
-const protectedRoutes = ['/dashboard']
-const publicRoutes = ['/signin', '/signup', '/']
+const protectedRoutes = ['/overview', '/wallets', '/positions', '/transactions', '/contracts'];
+// const publicRoutes = ['/signin', '/signup', '/']
 
 // Helper function to check if a path is protected
 function isProtectedRoute(path: string): boolean {
