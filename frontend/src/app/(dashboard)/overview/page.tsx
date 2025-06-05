@@ -23,7 +23,7 @@ import React from "react";
 // import TopBlockchains from "../components/dashboard/TopBlockchains";
 import { Toaster } from "@/components/Toaster";
 import { useToast } from "@/lib/useToast";
-import { DataTable } from "@/components/ui/data-table-support/DataTable";
+import { DataTable } from "@/components/ui/data-table-wallet/DataTable";
 import { LineChartSupport } from "@/components/LineChartSupport";
 import { ProgressCircle } from "@/components/ProgressCircle";
 import { CategoryBar } from "@/components/CategoryBar";
@@ -35,7 +35,7 @@ import { volume } from "@/data/wallet/volume";
 import { List, ListItem } from "@tremor/react";
 import { formatNumber } from "@/lib/format";
 import { Card } from "@/components/Card";
-import { getColumns } from "@/components/ui/data-table-support/columns";
+import { getColumns } from "@/components/ui/data-table-wallet/columns";
 import { Row } from "@tanstack/react-table";
 
 function classNames(...classes: string[]) {

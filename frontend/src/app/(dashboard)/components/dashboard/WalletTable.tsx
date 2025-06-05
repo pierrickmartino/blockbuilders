@@ -11,8 +11,8 @@ import BasicCard from "../shared/BasicCard";
 import AddressCell from "./AddressCell";
 import { Badge1 } from "@/components/BadgeCustom";
 import { Heading } from "@/components/Heading";
-import { DataTable } from "@/components/ui/data-table-support/DataTable";
-import { getColumns } from "@/components/ui/data-table-support/columns";
+import { DataTable } from "@/components/ui/data-table-wallet/DataTable";
+import { getColumns } from "@/components/ui/data-table-wallet/columns";
 
 // Define the props type that will be passed into WalletTable
 interface WalletTableProps {
