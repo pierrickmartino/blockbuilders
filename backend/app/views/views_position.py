@@ -53,6 +53,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from app.models import (
+    CategoryContractChoices,
     Position,
     Transaction,
     UserSetting,
@@ -330,6 +331,68 @@ def get_wallet_capitalgains(request, wallet_id, last):
         # Create timezone-aware datetime at 4:00 AM
         time_with_tz = tz.localize(datetime.combine(date, datetime.min.time()) + timedelta(hours=4))
         formatted_value = f"{capital_gain_at_date:.8f}"
-        result.append({"time": time_with_tz.isoformat(), "running_capital_gain": formatted_value})    
+        result.append({"time": time_with_tz.isoformat(), "running_capital_gain": formatted_value})
+
+    return Response(result)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
+def get_total_capitalgains(request, last):
+    # logger.info(f"Enter in [get_wallet_capitalgains] for wallet with id {wallet_id}")
+
+    # Get all the wallets for the authenticated user
+    user = request.user
+    wallets = Wallet.objects.filter(user=user)
+
+    # Calculate the total capital gain for all wallets
+    total_capital_gain = sum(wallet.capital_gain for wallet in wallets)
+
+    # Calculate the date 30 days ago from now
+    end_date = timezone.now().date()
+    days_ago = end_date - timedelta(days=last)
+
+    # Get timezone (using Europe/Paris based on your "+02:00" offset)
+    tz = pytz.timezone("Europe/Paris")
+
+    # Get all the transactions for the wallets in scope and exclude suspicious contracts
+    transactions = (
+        Transaction.objects.filter(position__wallet__user=request.user) # Filter transactions for the authenticated user
+        .exclude(position__contract__category=CategoryContractChoices.STABLE) # Exclude stable contracts
+        .exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS) # Exclude suspicious contracts
+        .order_by("-date")
+    )  # Order by date and limit to the max specified
+    transactions_in_scope = [t for t in transactions if t.date.date() >= days_ago]
+
+    # Step 1: Group transactions by date and sum gains for each date
+    gains_by_date = defaultdict(Decimal)
+    for t in transactions_in_scope:
+        gains_by_date[t.date.date()] += getattr(t, "capital_gain", Decimal("0"))
+
+    # Step 2: Build running sum of future transaction gains
+    # For each date, we need the sum of gains for dates AFTER this date
+    # So, we precompute the cumulative sum from future to past
+
+    date_list = []
+    current_date = end_date
+    while current_date >= days_ago:
+        date_list.append(current_date)
+        current_date -= timedelta(days=1)
+
+    # To get "future sum" as of each date, iterate date_list in reverse
+    future_sum = 0
+    future_sums = {}  # date -> sum of capital_gain for transactions after this date
+    for date in date_list:
+        future_sums[date] = future_sum
+        future_sum += gains_by_date.get(date, Decimal("0"))
+
+    # Step 3: For each day, calculate the capital gain as of the end of that day
+    result = []
+    for date in date_list:
+        capital_gain_at_date = total_capital_gain - future_sums[date]
+        # Create timezone-aware datetime at 4:00 AM
+        time_with_tz = tz.localize(datetime.combine(date, datetime.min.time()) + timedelta(hours=4))
+        formatted_value = f"{capital_gain_at_date:.8f}"
+        result.append({"time": time_with_tz.isoformat(), "running_capital_gain": formatted_value})
 
     return Response(result)

@@ -301,6 +301,11 @@ urlpatterns = [
         name="get_wallet_capitalgains",
     ),
     path(
+        "api/wallets/capitalgains/<int:last>",
+        views_position.get_total_capitalgains,
+        name="get_total_capitalgains",
+    ),
+    path(
         "api/positions/<uuid:position_id>/export/csv/",
         views_transaction.export_transactions_csv,
         name="export_transactions_csv",

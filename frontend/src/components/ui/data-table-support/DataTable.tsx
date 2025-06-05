@@ -10,7 +10,7 @@ interface DataTableProps<TData> {
 }
 
 export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
-  const pageSize = 20;
+  const pageSize = 10;
 
   const table = useReactTable({
     data,
@@ -27,7 +27,7 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
   });
 
   return (
-    <div className="mt-8 space-y-3">
+    <div className="mt-8 mb-8 space-y-3">
       <div className="relative overflow-hidden overflow-x-auto">
         <Table>
           <TableHead>

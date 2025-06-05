@@ -5,7 +5,7 @@ import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Overview",
+  title: "Blockbuilders",
   description: "Dashboard pages to summarize data.",
 };
 

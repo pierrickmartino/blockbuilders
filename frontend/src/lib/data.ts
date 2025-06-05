@@ -30,6 +30,23 @@ export const fetchWallets = async (
   }
 };
 
+export const fetchWalletsAll = async (
+  setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>,
+): Promise<void> => {
+
+  try {
+    const response = await fetcher(`/api/wallets/?limit=100`);
+
+    if (response) {
+      setWallets(response.results); // Ensure the wallets are correctly set
+    }
+  } catch (err) {
+    console.error("Error fetching data from wallet API:", err);
+    setWallets([]); // Set empty wallets if fetching fails
+    throw new Error("Failed to fetch all wallets.");
+  }
+};
+
 export const fetchPositionsWithSearch = async (
   wallet_id: string,
   searchTerm: string,
@@ -250,6 +267,24 @@ export const fetchWalletCapitalGainHisto = async (
   } catch (err) {
     console.error("Error fetching data from capital gain API:", err);
     setWalletCapitalGainHisto([]); // Set empty transactions if fetching fails
+    throw new Error("Failed to fetch capital gains.");
+  }
+};
+
+export const fetchTotalCapitalGainHisto = async (
+  offset: number,
+  setTotalCapitalGainHisto: React.Dispatch<React.SetStateAction<CapitalGainHisto[]>>,
+): Promise<void> => {
+
+  try {
+    const response = await fetcher(`/api/wallets/capitalgains/${offset}`);
+
+    if (response) {
+      setTotalCapitalGainHisto(response);
+    }
+  } catch (err) {
+    console.error("Error fetching data from capital gain API:", err);
+    setTotalCapitalGainHisto([]); // Set empty transactions if fetching fails
     throw new Error("Failed to fetch capital gains.");
   }
 };

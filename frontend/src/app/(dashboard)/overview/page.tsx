@@ -1,7 +1,7 @@
 "use client";
 // import WalletTable from "../components/dashboard/WalletTable";
 import { useEffect, useState, useCallback } from "react";
-import { Wallet, Position, Blockchain, Transaction } from "@/lib/definition";
+import { Wallet, Position, Blockchain, Transaction, CapitalGainHisto } from "@/lib/definition";
 import {
   fetchWallets,
   fetchTopPositions,
@@ -9,6 +9,8 @@ import {
   fetchLastTransactions,
   fetchCountTransactions,
   fetchTaskStatus,
+  fetchWalletsAll,
+  fetchTotalCapitalGainHisto,
 } from "@/lib/data";
 // import LastTransactions from "../components/dashboard/LastTransactions";
 // import TradingCalendar from "../components/dashboard/TradingCalendar";
@@ -40,36 +42,34 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+/* This function calculates the total capital gain from an array of wallets. */
+function getTotalCapitalGain(wallets: Wallet[]): number {
+  return wallets.reduce((sum, wallet) => sum + (Number(wallet.capital_gain) || 0), 0);
+}
+
+/* This function calculates the total amount from an array of wallets. */
+function getTotalAmount(wallets: Wallet[]): number {
+  return wallets.reduce((sum, wallet) => sum + (Number(wallet.balance) || 0), 0);
+}
+
+function getCapitalGainsDelta(capitalGainHisto: CapitalGainHisto[]): number {
+  if (capitalGainHisto.length < 2) return 0; // Not enough data to calculate delta
+  const lastGain = capitalGainHisto[0].running_capital_gain;
+  const firstGain = capitalGainHisto[capitalGainHisto.length - 1].running_capital_gain;
+
+  return (lastGain - firstGain) / Math.abs(firstGain) * 100; // Return percentage change
+}
+
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [top_positions, setTopPositions] = useState<Position[]>([]);
   const [top_blockchains, setTopBlockchains] = useState<Blockchain[]>([]);
   const [last_transactions, setLastTransactions] = useState<Transaction[]>([]);
+  const [total_capital_gains, setTotalCapitalGainHisto] = useState<CapitalGainHisto[]>([]);
   const [count_transactions, setCountTransactions] = useState(0);
-  const [page, setPage] = useState(0); // State for current page
-  const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
-  const [totalCount, setTotalCount] = useState(0); // State for total number of items
   const [taskPolling, setTaskPolling] = useState<{
     [taskId: string]: NodeJS.Timeout;
   }>({}); // New state for task polling
-  // const [drawerOpen, setDrawerOpen] = useState(false);
-
-  // const toggleDrawer = (open: boolean) => {
-  //   setDrawerOpen(open);
-  // };
-
-  // const handleAddWalletClick = () => {
-  //   toggleDrawer(true);
-  // };
-
-  /* Drawer for wallet detail */
-  // const [drawerWalletOpen, setDrawerWalletOpen] = useState(false);
-  // const toggleWalletDrawer = (open: boolean) => {
-  //   setDrawerWalletOpen(open);
-  // };
-  // const handleShowWalletDrawer = () => {
-  //   toggleWalletDrawer(true);
-  // };
 
   const { toast } = useToast();
 
@@ -110,13 +110,22 @@ const Wallets = () => {
 
   // Memoize fetchWalletData using useCallback
   const fetchWalletData = useCallback(async () => {
-    await fetchWallets(setWallets, setTotalCount, page, rowsPerPage);
-  }, [page, rowsPerPage]); // Dependencies include page and rowsPerPage
+    await fetchWalletsAll(setWallets);
+  }, []); // Dependencies include page and rowsPerPage
 
   // Use useEffect to call fetchWalletData
   useEffect(() => {
     fetchWalletData();
-  }, [page, rowsPerPage, fetchWalletData]); // Include fetchWalletData as a dependency
+  }, [fetchWalletData]); // Include fetchWalletData as a dependency
+
+  const fetchTotalCapitalGainHistoData = useCallback(async () => {
+    // console.log("fetchPositionCapitalGainHistoData");
+    await fetchTotalCapitalGainHisto(30, setTotalCapitalGainHisto);
+  }, [fetchTotalCapitalGainHisto, setTotalCapitalGainHisto]);
+
+  useEffect(() => {
+    fetchTotalCapitalGainHistoData();
+  }, [fetchTotalCapitalGainHistoData]);
 
   // Fetch top positions function
   const fetchTopPositionData = async () => {
@@ -178,17 +187,6 @@ const Wallets = () => {
     pollTaskStatus(taskId); // Start polling task status
   };
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage); // Update page state
-    fetchWalletData();
-  };
-
-  const handleRowsPerPageChange = (newRowsPerPage: number) => {
-    setRowsPerPage(newRowsPerPage); // Update rows per page state
-    setPage(0); // Reset page to 0 whenever rows per page changes
-    fetchWalletData();
-  };
-
   // Handle cleanup on component unmount
   useEffect(() => {
     return () => {
@@ -208,6 +206,12 @@ const Wallets = () => {
     },
   });
 
+  const difference_neutre: number = 0;
+
+  const total_amount = getTotalAmount(wallets);
+  const total_capital_gain = getTotalCapitalGain(wallets);
+  const capitalGainDelta = getCapitalGainsDelta(total_capital_gains);
+
   return (
     <main>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -225,7 +229,15 @@ const Wallets = () => {
           Add Wallet
           <RiAddLine className="-mr-0.5 size-5 shrink-0" aria-hidden="true" />
         </Button>
-        <WalletDrawer open={isOpen} onOpenChange={setIsOpen} datas={datas} />
+        <WalletDrawer
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          datas={datas}
+          onWalletDeleted={handleWalletDeleted}
+          onWalletDownloaded={handleWalletDownloaded}
+          onWalletFullRefreshed={handleWalletFullRefreshed}
+          onWalletRefreshed={handleWalletRefreshed}
+        />
       </div>
       <Divider />
       <dl className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -236,28 +248,22 @@ const Wallets = () => {
           />
           <div>
             <p className="flex items-center justify-between gap-2">
-              <span className="text-sm text-gray-500 dark:text-gray-500">Total cases</span>
-              <span className="text-sm text-gray-500 dark:text-gray-500">current</span>
+              <span className="text-sm text-gray-500 dark:text-gray-500">Total amount</span>
+              <span className="text-sm text-gray-500 dark:text-gray-500"></span>
             </p>
             <p className="flex items-center justify-between gap-2">
-              <span className="text-lg font-medium text-gray-900 dark:text-gray-50">11 327</span>
-              <span className="text-base font-medium text-gray-500 dark:text-gray-500">11 327</span>
-            </p>
-          </div>
-        </div>
-        <div className="relative rounded-md border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-          <span
-            className="absolute inset-x-0 top-1/2 h-10 w-1 -translate-y-1/2 rounded-r-md bg-blue-500 dark:bg-blue-500"
-            aria-hidden="true"
-          />
-          <div>
-            <p className="flex items-center justify-between gap-2">
-              <span className="text-sm text-gray-500 dark:text-gray-500">Net cost savings</span>
-              <span className="text-sm text-gray-500 dark:text-gray-500">current</span>
-            </p>
-            <p className="flex items-center justify-between gap-2">
-              <span className="text-lg font-medium text-gray-900 dark:text-gray-50">$287 540</span>
-              <span className="text-base font-medium text-gray-500 dark:text-gray-500">$178 940</span>
+              <span className="text-lg font-medium text-gray-900 dark:text-gray-50">{formatNumber(total_amount, "currency")}</span>
+              <span
+                className={`rounded px-1.5 py-1 text-right text-xs font-semibold ${
+                  difference_neutre === 0
+                    ? "bg-gray-50 text-gray-600 dark:bg-gray-400/10 dark:text-gray-400"
+                    : difference_neutre > 0
+                    ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-400/10 dark:text-emerald-400"
+                    : "bg-red-50 text-red-600 dark:bg-red-400/20 dark:text-red-500"
+                }`}
+              >
+                {difference_neutre === 0 ? "0.0%" : `${difference_neutre > 0 ? "+" : ""}${difference_neutre.toFixed(1)}%`}
+              </span>
             </p>
           </div>
         </div>
@@ -268,12 +274,48 @@ const Wallets = () => {
           />
           <div>
             <p className="flex items-center justify-between gap-2">
-              <span className="text-sm text-gray-500 dark:text-gray-500">Net FTE impact</span>
-              <span className="text-sm text-gray-500 dark:text-gray-500">current</span>
+              <span className="text-sm text-gray-500 dark:text-gray-500">Total capital gain</span>
+              <span className="text-sm text-gray-500 dark:text-gray-500"></span>
+            </p>
+            <p className="flex items-center justify-between gap-2">
+              <span className="text-lg font-medium text-gray-900 dark:text-gray-50">{formatNumber(total_capital_gain, "currency")}</span>
+              <span
+                className={`rounded px-1.5 py-1 text-right text-xs font-semibold ${
+                  capitalGainDelta === 0
+                    ? "bg-gray-50 text-gray-600 dark:bg-gray-400/10 dark:text-gray-400"
+                    : capitalGainDelta > 0
+                    ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-400/10 dark:text-emerald-400"
+                    : "bg-red-50 text-red-600 dark:bg-red-400/20 dark:text-red-500"
+                }`}
+              >
+                {capitalGainDelta === 0 ? "0.0%" : `${capitalGainDelta > 0 ? "+" : ""}${capitalGainDelta.toFixed(1)}%`}
+              </span>
+            </p>
+          </div>
+        </div>
+        <div className="relative rounded-md border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <span
+            className="absolute inset-x-0 top-1/2 h-10 w-1 -translate-y-1/2 rounded-r-md bg-blue-500 dark:bg-blue-500"
+            aria-hidden="true"
+          />
+          <div>
+            <p className="flex items-center justify-between gap-2">
+              <span className="text-sm text-gray-500 dark:text-gray-500">Total unrealized</span>
+              <span className="text-sm text-gray-500 dark:text-gray-500"></span>
             </p>
             <p className="flex items-center justify-between gap-2">
               <span className="text-lg font-medium text-gray-900 dark:text-gray-50">-17.1</span>
-              <span className="text-base font-medium text-gray-500 dark:text-gray-500">-10.6</span>
+              <span
+                className={`rounded px-1.5 py-1 text-right text-xs font-semibold ${
+                  difference_neutre === 0
+                    ? "bg-gray-50 text-gray-600 dark:bg-gray-400/10 dark:text-gray-400"
+                    : difference_neutre > 0
+                    ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-400/10 dark:text-emerald-400"
+                    : "bg-red-50 text-red-600 dark:bg-red-400/20 dark:text-red-500"
+                }`}
+              >
+                {difference_neutre === 0 ? "0.0%" : `${difference_neutre > 0 ? "+" : ""}${difference_neutre.toFixed(1)}%`}
+              </span>
             </p>
           </div>
         </div>
@@ -421,6 +463,7 @@ const Wallets = () => {
           </div>
         </Card>
       </dl>
+      <Toaster />
     </main>
     // <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
     //   <Heading variant="h6" className="mb-2">
