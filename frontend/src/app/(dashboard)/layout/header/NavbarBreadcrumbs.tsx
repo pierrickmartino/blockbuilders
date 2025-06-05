@@ -42,7 +42,7 @@ export default function NavbarBreadcrumbs({ walletName, positionName }: Props) {
   const crumbs: Crumb[] = [];
 
   /* Always start with Dashboard */
-  let href = "/dashboard";
+  let href = "/overview";
   crumbs.push({ label: "Dashboard", href });
 
   /* Pattern-specific parsing */
@@ -79,7 +79,7 @@ export default function NavbarBreadcrumbs({ walletName, positionName }: Props) {
       {/* Home icon + Dashboard link */}
       <Link
         component={LinkComponent}
-        href="/dashboard"
+        href="/overview"
         underline="none"
         sx={{ display: "flex", alignItems: "center", color: "text.secondary" }}
       >

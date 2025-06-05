@@ -47,7 +47,7 @@ const Contracts = () => {
   };
 
   const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/dashboard">
+    <Link underline="hover" key="1" color="inherit" href="/overview">
       Dashboard
     </Link>,
     contracts.length > 0 ? (

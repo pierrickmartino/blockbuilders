@@ -72,7 +72,7 @@ const Login = () => {
       .json((json) => {
         storeToken(json.access, "access");
         storeToken(json.refresh, "refresh");
-        router.push("/dashboard");
+        router.push("/overview");
       })
       .catch((err) => {
         setError("root", { type: "manual", message: err.json.detail });

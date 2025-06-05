@@ -36,14 +36,14 @@ export default function Wallets() {
   const router = useRouter();
   const { createWallet } = AuthActions();
 
-  useEffect(() => {
-    fetchWalletsData();
-  }, []);
-
   // Memoize fetchTransactionData using useCallback
   const fetchWalletsData = useCallback(async () => {
     await fetchWallets(setWallets, setTotalCount, page, rowsPerPage);
   }, [page, rowsPerPage]); // Dependencies include page and rowsPerPage
+
+  useEffect(() => {
+    fetchWalletsData();
+  }, [fetchWalletsData]);
 
   const handleOpen = (wallet: Wallet | null = null) => {
     if (wallet) {
@@ -61,7 +61,7 @@ export default function Wallets() {
       //   await axios.put(`/api/wallets/${editingWallet.id}/`, form);
     } else {
       createWallet(form.address, form.name, form.description).json((json) => {
-        router.push("/dashboard/wallets");
+        router.push("/wallets");
       });
       //   .catch((err) => {
       //     setError("root", { type: "manual", message: err.json.detail });

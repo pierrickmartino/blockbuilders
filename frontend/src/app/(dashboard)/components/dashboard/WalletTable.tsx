@@ -66,7 +66,7 @@ const WalletTable: React.FC<WalletTableProps> = ({
   // Handle navigation to wallet details
   const handleNavigateToDetails = (selectedWalletId: string) => {
     if (selectedWalletId !== null) {
-      window.location.href = `/dashboard/wallets/${selectedWalletId}/positions`;
+      window.location.href = `/overview/wallets/${selectedWalletId}/positions`;
     }
   };
 

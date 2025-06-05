@@ -10,7 +10,7 @@ interface DataTableProps<TData> {
 }
 
 export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
-  const pageSize = 16;
+  const pageSize = 20;
 
   const table = useReactTable({
     data,

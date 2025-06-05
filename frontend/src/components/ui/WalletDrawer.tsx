@@ -9,17 +9,23 @@ import { Input } from "../Input";
 import { Label } from "../Label";
 import { Textarea } from "../Textarea";
 import { Wallet } from "@/lib/definition";
+import { AuthActions } from "@/app/(auth)/utils";
+import router from "next/router";
+import { useRouter } from "next/navigation";
+import { deleteWallet } from "@/lib/actions";
 
 type WalletFormData = Partial<Wallet>;
 
 interface WalletDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  datas: Wallet | undefined;
 }
 
 interface FormPageProps {
   formData: WalletFormData;
   onUpdateForm: (updates: Partial<WalletFormData>) => void;
+  datas: Wallet | undefined;
 }
 
 const SummaryItem = ({ label, value }: { label: string; value: string | number | null | undefined }) => (
@@ -46,14 +52,9 @@ const FirstPage = ({ formData, onUpdateForm }: FormPageProps) => (
     </DrawerHeader>
     <DrawerBody className="-mx-6 space-y-6 overflow-y-scroll border-t border-gray-200 px-6 dark:border-gray-800">
       <FormField label="Wallet Name">
-        <Input
-          name="walletName"
-          value={formData.name}
-          onChange={(e) => onUpdateForm({ name: e.target.value })}
-          placeholder="Name"
-        />
+        <Input name="walletName" value={formData.name} onChange={(e) => onUpdateForm({ name: e.target.value })} placeholder="Name" />
       </FormField>
-      
+
       <FormField label="Wallet Address">
         <Input
           name="walletAddress"
@@ -126,6 +127,44 @@ const FirstPage = ({ formData, onUpdateForm }: FormPageProps) => (
           placeholder="Auto generated"
         />
       </FormField> */}
+    </DrawerBody>
+  </>
+);
+
+const EditPage = ({ formData, onUpdateForm, datas }: FormPageProps) => (
+  <>
+    <DrawerHeader>
+      <DrawerTitle>
+        <p>Edit Wallet</p>
+        <span className="text-sm font-normal text-gray-500 dark:text-gray-500">Wallet Type & Category</span>
+      </DrawerTitle>
+    </DrawerHeader>
+    <DrawerBody className="-mx-6 space-y-6 overflow-y-scroll border-t border-gray-200 px-6 dark:border-gray-800">
+      <FormField label="Wallet ID">
+        <Input disabled name="walletId" value={formData.id} onChange={(e) => onUpdateForm({ id: e.target.value })} placeholder="ID" />
+      </FormField>
+
+      <FormField label="Wallet Name">
+        <Input name="walletName" value={formData.name} onChange={(e) => onUpdateForm({ name: e.target.value })} placeholder="Name" />
+      </FormField>
+
+      <FormField label="Wallet Address">
+        <Input
+          name="walletAddress"
+          value={formData.address}
+          onChange={(e) => onUpdateForm({ address: e.target.value })}
+          placeholder="Address"
+        />
+      </FormField>
+
+      <FormField label="Wallet Description">
+        <Textarea
+          name="walletDescription"
+          value={formData.description}
+          onChange={(e) => onUpdateForm({ description: e.target.value })}
+          placeholder="Description"
+        />
+      </FormField>
     </DrawerBody>
   </>
 );
@@ -222,20 +261,40 @@ const SummaryPage = ({ formData }: { formData: WalletFormData }) => (
   </>
 );
 
-export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
+export function WalletDrawer({ open, onOpenChange, datas }: WalletDrawerProps) {
   const [formData, setFormData] = React.useState<WalletFormData>({
-    // status: "in-progress",
-    // category: categoryTypes[0].value,
-    // type: ticketTypes[0].value,
-    // policyType: policyTypes[0].value,
-    // priority: priorities[0].value,
+    id: "",
     name: "",
     address: "",
     description: "",
-    // policyNumber: "",
-    // duration: "0",
-    // created: new Date().toISOString(),
   });
+
+  React.useEffect(() => {
+    if (open && datas) {
+      setFormData({
+        id: datas.id || "",
+        name: datas.name || "",
+        address: datas.address || "",
+        description: datas.description || "",
+      });
+    }
+    if (open && !datas) {
+      setFormData({
+        id: "",
+        name: "",
+        address: "",
+        description: "",
+      });
+    }
+    if (!open) {
+      setFormData({
+        id: "",
+        name: "",
+        address: "",
+        description: "",
+      });
+    }
+  }, [open, datas]);
 
   const [currentPage, setCurrentPage] = React.useState(1);
 
@@ -243,53 +302,99 @@ export function WalletDrawer({ open, onOpenChange }: WalletDrawerProps) {
     setFormData((prev) => ({ ...prev, ...updates }));
   };
 
+  const router = useRouter();
+  const { createWallet, editWallet } = AuthActions();
+
   const handleSubmit = () => {
     console.log("Wallet created:", formData);
+    createWallet(formData.address, formData.name, formData.description)
+      .json((json) => {
+        router.push("/overview");
+      })
+      .catch((err) => {
+        console.error("Error creating wallet:", err);
+        // setError("root", { type: "manual", message: err.json.detail });
+      });
+    onOpenChange(false);
+  };
+
+  const handleEdition = () => {
+    console.log("Wallet edited:", formData);
+    editWallet(formData.id, formData.address, formData.name, formData.description)
+      .json((json) => {
+        router.push("/overview");
+      })
+      .catch((err) => {
+        console.error("Error creating wallet:", err);
+        // setError("root", { type: "manual", message: err.json.detail });
+      });
+    onOpenChange(false);
+  };
+
+  const handleDelete = async (selectedWalletId: string) => {
+    if (selectedWalletId !== null) {
+      const response = await deleteWallet(selectedWalletId.toString());
+      if (response.message !== "Database Error: Failed to delete wallet.") {
+        router.push("/overview");
+      }
+    }
+    console.log("Wallet deleted:", selectedWalletId);
     onOpenChange(false);
   };
 
   const renderPage = () => {
-    switch (currentPage) {
-      case 1:
-        return <FirstPage formData={formData} onUpdateForm={handleUpdateForm} />;
-      case 2:
-        return <SecondPage formData={formData} onUpdateForm={handleUpdateForm} />;
-      case 3:
-        return <SummaryPage formData={formData} />;
-      default:
-        return null;
+    if (datas) {
+      // If editing an existing wallet, skip the first page
+      return <EditPage formData={formData} onUpdateForm={handleUpdateForm} datas={datas} />;
+    } else {
+      switch (currentPage) {
+        case 1:
+          return <FirstPage formData={formData} onUpdateForm={handleUpdateForm} datas={datas} />;
+        case 2:
+          return <EditPage formData={formData} onUpdateForm={handleUpdateForm} datas={datas} />;
+        case 3:
+          return <SummaryPage formData={formData} />;
+        default:
+          return null;
+      }
     }
   };
 
   const renderFooter = () => {
-    if (currentPage === 1) {
+    if (datas) {
       return (
         <>
           <DrawerClose asChild>
             <Button variant="secondary">Cancel</Button>
           </DrawerClose>
-          <Button onClick={() => setCurrentPage(3)}>Review</Button>
+          <Button variant="destructive" onClick={() => handleDelete(datas.id.toString())}>
+            Delete Wallet
+          </Button>
+          <Button onClick={handleEdition}>Edit Wallet</Button>
+        </>
+      );
+    } else {
+      if (currentPage === 1) {
+        return (
+          <>
+            <DrawerClose asChild>
+              <Button variant="secondary">Cancel</Button>
+            </DrawerClose>
+            <Button onClick={() => setCurrentPage(3)}>Review</Button>
+          </>
+        );
+      }
+      if (currentPage === 2 && datas) {
+      }
+      return (
+        <>
+          <Button variant="secondary" onClick={() => setCurrentPage(1)}>
+            Back
+          </Button>
+          <Button onClick={handleSubmit}>Create Wallet</Button>
         </>
       );
     }
-    // if (currentPage === 2) {
-    //   return (
-    //     <>
-    //       <Button variant="secondary" onClick={() => setCurrentPage(1)}>
-    //         Back
-    //       </Button>
-    //       <Button onClick={() => setCurrentPage(3)}>Review</Button>
-    //     </>
-    //   );
-    // }
-    return (
-      <>
-        <Button variant="secondary" onClick={() => setCurrentPage(1)}>
-          Back
-        </Button>
-        <Button onClick={handleSubmit}>Create Wallet</Button>
-      </>
-    );
   };
 
   return (

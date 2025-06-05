@@ -13,7 +13,7 @@ import {
 // import LastTransactions from "../components/dashboard/LastTransactions";
 // import TradingCalendar from "../components/dashboard/TradingCalendar";
 import React from "react";
-import CreateWalletForm from "@/components/forms/CreateWalletForm";
+// import CreateWalletForm from "@/components/forms/CreateWalletForm";
 // import StatCard, { StatCardProps } from "../components/dashboard/StatCard";
 // import HighlightedCard from "../components/dashboard/HighlightedCard";
 // import BasicCard from "../components/shared/BasicCard";
@@ -52,24 +52,24 @@ const Wallets = () => {
   const [taskPolling, setTaskPolling] = useState<{
     [taskId: string]: NodeJS.Timeout;
   }>({}); // New state for task polling
-  const [drawerOpen, setDrawerOpen] = useState(false);
+  // const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const toggleDrawer = (open: boolean) => {
-    setDrawerOpen(open);
-  };
+  // const toggleDrawer = (open: boolean) => {
+  //   setDrawerOpen(open);
+  // };
 
-  const handleAddWalletClick = () => {
-    toggleDrawer(true);
-  };
+  // const handleAddWalletClick = () => {
+  //   toggleDrawer(true);
+  // };
 
   /* Drawer for wallet detail */
-  const [drawerWalletOpen, setDrawerWalletOpen] = useState(false);
-  const toggleWalletDrawer = (open: boolean) => {
-    setDrawerWalletOpen(open);
-  };
-  const handleShowWalletDrawer = () => {
-    toggleWalletDrawer(true);
-  };
+  // const [drawerWalletOpen, setDrawerWalletOpen] = useState(false);
+  // const toggleWalletDrawer = (open: boolean) => {
+  //   setDrawerWalletOpen(open);
+  // };
+  // const handleShowWalletDrawer = () => {
+  //   toggleWalletDrawer(true);
+  // };
 
   const { toast } = useToast();
 
@@ -198,14 +198,15 @@ const Wallets = () => {
   }, [taskPolling]);
 
   const [isOpen, setIsOpen] = React.useState(false);
-  const [row, setRow] = React.useState<Row<Wallet> | null>(null)
-  
+  const [row, setRow] = React.useState<Row<Wallet> | null>(null);
+  const datas = row?.original;
+
   const columns = getColumns({
     onEditClick: (row) => {
-      setRow(row)
-      setIsOpen(true)
+      setRow(row);
+      setIsOpen(true);
     },
-  })
+  });
 
   return (
     <main>
@@ -214,13 +215,127 @@ const Wallets = () => {
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Overview</h1>
           <p className="text-gray-500 sm:text-sm/6 dark:text-gray-500">Real-time monitoring of support metrics with AI-powered insights</p>
         </div>
-        <Button onClick={() => setIsOpen(true)} className="flex items-center gap-2 text-base sm:text-sm">
+        <Button
+          onClick={() => {
+            setRow(null);
+            setIsOpen(true);
+          }}
+          className="flex items-center gap-2 text-base sm:text-sm"
+        >
           Add Wallet
           <RiAddLine className="-mr-0.5 size-5 shrink-0" aria-hidden="true" />
         </Button>
-        <WalletDrawer open={isOpen} onOpenChange={setIsOpen} />
+        <WalletDrawer open={isOpen} onOpenChange={setIsOpen} datas={datas} />
       </div>
       <Divider />
+      <dl className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="relative rounded-md border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <span
+            className="absolute inset-x-0 top-1/2 h-10 w-1 -translate-y-1/2 rounded-r-md bg-blue-500 dark:bg-blue-500"
+            aria-hidden="true"
+          />
+          <div>
+            <p className="flex items-center justify-between gap-2">
+              <span className="text-sm text-gray-500 dark:text-gray-500">Total cases</span>
+              <span className="text-sm text-gray-500 dark:text-gray-500">current</span>
+            </p>
+            <p className="flex items-center justify-between gap-2">
+              <span className="text-lg font-medium text-gray-900 dark:text-gray-50">11 327</span>
+              <span className="text-base font-medium text-gray-500 dark:text-gray-500">11 327</span>
+            </p>
+          </div>
+        </div>
+        <div className="relative rounded-md border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <span
+            className="absolute inset-x-0 top-1/2 h-10 w-1 -translate-y-1/2 rounded-r-md bg-blue-500 dark:bg-blue-500"
+            aria-hidden="true"
+          />
+          <div>
+            <p className="flex items-center justify-between gap-2">
+              <span className="text-sm text-gray-500 dark:text-gray-500">Net cost savings</span>
+              <span className="text-sm text-gray-500 dark:text-gray-500">current</span>
+            </p>
+            <p className="flex items-center justify-between gap-2">
+              <span className="text-lg font-medium text-gray-900 dark:text-gray-50">$287 540</span>
+              <span className="text-base font-medium text-gray-500 dark:text-gray-500">$178 940</span>
+            </p>
+          </div>
+        </div>
+        <div className="relative rounded-md border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <span
+            className="absolute inset-x-0 top-1/2 h-10 w-1 -translate-y-1/2 rounded-r-md bg-blue-500 dark:bg-blue-500"
+            aria-hidden="true"
+          />
+          <div>
+            <p className="flex items-center justify-between gap-2">
+              <span className="text-sm text-gray-500 dark:text-gray-500">Net FTE impact</span>
+              <span className="text-sm text-gray-500 dark:text-gray-500">current</span>
+            </p>
+            <p className="flex items-center justify-between gap-2">
+              <span className="text-lg font-medium text-gray-900 dark:text-gray-50">-17.1</span>
+              <span className="text-base font-medium text-gray-500 dark:text-gray-500">-10.6</span>
+            </p>
+          </div>
+        </div>
+
+        <Card className="sm:mx-auto sm:max-w-lg">
+          <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Top Positions</dt>
+          <p className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
+            <span>Token</span>
+            <span>Amount / Share</span>
+          </p>
+          <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
+            {top_positions.map((item, idx) => {
+              const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
+              return (
+                <ListItem key={item.contract.name} className="space-x-6">
+                  <div className="flex items-center space-x-2.5 truncate">
+                    <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
+                    <span className="truncate dark:text-gray-300">{item.contract.name}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
+                      {formatNumber(item.amount, "currency")}
+                    </span>
+                    <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                      {formatNumber(item.progress_percentage, "percentage")}
+                    </span>
+                  </div>
+                </ListItem>
+              );
+            })}
+          </List>
+        </Card>
+        <Card className="sm:mx-auto sm:max-w-lg">
+          <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Top Blockchains</dt>
+          <p className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
+            <span>Blockchain</span>
+            <span>Amount / Share</span>
+          </p>
+          <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
+            {top_blockchains.map((item, idx) => {
+              const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
+              return (
+                <ListItem key={item.name} className="space-x-6">
+                  <div className="flex items-center space-x-2.5 truncate">
+                    <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
+                    <span className="truncate dark:text-gray-300">{item.name}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
+                      {formatNumber(item.balance, "currency")}
+                    </span>
+                    <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                      {formatNumber(item.progress_percentage, "percentage")}
+                    </span>
+                  </div>
+                </ListItem>
+              );
+            })}
+          </List>
+        </Card>
+      </dl>
+      <DataTable data={wallets} columns={columns} />
       <dl className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Current Tickets</dt>
@@ -305,67 +420,7 @@ const Wallets = () => {
             />
           </div>
         </Card>
-        <Card className="sm:mx-auto sm:max-w-lg">
-          <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Biggest Positions</dt>
-          <p className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
-            <span>Token</span>
-            <span>Amount / Share</span>
-          </p>
-          <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
-            {top_positions.map((item, idx) => {
-              const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
-              return (
-                <ListItem key={item.contract.name} className="space-x-6">
-                  <div className="flex items-center space-x-2.5 truncate">
-                    <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
-                    <span className="truncate dark:text-gray-300">{item.contract.name}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
-                      {formatNumber(item.amount, "currency")}
-                    </span>
-                    <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                      {formatNumber(item.progress_percentage, "percentage")}
-                    </span>
-                  </div>
-                </ListItem>
-              );
-            })}
-          </List>
-        </Card>
-        <Card className="sm:mx-auto sm:max-w-lg">
-          <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Biggest Blockchains</dt>
-          <p className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
-            <span>Blockchain</span>
-            <span>Amount / Share</span>
-          </p>
-          <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
-            {top_blockchains.map((item, idx) => {
-              const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
-              return (
-                <ListItem key={item.name} className="space-x-6">
-                  <div className="flex items-center space-x-2.5 truncate">
-                    <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
-                    <span className="truncate dark:text-gray-300">{item.name}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
-                      {formatNumber(item.balance, "currency")}
-                    </span>
-                    <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                      {formatNumber(item.progress_percentage, "percentage")}
-                    </span>
-                  </div>
-                </ListItem>
-              );
-            })}
-          </List>
-        </Card>
       </dl>
-      <DataTable
-        data={wallets}
-        columns={columns}
-      />
     </main>
     // <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
     //   <Heading variant="h6" className="mb-2">

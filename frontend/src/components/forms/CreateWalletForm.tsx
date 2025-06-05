@@ -35,7 +35,7 @@ const CreateWalletForm = () => {
   const onSubmit = (data: FormData) => {
     createWallet(data.address, data.name, data.description)
       .json((json) => {
-        router.push("/dashboard");
+        router.push("/overview");
       })
       .catch((err) => {
         setError("root", { type: "manual", message: err.json.detail });

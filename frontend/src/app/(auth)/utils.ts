@@ -73,9 +73,14 @@ const storeToken = (token: string, type: "access" | "refresh") => {
     return api.auth(`Bearer ${ accessToken }`).get("/api/auth/users/me");
   };
 
-  const createWallet = (address: string, name: string, description: string) => {
+  const createWallet = (address: string | undefined, name: string | undefined, description: string | undefined) => {
     const accessToken = getToken("access");
     return api.auth(`Bearer ${ accessToken }`).post({ address, name, description }, "/api/wallets/");
+  };
+
+  const editWallet = (id: string | undefined, address: string | undefined, name: string | undefined, description: string | undefined) => {
+    const accessToken = getToken("access");
+    return api.auth(`Bearer ${ accessToken }`).put({ address, name, description }, `/api/wallets/${id}/`);
   };
 
   export const AuthActions = () => {
@@ -90,6 +95,7 @@ const storeToken = (token: string, type: "access" | "refresh") => {
       logout,
       removeTokens,
       createWallet,
+      editWallet,
       getUserMe,
     };
   };
