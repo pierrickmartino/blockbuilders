@@ -1,12 +1,4 @@
-import {
-  Position,
-  Wallet,
-  Transaction,
-  Blockchain,
-  Contract,
-  MarketData,
-  CapitalGainHisto,
-} from "./definition";
+import { Position, Wallet, Transaction, Blockchain, Contract, MarketData, CapitalGainHisto } from "./definition";
 import { fetcher } from "./fetcher";
 
 export const fetchWallets = async (
@@ -15,9 +7,8 @@ export const fetchWallets = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-
   try {
-    const response = await fetcher(`/api/wallets/?page=${page+1}&limit=${rowsPerPage}`);
+    const response = await fetcher(`/api/wallets/?page=${page + 1}&limit=${rowsPerPage}`);
 
     if (response) {
       setWallets(response.results); // Ensure the wallets are correctly set
@@ -30,10 +21,7 @@ export const fetchWallets = async (
   }
 };
 
-export const fetchWalletsAll = async (
-  setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>,
-): Promise<void> => {
-
+export const fetchWalletsAll = async (setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>): Promise<void> => {
   try {
     const response = await fetcher(`/api/wallets/?limit=100`);
 
@@ -55,9 +43,8 @@ export const fetchPositionsWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-
   try {
-    const response = await fetcher(`/api/wallets/${wallet_id}/positions/?search=${searchTerm}&page=${page+1}&limit=${rowsPerPage}`);
+    const response = await fetcher(`/api/wallets/${wallet_id}/positions/?search=${searchTerm}&page=${page + 1}&limit=${rowsPerPage}`);
 
     if (response.results) {
       setPositions(response.results); // Ensure the positions are correctly set
@@ -77,10 +64,9 @@ export const fetchPositionsAllWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-
   try {
-    const response = await fetcher(`/api/positions/?search=${searchTerm}&page=${page+1}&limit=${rowsPerPage}`);
-    
+    const response = await fetcher(`/api/positions/?search=${searchTerm}&page=${page + 1}&limit=${rowsPerPage}`);
+
     if (response.results) {
       setPositions(response.results); // Ensure the positions are correctly set
       setTotalCount(response.count); // Update total count if pagination is enabled
@@ -99,9 +85,8 @@ export const fetchPositions = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-
   try {
-    const response = await fetcher(`/api/wallets/${wallet_id}/positions/?page=${page+1}&limit=${rowsPerPage}`);
+    const response = await fetcher(`/api/wallets/${wallet_id}/positions/?page=${page + 1}&limit=${rowsPerPage}`);
 
     if (response.results) {
       setPositions(response.results); // Ensure the positions are correctly set
@@ -120,10 +105,8 @@ export const fetchPositionsAll = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-
- 
   try {
-    const response = await fetcher(`/api/positions/?page=${page+1}&limit=${rowsPerPage}`);
+    const response = await fetcher(`/api/positions/?page=${page + 1}&limit=${rowsPerPage}`);
 
     if (response.results) {
       setPositions(response.results); // Ensure the positions are correctly set
@@ -136,15 +119,10 @@ export const fetchPositionsAll = async (
   }
 };
 
-export const fetchTopPositions = async (
-  max: number,
-  setTopPositions: React.Dispatch<React.SetStateAction<Position[]>>
-): Promise<void> => {
-
- 
+export const fetchTopPositions = async (max: number, setTopPositions: React.Dispatch<React.SetStateAction<Position[]>>): Promise<void> => {
   try {
     const response = await fetcher(`/api/positions/top/${max}`);
-    
+
     if (response.results) {
       setTopPositions(response.results); // Ensure the positions are correctly set
     }
@@ -159,9 +137,6 @@ export const fetchTopBlockchains = async (
   max: number,
   setTopBlockchains: React.Dispatch<React.SetStateAction<Blockchain[]>>
 ): Promise<void> => {
-
-  
-
   try {
     const response = await fetcher(`/api/blockchains/top/${max}`);
 
@@ -179,9 +154,8 @@ export const fetchLastTransactions = async (
   max: number,
   setLastTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>
 ): Promise<void> => {
-
   try {
-    const response = await fetcher(`/api/transactions/last/${max}`);    
+    const response = await fetcher(`/api/transactions/last/${max}`);
 
     if (response.results) {
       setLastTransactions(response.results); // Ensure the transactions are correctly set
@@ -193,13 +167,10 @@ export const fetchLastTransactions = async (
   }
 };
 
-export const fetchCountTransactions = async (
-  setCountTransactions: React.Dispatch<React.SetStateAction<number>>
-): Promise<void> => {
-
+export const fetchCountTransactions = async (setCountTransactions: React.Dispatch<React.SetStateAction<number>>): Promise<void> => {
   try {
-    const response = await fetcher(`/api/transactions/count`);    
-    
+    const response = await fetcher(`/api/transactions/count`);
+
     if (response) {
       setCountTransactions(response.counter); // Ensure the transactions are correctly set
     }
@@ -218,9 +189,10 @@ export const fetchTransactions = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-
   try {
-    const response = await fetcher(`/api/wallets/${wallet_id}/positions/${position_id}/transactions/?page=${page+1}&limit=${rowsPerPage}`);
+    const response = await fetcher(
+      `/api/wallets/${wallet_id}/positions/${position_id}/transactions/?page=${page + 1}&limit=${rowsPerPage}`
+    );
 
     if (response.results) {
       setTransactions(response.results); // Ensure the transactions are correctly set
@@ -236,9 +208,8 @@ export const fetchTransactions = async (
 export const fetchPositionCapitalGainHisto = async (
   offset: number,
   position_id: string,
-  setPositionCapitalGainHisto: React.Dispatch<React.SetStateAction<CapitalGainHisto[]>>,
+  setPositionCapitalGainHisto: React.Dispatch<React.SetStateAction<CapitalGainHisto[]>>
 ): Promise<void> => {
-
   try {
     const response = await fetcher(`/api/positions/${position_id}/capitalgains/${offset}`);
 
@@ -255,9 +226,8 @@ export const fetchPositionCapitalGainHisto = async (
 export const fetchWalletCapitalGainHisto = async (
   offset: number,
   wallet_id: string,
-  setWalletCapitalGainHisto: React.Dispatch<React.SetStateAction<CapitalGainHisto[]>>,
+  setWalletCapitalGainHisto: React.Dispatch<React.SetStateAction<CapitalGainHisto[]>>
 ): Promise<void> => {
-
   try {
     const response = await fetcher(`/api/wallets/${wallet_id}/capitalgains/${offset}`);
 
@@ -273,9 +243,8 @@ export const fetchWalletCapitalGainHisto = async (
 
 export const fetchTotalCapitalGainHisto = async (
   offset: number,
-  setTotalCapitalGainHisto: React.Dispatch<React.SetStateAction<CapitalGainHisto[]>>,
+  setTotalCapitalGainHisto: React.Dispatch<React.SetStateAction<CapitalGainHisto[]>>
 ): Promise<void> => {
-
   try {
     const response = await fetcher(`/api/wallets/capitalgains/${offset}`);
 
@@ -295,10 +264,9 @@ export const fetchTransactionsAll = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-
   try {
-    const response = await fetcher(`/api/transactions/?page=${page+1}&limit=${rowsPerPage}`);
-    
+    const response = await fetcher(`/api/transactions/?page=${page + 1}&limit=${rowsPerPage}`);
+
     if (response.results) {
       setTransactions(response.results); // Ensure the transactions are correctly set
       setTotalCount(response.count); // Update total count if pagination is enabled
@@ -319,10 +287,11 @@ export const fetchTransactionsWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-
   try {
-    const response = await fetcher(`/api/wallets/${wallet_id}/positions/${position_id}/transactions/?search=${searchTerm}&page=${page+1}&limit=${rowsPerPage}`);
-    
+    const response = await fetcher(
+      `/api/wallets/${wallet_id}/positions/${position_id}/transactions/?search=${searchTerm}&page=${page + 1}&limit=${rowsPerPage}`
+    );
+
     if (response.results) {
       setTransactions(response.results); // Ensure the transactions are correctly set
       setTotalCount(response.count); // Update total count if pagination is enabled
@@ -341,10 +310,9 @@ export const fetchTransactionsAllWithSearch = async (
   page: number,
   rowsPerPage: number
 ): Promise<void> => {
-  
   try {
-    const response = await fetcher(`/api/transactions/?search=${searchTerm}&page=${page+1}&limit=${rowsPerPage}`);
-  
+    const response = await fetcher(`/api/transactions/?search=${searchTerm}&page=${page + 1}&limit=${rowsPerPage}`);
+
     if (response.results) {
       setTransactions(response.results); // Ensure the transactions are correctly set
       setTotalCount(response.count); // Update total count if pagination is enabled
@@ -356,19 +324,12 @@ export const fetchTransactionsAllWithSearch = async (
   }
 };
 
-export const fetchContractsAll = async (
-  setContracts: React.Dispatch<React.SetStateAction<Contract[]>>,
-  setTotalCount: React.Dispatch<React.SetStateAction<number>>,
-  page: number,
-  rowsPerPage: number
-): Promise<void> => {
-
+export const fetchContractsAll = async (setContracts: React.Dispatch<React.SetStateAction<Contract[]>>): Promise<void> => {
   try {
-    const response = await fetcher(`/api/contracts/?page=${page+1}&limit=${rowsPerPage}`);
-    
+    const response = await fetcher(`/api/contracts/?limit=100`);
+
     if (response.results) {
       setContracts(response.results); // Ensure the transactions are correctly set
-      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
@@ -381,12 +342,11 @@ export const fetchContractMarketPriceHisto = async (
   offset: number,
   symbol: string,
   reference: string,
-  setMarketDataHisto: React.Dispatch<React.SetStateAction<MarketData[]>>,
+  setMarketDataHisto: React.Dispatch<React.SetStateAction<MarketData[]>>
 ): Promise<void> => {
-
   try {
     const response = await fetcher(`/api/marketdatas/${symbol}/${reference}/${offset}`);
-    
+
     if (response.results) {
       setMarketDataHisto(response.results);
     }
@@ -399,18 +359,13 @@ export const fetchContractMarketPriceHisto = async (
 
 export const fetchContractsAllWithSearch = async (
   searchTerm: string,
-  setContracts: React.Dispatch<React.SetStateAction<Contract[]>>,
-  setTotalCount: React.Dispatch<React.SetStateAction<number>>,
-  page: number,
-  rowsPerPage: number
+  setContracts: React.Dispatch<React.SetStateAction<Contract[]>>
 ): Promise<void> => {
-
   try {
-    const response = await fetcher(`/api/contracts/?search=${searchTerm}&page=${page+1}&limit=${rowsPerPage}`);
-    
+    const response = await fetcher(`/api/contracts/?search=${searchTerm}&limit=100`);
+
     if (response.results) {
       setContracts(response.results); // Ensure the transactions are correctly set
-      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
@@ -420,10 +375,9 @@ export const fetchContractsAllWithSearch = async (
 };
 
 export const fetchTaskStatus = async (task_id: string): Promise<string> => {
-  
   try {
     const response = await fetcher(`/api/tasks/${task_id}/status`);
-    
+
     if (response) {
       return response.status;
     } else {
