@@ -19,6 +19,7 @@ const typeIconMapping: Record<string, React.ElementType> = {
 };
 
 const isZero = (n: number | null | undefined) => Number(n) === 0;
+const truncate = (addr: string) => `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 
 function renderChipAmount(amount: number, type: "currency" | "quantity_precise" | "quantity" | "percentage") {
   return (
@@ -98,6 +99,9 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
         displayName: "Name",
       },
       filterFn: "arrIncludesSome",
+      cell: ({ getValue }) => {
+        return <span className="font-medium">{getValue()}</span>;
+      },
     }),
     columnHelper.accessor("description", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,
@@ -116,6 +120,9 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
         displayName: "Address",
       },
       filterFn: "arrIncludesSome",
+      cell: ({ getValue }) => {
+        return <span>{truncate(getValue())}</span>;
+      },
     }),
     columnHelper.accessor("balance", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Balance" />,
@@ -125,6 +132,9 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
         displayName: "Balance",
       },
       filterFn: "arrIncludesSome",
+      cell: ({ getValue }) => {
+        return <span className="font-medium">{formatNumber(getValue(), "currency")}</span>;
+      },
     }),
     columnHelper.accessor("capital_gain", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Capital Gain" />,
@@ -134,6 +144,9 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
         displayName: "Capital Gain",
       },
       filterFn: "arrIncludesSome",
+      cell: ({ getValue }) => {
+        return <span>{formatNumber(getValue(), "currency")}</span>;
+      },
     }),
     columnHelper.accessor("unrealized_gain", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Unrealized Gain" />,
@@ -143,6 +156,9 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
         displayName: "Unrealized Gain",
       },
       filterFn: "arrIncludesSome",
+      cell: ({ getValue }) => {
+        return <span>{formatNumber(getValue(), "percentage")}</span>;
+      },
     }),
     // columnHelper.accessor("category", {
     //   header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
@@ -198,145 +214,145 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
 //       cell: "font-medium text-gray-900 dark:text-gray-50",
 //     },
 //   },
-  // {
-  //   header: "Created at",
-  //   accessorKey: "created",
-  //   meta: {
-  //     className: "text-left",
-  //   },
-  //   cell: ({ row }) => (
-  //     <>
-  //       {new Date(row.original.created).toLocaleDateString("en-GB", {
-  //         day: "2-digit",
-  //         month: "2-digit",
-  //         year: "numeric",
-  //         hour: "2-digit",
-  //         minute: "2-digit",
-  //       })}
-  //     </>
-  //   ),
-  // },
-  // {
-  //   header: "Description",
-  //   accessorKey: "description",
-  //   meta: {
-  //     className: "text-left",
-  //     cell: "font-medium text-gray-900 dark:text-gray-50",
-  //   },
-  // },
-  // {
-  //   header: "Address",
-  //   accessorKey: "address",
-  //   meta: {
-  //     className: "text-left",
-  //     cell: "font-medium",
-  //   },
-  // },
-  // {
-  //   header: "Balance",
-  //   accessorKey: "balance",
-  //   meta: {
-  //     className: "text-right",
-  //     cell: "font-medium",
-  //   },
-  // },
-  // {
-  //   header: "Capital Gain",
-  //   accessorKey: "capital_gain",
-  //   meta: {
-  //     className: "text-right",
-  //     cell: "font-medium",
-  //   },
-  // },
-  // {
-  //   header: "Unrealized Gain",
-  //   accessorKey: "unrealized_gain",
-  //   meta: {
-  //     className: "text-right",
-  //     cell: "font-medium",
-  //   },
-  // },
-  // {
-  //   header: "Contact Type",
-  //   accessorKey: "type",
-  //   meta: {
-  //     className: "text-left",
-  //   },
-  //   cell: ({ row }) => {
-  //     const Icon = typeIconMapping[row.original.type]
-  //     return (
-  //       <div className="flex items-center gap-2">
-  //         {Icon && <Icon className="size-4 shrink-0" aria-hidden="true" />}
-  //         <span className="capitalize">
-  //           {row.original.type.replace("-contact", "")}
-  //         </span>
-  //       </div>
-  //     )
-  //   },
-  // },
-  // {
-  //   header: "Duration",
-  //   accessorKey: "duration",
-  //   meta: {
-  //     className: "text-right",
-  //   },
-  //   cell: ({ row }) => {
-  //     const DurationCell = (props: { minutes: string | null }) => {
-  //       if (props.minutes === null) return null
-  //       const mins = parseInt(props.minutes)
-  //       const hours = Math.floor(mins / 60)
-  //       const remainingMins = mins % 60
+// {
+//   header: "Created at",
+//   accessorKey: "created",
+//   meta: {
+//     className: "text-left",
+//   },
+//   cell: ({ row }) => (
+//     <>
+//       {new Date(row.original.created).toLocaleDateString("en-GB", {
+//         day: "2-digit",
+//         month: "2-digit",
+//         year: "numeric",
+//         hour: "2-digit",
+//         minute: "2-digit",
+//       })}
+//     </>
+//   ),
+// },
+// {
+//   header: "Description",
+//   accessorKey: "description",
+//   meta: {
+//     className: "text-left",
+//     cell: "font-medium text-gray-900 dark:text-gray-50",
+//   },
+// },
+// {
+//   header: "Address",
+//   accessorKey: "address",
+//   meta: {
+//     className: "text-left",
+//     cell: "font-medium",
+//   },
+// },
+// {
+//   header: "Balance",
+//   accessorKey: "balance",
+//   meta: {
+//     className: "text-right",
+//     cell: "font-medium",
+//   },
+// },
+// {
+//   header: "Capital Gain",
+//   accessorKey: "capital_gain",
+//   meta: {
+//     className: "text-right",
+//     cell: "font-medium",
+//   },
+// },
+// {
+//   header: "Unrealized Gain",
+//   accessorKey: "unrealized_gain",
+//   meta: {
+//     className: "text-right",
+//     cell: "font-medium",
+//   },
+// },
+// {
+//   header: "Contact Type",
+//   accessorKey: "type",
+//   meta: {
+//     className: "text-left",
+//   },
+//   cell: ({ row }) => {
+//     const Icon = typeIconMapping[row.original.type]
+//     return (
+//       <div className="flex items-center gap-2">
+//         {Icon && <Icon className="size-4 shrink-0" aria-hidden="true" />}
+//         <span className="capitalize">
+//           {row.original.type.replace("-contact", "")}
+//         </span>
+//       </div>
+//     )
+//   },
+// },
+// {
+//   header: "Duration",
+//   accessorKey: "duration",
+//   meta: {
+//     className: "text-right",
+//   },
+//   cell: ({ row }) => {
+//     const DurationCell = (props: { minutes: string | null }) => {
+//       if (props.minutes === null) return null
+//       const mins = parseInt(props.minutes)
+//       const hours = Math.floor(mins / 60)
+//       const remainingMins = mins % 60
 
-  //       return (
-  //         <span className="ml-auto text-gray-600 dark:text-gray-300">
-  //           {hours > 0 ? `${hours}h ` : ""}
-  //           {remainingMins}m
-  //         </span>
-  //       )
-  //     }
-  //     return (
-  //       <div className="flex items-center gap-2">
-  //         <DurationCell minutes={row.original.duration} />
-  //       </div>
-  //     )
-  //   },
-  // },
-  // {
-  //   header: "Assessed Priority",
-  //   accessorKey: "priority",
-  //   meta: {
-  //     className: "text-left",
-  //   },
-  //   cell: ({ row }) => (
-  //     <Badge
-  //       variant="neutral"
-  //       className="gap-1.5 font-normal capitalize text-gray-700 dark:text-gray-300"
-  //     >
-  //       <span
-  //         className={cx(
-  //           "size-2 shrink-0 rounded-sm",
-  //           "bg-gray-500 dark:bg-gray-500",
-  //           {
-  //             "bg-emerald-600 dark:bg-emerald-400":
-  //               row.original.priority === "low",
-  //           },
-  //           {
-  //             "bg-gray-500 dark:bg-gray-500":
-  //               row.original.priority === "medium",
-  //           },
-  //           {
-  //             "bg-orange-500 dark:bg-orange-500":
-  //               row.original.priority === "high",
-  //           },
-  //           {
-  //             "bg-red-500 dark:bg-red-500":
-  //               row.original.priority === "emergency",
-  //           },
-  //         )}
-  //         aria-hidden="true"
-  //       />
-  //       {row.original.priority}
-  //     </Badge>
-  //   ),
-  // },
+//       return (
+//         <span className="ml-auto text-gray-600 dark:text-gray-300">
+//           {hours > 0 ? `${hours}h ` : ""}
+//           {remainingMins}m
+//         </span>
+//       )
+//     }
+//     return (
+//       <div className="flex items-center gap-2">
+//         <DurationCell minutes={row.original.duration} />
+//       </div>
+//     )
+//   },
+// },
+// {
+//   header: "Assessed Priority",
+//   accessorKey: "priority",
+//   meta: {
+//     className: "text-left",
+//   },
+//   cell: ({ row }) => (
+//     <Badge
+//       variant="neutral"
+//       className="gap-1.5 font-normal capitalize text-gray-700 dark:text-gray-300"
+//     >
+//       <span
+//         className={cx(
+//           "size-2 shrink-0 rounded-sm",
+//           "bg-gray-500 dark:bg-gray-500",
+//           {
+//             "bg-emerald-600 dark:bg-emerald-400":
+//               row.original.priority === "low",
+//           },
+//           {
+//             "bg-gray-500 dark:bg-gray-500":
+//               row.original.priority === "medium",
+//           },
+//           {
+//             "bg-orange-500 dark:bg-orange-500":
+//               row.original.priority === "high",
+//           },
+//           {
+//             "bg-red-500 dark:bg-red-500":
+//               row.original.priority === "emergency",
+//           },
+//         )}
+//         aria-hidden="true"
+//       />
+//       {row.original.priority}
+//     </Badge>
+//   ),
+// },
 // ] as ColumnDef<Wallet>[];
