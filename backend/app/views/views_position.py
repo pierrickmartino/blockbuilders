@@ -56,6 +56,7 @@ from app.models import (
     CategoryContractChoices,
     Position,
     Transaction,
+    User,
     UserSetting,
     Wallet,
     WalletProcess,
@@ -128,14 +129,18 @@ def delete_Position_by_id(request, position_id):
     result = delete_position_task.delay(position_id, 100)
     return redirect("dashboard")
 
+
 # @login_required
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
 def refresh_position_price(request):
     """
     View to refresh position prices of all the wallet of the user by chaining several Celery tasks.
     """
     logger.info(f"Enter in [refresh_position_price]")
     # Get the wallets owned by the user
-    wallets = Wallet.objects.filter(user=request.user)
+    user = get_object_or_404(User, id=request.user.id)
+    wallets = Wallet.objects.filter(user=user)
     if not wallets:
         logger.warning("No wallets found for the user.")
         return JsonResponse({"status": "No wallets found for the user."}, status=404)
@@ -154,7 +159,7 @@ def refresh_position_price(request):
 
     # For each wallet, we will start a chain of tasks
     for wallet_id in [wallet.id for wallet in wallets]:
-        chain(
+        chain_result = chain(
             start_wallet_resync_task.s(wallet_id),
             group(get_historical_price_from_market_task.s(symbol) for symbol in symbol_list),
             group(update_contract_information.s(symbol) for symbol in symbol_list),
@@ -163,6 +168,11 @@ def refresh_position_price(request):
             calculate_blockchain_balance_task.s(wallet_id),
             finish_wallet_resync_task.s(wallet_id),
         )()
+
+        logger.info(f"Started getting position prices")
+        # return redirect("dashboard")
+        return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
+
 
 # @login_required
 def refresh_wallet_position_price(request, wallet_id: uuid):
@@ -377,7 +387,7 @@ def get_total_capitalgains(request, last):
     # logger.info(f"Enter in [get_wallet_capitalgains] for wallet with id {wallet_id}")
 
     # Get all the wallets for the authenticated user
-    user = request.user
+    user = get_object_or_404(User, id=request.user.id)
     wallets = Wallet.objects.filter(user=user)
 
     # Calculate the total capital gain for all wallets
@@ -392,9 +402,9 @@ def get_total_capitalgains(request, last):
 
     # Get all the transactions for the wallets in scope and exclude suspicious contracts
     transactions = (
-        Transaction.objects.filter(position__wallet__user=request.user) # Filter transactions for the authenticated user
-        .exclude(position__contract__category=CategoryContractChoices.STABLE) # Exclude stable contracts
-        .exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS) # Exclude suspicious contracts
+        Transaction.objects.filter(position__wallet__user=request.user)  # Filter transactions for the authenticated user
+        .exclude(position__contract__category=CategoryContractChoices.STABLE)  # Exclude stable contracts
+        .exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS)  # Exclude suspicious contracts
         .order_by("-date")
     )  # Order by date and limit to the max specified
     transactions_in_scope = [t for t in transactions if t.date.date() >= days_ago]
