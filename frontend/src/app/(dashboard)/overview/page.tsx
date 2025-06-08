@@ -37,6 +37,7 @@ import { formatNumber } from "@/lib/format";
 import { Card } from "@/components/Card";
 import { getColumns } from "@/components/ui/data-table-wallet/columns";
 import { Row } from "@tanstack/react-table";
+import { refresh } from "@/lib/actions";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -57,7 +58,7 @@ function getCapitalGainsDelta(capitalGainHisto: CapitalGainHisto[]): number {
   const lastGain = capitalGainHisto[0].running_capital_gain;
   const firstGain = capitalGainHisto[capitalGainHisto.length - 1].running_capital_gain;
 
-  return (lastGain - firstGain) / Math.abs(firstGain) * 100; // Return percentage change
+  return ((lastGain - firstGain) / Math.abs(firstGain)) * 100; // Return percentage change
 }
 
 const Wallets = () => {
@@ -168,6 +169,15 @@ const Wallets = () => {
   //   toggleDrawer(false);
   // };
 
+  const handleRefresh = async () => {
+    const response = await refresh();
+    if (response.task_id) {
+      //onRefreshed(response.task_id); // Notify the parent component with the task ID
+    } else {
+      console.error("Error: Task ID not found in the response.");
+    }
+  };
+
   const handleWalletDeleted = () => {
     fetchWalletData(); // Re-fetch wallet data after a new wallet is created
   };
@@ -219,7 +229,8 @@ const Wallets = () => {
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Overview</h1>
           <p className="text-gray-500 sm:text-sm/6 dark:text-gray-500">Real-time monitoring of support metrics with AI-powered insights</p>
         </div>
-        <Button
+        <div className="flex items-end gap-2">
+          <Button
           onClick={() => {
             setRow(null);
             setIsOpen(true);
@@ -229,6 +240,23 @@ const Wallets = () => {
           Add Wallet
           <RiAddLine className="-mr-0.5 size-5 shrink-0" aria-hidden="true" />
         </Button>
+        <Button variant="secondary" onClick={() => handleRefresh()}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+            />
+          </svg>
+        </Button>
+        </div>
         <WalletDrawer
           open={isOpen}
           onOpenChange={setIsOpen}

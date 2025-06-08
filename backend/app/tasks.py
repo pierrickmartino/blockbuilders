@@ -911,7 +911,6 @@ def finish_contract_download_task(previous_return: list, contract_id: uuid):
 
     return contract_id
 
-
 @shared_task
 def start_wallet_resync_task(wallet_id: uuid):
     """

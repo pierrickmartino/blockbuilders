@@ -128,6 +128,41 @@ def delete_Position_by_id(request, position_id):
     result = delete_position_task.delay(position_id, 100)
     return redirect("dashboard")
 
+# @login_required
+def refresh_position_price(request):
+    """
+    View to refresh position prices of all the wallet of the user by chaining several Celery tasks.
+    """
+    logger.info(f"Enter in [refresh_position_price]")
+    # Get the wallets owned by the user
+    wallets = Wallet.objects.filter(user=request.user)
+    if not wallets:
+        logger.warning("No wallets found for the user.")
+        return JsonResponse({"status": "No wallets found for the user."}, status=404)
+    # Collect all the positions from all wallets
+    positions = Position.objects.filter(wallet__in=wallets)
+    if not positions:
+        logger.warning("No positions found for the user's wallets.")
+        return JsonResponse({"status": "No positions found for the user's wallets."}, status=404)
+    symbol_set = {
+        position.contract.symbol
+        for position in positions
+        if not position.contract.symbol[0].islower() and "-" not in position.contract.symbol and "." not in position.contract.symbol
+    }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
+    # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
+    symbol_list = list(symbol_set)
+
+    # For each wallet, we will start a chain of tasks
+    for wallet_id in [wallet.id for wallet in wallets]:
+        chain(
+            start_wallet_resync_task.s(wallet_id),
+            group(get_historical_price_from_market_task.s(symbol) for symbol in symbol_list),
+            group(update_contract_information.s(symbol) for symbol in symbol_list),
+            get_price_from_market_task.s(symbol_list),
+            calculate_wallet_balance_task.s(wallet_id),
+            calculate_blockchain_balance_task.s(wallet_id),
+            finish_wallet_resync_task.s(wallet_id),
+        )()
 
 # @login_required
 def refresh_wallet_position_price(request, wallet_id: uuid):

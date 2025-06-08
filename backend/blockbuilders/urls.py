@@ -226,6 +226,11 @@ urlpatterns = [
         name="wallet-refresh",
     ),
     path(
+        "api/wallets/refresh/",
+        views_position.refresh_position_price,
+        name="refresh",
+    ),
+    path(
         "api/wallets/<uuid:wallet_id>/refresh-full/",
         views_position.refresh_full_historical_position_price,
         name="wallet-refresh-full",

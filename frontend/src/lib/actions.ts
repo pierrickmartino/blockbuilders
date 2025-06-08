@@ -100,6 +100,17 @@ export async function downloadContractInfo(id: string) {
   }
 }
 
+export async function refresh() {
+  try {
+    const response = await poster(`/api/wallets/refresh/`);
+    const result = await response;
+    console.log("Task triggered:", result);
+    return result;
+  } catch {
+    return { message: "Database Error: Failed to refresh." };
+  }
+}
+
 export async function refreshWallet(id: string) {
   try {
     const response = await poster(`/api/wallets/${id}/refresh/`);
