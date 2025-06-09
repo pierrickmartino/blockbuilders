@@ -190,14 +190,14 @@ class TransactionLastView(generics.ListAPIView):
 
     def get_queryset(self):
         # Get the max number of transactions to return from the URL kwargs
-        max = int(self.kwargs.get("max", 1))  # Default to 1 if not provided
+        limit = int(self.kwargs.get("limit", 1))  # Default to 1 if not provided
 
         # Filter transactions to include only those belonging to wallets owned by the authenticated user
         return (
             Transaction.objects.filter(position__wallet__user=self.request.user)  # Restrict to user's wallets
             .exclude(position__contract__category=CategoryContractChoices.STABLE)  # Exclude STABLE contracts
             .exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS)  # Exclude SUSPICIOUS contracts
-            .order_by("-date")[:max]  # Order by date and limit to the max specified
+            .order_by("-date")[:limit]  # Order by date and limit to the max specified
         )
 
 
@@ -207,11 +207,25 @@ class PositionTopView(generics.ListAPIView):
 
     def get_queryset(self):
         # Get the max number of positions to return from the URL kwargs
-        max = int(self.kwargs.get("max", 1))  # Default to 1 if not provided
+        limit = int(self.kwargs.get("limit", 1))  # Default to 1 if not provided
 
         # Filter positions to include only those belonging to wallets owned by the authenticated user
         return Position.objects.filter(wallet__user=self.request.user).order_by("-amount")[  # Restrict to user's wallets
-            :max
+            :limit
+        ]  # Order by amount and limit to the max specified
+
+
+class PositionMostProfitableView(generics.ListAPIView):
+    serializer_class = PositionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get the max number of positions to return from the URL kwargs
+        limit = int(self.kwargs.get("limit", 1))  # Default to 1 if not provided
+
+        # Filter positions to include only those belonging to wallets owned by the authenticated user
+        return Position.objects.filter(wallet__user=self.request.user).order_by("-capital_gain")[  # Restrict to user's wallets
+            :limit
         ]  # Order by amount and limit to the max specified
 
 
@@ -233,9 +247,9 @@ class BlockchainTopView(generics.ListAPIView):
 
     def get_queryset(self):
         # Get the max number of blockchains to return from the URL kwargs
-        max = int(self.kwargs.get("max", 1))  # Default to 1 if not provided
+        limit = int(self.kwargs.get("limit", 1))  # Default to 1 if not provided
 
-        return Blockchain.objects.order_by("-balance")[:max]
+        return Blockchain.objects.order_by("-balance")[:limit]
 
 
 class WalletPositionView(generics.ListAPIView):
