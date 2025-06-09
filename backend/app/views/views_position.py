@@ -129,11 +129,6 @@ def delete_Position_by_id(request, position_id):
     result = delete_position_task.delay(position_id, 100)
     return redirect("dashboard")
 
-<<<<<<< HEAD
-
-# @login_required
-=======
->>>>>>> 454f494 (Ajout de la vérification d'authentification pour la fonction de rafraîchissement des prix des positions et amélioration de la récupération des portefeuilles de l'utilisateur.)
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
 def refresh_position_price(request):
@@ -175,11 +170,7 @@ def refresh_position_price(request):
         logger.info(f"Started getting position prices")
         # return redirect("dashboard")
         return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
-<<<<<<< HEAD
-
-=======
     
->>>>>>> 454f494 (Ajout de la vérification d'authentification pour la fonction de rafraîchissement des prix des positions et amélioration de la récupération des portefeuilles de l'utilisateur.)
 
 # @login_required
 def refresh_wallet_position_price(request, wallet_id: uuid):
