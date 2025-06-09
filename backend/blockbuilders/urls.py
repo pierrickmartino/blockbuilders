@@ -26,6 +26,7 @@ from app.views.views_api import (
     FiatViewSet,
     LogoutView,
     MarketDataLastView,
+    PositionMostProfitableView,
     PositionTopView,
     PositionView,
     TransactionLastView,
@@ -71,6 +72,7 @@ transaction_last_list = TransactionLastView.as_view()
 transaction_detail = TransactionViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})
 position_list = PositionView.as_view()
 position_top_list = PositionTopView.as_view()
+position_most_profitable_list = PositionMostProfitableView.as_view()
 blockchain_top_list = BlockchainTopView.as_view()
 position_detail = PositionViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})
 urlpatterns = [
@@ -256,7 +258,7 @@ urlpatterns = [
     # FROM BLOCKCHAIN OBJECT #
     path("api/blockchains/", blockchain_list, name="blockchain-list"),
     path("api/blockchains/<uuid:pk>/", blockchain_detail, name="blockchain-detail"),
-    path("api/blockchains/top/<int:max>", blockchain_top_list, name="blockchain-top-list"),
+    path("api/blockchains/top/<int:limit>", blockchain_top_list, name="blockchain-top-list"),
     # FROM CONTRACT OBJECT #
     path("api/contracts/", contract_list, name="contract-list"),
     path("api/contracts/<uuid:pk>/", contract_detail, name="contract-detail"),
@@ -289,12 +291,13 @@ urlpatterns = [
     path("api/usersettings/<uuid:pk>/", user_setting_detail, name="usersetting-detail"),
     # FROM TRANSACTION OBJECT #
     path("api/transactions/", transaction_list, name="transaction-list"),
-    path("api/transactions/last/<int:max>", transaction_last_list, name="transaction-last-list"),
+    path("api/transactions/last/<int:limit>", transaction_last_list, name="transaction-last-list"),
     path("api/transactions/count", views_transaction.count_transactions, name="transaction-count"),
     path("api/transactions/<uuid:pk>/", transaction_detail, name="transaction-detail"),
     # FROM POSITION OBJECT #
     path("api/positions/", position_list, name="position-list"),
-    path("api/positions/top/<int:max>", position_top_list, name="position-top-list"),
+    path("api/positions/top/<int:limit>", position_top_list, name="position-top-list"),
+    path("api/positions/mostprofitable/<int:limit>", position_most_profitable_list, name="position-mostprofitable-list"),
     path(
         "api/positions/<uuid:position_id>/capitalgains/<int:last>",
         views_position.get_position_capitalgains,

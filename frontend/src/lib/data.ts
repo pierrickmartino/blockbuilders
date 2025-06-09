@@ -119,9 +119,9 @@ export const fetchPositionsAll = async (
   }
 };
 
-export const fetchTopPositions = async (max: number, setTopPositions: React.Dispatch<React.SetStateAction<Position[]>>): Promise<void> => {
+export const fetchTopPositions = async (limit: number, setTopPositions: React.Dispatch<React.SetStateAction<Position[]>>): Promise<void> => {
   try {
-    const response = await fetcher(`/api/positions/top/${max}`);
+    const response = await fetcher(`/api/positions/top/${limit}`);
 
     if (response.results) {
       setTopPositions(response.results); // Ensure the positions are correctly set
@@ -134,11 +134,11 @@ export const fetchTopPositions = async (max: number, setTopPositions: React.Disp
 };
 
 export const fetchTopBlockchains = async (
-  max: number,
+  limit: number,
   setTopBlockchains: React.Dispatch<React.SetStateAction<Blockchain[]>>
 ): Promise<void> => {
   try {
-    const response = await fetcher(`/api/blockchains/top/${max}`);
+    const response = await fetcher(`/api/blockchains/top/${limit}`);
 
     if (response.results) {
       setTopBlockchains(response.results); // Ensure the blockchains are correctly set
@@ -150,12 +150,29 @@ export const fetchTopBlockchains = async (
   }
 };
 
+export const fetchMostProfitablePositions = async (
+  limit: number,
+  setMostProfitablePositions: React.Dispatch<React.SetStateAction<Position[]>>
+): Promise<void> => {
+  try {
+    const response = await fetcher(`/api/positions/mostprofitable/${limit}`);
+
+    if (response.results) {
+      setMostProfitablePositions(response.results); // Ensure the positions are correctly set
+    }
+  } catch (err) {
+    console.error("Error fetching data from most profitable positions API:", err);
+    setMostProfitablePositions([]); // Set empty positions if fetching fails
+    throw new Error("Failed to fetch the most profitable positions.");
+  }
+};
+
 export const fetchLastTransactions = async (
-  max: number,
+  limit: number,
   setLastTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>
 ): Promise<void> => {
   try {
-    const response = await fetcher(`/api/transactions/last/${max}`);
+    const response = await fetcher(`/api/transactions/last/${limit}`);
 
     if (response.results) {
       setLastTransactions(response.results); // Ensure the transactions are correctly set

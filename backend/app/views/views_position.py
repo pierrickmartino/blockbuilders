@@ -273,6 +273,9 @@ def download_wallet(request, wallet_id: uuid):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
 def get_position_capitalgains(request, position_id, last):
+    """
+    View to get the capital gains for a specific position over the last 'last' days.
+    """
     # logger.info(f"Enter in [get_position_capitalgains] for position with id {position_id}")
 
     # Calculate the date 30 days ago from now
@@ -324,6 +327,9 @@ def get_position_capitalgains(request, position_id, last):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
 def get_wallet_capitalgains(request, wallet_id, last):
+    """
+    View to get the capital gains for a specific wallet.
+    """
     # logger.info(f"Enter in [get_wallet_capitalgains] for wallet with id {wallet_id}")
 
     # Calculate the date 30 days ago from now
@@ -374,6 +380,9 @@ def get_wallet_capitalgains(request, wallet_id, last):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
 def get_total_capitalgains(request, last):
+    """
+    View to get the total capital gains for all wallets of the authenticated user.
+    """
     # logger.info(f"Enter in [get_wallet_capitalgains] for wallet with id {wallet_id}")
 
     # Get all the wallets for the authenticated user

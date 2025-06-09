@@ -6,6 +6,7 @@ import {
   fetchWallets,
   fetchTopPositions,
   fetchTopBlockchains,
+  fetchMostProfitablePositions,
   fetchLastTransactions,
   fetchCountTransactions,
   fetchTaskStatus,
@@ -65,6 +66,7 @@ const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
   const [top_positions, setTopPositions] = useState<Position[]>([]);
   const [top_blockchains, setTopBlockchains] = useState<Blockchain[]>([]);
+  const [most_profitable_positions, setMostProfitablePositions] = useState<Position[]>([]);
   const [last_transactions, setLastTransactions] = useState<Transaction[]>([]);
   const [total_capital_gains, setTotalCapitalGainHisto] = useState<CapitalGainHisto[]>([]);
   const [count_transactions, setCountTransactions] = useState(0);
@@ -147,6 +149,15 @@ const Wallets = () => {
   const fetchCountTransactionData = async () => {
     await fetchCountTransactions(setCountTransactions);
   };
+
+  // Fetch most profitable position function
+  const fetchMostProfitablePositionsData = async () => {
+    await fetchMostProfitablePositions(5, setMostProfitablePositions);
+  };
+
+  useEffect(() => {
+    fetchMostProfitablePositionsData();
+  }, []);
 
   useEffect(() => {
     fetchTopPositionData();
@@ -398,6 +409,32 @@ const Wallets = () => {
                     <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-gray-700 dark:bg-gray-800 dark:text-gray-300">
                       {formatNumber(item.progress_percentage, "percentage")}
                     </span>
+                  </div>
+                </ListItem>
+              );
+            })}
+          </List>
+        </Card>
+        <Card className="sm:mx-auto sm:max-w-lg">
+          <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Most Profitable</dt>
+          <p className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
+            <span>Position</span>
+            <span>Amount</span>
+          </p>
+          <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
+            {most_profitable_positions.map((item, idx) => {
+              const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
+              return (
+                <ListItem key={item.contract.name} className="space-x-6">
+                  <div className="flex items-center space-x-2.5 truncate">
+                    <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
+                    <span className="truncate dark:text-gray-300">{item.contract.name}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
+                      {formatNumber(item.capital_gain, "currency")}
+                    </span>
+                    
                   </div>
                 </ListItem>
               );
