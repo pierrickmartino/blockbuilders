@@ -167,6 +167,24 @@ export const fetchMostProfitablePositions = async (
   }
 };
 
+export const fetchLessProfitablePositions = async (
+  limit: number,
+  setLessProfitablePositions: React.Dispatch<React.SetStateAction<Position[]>>
+): Promise<void> => {
+  try {
+    const response = await fetcher(`/api/positions/lessprofitable/${limit}`);
+
+    if (response.results) {
+      setLessProfitablePositions(response.results); // Ensure the positions are correctly set
+    }
+  } catch (err) {
+    console.error("Error fetching data from less profitable positions API:", err);
+    setLessProfitablePositions([]); // Set empty positions if fetching fails
+    throw new Error("Failed to fetch the less profitable positions.");
+  }
+};
+
+
 export const fetchLastTransactions = async (
   limit: number,
   setLastTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>

@@ -26,6 +26,7 @@ from app.views.views_api import (
     FiatViewSet,
     LogoutView,
     MarketDataLastView,
+    PositionLessProfitableView,
     PositionMostProfitableView,
     PositionTopView,
     PositionView,
@@ -73,6 +74,7 @@ transaction_detail = TransactionViewSet.as_view({"get": "retrieve", "put": "upda
 position_list = PositionView.as_view()
 position_top_list = PositionTopView.as_view()
 position_most_profitable_list = PositionMostProfitableView.as_view()
+position_less_profitable_list = PositionLessProfitableView.as_view()
 blockchain_top_list = BlockchainTopView.as_view()
 position_detail = PositionViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})
 urlpatterns = [
@@ -298,6 +300,7 @@ urlpatterns = [
     path("api/positions/", position_list, name="position-list"),
     path("api/positions/top/<int:limit>", position_top_list, name="position-top-list"),
     path("api/positions/mostprofitable/<int:limit>", position_most_profitable_list, name="position-mostprofitable-list"),
+    path("api/positions/lessprofitable/<int:limit>", position_less_profitable_list, name="position-lessprofitable-list"),
     path(
         "api/positions/<uuid:position_id>/capitalgains/<int:last>",
         views_position.get_position_capitalgains,

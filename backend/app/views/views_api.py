@@ -228,6 +228,18 @@ class PositionMostProfitableView(generics.ListAPIView):
             :limit
         ]  # Order by amount and limit to the max specified
 
+class PositionLessProfitableView(generics.ListAPIView):
+    serializer_class = PositionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get the max number of positions to return from the URL kwargs
+        limit = int(self.kwargs.get("limit", 1))  # Default to 1 if not provided
+
+        # Filter positions to include only those belonging to wallets owned by the authenticated user
+        return Position.objects.filter(wallet__user=self.request.user).order_by("capital_gain")[  # Restrict to user's wallets
+            :limit
+        ]  # Order by amount and limit to the max specified
 
 class MarketDataLastView(generics.ListAPIView):
     serializer_class = MarketDataSerializer
@@ -331,8 +343,6 @@ class WalletPositionTransactionView(generics.ListAPIView):
 #             raise NotFound("Position not found for this wallet")
 #         except Wallet.DoesNotExist:
 #             raise NotFound("Wallet does not exist")
-
-# TODO : Récupérer une vue Historique au niveau Transaction avec une valeur par jour et les statistiques cumulées et daily
 
 
 class WalletPositionTransactionDetailView(generics.RetrieveAPIView):
