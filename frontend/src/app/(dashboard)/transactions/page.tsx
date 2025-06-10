@@ -1,23 +1,22 @@
 "use client";
-import { Box, Stack, Drawer } from "@mui/material";
 // components
-import Grid from "@mui/material/Grid2";
 import { useEffect, useState, useCallback } from "react";
 import { Transaction } from "@/lib/definition";
 import { fetchTransactionsAll, fetchTransactionsAllWithSearch } from "@/lib/data";
-import TransactionTable from "@/app/(dashboard)/components/dashboard/TransactionTable";
-import { Heading } from "@/components/Heading";
+import React from "react";
+import { Row } from "@tanstack/react-table";
+import { Divider } from "@/components/Divider";
+import { DataTable } from "@/components/ui/data-table-transaction/DataTable";
+import { TransactionDrawer } from "@/components/ui/TransactionDrawer";
+import { getColumns } from "@/components/ui/data-table-transaction/columns";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [page, setPage] = useState(0); // State for current page
-  const [rowsPerPage, setRowsPerPage] = useState(25); // State for rows per page
-  const [totalCount, setTotalCount] = useState(0); // State for total number of items
 
   // Memoize fetchTransactionData using useCallback
   const fetchTransactionData = useCallback(async () => {
-    await fetchTransactionsAll(setTransactions, setTotalCount, page, rowsPerPage);
-  }, [page, rowsPerPage]); // Dependencies include page and rowsPerPage
+    await fetchTransactionsAll(setTransactions);
+  }, []); // Dependencies include page and rowsPerPage
 
   // Use useEffect to call fetchTransactionData
   useEffect(() => {
@@ -25,16 +24,7 @@ const Transactions = () => {
   }, [fetchTransactionData]); // Include fetchTransactionData as a dependency
 
   const fetchTransactionDataWithSearch = async (searchTerm: string) => {
-    await fetchTransactionsAllWithSearch(String(searchTerm), setTransactions, setTotalCount, page, rowsPerPage);
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage); // Update page state
-  };
-
-  const handleRowsPerPageChange = (newRowsPerPage: number) => {
-    setRowsPerPage(newRowsPerPage); // Update rows per page state
-    setPage(0); // Reset page to 0 whenever rows per page changes
+    await fetchTransactionsAllWithSearch(String(searchTerm), setTransactions);
   };
 
   const handleSearch = (searchTerm: string) => {
@@ -42,46 +32,36 @@ const Transactions = () => {
     fetchTransactionDataWithSearch(searchTerm);
   };
 
-  /* Drawer for transaction detail */
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const toggleDrawer = (open: boolean) => {
-    setDrawerOpen(open);
-  };
-  const handleShowTransactionDrawer = () => {
-    toggleDrawer(true);
-  };
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [row, setRow] = React.useState<Row<Transaction> | null>(null);
+  const datas = row?.original;
 
-  const DrawerList = (
-    <Box sx={{ width: 350, height: "100%" }} role="presentation">
-      {/* <CreateWalletForm /> */}
-    </Box>
-  );
+  const columns = getColumns({
+    onEditClick: (row) => {
+      setRow(row);
+      setIsOpen(true);
+    },
+  });
 
   return (
-    <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
-      <Stack direction="row" sx={{ justifyContent: "space-between", alignItems: "flex-start" }}>
-        <Heading variant="h6" className="mb-2">
-          Transactions
-        </Heading>
-      </Stack>
-      <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2) }}>
-        <Grid size={{ xs: 12, lg: 12 }}>
-          <TransactionTable
-            transactions={transactions}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            totalCount={totalCount}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            onTransactionClick={handleShowTransactionDrawer}
+      <main>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Transactions</h1>
+            <p className="text-gray-500 sm:text-sm/6 dark:text-gray-500">Monitor transaction performance and manage ticket generation</p>
+          </div>
+          <TransactionDrawer
+            open={isOpen}
+            onOpenChange={setIsOpen}
+            datas={datas}
           />
-        </Grid>
-      </Grid>
-      <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
-        {DrawerList}
-      </Drawer>
-    </Box>
-  );
+        </div>
+        <Divider />
+        <section className="mt-8">
+          <DataTable data={transactions} columns={columns} />
+        </section>
+      </main>
+    );
 };
 
 export default Transactions;

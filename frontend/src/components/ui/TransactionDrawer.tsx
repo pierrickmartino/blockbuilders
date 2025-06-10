@@ -5,16 +5,16 @@ import React from "react";
 import { Input } from "../Input";
 import { Label } from "../Label";
 
-import { Contract } from "@/lib/definition";
+import { Transaction } from "@/lib/definition";
 
-interface ContractDrawerProps {
+interface TransactionDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  datas: Contract | undefined;
+  datas: Transaction | undefined;
 }
 
 interface FormPageProps {
-  datas: Contract | undefined;
+  datas: Transaction | undefined;
 }
 
 const SummaryItem = ({ label, value }: { label: string; value: string | number | null | undefined }) => (
@@ -35,37 +35,17 @@ const FirstPage = ({ datas }: FormPageProps) => (
   <>
     <DrawerHeader>
       <DrawerTitle>
-        <p>Contract</p>
+        <p>Transaction</p>
         <span className="text-sm font-normal text-gray-500 dark:text-gray-500">Information</span>
       </DrawerTitle>
     </DrawerHeader>
     <DrawerBody className="-mx-6 space-y-6 overflow-y-scroll border-t border-gray-200 px-6 dark:border-gray-800">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <FormField label="Blockchain">
-          <Input value={datas?.blockchain.name} readOnly />
-        </FormField>
-        <FormField label="Name">
-          <Input value={datas?.name} readOnly />
-        </FormField>
-        <FormField label="Category">
-          <Input value={datas?.category} readOnly />
-        </FormField>
-        <FormField label="Symbol">
-          <Input value={datas?.symbol} readOnly />
-        </FormField>
-        <FormField label="Address">
-          <Input value={datas?.address} readOnly />
-        </FormField>
-      </div>
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <SummaryItem label="Total Supply" value={datas?.supply_total} />
-        <SummaryItem label="Decimals" value={datas?.decimals} />
-      </div>
+      
     </DrawerBody>
   </>
 );
 
-export function ContractDrawer({ open, onOpenChange, datas }: ContractDrawerProps) {
+export function TransactionDrawer({ open, onOpenChange, datas }: TransactionDrawerProps) {
   const renderPage = () => {
     if (datas) {
       return <FirstPage datas={datas} />;

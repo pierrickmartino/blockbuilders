@@ -330,17 +330,13 @@ export const fetchTotalCapitalGainHisto = async (
 };
 
 export const fetchTransactionsAll = async (
-  setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>,
-  setTotalCount: React.Dispatch<React.SetStateAction<number>>,
-  page: number,
-  rowsPerPage: number
+  setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>
 ): Promise<void> => {
   try {
-    const response = await fetcher(`/api/transactions/?page=${page + 1}&limit=${rowsPerPage}`);
+    const response = await fetcher(`/api/transactions/?limit=1000`);
 
     if (response.results) {
       setTransactions(response.results); // Ensure the transactions are correctly set
-      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
@@ -377,16 +373,12 @@ export const fetchTransactionsWithSearch = async (
 export const fetchTransactionsAllWithSearch = async (
   searchTerm: string,
   setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>,
-  setTotalCount: React.Dispatch<React.SetStateAction<number>>,
-  page: number,
-  rowsPerPage: number
 ): Promise<void> => {
   try {
-    const response = await fetcher(`/api/transactions/?search=${searchTerm}&page=${page + 1}&limit=${rowsPerPage}`);
+    const response = await fetcher(`/api/transactions/?search=${searchTerm}&limit=1000`);
 
     if (response.results) {
       setTransactions(response.results); // Ensure the transactions are correctly set
-      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);
@@ -397,7 +389,7 @@ export const fetchTransactionsAllWithSearch = async (
 
 export const fetchContractsAll = async (setContracts: React.Dispatch<React.SetStateAction<Contract[]>>): Promise<void> => {
   try {
-    const response = await fetcher(`/api/contracts/?limit=100`);
+    const response = await fetcher(`/api/contracts/?limit=1000`);
 
     if (response.results) {
       setContracts(response.results); // Ensure the transactions are correctly set
