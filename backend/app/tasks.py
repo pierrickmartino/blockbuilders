@@ -65,20 +65,7 @@ logger = logging.getLogger("blockbuilders")
 
 
 def is_contract_suspicious(contract_name, contract_symbol):
-    suspicious_startswith_keywords = [
-        "$",
-        "claim ",
-        "(e",
-        "http",
-        "use just",
-        "visit ",
-        "www.",
-        "@",
-        "!",
-        "#",
-        "NO_NAME",
-        "✅"
-    ]
+    suspicious_startswith_keywords = ["$", "claim ", "(e", "http", "use just", "visit ", "www.", "@", "!", "#", "NO_NAME", "✅"]
 
     suspicious_endswith_keywords = [
         ".com",
@@ -115,7 +102,7 @@ def is_contract_suspicious(contract_name, contract_symbol):
     for keyword in suspicious_endswith_keywords:
         if contract_name.lower().endswith(keyword):
             return True
-        
+
     # Check if contract name starts with any suspicious keywords
     for keyword in suspicious_startswith_keywords:
         if contract_name.lower().startswith(keyword):
@@ -911,6 +898,7 @@ def finish_contract_download_task(previous_return: list, contract_id: uuid):
 
     return contract_id
 
+
 @shared_task
 def start_wallet_resync_task(wallet_id: uuid):
     """
@@ -1177,7 +1165,7 @@ def calculate_running_quantity_transaction_task(wallet_id: uuid):
                 transaction.average_cost = average_cost
                 transaction.cost = calculator.calculate_cost()
                 transaction.cost_fiat_based = calculator.calculate_cost_fiat_based()
-                
+
                 # Capital Gain and Running Capital Gain calculation
                 transaction.capital_gain = calculator.calculate_capital_gain()
                 running_capital_gain += transaction.capital_gain

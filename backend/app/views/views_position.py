@@ -129,6 +129,7 @@ def delete_Position_by_id(request, position_id):
     result = delete_position_task.delay(position_id, 100)
     return redirect("dashboard")
 
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
 def refresh_position_price(request):
@@ -150,7 +151,11 @@ def refresh_position_price(request):
     symbol_set = {
         position.contract.symbol
         for position in positions
-        if not position.contract.symbol[0].islower() and "-" not in position.contract.symbol and "." not in position.contract.symbol
+        if not position.contract.category == CategoryContractChoices.COLLATERAL
+        and not position.contract.category == CategoryContractChoices.SUSPICIOUS
+        and "-" not in position.contract.symbol
+        and "." not in position.contract.symbol
+        # if not position.contract.symbol[0].islower() and "-" not in position.contract.symbol and "." not in position.contract.symbol
     }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
     # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)
@@ -170,7 +175,7 @@ def refresh_position_price(request):
         logger.info(f"Started getting position prices")
         # return redirect("dashboard")
         return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
-    
+
 
 # @login_required
 def refresh_wallet_position_price(request, wallet_id: uuid):
@@ -183,7 +188,11 @@ def refresh_wallet_position_price(request, wallet_id: uuid):
     symbol_set = {
         position.contract.symbol
         for position in positions
-        if not position.contract.symbol[0].islower() and "-" not in position.contract.symbol and "." not in position.contract.symbol
+        # if "-" not in position.contract.symbol and "." not in position.contract.symbol
+        if not position.contract.category == CategoryContractChoices.COLLATERAL
+        and not position.contract.category == CategoryContractChoices.SUSPICIOUS
+        and "-" not in position.contract.symbol
+        and "." not in position.contract.symbol
     }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
     # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)
@@ -214,7 +223,11 @@ def refresh_full_historical_position_price(request, wallet_id: uuid):
     symbol_set = {
         position.contract.symbol
         for position in positions
-        if not position.contract.symbol[0].islower() and "-" not in position.contract.symbol and "." not in position.contract.symbol
+        if not position.contract.category == CategoryContractChoices.COLLATERAL
+        and not position.contract.category == CategoryContractChoices.SUSPICIOUS
+        and "-" not in position.contract.symbol
+        and "." not in position.contract.symbol
+        # if not position.contract.symbol[0].islower() and "-" not in position.contract.symbol and "." not in position.contract.symbol
     }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
     # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)

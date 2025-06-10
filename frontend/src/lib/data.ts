@@ -119,7 +119,10 @@ export const fetchPositionsAll = async (
   }
 };
 
-export const fetchTopPositions = async (limit: number, setTopPositions: React.Dispatch<React.SetStateAction<Position[]>>): Promise<void> => {
+export const fetchTopPositions = async (
+  limit: number,
+  setTopPositions: React.Dispatch<React.SetStateAction<Position[]>>
+): Promise<void> => {
   try {
     const response = await fetcher(`/api/positions/top/${limit}`);
 
@@ -184,6 +187,39 @@ export const fetchLessProfitablePositions = async (
   }
 };
 
+export const fetchBestPerformerPositions = async (
+  limit: number,
+  setBestPerformerPositions: React.Dispatch<React.SetStateAction<Position[]>>
+): Promise<void> => {
+  try {
+    const response = await fetcher(`/api/positions/bestperformer/${limit}`);
+
+    if (response.results) {
+      setBestPerformerPositions(response.results); // Ensure the positions are correctly set
+    }
+  } catch (err) {
+    console.error("Error fetching data from best performer positions API:", err);
+    setBestPerformerPositions([]); // Set empty positions if fetching fails
+    throw new Error("Failed to fetch the best performer positions.");
+  }
+};
+
+export const fetchWorstPerformerPositions = async (
+  limit: number,
+  setWorstPerformerPositions: React.Dispatch<React.SetStateAction<Position[]>>
+): Promise<void> => {
+  try {
+    const response = await fetcher(`/api/positions/worstperformer/${limit}`);
+
+    if (response.results) {
+      setWorstPerformerPositions(response.results); // Ensure the positions are correctly set
+    }
+  } catch (err) {
+    console.error("Error fetching data from worst performer positions API:", err);
+    setWorstPerformerPositions([]); // Set empty positions if fetching fails
+    throw new Error("Failed to fetch the worst performer positions.");
+  }
+};
 
 export const fetchLastTransactions = async (
   limit: number,

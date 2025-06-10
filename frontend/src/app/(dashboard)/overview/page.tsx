@@ -13,6 +13,8 @@ import {
   fetchTaskStatus,
   fetchWalletsAll,
   fetchTotalCapitalGainHisto,
+  fetchBestPerformerPositions,
+  fetchWorstPerformerPositions,
 } from "@/lib/data";
 // import LastTransactions from "../components/dashboard/LastTransactions";
 // import TradingCalendar from "../components/dashboard/TradingCalendar";
@@ -34,12 +36,13 @@ import { Divider } from "@/components/Divider";
 import { Button } from "@/components/Button";
 import { RiAddLine } from "@remixicon/react";
 import { volume } from "@/data/wallet/volume";
-import { List, ListItem } from "@tremor/react";
+import { List, ListItem, Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import { formatNumber } from "@/lib/format";
 import { Card } from "@/components/Card";
 import { getColumns } from "@/components/ui/data-table-wallet/columns";
 import { Row } from "@tanstack/react-table";
 import { refresh } from "@/lib/actions";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -69,6 +72,8 @@ const Wallets = () => {
   const [top_blockchains, setTopBlockchains] = useState<Blockchain[]>([]);
   const [most_profitable_positions, setMostProfitablePositions] = useState<Position[]>([]);
   const [less_profitable_positions, setLessProfitablePositions] = useState<Position[]>([]);
+  const [best_performer_positions, setBestPerformerPositions] = useState<Position[]>([]);
+  const [worst_performer_positions, setWorstPerformerPositions] = useState<Position[]>([]);
   const [last_transactions, setLastTransactions] = useState<Transaction[]>([]);
   const [total_capital_gains, setTotalCapitalGainHisto] = useState<CapitalGainHisto[]>([]);
   const [count_transactions, setCountTransactions] = useState(0);
@@ -165,11 +170,26 @@ const Wallets = () => {
   const fetchLessProfitablePositionsData = async () => {
     await fetchLessProfitablePositions(5, setLessProfitablePositions);
   };
-  
+
   useEffect(() => {
     fetchLessProfitablePositionsData();
   }, []);
 
+  // Fetch best performer position function
+  const fetchBestPerformerPositionsData = async () => {
+    await fetchBestPerformerPositions(5, setBestPerformerPositions);
+  };
+
+  useEffect(() => {
+    fetchBestPerformerPositionsData();
+  }, []);
+
+  const fetchWorstPerformerPositionsData = async () => {
+    await fetchWorstPerformerPositions(5, setWorstPerformerPositions);
+  };
+  useEffect(() => {
+    fetchWorstPerformerPositionsData();
+  }, []);
   useEffect(() => {
     fetchTopPositionData();
   }, []);
@@ -243,6 +263,36 @@ const Wallets = () => {
   const total_amount = getTotalAmount(wallets);
   const total_capital_gain = getTotalCapitalGain(wallets);
   const capitalGainDelta = getCapitalGainsDelta(total_capital_gains);
+  const summary_daily_performance = [
+    {
+      name: "Best",
+      data: best_performer_positions,
+    },
+    {
+      name: "Worst",
+      data: worst_performer_positions,
+    },
+  ];
+  const summary_profitability = [
+    {
+      name: "Most Profitable",
+      data: most_profitable_positions,
+    },
+    {
+      name: "Less Profitable",
+      data: less_profitable_positions,
+    },
+  ];
+  const summary_repartition = [
+    {
+      name: "Positions",
+      data: top_positions,
+    },
+    {
+      name: "Blockchains",
+      data: top_blockchains,
+    },
+  ];
 
   return (
     <main>
@@ -253,31 +303,31 @@ const Wallets = () => {
         </div>
         <div className="flex items-end gap-2">
           <Button
-          onClick={() => {
-            setRow(null);
-            setIsOpen(true);
-          }}
-          className="flex items-center gap-2 text-base sm:text-sm"
-        >
-          Add Wallet
-          <RiAddLine className="-mr-0.5 size-5 shrink-0" aria-hidden="true" />
-        </Button>
-        <Button variant="secondary" onClick={() => handleRefresh()}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-5"
+            onClick={() => {
+              setRow(null);
+              setIsOpen(true);
+            }}
+            className="flex items-center gap-2 text-base sm:text-sm"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-            />
-          </svg>
-        </Button>
+            Add Wallet
+            <RiAddLine className="-mr-0.5 size-5 shrink-0" aria-hidden="true" />
+          </Button>
+          <Button variant="secondary" onClick={() => handleRefresh()}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+              />
+            </svg>
+          </Button>
         </div>
         <WalletDrawer
           open={isOpen}
@@ -370,113 +420,148 @@ const Wallets = () => {
           </div>
         </div>
 
-        <Card className="sm:mx-auto sm:max-w-lg">
-          <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Top Positions</dt>
-          <p className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
-            <span>Token</span>
-            <span>Amount / Share</span>
-          </p>
-          <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
-            {top_positions.map((item, idx) => {
-              const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
-              return (
-                <ListItem key={item.contract.name} className="space-x-6">
-                  <div className="flex items-center space-x-2.5 truncate">
-                    <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
-                    <span className="truncate dark:text-gray-300">{item.contract.name}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
-                      {formatNumber(item.amount, "currency")}
-                    </span>
-                    <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                      {formatNumber(item.progress_percentage, "percentage")}
-                    </span>
-                  </div>
-                </ListItem>
-              );
-            })}
-          </List>
+        <Card className="p-0 sm:mx-auto sm:max-w-lg">
+          <div className="px-6 pt-6">
+            <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Repartition</dt>
+            <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">
+              Token allocation across all user wallets
+            </p>
+          </div>
+          <Tabs defaultValue="Positions">
+            <TabsList className="px-6 pt-6">
+              {summary_repartition.map((category) => (
+                <TabsTrigger value={category.name} key={category.name}>
+                  {category.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <div className="px-6 pb-6">
+              {summary_repartition.map((category) => (
+                <TabsContent value={category.name} key={category.name}>
+                  <p className="mt-6 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
+                    <span>{category.name === "Blockchains" ? "Chain" : "Token"}</span>
+                    <span>Amount / Share</span>
+                  </p>
+                  <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
+                    {category.data.map((item, idx) => {
+                      const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
+                      // Si la catégorie est "Blockchains", item est un Blockchain, sinon c'est une Position
+                      const isBlockchain = category.name === "Blockchains";
+                      const name = isBlockchain ? (item as Blockchain).name : (item as Position).contract.name;
+                      const value = isBlockchain ? (item as Blockchain).balance : (item as Position).amount;
+                      const share = isBlockchain ? (item as Blockchain).progress_percentage : (item as Position).progress_percentage;
+                      return (
+                        <ListItem key={name} className="space-x-6">
+                          <div className="flex items-center space-x-2.5 truncate">
+                            <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
+                            <span className="truncate dark:text-gray-300">{name}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
+                              {formatNumber(value, "currency")}
+                            </span>
+                            <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                              {formatNumber(share, "percentage")}
+                            </span>
+                          </div>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </TabsContent>
+              ))}
+            </div>
+          </Tabs>
         </Card>
-        <Card className="sm:mx-auto sm:max-w-lg">
-          <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Top Blockchains</dt>
-          <p className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
-            <span>Blockchain</span>
-            <span>Amount / Share</span>
-          </p>
-          <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
-            {top_blockchains.map((item, idx) => {
-              const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
-              return (
-                <ListItem key={item.name} className="space-x-6">
-                  <div className="flex items-center space-x-2.5 truncate">
-                    <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
-                    <span className="truncate dark:text-gray-300">{item.name}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
-                      {formatNumber(item.balance, "currency")}
-                    </span>
-                    <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-gray-700 dark:bg-gray-800 dark:text-gray-300">
-                      {formatNumber(item.progress_percentage, "percentage")}
-                    </span>
-                  </div>
-                </ListItem>
-              );
-            })}
-          </List>
+        <Card className="p-0 sm:mx-auto sm:max-w-lg">
+          <div className="px-6 pt-6">
+            <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Position Profitability</dt>
+            <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">
+              Profit or loss analysis for each individual position
+            </p>
+          </div>
+          <Tabs defaultValue="Most Profitable">
+            <TabsList className="px-6 pt-6">
+              {summary_profitability.map((category) => (
+                <TabsTrigger value={category.name} key={category.name}>
+                  {category.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <div className="px-6 pb-6">
+              {summary_profitability.map((category) => (
+                <TabsContent value={category.name} key={category.name}>
+                  <p className="mt-6 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
+                    <span>Token</span>
+                    <span>Amount / Share</span>
+                  </p>
+                  <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
+                    {category.data.map((item, idx) => {
+                      const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
+                      return (
+                        <ListItem key={item.contract.name} className="space-x-6">
+                          <div className="flex items-center space-x-2.5 truncate">
+                            <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
+                            <span className="truncate dark:text-gray-300">{item.contract.name}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
+                              {formatNumber(item.capital_gain, "currency")}
+                            </span>
+                          </div>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </TabsContent>
+              ))}
+            </div>
+          </Tabs>
         </Card>
-        <Card className="sm:mx-auto sm:max-w-lg">
-          <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Most Profitable</dt>
-          <p className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
-            <span>Position</span>
-            <span>Amount</span>
-          </p>
-          <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
-            {most_profitable_positions.map((item, idx) => {
-              const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
-              return (
-                <ListItem key={item.contract.name} className="space-x-6">
-                  <div className="flex items-center space-x-2.5 truncate">
-                    <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
-                    <span className="truncate dark:text-gray-300">{item.contract.name}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
-                      {formatNumber(item.capital_gain, "currency")}
-                    </span>
-                    
-                  </div>
-                </ListItem>
-              );
-            })}
-          </List>
-        </Card>
-        <Card className="sm:mx-auto sm:max-w-lg">
-          <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Less Profitable</dt>
-          <p className="mt-4 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
-            <span>Position</span>
-            <span>Amount</span>
-          </p>
-          <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
-            {less_profitable_positions.map((item, idx) => {
-              const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
-              return (
-                <ListItem key={item.contract.name} className="space-x-6">
-                  <div className="flex items-center space-x-2.5 truncate">
-                    <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
-                    <span className="truncate dark:text-gray-300">{item.contract.name}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="font-medium tabular-nums text-gray-900 dark:text-gray-50">
-                      {formatNumber(item.capital_gain, "currency")}
-                    </span>
-                    
-                  </div>
-                </ListItem>
-              );
-            })}
-          </List>
+        <Card className="p-0 sm:mx-auto sm:max-w-lg">
+          <div className="px-6 pt-6">
+            <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Token Daily Performance</dt>
+            <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">
+              Daily variation in token prices
+            </p>
+          </div>
+          <Tabs defaultValue="Best">
+            <TabsList className="px-6 pt-6">
+              {summary_daily_performance.map((category) => (
+                <TabsTrigger value={category.name} key={category.name}>
+                  {category.name}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            <div className="px-6 pb-6">
+              {summary_daily_performance.map((category) => (
+                <TabsContent value={category.name} key={category.name}>
+                  <p className="mt-6 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
+                    <span>Token</span>
+                    <span>Amount / Share</span>
+                  </p>
+                  <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
+                    {category.data.map((item, idx) => {
+                      const colorClasses = ["bg-cyan-500", "bg-blue-500", "bg-indigo-500", "bg-violet-500", "bg-fuchsia-500"];
+                      return (
+                        <ListItem key={item.contract.name} className="space-x-6">
+                          <div className="flex items-center space-x-2.5 truncate">
+                            <span className={classNames(colorClasses[idx], "size-2.5 shrink-0 rounded-sm")} aria-hidden={true} />
+                            <span className="truncate dark:text-gray-300">{item.contract.name}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="rounded-md bg-gray-100 px-1.5 py-0.5 text-xs font-medium tabular-nums text-gray-700 dark:bg-gray-800 dark:text-gray-300">
+                              {formatNumber(item.daily_price_delta, "percentage")}
+                            </span>
+                          </div>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </TabsContent>
+              ))}
+            </div>
+          </Tabs>
         </Card>
       </dl>
       <DataTable data={wallets} columns={columns} />

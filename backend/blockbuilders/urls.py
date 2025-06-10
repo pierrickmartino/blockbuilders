@@ -28,6 +28,8 @@ from app.views.views_api import (
     MarketDataLastView,
     PositionLessProfitableView,
     PositionMostProfitableView,
+    BestPerformerPositionView,
+    WorstPerformerPositionView,
     PositionTopView,
     PositionView,
     TransactionLastView,
@@ -75,6 +77,8 @@ position_list = PositionView.as_view()
 position_top_list = PositionTopView.as_view()
 position_most_profitable_list = PositionMostProfitableView.as_view()
 position_less_profitable_list = PositionLessProfitableView.as_view()
+position_best_performer = BestPerformerPositionView.as_view()
+position_worst_performer = WorstPerformerPositionView.as_view()
 blockchain_top_list = BlockchainTopView.as_view()
 position_detail = PositionViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})
 urlpatterns = [
@@ -94,7 +98,7 @@ urlpatterns = [
     path("dashboard/", views.dashboard_redirect, name="dashboard_redirect"),
     path("dashboard/<int:page>/", views.dashboard, name="dashboard"),
     # BLOCKCHAIN
-    path("blockchains/", views.blockchains, name="blockchains"),
+    # path("blockchains/", views.blockchains, name="blockchains"),
     # CONTRACT
     path("contracts/", views_contract.contracts, name="contracts"),
     path(
@@ -301,6 +305,8 @@ urlpatterns = [
     path("api/positions/top/<int:limit>", position_top_list, name="position-top-list"),
     path("api/positions/mostprofitable/<int:limit>", position_most_profitable_list, name="position-mostprofitable-list"),
     path("api/positions/lessprofitable/<int:limit>", position_less_profitable_list, name="position-lessprofitable-list"),
+    path("api/positions/bestperformer/<int:limit>", position_best_performer, name="position-bestperformer-list"),
+    path("api/positions/worstperformer/<int:limit>", position_worst_performer, name="position-worstperformer-list"),
     path(
         "api/positions/<uuid:position_id>/capitalgains/<int:last>",
         views_position.get_position_capitalgains,

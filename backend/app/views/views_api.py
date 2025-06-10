@@ -1,4 +1,5 @@
-from django.shortcuts import get_object_or_404
+from datetime import timedelta
+from django.utils import timezone
 from rest_framework import viewsets, generics, filters, permissions, pagination
 from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
@@ -223,10 +224,13 @@ class PositionMostProfitableView(generics.ListAPIView):
         # Get the max number of positions to return from the URL kwargs
         limit = int(self.kwargs.get("limit", 1))  # Default to 1 if not provided
 
-        # Filter positions to include only those belonging to wallets owned by the authenticated user
-        return Position.objects.filter(wallet__user=self.request.user).order_by("-capital_gain")[  # Restrict to user's wallets
+        # Filter positions to include only those belonging to wallets owned by the authenticated user and only STANDARD contracts
+        return Position.objects.filter(wallet__user=self.request.user, contract__category=CategoryContractChoices.STANDARD).order_by(
+            "-capital_gain"
+        )[  # Restrict to user's wallets
             :limit
         ]  # Order by amount and limit to the max specified
+
 
 class PositionLessProfitableView(generics.ListAPIView):
     serializer_class = PositionSerializer
@@ -236,10 +240,53 @@ class PositionLessProfitableView(generics.ListAPIView):
         # Get the max number of positions to return from the URL kwargs
         limit = int(self.kwargs.get("limit", 1))  # Default to 1 if not provided
 
-        # Filter positions to include only those belonging to wallets owned by the authenticated user
-        return Position.objects.filter(wallet__user=self.request.user).order_by("capital_gain")[  # Restrict to user's wallets
+        # Filter positions to include only those belonging to wallets owned by the authenticated user and only STANDARD contracts
+        return Position.objects.filter(wallet__user=self.request.user, contract__category=CategoryContractChoices.STANDARD).order_by(
+            "capital_gain"
+        )[  # Restrict to user's wallets
             :limit
         ]  # Order by amount and limit to the max specified
+
+
+class BestPerformerPositionView(generics.ListAPIView):
+    serializer_class = PositionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get the max number of positions to return from the URL kwargs
+        limit = int(self.kwargs.get("limit", 1))  # Default to 1 if not provided
+
+        # Filter positions to include only those belonging to wallets owned by the authenticated user, only STANDARD contracts, and only those with a previous day at yesterday
+        return Position.objects.filter(
+            wallet__user=self.request.user,
+            contract__category=CategoryContractChoices.STANDARD,
+            contract__previous_day__gt=timezone.now() - timedelta(days=2)
+        ).order_by(
+            "-daily_price_delta"
+        )[  # Restrict to user's wallets
+            :limit
+        ]  # Order by amount and limit to the max specified
+
+
+class WorstPerformerPositionView(generics.ListAPIView):
+    serializer_class = PositionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get the max number of positions to return from the URL kwargs
+        limit = int(self.kwargs.get("limit", 1))  # Default to 1 if not provided
+
+        # Filter positions to include only those belonging to wallets owned by the authenticated user, only STANDARD contracts, and only those with a previous day at yesterday
+        return Position.objects.filter(
+            wallet__user=self.request.user,
+            contract__category=CategoryContractChoices.STANDARD,
+            contract__previous_day__gt=timezone.now() - timedelta(days=2)
+        ).order_by(
+            "daily_price_delta"
+        )[  # Restrict to user's wallets
+            :limit
+        ]  # Order by amount and limit to the max specified
+
 
 class MarketDataLastView(generics.ListAPIView):
     serializer_class = MarketDataSerializer

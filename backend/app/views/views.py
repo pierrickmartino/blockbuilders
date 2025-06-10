@@ -216,13 +216,13 @@ def dashboard(request: HttpRequest, page):
         return render(request, "dashboard.html", context)
 
 
-@login_required
-def blockchains(request: HttpRequest):
-    blockchains = Blockchain.objects.all()
-    context = {
-        "blockchains": blockchains,
-    }
-    return render(request, "blockchains.html", context)
+# @login_required
+# def blockchains(request: HttpRequest):
+#     blockchains = Blockchain.objects.all()
+#     context = {
+#         "blockchains": blockchains,
+#     }
+#     return render(request, "blockchains.html", context)
 
 
 # def register(request: HttpRequest):
