@@ -60,16 +60,12 @@ export const fetchPositionsWithSearch = async (
 export const fetchPositionsAllWithSearch = async (
   searchTerm: string,
   setPositions: React.Dispatch<React.SetStateAction<Position[]>>,
-  setTotalCount: React.Dispatch<React.SetStateAction<number>>,
-  page: number,
-  rowsPerPage: number
 ): Promise<void> => {
   try {
-    const response = await fetcher(`/api/positions/?search=${searchTerm}&page=${page + 1}&limit=${rowsPerPage}`);
+    const response = await fetcher(`/api/positions/?search=${searchTerm}&limit=100`);
 
     if (response.results) {
       setPositions(response.results); // Ensure the positions are correctly set
-      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from position API:", err);
@@ -101,16 +97,12 @@ export const fetchPositions = async (
 
 export const fetchPositionsAll = async (
   setPositions: React.Dispatch<React.SetStateAction<Position[]>>,
-  setTotalCount: React.Dispatch<React.SetStateAction<number>>,
-  page: number,
-  rowsPerPage: number
 ): Promise<void> => {
   try {
-    const response = await fetcher(`/api/positions/?page=${page + 1}&limit=${rowsPerPage}`);
+    const response = await fetcher(`/api/positions/?limit=100`);
 
     if (response.results) {
       setPositions(response.results); // Ensure the positions are correctly set
-      setTotalCount(response.count); // Update total count if pagination is enabled
     }
   } catch (err) {
     console.error("Error fetching data from position API:", err);
