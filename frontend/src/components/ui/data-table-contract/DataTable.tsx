@@ -1,9 +1,9 @@
 "use client";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@/components/Table";
 import { cx } from "@/lib/utils";
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { DataTablePagination } from "../data-table/DataTablePagination";
-import { Filterbar } from "../data-table/DataTableFilterbar";
+import { Filterbar } from "../data-table-contract/DataTableFilterbar";
 import { useState } from "react";
 
 interface DataTableProps<TData> {
@@ -16,20 +16,28 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const registeredFilterValue = columnFilters.find((filter) => filter.id === "registered")?.value as boolean | undefined;
+  const standardFilterValue = columnFilters.find((filter) => filter.id === "standard")?.value as boolean | undefined;
 
   const table = useReactTable({
     data,
     columns,
     enableColumnResizing: false,
+    state: {
+      globalFilter,
+      columnFilters,
+    },
+    onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
     initialState: {
       pagination: {
         pageIndex: 0,
         pageSize: pageSize,
       },
     },
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return (
@@ -37,9 +45,9 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
       <Filterbar
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
-        registeredOnly={Boolean(registeredFilterValue)}
-        setRegisteredOnly={(checked: boolean) => {
-          table.getColumn("registered")?.setFilterValue(checked || null);
+        standardOnly={Boolean(standardFilterValue)}
+        setStandardOnly={(checked: boolean) => {
+          table.getColumn("category")?.setFilterValue(checked || null);
         }}
       />
       <div className="relative overflow-hidden overflow-x-auto">
