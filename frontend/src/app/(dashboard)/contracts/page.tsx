@@ -8,6 +8,7 @@ import { DataTable } from "@/components/ui/data-table-contract/DataTable";
 import { getColumns } from "@/components/ui/data-table-contract/columns";
 import { Row } from "@tanstack/react-table";
 import React from "react";
+import { ContractDrawer } from "@/components/ui/ContractDrawer";
 
 const Contracts = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -49,6 +50,11 @@ const Contracts = () => {
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Contracts</h1>
           <p className="text-gray-500 sm:text-sm/6 dark:text-gray-500">Monitor contract performance and manage ticket generation</p>
         </div>
+        <ContractDrawer
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          datas={datas}
+        />
       </div>
       <Divider />
       <section className="mt-8">

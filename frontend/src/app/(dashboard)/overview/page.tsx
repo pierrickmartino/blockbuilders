@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { Wallet, Position, Blockchain, Transaction, CapitalGainHisto } from "@/lib/definition";
 import {
-  fetchWallets,
   fetchTopPositions,
   fetchTopBlockchains,
   fetchMostProfitablePositions,
@@ -16,15 +15,7 @@ import {
   fetchBestPerformerPositions,
   fetchWorstPerformerPositions,
 } from "@/lib/data";
-// import LastTransactions from "../components/dashboard/LastTransactions";
-// import TradingCalendar from "../components/dashboard/TradingCalendar";
 import React from "react";
-// import CreateWalletForm from "@/components/forms/CreateWalletForm";
-// import StatCard, { StatCardProps } from "../components/dashboard/StatCard";
-// import HighlightedCard from "../components/dashboard/HighlightedCard";
-// import BasicCard from "../components/shared/BasicCard";
-// import TopPositions from "../components/dashboard/TopPositions";
-// import TopBlockchains from "../components/dashboard/TopBlockchains";
 import { Toaster } from "@/components/Toaster";
 import { useToast } from "@/lib/useToast";
 import { DataTable } from "@/components/ui/data-table-wallet/DataTable";
@@ -36,7 +27,7 @@ import { Divider } from "@/components/Divider";
 import { Button } from "@/components/Button";
 import { RiAddLine } from "@remixicon/react";
 import { volume } from "@/data/wallet/volume";
-import { List, ListItem, Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
+import { List, ListItem } from "@tremor/react";
 import { formatNumber } from "@/lib/format";
 import { Card } from "@/components/Card";
 import { getColumns } from "@/components/ui/data-table-wallet/columns";
