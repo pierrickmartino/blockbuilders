@@ -1225,6 +1225,8 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
                     contracts = Contract.objects.filter(category=CategoryContractChoices.STABLE).filter(symbol__startswith=symbol)
                 elif symbol == "ETH":
                     contracts = Contract.objects.filter(category=CategoryContractChoices.STANDARD).filter(symbol__endswith=symbol)
+                elif symbol == "BTC":
+                    contracts = Contract.objects.filter(category=CategoryContractChoices.STANDARD).filter(symbol__endswith=symbol)
                 else:
                     contracts = Contract.objects.filter(category=CategoryContractChoices.STANDARD).filter(symbol=symbol)
 
