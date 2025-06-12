@@ -25,7 +25,7 @@ import { CategoryBar } from "@/components/CategoryBar";
 import { WalletDrawer } from "@/components/ui/WalletDrawer";
 import { Divider } from "@/components/Divider";
 import { Button } from "@/components/Button";
-import { RiAddLine } from "@remixicon/react";
+import { RiAddLine, RiRefreshLine } from "@remixicon/react";
 import { volume } from "@/data/wallet/volume";
 import { List, ListItem } from "@tremor/react";
 import { formatNumber } from "@/lib/format";
@@ -303,21 +303,9 @@ const Wallets = () => {
             Add Wallet
             <RiAddLine className="-mr-0.5 size-5 shrink-0" aria-hidden="true" />
           </Button>
-          <Button variant="secondary" onClick={() => handleRefresh()}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-              />
-            </svg>
+          <Button variant="secondary" className="flex items-center gap-2 text-base sm:text-sm" onClick={() => handleRefresh()}>
+            Refresh
+            <RiRefreshLine className="-mr-0.5 size-5 shrink-0" aria-hidden="true" />
           </Button>
         </div>
         <WalletDrawer
@@ -414,9 +402,7 @@ const Wallets = () => {
         <Card className="p-0 sm:mx-auto sm:max-w-lg">
           <div className="px-6 pt-6">
             <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Repartition</dt>
-            <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">
-              Token allocation across all user wallets
-            </p>
+            <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">Token allocation across all user wallets</p>
           </div>
           <Tabs defaultValue="Positions">
             <TabsList className="px-6 pt-6">
@@ -467,9 +453,7 @@ const Wallets = () => {
         <Card className="p-0 sm:mx-auto sm:max-w-lg">
           <div className="px-6 pt-6">
             <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Position Profitability</dt>
-            <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">
-              Profit or loss analysis for each individual position
-            </p>
+            <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">Profit or loss analysis for each individual position</p>
           </div>
           <Tabs defaultValue="Most Profitable">
             <TabsList className="px-6 pt-6">
@@ -484,7 +468,7 @@ const Wallets = () => {
                 <TabsContent value={category.name} key={category.name}>
                   <p className="mt-6 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
                     <span>Token</span>
-                    <span>Amount / Share</span>
+                    <span>Amount</span>
                   </p>
                   <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
                     {category.data.map((item, idx) => {
@@ -512,9 +496,7 @@ const Wallets = () => {
         <Card className="p-0 sm:mx-auto sm:max-w-lg">
           <div className="px-6 pt-6">
             <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Token Daily Performance</dt>
-            <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">
-              Daily variation in token prices
-            </p>
+            <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">Daily variation in token prices</p>
           </div>
           <Tabs defaultValue="Best">
             <TabsList className="px-6 pt-6">
@@ -529,7 +511,7 @@ const Wallets = () => {
                 <TabsContent value={category.name} key={category.name}>
                   <p className="mt-6 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
                     <span>Token</span>
-                    <span>Amount / Share</span>
+                    <span>Share</span>
                   </p>
                   <List className="mt-2 divide-y divide-gray-200 text-sm text-gray-500 dark:divide-gray-800 dark:text-gray-500">
                     {category.data.map((item, idx) => {
