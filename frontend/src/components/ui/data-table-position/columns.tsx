@@ -16,7 +16,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Position>) 
   [
     columnHelper.accessor("contract.symbol", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Token" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-left",
         displayName: "Token",
@@ -67,7 +67,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Position>) 
 
     columnHelper.accessor("amount", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-right",
         displayName: "Amount",
@@ -87,7 +87,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Position>) 
 
     columnHelper.accessor("capital_gain", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Capital Gain" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-right",
         displayName: "Capital Gain",
@@ -104,7 +104,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Position>) 
 
     columnHelper.accessor("unrealized_gain", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Unrealized Gain" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-right",
         displayName: "Unrealized Gain",

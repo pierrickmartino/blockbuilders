@@ -15,7 +15,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Contract>) 
   [
     columnHelper.accessor("blockchain", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Blockchain" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-left",
         displayName: "Blockchain",
@@ -27,7 +27,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Contract>) 
     }),
     columnHelper.accessor("name", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-left",
         displayName: "Name",
@@ -36,7 +36,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Contract>) 
     }),
     columnHelper.accessor("symbol", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Symbol" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-left",
         displayName: "Symbol",
@@ -58,6 +58,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Contract>) 
     columnHelper.accessor("category", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
       enableSorting: false,
+      enableColumnFilter: true,
       meta: {
         className: "text-left",
         displayName: "Category",

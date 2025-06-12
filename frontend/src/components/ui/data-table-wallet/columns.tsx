@@ -93,7 +93,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
     // }),
     columnHelper.accessor("name", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-left",
         displayName: "Name",
@@ -126,7 +126,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
     }),
     columnHelper.accessor("balance", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Balance" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-right",
         displayName: "Balance",
@@ -138,7 +138,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
     }),
     columnHelper.accessor("capital_gain", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Capital Gain" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-right",
         displayName: "Capital Gain",
@@ -150,7 +150,7 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
     }),
     columnHelper.accessor("unrealized_gain", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Unrealized Gain" />,
-      enableSorting: false,
+      enableSorting: true,
       meta: {
         className: "text-right",
         displayName: "Unrealized Gain",
