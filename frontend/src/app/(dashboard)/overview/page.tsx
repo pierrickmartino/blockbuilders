@@ -25,7 +25,7 @@ import { CategoryBar } from "@/components/CategoryBar";
 import { WalletDrawer } from "@/components/ui/WalletDrawer";
 import { Divider } from "@/components/Divider";
 import { Button } from "@/components/Button";
-import { RiAddLine, RiRefreshLine } from "@remixicon/react";
+import { RiAddLine, RiCheckLine, RiRefreshLine } from "@remixicon/react";
 import { volume } from "@/data/wallet/volume";
 import { List, ListItem } from "@tremor/react";
 import { formatNumber } from "@/lib/format";
@@ -34,6 +34,7 @@ import { getColumns } from "@/components/ui/data-table-wallet/columns";
 import { Row } from "@tanstack/react-table";
 import { refresh } from "@/lib/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
+import { formatDistanceToNow } from "date-fns";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -533,6 +534,56 @@ const Wallets = () => {
       </dl>
       <DataTable data={wallets} columns={columns} />
       <dl className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Card className="p-0 sm:mx-auto sm:max-w-lg">
+          <div className="px-6 pt-6">
+            <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Activity</dt>
+            <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">Latest transactions across the various blockchains</p>
+          </div>
+          <div className="space-y-6 px-6">
+            <ul role="list" className="space-y-6">
+              {last_transactions.map((step, stepIdx) => (
+                <li key={step.id} className="relative flex gap-x-3">
+                  <div
+                    className={classNames(
+                      stepIdx === last_transactions.length - 1 ? "h-6" : "-bottom-6",
+                      "absolute left-0 top-0 flex w-6 justify-center"
+                    )}
+                  >
+                    <span className="w-px bg-gray-200 dark:bg-gray-800" aria-hidden={true} />
+                  </div>
+                  <>
+                    <div className="relative flex size-6 flex-none items-center justify-center bg-white dark:bg-[#090E1A]">
+                      {step.type === "IN" ? (
+                        <div
+                          className="size-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300 dark:bg-[#090E1A] dark:ring-gray-700"
+                          aria-hidden={true}
+                        />
+                      ) : step.type === "OUT" ? (
+                        <div
+                          className="size-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300 dark:bg-[#090E1A] dark:ring-gray-700"
+                          aria-hidden={true}
+                        />
+                      ) : (
+                        <div
+                          className="size-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300 dark:bg-[#090E1A] dark:ring-gray-700"
+                          aria-hidden={true}
+                        />
+                      )}
+                    </div>
+
+                    <p className="flex-auto py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
+                      <span className="font-medium text-gray-900 dark:text-gray-50">{step.position.contract.symbol}</span>
+                      {formatNumber(step.quantity, "quantity_precise")}
+                    </p>
+                    <time dateTime={step.date} className="flex-none py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
+                      {formatDistanceToNow(new Date(step.date), { addSuffix: true })}
+                    </time>
+                  </>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Card>
         <Card>
           <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Current Tickets</dt>
           <dd className="mt-1 text-3xl font-semibold text-gray-900 dark:text-gray-50">247</dd>
