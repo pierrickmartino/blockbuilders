@@ -55,6 +55,8 @@ from app.models import (
     Transaction,
     TransactionCalculator,
     TypeTransactionChoices,
+    User,
+    UserProcess,
     Wallet,
     WalletProcess,
 )
@@ -898,6 +900,42 @@ def finish_contract_download_task(previous_return: list, contract_id: uuid):
 
     return contract_id
 
+
+@shared_task
+def start_user_resync_task(user_id: uuid):
+    """
+    Task to update user process with STARTED sync status.
+    """
+    start_time = time.time()
+    logger.info(f"Task started [start_user_resync_task] with ({user_id})")
+
+    user = get_object_or_404(User, id=user_id)
+    user_process, created = UserProcess.objects.get_or_create(user=user)
+    user_process.resync_task_status = TaskStatusChoices.STARTED
+    user_process.save()
+
+    end_time = time.time()
+    logger.info(f"Task completed [start_user_resync_task] in {(end_time - start_time)} seconds ({user_id})")
+
+    return user_id
+
+@shared_task
+def finish_user_resync_task(previous_return: list, user_id: uuid):
+    """
+    Task to update user process with FINISHED sync status.
+    """
+    start_time = time.time()
+    logger.info(f"Task started [finish_user_resync_task] with ({user_id})")
+
+    user = get_object_or_404(User, id=user_id)
+    user_process, created = UserProcess.objects.get_or_create(user=user)
+    user_process.resync_task_status = TaskStatusChoices.FINISHED
+    user_process.save()
+
+    end_time = time.time()
+    logger.info(f"Task completed [finish_user_resync_task] in {(end_time - start_time)} seconds ({user_id})")
+
+    return user_id
 
 @shared_task
 def start_wallet_resync_task(wallet_id: uuid):

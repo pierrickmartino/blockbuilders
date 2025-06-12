@@ -539,3 +539,29 @@ class UserSetting(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s settings"
+
+class UserProcess(TimeStampModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, related_name="processes")  # One-to-one relationship with User
+
+    # download_task = models.UUIDField(default=uuid.uuid4)  # UUID for download task
+    # download_task_date = models.DateTimeField(default=datetime.now)
+    # download_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
+
+    resync_task = models.UUIDField(default=uuid.uuid4)  # UUID for resync task
+    resync_task_date = models.DateTimeField(default=datetime.now)
+    resync_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
+
+    # delete_task = models.UUIDField(default=uuid.uuid4)  # UUID for delete task
+    # delete_task_date = models.DateTimeField(default=datetime.now)
+    # delete_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
+
+    # full_download_task = models.UUIDField(default=uuid.uuid4)  # UUID for download task
+    # full_download_task_date = models.DateTimeField(default=datetime.now)
+    # full_download_task_status = models.CharField(max_length=20, choices=TaskStatusChoices.choices, default=TaskStatusChoices.WAITING)
+
+    class Meta:
+        verbose_name = "User Process"
+        verbose_name_plural = "Users Processes"
+
+    def __str__(self):
+        return f"{self.user} processes"

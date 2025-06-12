@@ -205,7 +205,7 @@ const Wallets = () => {
   const handleRefresh = async () => {
     const response = await refresh();
     if (response.task_id) {
-      //onRefreshed(response.task_id); // Notify the parent component with the task ID
+      pollTaskStatus(response.task_id); // Start polling task status
     } else {
       console.error("Error: Task ID not found in the response.");
     }
@@ -217,11 +217,6 @@ const Wallets = () => {
 
   const handleWalletDownloaded = (taskId: string) => {
     // handleClick("Download in progress for " + taskId, "Info", "info");
-    pollTaskStatus(taskId); // Start polling task status
-  };
-
-  const handleWalletRefreshed = (taskId: string) => {
-    // handleClick("Refresh in progress for " + taskId, "Info", "info");
     pollTaskStatus(taskId); // Start polling task status
   };
 
@@ -315,7 +310,6 @@ const Wallets = () => {
           onWalletDeleted={handleWalletDeleted}
           onWalletDownloaded={handleWalletDownloaded}
           onWalletFullRefreshed={handleWalletFullRefreshed}
-          onWalletRefreshed={handleWalletRefreshed}
         />
       </div>
       <Divider />

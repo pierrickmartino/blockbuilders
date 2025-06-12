@@ -8,12 +8,14 @@ from django.http import JsonResponse
 from app.tasks import (
     calculate_wallet_balance_task,
     delete_position_task,
+    finish_user_resync_task,
     finish_wallet_download_task,
     finish_wallet_fulldownload_task,
     finish_wallet_resync_task,
     get_full_init_historical_price_from_market_task,
     get_historical_price_from_market_task,
     get_price_from_market_task,
+    start_user_resync_task,
     start_wallet_download_task,
     start_wallet_fulldownload_task,
     start_wallet_resync_task,
@@ -138,8 +140,8 @@ def refresh_position_price(request):
     """
     logger.info(f"Enter in [refresh_position_price]")
     # Get the wallets owned by the user
-    user = get_object_or_404(User, id=request.user.id)
-    wallets = Wallet.objects.filter(user=user)
+    # user = get_object_or_404(User, id=request.user.id)
+    wallets = Wallet.objects.filter(user=request.user)
     if not wallets:
         logger.warning("No wallets found for the user.")
         return JsonResponse({"status": "No wallets found for the user."}, status=404)
@@ -160,21 +162,20 @@ def refresh_position_price(request):
     # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
     symbol_list = list(symbol_set)
 
-    # For each wallet, we will start a chain of tasks
-    for wallet_id in [wallet.id for wallet in wallets]:
-        chain_result = chain(
-            start_wallet_resync_task.s(wallet_id),
-            group(get_historical_price_from_market_task.s(symbol) for symbol in symbol_list),
-            group(update_contract_information.s(symbol) for symbol in symbol_list),
-            get_price_from_market_task.s(symbol_list),
-            calculate_wallet_balance_task.s(wallet_id),
-            calculate_blockchain_balance_task.s(wallet_id),
-            finish_wallet_resync_task.s(wallet_id),
-        )()
-
-        logger.info(f"Started getting position prices")
-        # return redirect("dashboard")
-        return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
+    # Start the chain of tasks to refresh position prices
+    logger.info(f"Starting position price refresh for user {request.user.id} with {len(symbol_list)} symbols")
+    chain_result = chain(
+        start_user_resync_task.s(request.user.id),  # Start the user resync task
+        group(get_historical_price_from_market_task.s(symbol) for symbol in symbol_list),  # Get historical prices for each symbol
+        group(update_contract_information.s(symbol) for symbol in symbol_list),  # Update contract information
+        get_price_from_market_task.s(symbol_list),  # Get current prices for all symbols
+        group(calculate_wallet_balance_task.s(wallet.id) for wallet in wallets),  # Calculate wallet balances
+        group(calculate_blockchain_balance_task.s(wallet.id) for wallet in wallets),  # Calculate blockchain balances
+        finish_user_resync_task.s(request.user.id),  # Finish the user resync task
+    )()
+    logger.info(f"Started refreshing position prices for user {request.user.id}")
+    # Return the task ID and status
+    return JsonResponse({"task_id": chain_result.id, "status": "Task triggered successfully"})
 
 
 # @login_required
