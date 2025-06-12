@@ -1238,8 +1238,15 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
 
     try:
 
+        # Add some mandatory token to the symbol_list if they don't exist
+        mandatory_tokens = ["USDC", "ETH", "BTC"]
+        for token in mandatory_tokens:
+            if token not in symbol_list:
+                symbol_list.append(token)
+    
         # Get contracts with a relative symbol in the symbol_list
         relative_contracts = Contract.objects.filter(relative_symbol__in=symbol_list)
+        logger.info(f"Found {relative_contracts.count()} relative contracts for symbols: {','.join([c.symbol for c in relative_contracts])}")
 
         # Get symbols from contracts
         relative_symbols = [contract.symbol for contract in relative_contracts]
