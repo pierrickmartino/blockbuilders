@@ -32,6 +32,14 @@ const Contracts = () => {
     fetchContractDataWithSearch(searchTerm);
   };
 
+  const handleContractSetAsSuspicious = () => {
+    fetchContractData(); 
+  };
+
+  const handleContractSetAsStable = () => {
+    fetchContractData(); // Re-fetch wallet data after a new wallet is created
+  };
+
   const [isOpen, setIsOpen] = React.useState(false);
   const [row, setRow] = React.useState<Row<Contract> | null>(null);
   const datas = row?.original;
@@ -53,6 +61,8 @@ const Contracts = () => {
         <ContractDrawer
           open={isOpen}
           onOpenChange={setIsOpen}
+          onContractSetAsSuspicious={handleContractSetAsSuspicious}
+          onContractSetAsStable={handleContractSetAsStable}
           datas={datas}
         />
       </div>

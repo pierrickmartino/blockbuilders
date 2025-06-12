@@ -6,11 +6,14 @@ import { Input } from "../Input";
 import { Label } from "../Label";
 
 import { Contract } from "@/lib/definition";
+import { setContractAsStable, setContractAsSuspicious } from "@/lib/actions";
 
 interface ContractDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   datas: Contract | undefined;
+  onContractSetAsSuspicious: () => void;
+  onContractSetAsStable: () => void;
 }
 
 interface FormPageProps {
@@ -65,7 +68,27 @@ const FirstPage = ({ datas }: FormPageProps) => (
   </>
 );
 
-export function ContractDrawer({ open, onOpenChange, datas }: ContractDrawerProps) {
+export function ContractDrawer({ open, onOpenChange, datas, onContractSetAsSuspicious, onContractSetAsStable }: ContractDrawerProps) {
+  const handleSetAsSuspicious = async (selectedContractId: string) => {
+    if (selectedContractId !== null) {
+      const response = await setContractAsSuspicious(selectedContractId.toString());
+      if (response.message !== "Database Error: Failed to set contract as suspicious.") {
+        onContractSetAsSuspicious(); // Notify parent to refresh
+      }
+      onOpenChange(false);
+    }
+  };
+
+  const handleSetAsStable = async (selectedContractId: string) => {
+    if (selectedContractId !== null) {
+      const response = await setContractAsStable(selectedContractId.toString());
+      if (response.message !== "Database Error: Failed to set contract as stable.") {
+        onContractSetAsStable(); // Notify parent to refresh
+      }
+      onOpenChange(false);
+    }
+  };
+
   const renderPage = () => {
     if (datas) {
       return <FirstPage datas={datas} />;
@@ -79,6 +102,8 @@ export function ContractDrawer({ open, onOpenChange, datas }: ContractDrawerProp
           <DrawerClose asChild>
             <Button variant="secondary">Cancel</Button>
           </DrawerClose>
+          <Button onClick={() => handleSetAsSuspicious(datas.id.toString())}>Suspicious</Button>
+          <Button onClick={() => handleSetAsStable(datas.id.toString())}>Stable</Button>
         </>
       );
     }
