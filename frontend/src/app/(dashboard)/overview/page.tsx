@@ -534,12 +534,12 @@ const Wallets = () => {
       </dl>
       <DataTable data={wallets} columns={columns} />
       <dl className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <Card className="p-0 sm:mx-auto sm:max-w-lg">
-          <div className="px-6 pt-6">
+        <Card className="p-6 sm:mx-auto sm:max-w-lg">
+          <div>
             <dt className="text-sm font-medium text-gray-900 dark:text-gray-50">Activity</dt>
             <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">Latest transactions across the various blockchains</p>
           </div>
-          <div className="space-y-6 px-6">
+          <div className="mt-6">
             <ul role="list" className="space-y-6">
               {last_transactions.map((step, stepIdx) => (
                 <li key={step.id} className="relative flex gap-x-3">
@@ -555,12 +555,12 @@ const Wallets = () => {
                     <div className="relative flex size-6 flex-none items-center justify-center bg-white dark:bg-[#090E1A]">
                       {step.type === "IN" ? (
                         <div
-                          className="size-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300 dark:bg-[#090E1A] dark:ring-gray-700"
+                          className="size-1.5 rounded-full bg-emerald-100 ring-1 ring-emerald-500 dark:bg-emerald-400/20 dark:ring-emerald-700"
                           aria-hidden={true}
                         />
                       ) : step.type === "OUT" ? (
                         <div
-                          className="size-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300 dark:bg-[#090E1A] dark:ring-gray-700"
+                          className="size-1.5 rounded-full bg-red-100 ring-1 ring-red-500 dark:bg-red-400/20 dark:ring-red-700"
                           aria-hidden={true}
                         />
                       ) : (
@@ -573,7 +573,7 @@ const Wallets = () => {
 
                     <p className="flex-auto py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
                       <span className="font-medium text-gray-900 dark:text-gray-50">{step.position.contract.symbol}</span>
-                      {formatNumber(step.quantity, "quantity_precise")}
+                      {' '}{formatNumber(step.quantity, "quantity_precise")}
                     </p>
                     <time dateTime={step.date} className="flex-none py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
                       {formatDistanceToNow(new Date(step.date), { addSuffix: true })}
