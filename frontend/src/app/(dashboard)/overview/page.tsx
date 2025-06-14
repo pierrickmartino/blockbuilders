@@ -540,7 +540,7 @@ const Wallets = () => {
             <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">Latest transactions across the various blockchains</p>
           </div>
           <div className="mt-6">
-            <ul role="list" className="space-y-6">
+            <ul role="list" className="space-y-4">
               {last_transactions.map((step, stepIdx) => (
                 <li key={step.id} className="relative flex gap-x-3">
                   <div
@@ -572,8 +572,8 @@ const Wallets = () => {
                     </div>
 
                     <p className="flex-auto py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
+                      {step.type === "IN" ? "Buy" : step.type === "OUT" ? "Sell" : ""} {formatNumber(step.quantity, "quantity_precise")}{" "}
                       <span className="font-medium text-gray-900 dark:text-gray-50">{step.position.contract.symbol}</span>
-                      {' '}{formatNumber(step.quantity, "quantity_precise")}
                     </p>
                     <time dateTime={step.date} className="flex-none py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
                       {formatDistanceToNow(new Date(step.date), { addSuffix: true })}
