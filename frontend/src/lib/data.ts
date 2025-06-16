@@ -1,4 +1,4 @@
-import { Position, Wallet, Transaction, Blockchain, Contract, MarketData, CapitalGainHisto } from "./definition";
+import { Position, Wallet, Transaction, Blockchain, Contract, MarketData, CapitalGainHisto, UnrealizedGain } from "./definition";
 import { fetcher } from "./fetcher";
 
 export const fetchWallets = async (
@@ -318,6 +318,22 @@ export const fetchTotalCapitalGainHisto = async (
     console.error("Error fetching data from capital gain API:", err);
     setTotalCapitalGainHisto([]); // Set empty transactions if fetching fails
     throw new Error("Failed to fetch capital gains.");
+  }
+};
+
+export const fetchUnrealizedGain = async (
+  setTotalUnrealizedGain: React.Dispatch<React.SetStateAction<UnrealizedGain[]>>
+): Promise<void> => {
+  try {
+    const response = await fetcher(`/api/wallets/unrealizedgains/`);
+
+    if (response) {
+      setTotalUnrealizedGain(response);
+    }
+  } catch (err) {
+    console.error("Error fetching data from unrealized gain API:", err);
+    setTotalUnrealizedGain([]); // Set empty transactions if fetching fails
+    throw new Error("Failed to fetch unrealized gains.");
   }
 };
 

@@ -462,3 +462,27 @@ def get_total_capitalgains(request, last):
         result.append({"time": time_with_tz.isoformat(), "running_capital_gain": formatted_value})
 
     return Response(result)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
+def get_total_unrealizedgains(request):
+    """
+    View to get the total unrealized gains for all wallets of the authenticated user.
+    """
+    # logger.info(f"Enter in [get_wallet_capitalgains] for wallet with id {wallet_id}")
+
+    # Get all the wallets for the authenticated user
+    user = get_object_or_404(User, id=request.user.id)
+    wallets = Wallet.objects.filter(user=user)
+    positions = (
+        Position.objects.filter(wallet__in=wallets)
+        .exclude(contract__category=CategoryContractChoices.STABLE)  # Exclude stable contracts
+        .exclude(contract__category=CategoryContractChoices.SUSPICIOUS)  # Exclude suspicious contracts
+    )
+
+    unrealized_gain = 0
+    for position in positions:
+        unrealized_gain += (position.contract.price - position.average_cost) * position.quantity
+
+    return Response([{"total_unrealized_gain": unrealized_gain}])

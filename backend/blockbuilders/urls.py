@@ -323,6 +323,11 @@ urlpatterns = [
         name="get_total_capitalgains",
     ),
     path(
+        "api/wallets/unrealizedgains/",
+        views_position.get_total_unrealizedgains,
+        name="get_total_unrealizedgains",
+    ),
+    path(
         "api/positions/<uuid:position_id>/export/csv/",
         views_transaction.export_transactions_csv,
         name="export_transactions_csv",

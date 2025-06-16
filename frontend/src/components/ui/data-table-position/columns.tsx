@@ -110,11 +110,16 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Position>) 
         displayName: "Unrealized Gain",
       },
       filterFn: "arrIncludesSome",
-      cell: ({ getValue }) => {
-        if (isZero(getValue() as number)) {
+      cell: ({ row }) => {
+        const unrealizedGain = Number(row.original.unrealized_gain) || 0; // Default to 0 if invalid
+        const averageCost = Number(row.original.average_cost) || 0; // Default to 0 if invalid
+        const price = Number(row.original.contract.price) || 0; // Default to 0 if invalid
+        const quantity = Number(row.original.quantity) || 0; // Default to 0 if invalid
+
+        if (isZero(unrealizedGain)) {
           return <span className="tabular-nums">-</span>;
         } else {
-          return <span className="tabular-nums">{formatNumber(getValue() as number, "currency")}</span>;
+          return <span className="tabular-nums">{formatNumber((price - averageCost) * quantity, "currency")}</span>;
         }
       },
     }),

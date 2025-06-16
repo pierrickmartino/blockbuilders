@@ -1,7 +1,7 @@
 "use client";
 // import WalletTable from "../components/dashboard/WalletTable";
 import { useEffect, useState, useCallback } from "react";
-import { Wallet, Position, Blockchain, Transaction, CapitalGainHisto } from "@/lib/definition";
+import { Wallet, Position, Blockchain, Transaction, CapitalGainHisto, UnrealizedGain } from "@/lib/definition";
 import {
   fetchTopPositions,
   fetchTopBlockchains,
@@ -14,6 +14,7 @@ import {
   fetchTotalCapitalGainHisto,
   fetchBestPerformerPositions,
   fetchWorstPerformerPositions,
+  fetchUnrealizedGain,
 } from "@/lib/data";
 import React from "react";
 import { Toaster } from "@/components/Toaster";
@@ -68,6 +69,7 @@ const Wallets = () => {
   const [worst_performer_positions, setWorstPerformerPositions] = useState<Position[]>([]);
   const [last_transactions, setLastTransactions] = useState<Transaction[]>([]);
   const [total_capital_gains, setTotalCapitalGainHisto] = useState<CapitalGainHisto[]>([]);
+  const [total_unrealized_gains, setTotalUnrealizedGain] = useState<UnrealizedGain[]>([]);
   const [count_transactions, setCountTransactions] = useState(0);
   const [taskPolling, setTaskPolling] = useState<{
     [taskId: string]: NodeJS.Timeout;
@@ -182,6 +184,14 @@ const Wallets = () => {
   useEffect(() => {
     fetchWorstPerformerPositionsData();
   }, []);
+
+  const fetchUnrealizedGainData = async () => {
+    await fetchUnrealizedGain(setTotalUnrealizedGain);
+  };
+  useEffect(() => {
+    fetchUnrealizedGainData();
+  }, []);
+
   useEffect(() => {
     fetchTopPositionData();
   }, []);
@@ -378,7 +388,11 @@ const Wallets = () => {
               <span className="text-sm text-gray-500 dark:text-gray-500"></span>
             </p>
             <p className="flex items-center justify-between gap-2">
-              <span className="text-lg font-medium text-gray-900 dark:text-gray-50">-17.1</span>
+              <span className="text-lg font-medium text-gray-900 dark:text-gray-50">
+                {total_unrealized_gains[0]
+                  ? formatNumber(total_unrealized_gains[0].total_unrealized_gain, "currency")
+                  : formatNumber(0, "currency")}
+              </span>
               <span
                 className={`rounded px-1.5 py-1 text-right text-xs font-semibold ${
                   difference_neutre === 0
