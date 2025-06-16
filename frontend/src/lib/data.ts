@@ -383,7 +383,7 @@ export const fetchTransactionsAllWithSearch = async (
   setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>,
 ): Promise<void> => {
   try {
-    const response = await fetcher(`/api/transactions/?search=${searchTerm}&limit=1000`);
+    const response = await fetcher(`/api/transactions/?search=${searchTerm}&limit=200`);
 
     if (response.results) {
       setTransactions(response.results); // Ensure the transactions are correctly set
@@ -397,7 +397,7 @@ export const fetchTransactionsAllWithSearch = async (
 
 export const fetchContractsAll = async (setContracts: React.Dispatch<React.SetStateAction<Contract[]>>): Promise<void> => {
   try {
-    const response = await fetcher(`/api/contracts/?limit=1000`);
+    const response = await fetcher(`/api/contracts/?limit=200`);
 
     if (response.results) {
       setContracts(response.results); // Ensure the transactions are correctly set

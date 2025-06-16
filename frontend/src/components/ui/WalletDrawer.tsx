@@ -5,10 +5,12 @@ import React from "react";
 import { Input } from "../Input";
 import { Label } from "../Label";
 import { Textarea } from "../Textarea";
+import { Card } from "../Card";
 import { Wallet } from "@/lib/definition";
 import { AuthActions } from "@/app/(auth)/utils";
 import { useRouter } from "next/navigation";
 import { deleteWallet, downloadWallet, refreshFullWallet } from "@/lib/actions";
+import { Divider } from "../Divider";
 
 type WalletFormData = Partial<Wallet>;
 
@@ -164,6 +166,64 @@ const EditPage = ({ formData, onUpdateForm, datas }: FormPageProps) => (
           placeholder="Description"
         />
       </FormField>
+      <div>
+        <Label className="font-medium">Statistics</Label>
+        <div className="mt-0 grid grid-cols-1 gap-5 lg:grid-cols-8">
+          <div className="lg:col-span-8">
+            <dl className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-2">
+              {/* Left Column */}
+              <div className="space-y-6">
+                <div>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500">Total Users</dt>
+                  <dd className="mt-1 flex items-baseline">
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">25 784</span>
+                    <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+17%</span>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500">Average CSAT Score</dt>
+                  <dd className="mt-1 flex items-baseline">
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">86.9</span>
+                    <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+6%</span>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500">Average Response Time</dt>
+                  <dd className="mt-1 flex items-baseline">
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">7.2m</span>
+                    <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+12%</span>
+                  </dd>
+                </div>
+              </div>
+
+              {/* Right Column */}
+              <div className="space-y-6">
+                <div>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500">Avg. Handling Time</dt>
+                  <dd className="mt-1 flex items-baseline">
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">14.1m</span>
+                    <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+21%</span>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500">First Contact Resolution</dt>
+                  <dd className="mt-1 flex items-baseline">
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">80.0%</span>
+                    <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+3%</span>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500">Retention Rate</dt>
+                  <dd className="mt-1 flex items-baseline">
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">28.0%</span>
+                    <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+2%</span>
+                  </dd>
+                </div>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
     </DrawerBody>
   </>
 );
@@ -260,14 +320,7 @@ const SummaryPage = ({ formData }: { formData: WalletFormData }) => (
   </>
 );
 
-export function WalletDrawer({
-  open,
-  onOpenChange,
-  datas,
-  onWalletDeleted,
-  onWalletDownloaded,
-  onWalletFullRefreshed,
-}: WalletDrawerProps) {
+export function WalletDrawer({ open, onOpenChange, datas, onWalletDeleted, onWalletDownloaded, onWalletFullRefreshed }: WalletDrawerProps) {
   const [formData, setFormData] = React.useState<WalletFormData>({
     id: "",
     name: "",
