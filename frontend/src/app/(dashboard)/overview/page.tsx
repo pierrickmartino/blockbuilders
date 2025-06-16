@@ -26,7 +26,7 @@ import { CategoryBar } from "@/components/CategoryBar";
 import { WalletDrawer } from "@/components/ui/WalletDrawer";
 import { Divider } from "@/components/Divider";
 import { Button } from "@/components/Button";
-import { RiAddLine, RiCheckLine, RiRefreshLine } from "@remixicon/react";
+import { RiAddLine, RiArrowRightSLine, RiCheckLine, RiRefreshLine } from "@remixicon/react";
 import { volume } from "@/data/wallet/volume";
 import { List, ListItem } from "@tremor/react";
 import { formatNumber } from "@/lib/format";
@@ -565,7 +565,7 @@ const Wallets = () => {
                   >
                     <span className="w-px bg-gray-200 dark:bg-gray-800" aria-hidden={true} />
                   </div>
-                  <>
+                  <div className="flex items-start space-x-2.5">
                     <div className="relative flex size-6 flex-none items-center justify-center bg-white dark:bg-[#090E1A]">
                       {step.type === "IN" ? (
                         <div
@@ -584,15 +584,21 @@ const Wallets = () => {
                         />
                       )}
                     </div>
+                    <div>
+                      <p className="flex items-center justify-between gap-2">
+                        <p className="flex-auto mt-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
+                          {step.type === "IN" ? "Buy" : step.type === "OUT" ? "Sell" : ""} {formatNumber(step.quantity, "quantity_precise")}{" "}
+                          <span className="font-medium text-gray-900 dark:text-gray-50">{step.position.contract.symbol}</span>
+                          {step.against_contract ? <span> / {step.against_contract.symbol}</span> : ""}
+                        </p>
+                        <p><RiArrowRightSLine className="ml-auto size-4 shrink-0" aria-hidden="true"></RiArrowRightSLine></p>
+                      </p>
 
-                    <p className="flex-auto py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
-                      {step.type === "IN" ? "Buy" : step.type === "OUT" ? "Sell" : ""} {formatNumber(step.quantity, "quantity_precise")}{" "}
-                      <span className="font-medium text-gray-900 dark:text-gray-50">{step.position.contract.symbol}</span>
-                    </p>
-                    <time dateTime={step.date} className="flex-none py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
-                      {formatDistanceToNow(new Date(step.date), { addSuffix: true })}
-                    </time>
-                  </>
+                      <time dateTime={step.date} className="flex-none py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
+                        {formatDistanceToNow(new Date(step.date), { addSuffix: true })}
+                      </time>
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
