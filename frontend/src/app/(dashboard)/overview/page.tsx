@@ -19,6 +19,7 @@ import {
 import React from "react";
 import { Toaster } from "@/components/Toaster";
 import { useToast } from "@/lib/useToast";
+import Image from "next/image";
 import { DataTable } from "@/components/ui/data-table-wallet/DataTable";
 import { LineChartSupport } from "@/components/LineChartSupport";
 import { ProgressCircle } from "@/components/ProgressCircle";
@@ -143,7 +144,7 @@ const Wallets = () => {
 
   // Fetch last transaction function
   const fetchLastTransactionData = async () => {
-    await fetchLastTransactions(6, setLastTransactions);
+    await fetchLastTransactions(5, setLastTransactions);
   };
 
   // Fetch last transaction function
@@ -556,7 +557,7 @@ const Wallets = () => {
           <div className="mt-6">
             <ul role="list" className="space-y-4">
               {last_transactions.map((step, stepIdx) => (
-                <li key={step.id} className="relative flex gap-x-3">
+                <li key={step.id} className="relative flex-1 gap-x-3">
                   <div
                     className={classNames(
                       stepIdx === last_transactions.length - 1 ? "h-6" : "-bottom-6",
@@ -584,19 +585,30 @@ const Wallets = () => {
                         />
                       )}
                     </div>
-                    <div>
-                      <p className="flex items-center justify-between gap-2">
-                        <p className="flex-auto mt-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
+                    <div className="flex-auto rounded-md p-3 ring-1 ring-inset ring-gray-300 dark:ring-gray-800">
+                      <div className="flex justify-between gap-x-4">
+                        <div className="py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
                           {step.type === "IN" ? "Buy" : step.type === "OUT" ? "Sell" : ""} {formatNumber(step.quantity, "quantity_precise")}{" "}
                           <span className="font-medium text-gray-900 dark:text-gray-50">{step.position.contract.symbol}</span>
                           {step.against_contract ? <span> / {step.against_contract.symbol}</span> : ""}
-                        </p>
-                        <p><RiArrowRightSLine className="ml-auto size-4 shrink-0" aria-hidden="true"></RiArrowRightSLine></p>
-                      </p>
-
-                      <time dateTime={step.date} className="flex-none py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
-                        {formatDistanceToNow(new Date(step.date), { addSuffix: true })}
-                      </time>
+                        </div>
+                        <time dateTime={step.date} className="flex-none py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
+                          {formatDistanceToNow(new Date(step.date), { addSuffix: true })}
+                        </time>
+                      </div>
+                      <div className="flex justify-between gap-x-4">
+                        <div className="py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
+                          @ <span className="font-medium text-gray-900 dark:text-gray-50">{formatNumber(step.price, "currency")} </span>for{" "}
+                          {formatNumber(step.cost, "currency")}
+                        </div>
+                        <Image
+                          alt="Token Logo"
+                          width={25}
+                          height={25}
+                          src={step.position.contract.logo_uri || `/images/logos/${step.position.contract.blockchain.icon}`}
+                          className="relative mt-3 size-6 flex-none rounded-full bg-gray-50"
+                        />
+                      </div>
                     </div>
                   </div>
                 </li>
