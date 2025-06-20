@@ -3,12 +3,10 @@ import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
 import Drawer, { drawerClasses } from "@mui/material/Drawer";
 import Stack from "@mui/material/Stack";
-import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
 
 import MenuButton from "../../components/dashboard/MenuButton";
 import MenuContent from "./MenuContent";
-import CardAlert from "../../components/dashboard/CardAlert";
 
 import { Button } from "@/components/Button";
 import { Heading } from "@/components/Heading";
@@ -41,9 +39,7 @@ export default function SideMenuMobile({ open, toggleDrawer }: SideMenuMobilePro
         <Stack direction="row" sx={{ p: 2, pb: 0, gap: 1 }}>
           <Stack direction="row" sx={{ gap: 1, alignItems: "center", flexGrow: 1, p: 1 }}>
             <Avatar sizes="small" alt="Riley Carter" src="/static/images/avatar/7.jpg" sx={{ width: 24, height: 24 }} />
-            <Heading variant="h6">
-              Riley Carter
-            </Heading>
+            <Heading variant="h6">Riley Carter</Heading>
           </Stack>
           <MenuButton showBadge>
             <NotificationsRoundedIcon />
@@ -54,7 +50,6 @@ export default function SideMenuMobile({ open, toggleDrawer }: SideMenuMobilePro
           <MenuContent />
           <Divider />
         </Stack>
-        <CardAlert />
         <Stack sx={{ p: 2 }}>
           <Button variant="secondary" className="w-full text-sm">
             <svg

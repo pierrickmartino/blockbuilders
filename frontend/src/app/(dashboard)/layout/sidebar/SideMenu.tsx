@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import OptionsMenu from '../../components/dashboard/OptionsMenu';
 import SelectContent from '../../components/dashboard/SelectContent';
 import MenuContent from './MenuContent';
-import CardAlert from '../../components/dashboard/CardAlert';
 import { Heading } from '@/components/Heading';
 
 const drawerWidth = 240;
@@ -46,7 +45,6 @@ export default function SideMenu() {
       </Box>
       <Divider />
       <MenuContent />
-      <CardAlert />
       <Stack
         direction="row"
         sx={{
