@@ -178,14 +178,6 @@ const Positions = () => {
         Positions
       </Heading>
       <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2) }}>
-        {/* {data.map((card, index) => (
-          <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
-            <StatCard {...card} />
-          </Grid>
-        ))}
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <HighlightedCard />
-        </Grid>  */}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card>
             <Stack direction="column" sx={{ justifyContent: "space-between", flexGrow: "1", gap: 1 }}>
