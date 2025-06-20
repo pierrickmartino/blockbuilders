@@ -753,7 +753,6 @@ const Wallets = () => {
     //       </Grid>
     //     ))}
     //     <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-    //       <HighlightedCard />
     //     </Grid>
     //   </Grid>
     //   <Heading variant="h6" className="mb-2">

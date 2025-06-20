@@ -15,7 +15,6 @@ import { useParams } from "next/navigation";
 import { SearchForm } from "@/components/SearchForm";
 import { formatNumber } from "@/lib/format";
 import getLast30Days from "@/lib/getLast30Days";
-import HighlightedCard from "@/app/(dashboard)/components/dashboard/HighlightedCard";
 import PriceSparkline from "@/app/(dashboard)/components/dashboard/PriceSparkline";
 import DeltaChip from "@/app/(dashboard)/components/dashboard/DeltaChip";
 import { Badge1 } from "@/components/BadgeCustom";
@@ -272,9 +271,7 @@ const Positions = () => {
             </Stack>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <HighlightedCard />
-        </Grid>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}></Grid>
         <Grid size={{ xs: 12, lg: 9 }}>
           {positions.length > 0 && positions[0]?.wallet ? (
             <PositionTable
