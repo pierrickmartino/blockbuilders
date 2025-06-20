@@ -92,32 +92,6 @@ const FirstPage = ({ formData, onUpdateForm }: FormPageProps) => (
         </RadioCardGroup>
       </FormField> */}
 
-      {/* <FormField label="Category">
-        <Select value={formData.category} onValueChange={(value: Category) => onUpdateForm({ category: value })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Category" />
-          </SelectTrigger>
-          <SelectContent>
-            {categoryTypes.map((category) => (
-              <SelectItemExtended key={category.value} value={category.value} option={category.name} description={category.description} />
-            ))}
-          </SelectContent>
-        </Select>
-      </FormField> */}
-
-      {/* <FormField label="Policy Type">
-        <Select value={formData.policyType} onValueChange={(value: PolicyType) => onUpdateForm({ policyType: value })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select Policy Type" />
-          </SelectTrigger>
-          <SelectContent>
-            {policyTypes.map((type) => (
-              <SelectItemExtended key={type.value} value={type.value} option={type.name} description={type.description} />
-            ))}
-          </SelectContent>
-        </Select>
-      </FormField> */}
-
       {/* <FormField label="Policy Number">
         <Input
           disabled

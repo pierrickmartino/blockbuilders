@@ -6,7 +6,6 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import OptionsMenu from '../../components/dashboard/OptionsMenu';
-import SelectContent from '../../components/dashboard/SelectContent';
 import MenuContent from './MenuContent';
 import { Heading } from '@/components/Heading';
 
@@ -41,7 +40,6 @@ export default function SideMenu() {
           p: 1.5,
         }}
       >
-        <SelectContent />
       </Box>
       <Divider />
       <MenuContent />
