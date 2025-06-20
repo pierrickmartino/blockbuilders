@@ -19,15 +19,15 @@ import {
 import React from "react";
 import { Toaster } from "@/components/Toaster";
 import { useToast } from "@/lib/useToast";
-import Image from "next/image";
 import { DataTable } from "@/components/ui/data-table-wallet/DataTable";
 import { LineChartSupport } from "@/components/LineChartSupport";
 import { ProgressCircle } from "@/components/ProgressCircle";
 import { CategoryBar } from "@/components/CategoryBar";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/Popover";
 import { WalletDrawer } from "@/components/ui/WalletDrawer";
 import { Divider } from "@/components/Divider";
 import { Button } from "@/components/Button";
-import { RiAddLine, RiArrowRightSLine, RiCheckLine, RiRefreshLine } from "@remixicon/react";
+import { RiAddLine, RiArrowDropRightLine, RiArrowRightSLine, RiCheckLine, RiRefreshLine } from "@remixicon/react";
 import { volume } from "@/data/wallet/volume";
 import { List, ListItem } from "@tremor/react";
 import { formatNumber } from "@/lib/format";
@@ -588,7 +588,7 @@ const Wallets = () => {
                     <div className="flex-auto rounded-md p-3 ring-1 ring-inset ring-gray-300 dark:ring-gray-800">
                       <div className="flex justify-between gap-x-4">
                         <div className="py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
-                          {step.type === "IN" ? "Buy" : step.type === "OUT" ? "Sell" : ""} {formatNumber(step.quantity, "quantity_precise")}{" "}
+                          {step.type === "IN" ? "Buy" : step.type === "OUT" ? "Sell" : ""}{" "}
                           <span className="font-medium text-gray-900 dark:text-gray-50">{step.position.contract.symbol}</span>
                           {step.against_contract ? <span> / {step.against_contract.symbol}</span> : ""}
                         </div>
@@ -601,13 +601,54 @@ const Wallets = () => {
                           @ <span className="font-medium text-gray-900 dark:text-gray-50">{formatNumber(step.price, "currency")} </span>for{" "}
                           {formatNumber(step.cost, "currency")}
                         </div>
-                        <Image
-                          alt="Token Logo"
-                          width={25}
-                          height={25}
-                          src={step.position.contract.logo_uri || `/images/logos/${step.position.contract.blockchain.icon}`}
-                          className="relative mt-3 size-6 flex-none rounded-full bg-gray-50"
-                        />
+                        <a
+                          href={`${step.position.contract.blockchain.transaction_link}${step.hash}`}
+                          className="py-0.5 flex items-center gap-0.5 text-xs font-normal text-blue-600 hover:underline hover:underline-offset-4 dark:text-blue-500"
+                          aria-label={`Explorer link for ${step.hash}`}
+                        >
+                          Explorer
+                          <RiArrowDropRightLine className="size-4 shrink-0" aria-hidden="true" />
+                        </a>
+                      </div>
+                      <div className="flex justify-between gap-x-4">
+                        <div className="py-0.5 text-xs leading-5 text-gray-500 dark:text-gray-500">
+                          on {step.position.contract.blockchain.name}
+                        </div>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <a
+                          className="py-0.5 flex items-center gap-0.5 text-xs font-normal text-blue-600 hover:underline hover:underline-offset-4 dark:text-blue-500"
+                          aria-label={`Details for ${step.hash}`}
+                        >
+                          Details
+                          <RiArrowDropRightLine className="size-4 shrink-0" aria-hidden="true" />
+                        </a>
+                          </PopoverTrigger>
+                          <PopoverContent className="p-4">
+                            <div className="flex flex-col gap-1">
+                              <div className="space-y-1">
+                                <span className="text-xs font-medium text-gray-900 dark:text-gray-50">Quantity:</span>{" "}
+                                <span className="text-xs leading-5 text-gray-500 dark:text-gray-500">{formatNumber(step.quantity, "quantity_precise")}</span>
+                              </div>
+                              <div className="space-y-1">
+                                <span className="text-xs font-medium text-gray-900 dark:text-gray-50">Average cost:</span>{" "}
+                                <span className="text-xs leading-5 text-gray-500 dark:text-gray-500">{formatNumber(step.average_cost, "currency")}</span>
+                              </div>
+                              <div className="space-y-1">
+                                <span className="text-xs font-medium text-gray-900 dark:text-gray-50">Capital gain:</span>{" "}
+                                <span className="text-xs leading-5 text-gray-500 dark:text-gray-500">{formatNumber(step.capital_gain, "currency")}</span>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                        {/* <a
+                          href={`${step.position.contract.blockchain.transaction_link}${step.hash}`}
+                          className="py-0.5 flex items-center gap-0.5 text-xs font-normal text-blue-600 hover:underline hover:underline-offset-4 dark:text-blue-500"
+                          aria-label={`Details for ${step.hash}`}
+                        >
+                          Details
+                          <RiArrowDropRightLine className="size-4 shrink-0" aria-hidden="true" />
+                        </a> */}
                       </div>
                     </div>
                   </div>

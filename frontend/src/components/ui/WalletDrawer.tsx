@@ -5,12 +5,11 @@ import React from "react";
 import { Input } from "../Input";
 import { Label } from "../Label";
 import { Textarea } from "../Textarea";
-import { Card } from "../Card";
 import { Wallet } from "@/lib/definition";
 import { AuthActions } from "@/app/(auth)/utils";
 import { useRouter } from "next/navigation";
 import { deleteWallet, downloadWallet, refreshFullWallet } from "@/lib/actions";
-import { Divider } from "../Divider";
+import { formatNumber } from "@/lib/format";
 
 type WalletFormData = Partial<Wallet>;
 
@@ -174,23 +173,29 @@ const EditPage = ({ formData, onUpdateForm, datas }: FormPageProps) => (
               {/* Left Column */}
               <div className="space-y-6">
                 <div>
-                  <dt className="text-sm text-gray-500 dark:text-gray-500">Total Users</dt>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500">Total amount</dt>
                   <dd className="mt-1 flex items-baseline">
-                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">25 784</span>
-                    <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+17%</span>
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
+                      { datas && datas.balance ? formatNumber(datas.balance, "currency") : "-"}
+                    </span>
+                    <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+0%</span>
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-gray-500 dark:text-gray-500">Average CSAT Score</dt>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500">Capital gain</dt>
                   <dd className="mt-1 flex items-baseline">
-                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">86.9</span>
-                    <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+6%</span>
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
+                      { datas && datas.capital_gain ? formatNumber(datas.capital_gain, "currency") : "-"}
+                    </span>
+                    <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+0%</span>
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-gray-500 dark:text-gray-500">Average Response Time</dt>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500">Unrealized Gain</dt>
                   <dd className="mt-1 flex items-baseline">
-                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">7.2m</span>
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
+                      { datas && datas.unrealized_gain ? formatNumber(datas.unrealized_gain, "currency") : "-"}
+                    </span>
                     <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+12%</span>
                   </dd>
                 </div>
@@ -199,16 +204,16 @@ const EditPage = ({ formData, onUpdateForm, datas }: FormPageProps) => (
               {/* Right Column */}
               <div className="space-y-6">
                 <div>
-                  <dt className="text-sm text-gray-500 dark:text-gray-500">Avg. Handling Time</dt>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500"># Positions</dt>
                   <dd className="mt-1 flex items-baseline">
-                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">14.1m</span>
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">6</span>
                     <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+21%</span>
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-sm text-gray-500 dark:text-gray-500">First Contact Resolution</dt>
+                  <dt className="text-sm text-gray-500 dark:text-gray-500"># Transactions</dt>
                   <dd className="mt-1 flex items-baseline">
-                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">80.0%</span>
+                    <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">15 547</span>
                     <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+3%</span>
                   </dd>
                 </div>
