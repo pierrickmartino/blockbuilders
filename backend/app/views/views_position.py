@@ -224,14 +224,19 @@ def refresh_full_historical_position_price(request, wallet_id: uuid):
     symbol_set = {
         position.contract.symbol
         for position in positions
-        if not position.contract.category == CategoryContractChoices.COLLATERAL
-        and not position.contract.category == CategoryContractChoices.SUSPICIOUS
-        and "-" not in position.contract.symbol
-        and "." not in position.contract.symbol
-        # if not position.contract.symbol[0].islower() and "-" not in position.contract.symbol and "." not in position.contract.symbol
-    }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
-    # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
+        if not position.contract.category == CategoryContractChoices.COLLATERAL  # exclusion of collateral contracts
+        and not position.contract.category == CategoryContractChoices.SUSPICIOUS  # exclusion of suspicious contracts
+        and not position.contract.relative_symbol  # exclusion of relative symbols (f.e. aPolMIMATIC, amUSDC, etc...)
+        and "-" not in position.contract.symbol  # exclusion of all the symbol with a - inside (f.e. BSC-Coin, etc...)
+        and "." not in position.contract.symbol  # exclusion of all the symbol with a . inside (f.e. USD.e, etc...)
+    }
     symbol_list = list(symbol_set)
+
+    # Add some mandatory token to the symbol_list if they don't exist
+    mandatory_tokens = ["USDC", "ETH", "BTC", "MATIC", "POL", "BNB", "ARB", "OP", "BASE", "METIS", "DAI", "USDT"]
+    for token in mandatory_tokens:
+        if token not in symbol_list:
+            symbol_list.append(token)
 
     chain_result = chain(
         start_wallet_fulldownload_task.s(wallet_id),

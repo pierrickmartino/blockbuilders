@@ -1372,7 +1372,7 @@ def get_full_init_historical_price_from_market_task(previous_return: list, symbo
     for symbol in symbol_list:
         logger.info(f"Get full init market historical price for {symbol}.")
         try:
-            delta = 1000
+            delta = 400
 
             # Get today's date
             days_ago = timezone.now().date() - timedelta(days=delta)
