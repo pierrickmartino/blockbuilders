@@ -1364,7 +1364,7 @@ def get_historical_price_from_market_task(previous_return: list, symbol: str):
 @shared_task
 def get_full_init_historical_price_from_market_task(previous_return: list, symbol_list: list[str]):
     """
-    Task to get the full init historical market price of a symbol.
+    Task to get the complete initialization of the historical market price for a list of symbols.
     """
     start_time = time.time()
     logger.info(f"Task started [get_full_init_historical_price_from_market_task] with ({','.join(symbol_list)})")
