@@ -147,6 +147,16 @@ def export_all_transactions_csv(request):
             "total_cost",
             "total_cost_contract_based",
             "total_cost_fiat_based",
+            "average_cost",
+            "average_cost_contract_based",
+            "average_cost_fiat_based",
+            "capital_gain",
+            "running_capital_gain",
+            "position__contract__symbol",
+            "position__contract__name",
+            "position__wallet__name",
+            "position__contract__category",
+            "position__contract__blockchain__name",
         ]
     )
 
@@ -183,6 +193,16 @@ def export_all_transactions_csv(request):
             "total_cost",
             "total_cost_contract_based",
             "total_cost_fiat_based",
+            "average_cost",
+            "average_cost_contract_based",
+            "average_cost_fiat_based",
+            "capital_gain",
+            "running_capital_gain",
+            "position__contract__symbol",
+            "position__contract__name",
+            "position__wallet__name",
+            "position__contract__category",
+            "position__contract__blockchain__name",
         )
     )
     for transaction in transactions:
