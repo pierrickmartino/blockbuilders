@@ -1,9 +1,10 @@
 from collections import defaultdict
+import csv
 import logging
 import uuid
 
 from celery import chain, chord, group
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 
 from app.tasks import (
     calculate_wallet_balance_task,
@@ -139,8 +140,8 @@ def refresh_position_price(request):
     View to refresh position prices of all the wallet of the user by chaining several Celery tasks.
     """
     logger.info(f"Enter in [refresh_position_price]")
+
     # Get the wallets owned by the user
-    # user = get_object_or_404(User, id=request.user.id)
     wallets = Wallet.objects.filter(user=request.user)
     if not wallets:
         logger.warning("No wallets found for the user.")
@@ -150,17 +151,23 @@ def refresh_position_price(request):
     if not positions:
         logger.warning("No positions found for the user's wallets.")
         return JsonResponse({"status": "No positions found for the user's wallets."}, status=404)
+    
     symbol_set = {
         position.contract.symbol
         for position in positions
-        if not position.contract.category == CategoryContractChoices.COLLATERAL
-        and not position.contract.category == CategoryContractChoices.SUSPICIOUS
-        and "-" not in position.contract.symbol
-        and "." not in position.contract.symbol
-        # if not position.contract.symbol[0].islower() and "-" not in position.contract.symbol and "." not in position.contract.symbol
-    }  # exclusion of all the derivative token (f.e. aPolMIMATIC, amUSDC, etc...)
-    # exclusion of all the symbol with a . or - inside (f.e. BSC-Coin, USD.e, etc...)
+        if not position.contract.category == CategoryContractChoices.COLLATERAL  # exclusion of collateral contracts
+        and not position.contract.category == CategoryContractChoices.SUSPICIOUS  # exclusion of suspicious contracts
+        and not position.contract.relative_symbol  # exclusion of relative symbols (f.e. aPolMIMATIC, amUSDC, etc...)
+        and "-" not in position.contract.symbol  # exclusion of all the symbol with a - inside (f.e. BSC-Coin, etc...)
+        and "." not in position.contract.symbol  # exclusion of all the symbol with a . inside (f.e. USD.e, etc...)
+    }  
     symbol_list = list(symbol_set)
+
+    # Add some mandatory token to the symbol_list if they don't exist
+    mandatory_tokens = ["USDC", "ETH", "BTC", "MATIC", "POL", "BNB", "ARB", "OP", "BASE", "METIS", "DAI", "USDT"]
+    for token in mandatory_tokens:
+        if token not in symbol_list:
+            symbol_list.append(token)
 
     # Start the chain of tasks to refresh position prices
     logger.info(f"Starting position price refresh for user {request.user.id} with {len(symbol_list)} symbols")
@@ -491,3 +498,68 @@ def get_total_unrealizedgains(request):
         unrealized_gain += (position.contract.price - position.average_cost) * position.quantity
 
     return Response([{"total_unrealized_gain": unrealized_gain}])
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
+def export_all_positions_csv(request):
+
+    # Generate the current timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"positions_{timestamp}.csv"
+
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow(
+        [
+            "id",
+            "wallet",
+            "contract",
+            "quantity",
+            "average_cost",
+            "amount",
+            "daily_price_delta",
+            "weekly_price_delta",
+            "monthly_price_delta",
+            "progress_percentage",
+            "total_cost",
+            "unrealized_gain",
+            "unrealized_gain_percentage",
+            "capital_gain",
+        ]
+    )
+
+    # Get the wallets owned by the user
+    user = get_object_or_404(User, id=request.user.id)
+    wallets = Wallet.objects.filter(user=user)
+    if not wallets:
+        logger.warning("No wallets found for the user.")
+        return HttpResponse({"status": "No wallets found for the user."}, status=404)
+    
+    # Collect all the positions from all wallets
+    positions = (Position.objects.filter(wallet__in=wallets)
+        .order_by("amount")
+        .values_list(
+            "id",
+            "wallet",
+            "contract",
+            "quantity",
+            "average_cost",
+            "amount",
+            "daily_price_delta",
+            "weekly_price_delta",
+            "monthly_price_delta",
+            "progress_percentage",
+            "total_cost",
+            "unrealized_gain",
+            "unrealized_gain_percentage",
+            "capital_gain",
+        )
+    )
+
+    for position in positions:
+        writer.writerow(position)
+
+    return response

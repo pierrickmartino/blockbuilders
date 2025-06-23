@@ -332,6 +332,16 @@ urlpatterns = [
         views_transaction.export_transactions_csv,
         name="export_transactions_csv",
     ),
+    path(
+        "api/positions/export/csv/",
+        views_position.export_all_positions_csv,
+        name="export_all_positions_csv",
+    ),
+    path(
+        "api/transactions/export/csv/",
+        views_transaction.export_all_transactions_csv,
+        name="export_all_transactions_csv",
+    ),
     # FOR CELERY PROCESS
     path(
         "api/tasks/<uuid:task_id>/status/",

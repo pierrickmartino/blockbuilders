@@ -9,6 +9,10 @@ import { Divider } from "@/components/Divider";
 import { DataTable } from "@/components/ui/data-table-transaction/DataTable";
 import { TransactionDrawer } from "@/components/ui/TransactionDrawer";
 import { getColumns } from "@/components/ui/data-table-transaction/columns";
+import { Button } from "@/components/Button";
+import { RiDownload2Line } from "@remixicon/react";
+import { exportAllTransactions } from "@/lib/export-transaction";
+import saveAs from "file-saver";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -43,25 +47,48 @@ const Transactions = () => {
     },
   });
 
+  const handleExport = async () => {
+    console.log("Export function called"); // Debug log
+
+    try {
+      console.log("Attempting to export transactions");
+
+      const response = await exportAllTransactions();
+
+      // Log response to check if we got it successfully
+      console.log("Export API response received:", response);
+
+      // Create a Blob from the response data
+      const blob = new Blob([response], {
+        type: "text/csv;charset=utf-8;",
+      });
+      saveAs(blob, `transactions_${new Date().toISOString().replace(/[:.-]/g, "")}.csv`);
+    } catch (error) {
+      console.error("An error occurred while exporting transactions:", error);
+    }
+  };
+
   return (
-      <main>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Transactions</h1>
-            <p className="text-gray-500 sm:text-sm/6 dark:text-gray-500">Monitor transaction performance and manage ticket generation</p>
-          </div>
-          <TransactionDrawer
-            open={isOpen}
-            onOpenChange={setIsOpen}
-            datas={datas}
-          />
+    <main>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-50">Transactions</h1>
+          <p className="text-gray-500 sm:text-sm/6 dark:text-gray-500">Monitor transaction performance and manage ticket generation</p>
         </div>
-        <Divider />
-        <section className="mt-8">
-          <DataTable data={transactions} columns={columns} />
-        </section>
-      </main>
-    );
+        <div className="flex items-end gap-2">
+          <Button variant="secondary" className="flex items-center gap-2 text-base sm:text-sm" onClick={() => handleExport()}>
+            Export
+            <RiDownload2Line className="-mr-0.5 size-5 shrink-0" aria-hidden="true" />
+          </Button>
+        </div>
+        <TransactionDrawer open={isOpen} onOpenChange={setIsOpen} datas={datas} />
+      </div>
+      <Divider />
+      <section className="mt-8">
+        <DataTable data={transactions} columns={columns} />
+      </section>
+    </main>
+  );
 };
 
 export default Transactions;

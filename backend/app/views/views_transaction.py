@@ -12,7 +12,7 @@ import plotly.graph_objects as go
 logger = logging.getLogger("blockbuilders")
 
 from django.core.paginator import Paginator
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from datetime import datetime, timedelta
@@ -29,6 +29,7 @@ from app.models import (
     PositionCalculator,
     Transaction,
     TransactionCalculator,
+    User,
     Wallet,
 )
 
@@ -90,6 +91,80 @@ def export_transactions_csv(request, position_id):
     position = Position.objects.filter(id=position_id).first()
     transactions = (
         Transaction.objects.filter(position=position)
+        .order_by("date")
+        .values_list(
+            "id",
+            "type",
+            "date",
+            "quantity",
+            "comment",
+            "hash",
+            "price",
+            "price_contract_based",
+            "against_contract",
+            "price_fiat_based",
+            "running_quantity",
+            "buy_quantity",
+            "sell_quantity",
+            "total_cost",
+            "total_cost_contract_based",
+            "total_cost_fiat_based",
+        )
+    )
+    for transaction in transactions:
+        writer.writerow(transaction)
+
+    return response
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
+def export_all_transactions_csv(request):
+
+    # Generate the current timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"transactions_{timestamp}.csv"
+
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+
+    writer = csv.writer(response)
+    writer.writerow(
+        [
+            "id",
+            "type",
+            "date",
+            "quantity",
+            "comment",
+            "hash",
+            "price",
+            "price_contract_based",
+            "against_contract",
+            "price_fiat_based",
+            "running_quantity",
+            "buy_quantity",
+            "sell_quantity",
+            "total_cost",
+            "total_cost_contract_based",
+            "total_cost_fiat_based",
+        ]
+    )
+
+    # Get the wallets owned by the user
+    user = get_object_or_404(User, id=request.user.id)
+    wallets = Wallet.objects.filter(user=user)
+    if not wallets:
+        logger.warning("No wallets found for the user.")
+        return HttpResponse({"status": "No wallets found for the user."}, status=404)
+    # Collect all the positions from all wallets
+    positions = Position.objects.filter(wallet__in=wallets)
+    if not positions:
+        logger.warning("No positions found for the user's wallets.")
+        return HttpResponse({"status": "No positions found for the user's wallets."}, status=404)
+    
+    # Collect all transactions from the positions
+    transactions = (
+        Transaction.objects.filter(position__in=positions)
         .order_by("date")
         .values_list(
             "id",
