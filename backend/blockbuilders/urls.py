@@ -33,6 +33,7 @@ from app.views.views_api import (
     PositionTopView,
     PositionView,
     TransactionLastView,
+    PositionTransactionLastView,
     BlockchainTopView,
     TransactionView,
     # WalletPositionCapitalGainLastView,
@@ -72,6 +73,7 @@ user_setting_list = UserSettingViewSet.as_view({"get": "list", "post": "create"}
 user_setting_detail = UserSettingViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})
 transaction_list = TransactionView.as_view()
 transaction_last_list = TransactionLastView.as_view()
+position_transaction_last_list = PositionTransactionLastView.as_view()
 transaction_detail = TransactionViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"})
 position_list = PositionView.as_view()
 position_top_list = PositionTopView.as_view()
@@ -225,6 +227,27 @@ urlpatterns = [
     # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # FROM WALLET OBJECT #
     path("api/wallets/", wallet_list, name="wallet-list"),
+    path(
+        "api/wallets/refresh/",
+        views_position.refresh_position_price,
+        name="refresh",
+    ),
+    path(
+        "api/wallets/capitalgains/<int:last>",
+        views_position.get_total_capitalgains,
+        name="get_total_capitalgains",
+    ),
+    path(
+        "api/wallets/unrealizedgains/",
+        views_position.get_total_unrealizedgains,
+        name="get_total_unrealizedgains",
+    ),
+    # FROM A SPECIFIC WALLET OBJECT #
+    path(
+        "api/wallets/<uuid:wallet_id>/capitalgains/<int:last>",
+        views_position.get_wallet_capitalgains,
+        name="get_wallet_capitalgains",
+    ),
     path("api/wallets/<uuid:pk>/", wallet_detail, name="wallet-detail"),
     path("api/wallets/<uuid:wallet_id>/positions/", wallet_position_list, name="wallet-position-list"),
     path("api/wallets/<uuid:wallet_id>/download/", views_position.download_wallet, name="wallet-download"),
@@ -232,11 +255,6 @@ urlpatterns = [
         "api/wallets/<uuid:wallet_id>/refresh/",
         views_position.refresh_wallet_position_price,
         name="wallet-refresh",
-    ),
-    path(
-        "api/wallets/refresh/",
-        views_position.refresh_position_price,
-        name="refresh",
     ),
     path(
         "api/wallets/<uuid:wallet_id>/refresh-full/",
@@ -307,25 +325,16 @@ urlpatterns = [
     path("api/positions/lessprofitable/<int:limit>", position_less_profitable_list, name="position-lessprofitable-list"),
     path("api/positions/bestperformer/<int:limit>", position_best_performer, name="position-bestperformer-list"),
     path("api/positions/worstperformer/<int:limit>", position_worst_performer, name="position-worstperformer-list"),
+    # FROM A SPECIFIC POSITION OBJECT #
+    path(
+        "api/positions/<uuid:position_id>/transactions/last/<int:limit>",
+        views_position.get_position_transactions_last,
+        name="position-transaction-last-list",
+    ),
     path(
         "api/positions/<uuid:position_id>/capitalgains/<int:last>",
         views_position.get_position_capitalgains,
         name="get_position_capitalgains",
-    ),
-    path(
-        "api/wallets/<uuid:wallet_id>/capitalgains/<int:last>",
-        views_position.get_wallet_capitalgains,
-        name="get_wallet_capitalgains",
-    ),
-    path(
-        "api/wallets/capitalgains/<int:last>",
-        views_position.get_total_capitalgains,
-        name="get_total_capitalgains",
-    ),
-    path(
-        "api/wallets/unrealizedgains/",
-        views_position.get_total_unrealizedgains,
-        name="get_total_unrealizedgains",
     ),
     path(
         "api/positions/<uuid:position_id>/export/csv/",

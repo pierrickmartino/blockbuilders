@@ -1,4 +1,5 @@
 from datetime import timedelta
+import uuid
 from django.utils import timezone
 from rest_framework import viewsets, generics, filters, permissions, pagination
 from rest_framework.exceptions import NotFound
@@ -202,6 +203,25 @@ class TransactionLastView(generics.ListAPIView):
         )
 
 
+class TransactionLastView(generics.ListAPIView):
+    serializer_class = TransactionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get the max number of transactions to return from the URL kwargs
+        limit = int(self.kwargs.get("limit", 1))  # Default to 1 if not provided
+        position_id = self.kwargs["position_id"]
+
+        # Filter transactions to include only those belonging to wallets owned by the authenticated user
+        return (
+            Transaction.objects.filter(position__wallet__user=self.request.user)  # Restrict to user's wallets
+            .filter(position_id=position_id)  # Restrict to the selected position
+            .exclude(position__contract__category=CategoryContractChoices.STABLE)  # Exclude STABLE contracts
+            .exclude(position__contract__category=CategoryContractChoices.SUSPICIOUS)  # Exclude SUSPICIOUS contracts
+            .order_by("-date")[:limit]  # Order by date and limit to the max specified
+        )
+
+
 class PositionTopView(generics.ListAPIView):
     serializer_class = PositionSerializer
     permission_classes = [IsAuthenticated]
@@ -260,7 +280,7 @@ class BestPerformerPositionView(generics.ListAPIView):
         return Position.objects.filter(
             wallet__user=self.request.user,
             contract__category=CategoryContractChoices.STANDARD,
-            contract__previous_day__gt=timezone.now() - timedelta(days=2)
+            contract__previous_day__gt=timezone.now() - timedelta(days=2),
         ).order_by(
             "-daily_price_delta"
         )[  # Restrict to user's wallets
@@ -280,7 +300,7 @@ class WorstPerformerPositionView(generics.ListAPIView):
         return Position.objects.filter(
             wallet__user=self.request.user,
             contract__category=CategoryContractChoices.STANDARD,
-            contract__previous_day__gt=timezone.now() - timedelta(days=2)
+            contract__previous_day__gt=timezone.now() - timedelta(days=2),
         ).order_by(
             "daily_price_delta"
         )[  # Restrict to user's wallets
