@@ -820,8 +820,11 @@ def calculate_cost_transaction_task(wallet_id: uuid):
 
             else:
 
-                # TODO : Need to be investigated
-                symbol = transaction.position.contract.symbol.replace("WETH", "ETH")
+                # Get relative symbol for the contract if exists, otherwise use the original symbol
+                if transaction.position.contract.relative_symbol:
+                    symbol = transaction.position.contract.relative_symbol
+                else:
+                    symbol = transaction.position.contract.symbol
 
                 # Retrieve the market data for the specified symbol and transaction date
                 data = get_market_data(symbol, transaction.date)
