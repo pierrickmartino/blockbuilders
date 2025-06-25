@@ -328,7 +328,7 @@ urlpatterns = [
     # FROM A SPECIFIC POSITION OBJECT #
     path(
         "api/positions/<uuid:position_id>/transactions/last/<int:limit>",
-        views_position.get_position_transactions_last,
+        position_transaction_last_list,
         name="position-transaction-last-list",
     ),
     path(
