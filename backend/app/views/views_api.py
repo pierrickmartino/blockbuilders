@@ -203,7 +203,7 @@ class TransactionLastView(generics.ListAPIView):
         )
 
 
-class TransactionLastView(generics.ListAPIView):
+class PositionTransactionLastView(generics.ListAPIView):
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated]
 
