@@ -239,16 +239,16 @@ const WalletTable: React.FC<WalletTableProps> = ({
     },
   ];
 
-  const columns = getColumns({
-      onEditClick: (row) => {
-        // setRow(row)
-        // setIsOpen(true)
-      },
-    })
+  // const columns = getColumns({
+  //     onEditClick: (row) => {
+  //       // setRow(row)
+  //       // setIsOpen(true)
+  //     },
+  //   })
 
   return (
     <BasicCard title="Wallet Overview" subtitle="Track balances, performance, and key metrics across your wallets">
-      <DataTable data={wallets} columns={columns} />
+      {/* <DataTable data={wallets} columns={columns} /> */}
       {/* <DataGrid
         checkboxSelection
         rows={wallets}

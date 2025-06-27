@@ -237,6 +237,13 @@ const Wallets = () => {
     pollTaskStatus(taskId); // Start polling task status
   };
 
+  // Handle navigation to wallet details
+  const handleNavigateToDetails = (selectedWalletId: string) => {
+    if (selectedWalletId !== null) {
+      window.location.href = `/wallets/${selectedWalletId}/positions`;
+    }
+  };
+
   // Handle cleanup on component unmount
   useEffect(() => {
     return () => {
@@ -253,6 +260,9 @@ const Wallets = () => {
     onEditClick: (row) => {
       setRow(row);
       setIsOpen(true);
+    },
+    onDetailsClick: (row) => {
+      handleNavigateToDetails(row.original.id.toString())
     },
   });
 

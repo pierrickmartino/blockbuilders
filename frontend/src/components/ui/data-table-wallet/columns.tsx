@@ -7,7 +7,7 @@ import { Wallet } from "@/lib/definition";
 import { formatNumber } from "@/lib/format";
 import { Ellipsis } from "lucide-react";
 import { cx } from "@/lib/utils";
-import { RiAlarmWarningLine, RiFileCheckLine, RiFileListLine, RiFolderReduceLine } from "@remixicon/react";
+import { RiAlarmWarningLine, RiArrowRightSLine, RiFileCheckLine, RiFileListLine, RiFolderReduceLine } from "@remixicon/react";
 import { ColumnDef, Row, createColumnHelper } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 
@@ -35,7 +35,13 @@ function renderChipAmount(amount: number, type: "currency" | "quantity_precise" 
 
 const columnHelper = createColumnHelper<Wallet>();
 
-export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) => void }) =>
+export const getColumns = ({
+  onEditClick,
+  onDetailsClick,
+}: {
+  onEditClick: (row: Row<Wallet>) => void;
+  onDetailsClick: (row: Row<Wallet>) => void;
+}) =>
   [
     // columnHelper.display({
     //   id: "select",
@@ -196,6 +202,30 @@ export const getColumns = ({ onEditClick }: { onEditClick: (row: Row<Wallet>) =>
             className="group aspect-square p-1.5 hover:border hover:border-gray-300 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:dark:border-gray-700 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900"
           >
             <Ellipsis
+              className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-data-[state=open]:text-gray-700 group-hover:dark:text-gray-300 group-data-[state=open]:dark:text-gray-300"
+              aria-hidden="true"
+            />
+          </Button>
+        );
+      },
+    }),
+    columnHelper.display({
+      id: "details",
+      header: "Details",
+      enableSorting: false,
+      enableHiding: false,
+      meta: {
+        className: "text-right",
+        displayName: "Details",
+      },
+      cell: ({ row }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => onDetailsClick?.(row)}
+            className="group aspect-square p-1.5 hover:border hover:border-gray-300 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:dark:border-gray-700 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900"
+          >
+            <RiArrowRightSLine
               className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-data-[state=open]:text-gray-700 group-hover:dark:text-gray-300 group-data-[state=open]:dark:text-gray-300"
               aria-hidden="true"
             />
