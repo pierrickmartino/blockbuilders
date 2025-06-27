@@ -9,6 +9,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken, TokenError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+from django.db.models import OuterRef, Subquery
 
 from app.serializers import (
     BlockchainSerializer,
@@ -164,7 +165,13 @@ class TransactionView(generics.ListAPIView):
     search_fields = ["against_contract__name", "against_contract__symbol"]
 
     def get_queryset(self):
-        return Transaction.objects.all()
+        # Return transactions that belong to wallets owned by the authenticated user
+        # This ensures that the user can only see their own transactions and not those of other users
+        return (
+            Transaction.objects.filter(position__wallet__user=self.request.user)  # Restrict to user's wallets
+            .select_related("position__contract")  # Optimize query by selecting related contract
+            .select_related("position__wallet")  # Optimize query by selecting related wallet
+        )
 
 
 class PositionView(generics.ListAPIView):
@@ -174,7 +181,37 @@ class PositionView(generics.ListAPIView):
     search_fields = ["contract__name", "contract__symbol"]
 
     def get_queryset(self):
-        return Position.objects.all().order_by("-amount")
+        # Return positions that belong to wallets owned by the authenticated user
+        # This ensures that the user can only see their own positions and not those of other users
+        return (
+            Position.objects.filter(wallet__user=self.request.user)  # Restrict to user's wallets
+            .select_related("contract")  # Optimize query by selecting related contract
+            .select_related("wallet")  # Optimize query by selecting related wallet
+            .order_by("-amount")  # Order by amount
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = serializer.data
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+            data = serializer.data
+
+        # Add last 5 transactions for each position
+        for position in data:
+            position_id = position["id"]
+            last_transactions = (
+                Transaction.objects.filter(position_id=position_id)
+                .order_by("-date")[:5]
+            )
+            position["last_transactions"] = TransactionSerializer(last_transactions, many=True).data
+
+        if page is not None:
+            return self.get_paginated_response(data)
+        return Response(data)
 
 
 class ContractView(generics.ListAPIView):

@@ -70,6 +70,7 @@ export type Position = {
   contract: Contract;
   wallet: Wallet;
   progress_percentage: number;
+  last_transactions: Transaction[];
 };
 
 export type Transaction = {
