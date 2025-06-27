@@ -74,6 +74,8 @@ export const fetchPositionsAllWithSearch = async (
   }
 };
 
+
+
 export const fetchPositions = async (
   wallet_id: string,
   setPositions: React.Dispatch<React.SetStateAction<Position[]>>,
@@ -87,6 +89,23 @@ export const fetchPositions = async (
     if (response.results) {
       setPositions(response.results); // Ensure the positions are correctly set
       setTotalCount(response.count); // Update total count if pagination is enabled
+    }
+  } catch (err) {
+    console.error("Error fetching data from position API:", err);
+    setPositions([]); // Set empty positions if fetching fails
+    throw new Error("Failed to fetch all positions.");
+  }
+};
+
+export const fetchWalletPositions = async (
+  wallet_id: string,
+  setPositions: React.Dispatch<React.SetStateAction<Position[]>>,
+): Promise<void> => {
+  try {
+    const response = await fetcher(`/api/wallets/${wallet_id}/positions/?limit=100`);
+
+    if (response.results) {
+      setPositions(response.results); // Ensure the positions are correctly set
     }
   } catch (err) {
     console.error("Error fetching data from position API:", err);
