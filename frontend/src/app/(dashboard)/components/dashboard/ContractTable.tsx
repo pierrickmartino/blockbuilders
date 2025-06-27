@@ -7,7 +7,7 @@ import { IconDotsVertical } from "@tabler/icons-react";
 import BasicCard from "../shared/BasicCard";
 import { Heading } from "@/components/Heading";
 
-// Define the props type that will be passed into WalletTable
+// Define the props type that will be passed into ContractTable
 interface ContractTableProps {
   contracts: Contract[];
   page: number;

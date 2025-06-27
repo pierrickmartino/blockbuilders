@@ -14,7 +14,7 @@ import { formatDistanceToNow, format } from "date-fns";
 import { Badge1 } from "@/components/BadgeCustom";
 import { Heading } from "@/components/Heading";
 
-// Define the props type that will be passed into WalletTable
+// Define the props type that will be passed into TransactionTable
 interface TransactionTableProps {
   transactions: Transaction[];
   page: number;

@@ -1,5 +1,4 @@
 "use client";
-// import WalletTable from "../components/dashboard/WalletTable";
 import { useEffect, useState, useCallback } from "react";
 import { Wallet, Position, Blockchain, Transaction, CapitalGainHisto, UnrealizedGain } from "@/lib/definition";
 import {
@@ -262,7 +261,7 @@ const Wallets = () => {
       setIsOpen(true);
     },
     onDetailsClick: (row) => {
-      handleNavigateToDetails(row.original.id.toString())
+      handleNavigateToDetails(row.original.id.toString());
     },
   });
 
@@ -627,26 +626,32 @@ const Wallets = () => {
                         <Popover>
                           <PopoverTrigger asChild>
                             <a
-                          className="py-0.5 flex items-center gap-0.5 text-xs font-normal text-blue-600 hover:underline hover:underline-offset-4 dark:text-blue-500"
-                          aria-label={`Details for ${step.hash}`}
-                        >
-                          Details
-                          <RiArrowDropRightLine className="size-4 shrink-0" aria-hidden="true" />
-                        </a>
+                              className="py-0.5 flex items-center gap-0.5 text-xs font-normal text-blue-600 hover:underline hover:underline-offset-4 dark:text-blue-500"
+                              aria-label={`Details for ${step.hash}`}
+                            >
+                              Details
+                              <RiArrowDropRightLine className="size-4 shrink-0" aria-hidden="true" />
+                            </a>
                           </PopoverTrigger>
                           <PopoverContent className="p-4">
                             <div className="flex flex-col gap-1">
                               <div className="space-y-1">
                                 <span className="text-xs font-medium text-gray-900 dark:text-gray-50">Quantity:</span>{" "}
-                                <span className="text-xs leading-5 text-gray-500 dark:text-gray-500">{formatNumber(step.quantity, "quantity_precise")}</span>
+                                <span className="text-xs leading-5 text-gray-500 dark:text-gray-500">
+                                  {formatNumber(step.quantity, "quantity_precise")}
+                                </span>
                               </div>
                               <div className="space-y-1">
                                 <span className="text-xs font-medium text-gray-900 dark:text-gray-50">Average cost:</span>{" "}
-                                <span className="text-xs leading-5 text-gray-500 dark:text-gray-500">{formatNumber(step.average_cost, "currency")}</span>
+                                <span className="text-xs leading-5 text-gray-500 dark:text-gray-500">
+                                  {formatNumber(step.average_cost, "currency")}
+                                </span>
                               </div>
                               <div className="space-y-1">
                                 <span className="text-xs font-medium text-gray-900 dark:text-gray-50">Capital gain:</span>{" "}
-                                <span className="text-xs leading-5 text-gray-500 dark:text-gray-500">{formatNumber(step.capital_gain, "currency")}</span>
+                                <span className="text-xs leading-5 text-gray-500 dark:text-gray-500">
+                                  {formatNumber(step.capital_gain, "currency")}
+                                </span>
                               </div>
                             </div>
                           </PopoverContent>
@@ -753,65 +758,6 @@ const Wallets = () => {
       </dl>
       <Toaster />
     </main>
-    // <Box sx={{ width: "100%", maxWidth: { sm: "100%", md: "1700px" } }}>
-    //   <Heading variant="h6" className="mb-2">
-    //     Overview
-    //   </Heading>
-    //   <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2) }}>
-    //     {data.map((card, index) => (
-    //       <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
-    //       </Grid>
-    //     ))}
-    //     <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-    //     </Grid>
-    //   </Grid>
-    //   <Heading variant="h6" className="mb-2">
-    //     Details
-    //   </Heading>
-    //   <Grid container spacing={2} columns={12}>
-    //     <Grid size={{ xs: 12, lg: 9 }}>
-    //       <Grid container spacing={2}>
-    //         <Grid size={{ xs: 12 }}>
-    //           <WalletTable
-    //             wallets={wallets}
-    //             page={page}
-    //             rowsPerPage={rowsPerPage}
-    //             totalCount={totalCount}
-    //             onPageChange={handlePageChange}
-    //             onRowsPerPageChange={handleRowsPerPageChange}
-    //             onWalletDeleted={handleWalletDeleted}
-    //             onWalletDownloaded={handleWalletDownloaded}
-    //             onWalletRefreshed={handleWalletRefreshed}
-    //             onWalletFullRefreshed={handleWalletFullRefreshed}
-    //             onWalletClick={handleShowWalletDrawer}
-    //           />
-    //         </Grid>
-    //       </Grid>
-    //     </Grid>
-    //     <Grid size={{ xs: 12, sm: 12, lg: 3 }}>
-    //       <BasicCard
-    //         title="Activity"
-    //         subtitle="Latest transactions across the various blockchains"
-    //         action={
-    //           <Fragment>
-    //             <IconButton size="small" href="/dashboard/transactions">
-    //               <ReadMoreOutlined />
-    //             </IconButton>
-    //           </Fragment>
-    //         }
-    //       >
-    //         <LastTransactions transactions={last_transactions} count={count_transactions} />
-    //       </BasicCard>
-    //     </Grid>
-    //   </Grid>
-    //   <Toaster />
-    //   <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
-    //     {DrawerList}
-    //   </Drawer>
-    //   <Drawer anchor="right" open={drawerWalletOpen} onClose={() => toggleWalletDrawer(false)}>
-    //     {DrawerWallet}
-    //   </Drawer>
-    // </Box>
   );
 };
 
