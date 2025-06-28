@@ -381,6 +381,8 @@ class WalletPositionView(generics.ListAPIView):
             return (
                 Position.objects.filter(wallet__user=self.request.user)  # Restrict to user's wallets
                 .filter(wallet_id=wallet_id)  # Restrict to the selected wallet
+                .select_related("contract")  # Optimize query by selecting related contract
+                .select_related("wallet")  # Optimize query by selecting related wallet
                 .order_by("-amount")  # Order by amount
             )
 
