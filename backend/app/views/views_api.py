@@ -387,6 +387,29 @@ class WalletPositionView(generics.ListAPIView):
         except Wallet.DoesNotExist:
             raise NotFound("Wallet does not exist")
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            data = serializer.data
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+            data = serializer.data
+
+        # Add last 5 transactions for each position
+        for position in data:
+            position_id = position["id"]
+            last_transactions = (
+                Transaction.objects.filter(position_id=position_id)
+                .order_by("-date")[:5]
+            )
+            position["last_transactions"] = TransactionSerializer(last_transactions, many=True).data
+
+        if page is not None:
+            return self.get_paginated_response(data)
+        return Response(data)
+
 
 class WalletPositionDetailView(generics.RetrieveAPIView):
     serializer_class = PositionSerializer
