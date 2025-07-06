@@ -26,9 +26,9 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/Popover";
 import { WalletDrawer } from "@/components/ui/WalletDrawer";
 import { Divider } from "@/components/Divider";
 import { Button } from "@/components/Button";
-import { RiAddLine, RiArrowDropRightLine, RiArrowRightSLine, RiCheckLine, RiRefreshLine } from "@remixicon/react";
+import { RiAddLine, RiArrowDropRightLine, RiArrowRightSLine, RiCheckLine, RiExternalLinkLine, RiRefreshLine } from "@remixicon/react";
 import { volume } from "@/data/wallet/volume";
-import { List, ListItem } from "@tremor/react";
+import { BarChart, List, ListItem } from "@tremor/react";
 import { formatNumber } from "@/lib/format";
 import { Card } from "@/components/Card";
 import { getColumns } from "@/components/ui/data-table-wallet/columns";
@@ -36,6 +36,7 @@ import { Row } from "@tanstack/react-table";
 import { refresh } from "@/lib/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
 import { formatDistanceToNow } from "date-fns";
+import { valueFormatter } from "@/lib/formatters";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -53,11 +54,182 @@ function getTotalAmount(wallets: Wallet[]): number {
 
 function getCapitalGainsDelta(capitalGainHisto: CapitalGainHisto[]): number {
   if (capitalGainHisto.length < 2) return 0; // Not enough data to calculate delta
-  const lastGain = capitalGainHisto[0].running_capital_gain;
-  const firstGain = capitalGainHisto[capitalGainHisto.length - 1].running_capital_gain;
+  const firstGain = capitalGainHisto[0].running_capital_gain;
+  const lastGain = capitalGainHisto[capitalGainHisto.length - 1].running_capital_gain;
 
   return ((lastGain - firstGain) / Math.abs(firstGain)) * 100; // Return percentage change
 }
+
+const summary = [
+  {
+    name: "Capital gain",
+    total: 23450,
+    color: "bg-blue-500",
+  },
+  {
+    name: "Capital loss",
+    total: 1397,
+    color: "bg-red-500",
+  },
+];
+
+const data = [
+  {
+    date: "Aug 01",
+    "Successful requests": 1040,
+    Errors: 0,
+  },
+  {
+    date: "Aug 02",
+    "Successful requests": 1200,
+    Errors: 0,
+  },
+  {
+    date: "Aug 03",
+    "Successful requests": 1130,
+    Errors: 0,
+  },
+  {
+    date: "Aug 04",
+    "Successful requests": 1050,
+    Errors: 0,
+  },
+  {
+    date: "Aug 05",
+    "Successful requests": 920,
+    Errors: 0,
+  },
+  {
+    date: "Aug 06",
+    "Successful requests": 870,
+    Errors: 0,
+  },
+  {
+    date: "Aug 07",
+    "Successful requests": 790,
+    Errors: 0,
+  },
+  {
+    date: "Aug 08",
+    "Successful requests": 910,
+    Errors: 0,
+  },
+  {
+    date: "Aug 09",
+    "Successful requests": 951,
+    Errors: 0,
+  },
+  {
+    date: "Aug 10",
+    "Successful requests": 1232,
+    Errors: 0,
+  },
+  {
+    date: "Aug 11",
+    "Successful requests": 1230,
+    Errors: 0,
+  },
+  {
+    date: "Aug 12",
+    "Successful requests": 1289,
+    Errors: 0,
+  },
+  {
+    date: "Aug 13",
+    "Successful requests": 1002,
+    Errors: 0,
+  },
+  {
+    date: "Aug 14",
+    "Successful requests": 1034,
+    Errors: 0,
+  },
+  {
+    date: "Aug 15",
+    "Successful requests": 1140,
+    Errors: 0,
+  },
+  {
+    date: "Aug 16",
+    "Successful requests": 1280,
+    Errors: 0,
+  },
+  {
+    date: "Aug 17",
+    "Successful requests": 1345,
+    Errors: 0,
+  },
+  {
+    date: "Aug 18",
+    "Successful requests": 1432,
+    Errors: 0,
+  },
+  {
+    date: "Aug 19",
+    "Successful requests": 1321,
+    Errors: 0,
+  },
+  {
+    date: "Aug 20",
+    "Successful requests": 1230,
+    Errors: 0,
+  },
+  {
+    date: "Aug 21",
+    "Successful requests": 1020,
+    Errors: 0,
+  },
+  {
+    date: "Aug 22",
+    "Successful requests": 1040,
+    Errors: 0,
+  },
+  {
+    date: "Aug 23",
+    "Successful requests": 610,
+    Errors: 81,
+  },
+  {
+    date: "Aug 24",
+    "Successful requests": 610,
+    Errors: 87,
+  },
+  {
+    date: "Aug 25",
+    "Successful requests": 610,
+    Errors: 92,
+  },
+  {
+    date: "Aug 26",
+    "Successful requests": 501,
+    Errors: 120,
+  },
+  {
+    date: "Aug 27",
+    "Successful requests": 480,
+    Errors: 120,
+  },
+  {
+    date: "Aug 28",
+    "Successful requests": 471,
+    Errors: 120,
+  },
+  {
+    date: "Aug 29",
+    "Successful requests": 610,
+    Errors: 89,
+  },
+  {
+    date: "Aug 30",
+    "Successful requests": 513,
+    Errors: 199,
+  },
+  {
+    date: "Aug 31",
+    "Successful requests": 500,
+    Errors: 56,
+  },
+];
 
 const Wallets = () => {
   const [wallets, setWallets] = useState<Wallet[]>([]);
@@ -124,12 +296,12 @@ const Wallets = () => {
 
   const fetchTotalCapitalGainHistoData = useCallback(async () => {
     // console.log("fetchPositionCapitalGainHistoData");
-    await fetchTotalCapitalGainHisto(30, setTotalCapitalGainHisto);
+    await fetchTotalCapitalGainHisto(90, setTotalCapitalGainHisto);
   }, [fetchTotalCapitalGainHisto, setTotalCapitalGainHisto]);
 
   useEffect(() => {
     fetchTotalCapitalGainHistoData();
-  }, [fetchTotalCapitalGainHistoData]);
+  }, []);
 
   // Fetch top positions function
   const fetchTopPositionData = async () => {
@@ -756,6 +928,55 @@ const Wallets = () => {
           </div>
         </Card>
       </dl>
+      <Card className="p-0 mt-8">
+        <div className="p-6">
+          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-50">Requests</h3>
+          <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt.{" "}
+            <a href="#" className="inline-flex items-center gap-1 text-sm/6 text-blue-500 dark:text-blue-500">
+              Learn more
+              <RiExternalLinkLine className="size-4" aria-hidden={true} />
+            </a>
+          </p>
+        </div>
+        <div className="relative rounded-md border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <ul role="list" className="flex flex-wrap gap-x-20 gap-y-10">
+            {summary.map((item) => (
+              <li key={item.name}>
+                <div className="flex items-center space-x-2">
+                  <span className={classNames(item.color, "size-3 shrink-0 rounded-sm")} aria-hidden={true} />
+                  <p className="font-semibold text-sm text-gray-900 dark:text-gray-50">
+                    {valueFormatter(item.total)}
+                  </p>
+                </div>
+                <p className="whitespace-nowrap text-sm/6 text-gray-500 dark:text-gray-500">{item.name}</p>
+              </li>
+            ))}
+          </ul>
+          <BarChart
+            data={total_capital_gains}
+            index="date"
+            categories={["capital_gain", "capital_loss"]}
+            colors={["blue", "red"]}
+            stack={true}
+            showLegend={false}
+            yAxisWidth={45}
+            valueFormatter={valueFormatter}
+            className="mt-10 hidden h-72 md:block"
+          />
+          <BarChart
+            data={data}
+            index="date"
+            categories={["capital_gain", "capital_loss"]}
+            colors={["blue", "red"]}
+            stack={true}
+            showLegend={false}
+            showYAxis={false}
+            valueFormatter={valueFormatter}
+            className="mt-6 h-72 md:hidden"
+          />
+        </div>
+      </Card>
       <Toaster />
     </main>
   );

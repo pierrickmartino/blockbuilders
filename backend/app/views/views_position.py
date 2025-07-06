@@ -151,7 +151,7 @@ def refresh_position_price(request):
     if not positions:
         logger.warning("No positions found for the user's wallets.")
         return JsonResponse({"status": "No positions found for the user's wallets."}, status=404)
-    
+
     symbol_set = {
         position.contract.symbol
         for position in positions
@@ -160,7 +160,7 @@ def refresh_position_price(request):
         and not position.contract.relative_symbol  # exclusion of relative symbols (f.e. aPolMIMATIC, amUSDC, etc...)
         and "-" not in position.contract.symbol  # exclusion of all the symbol with a - inside (f.e. BSC-Coin, etc...)
         and "." not in position.contract.symbol  # exclusion of all the symbol with a . inside (f.e. USD.e, etc...)
-    }  
+    }
     symbol_list = list(symbol_set)
 
     # Add some mandatory token to the symbol_list if they don't exist
@@ -471,7 +471,26 @@ def get_total_capitalgains(request, last):
         # Create timezone-aware datetime at 4:00 AM
         time_with_tz = tz.localize(datetime.combine(date, datetime.min.time()) + timedelta(hours=4))
         formatted_value = f"{capital_gain_at_date:.8f}"
-        result.append({"time": time_with_tz.isoformat(), "running_capital_gain": formatted_value})
+        # Create date object with format like "Aug 24"
+        time_with_date = time_with_tz.strftime("%b %d")
+        # Append the result with time, date, running capital gain, and capital gain for that date
+        # Note: gains_by_date.get(date, Decimal("0")) is used to get the capital gain for that date
+        # If the gain is positive, it will be displayed in "capital_gain"
+        # If the gain is negative, it will be displayed in "capital_loss"
+        # If no gain exists for that date, it defaults to Decimal("0")
+        # This is useful for displaying the capital gain for that specific date
+        result.append(
+            {
+                "time": time_with_tz,
+                "date": time_with_date,
+                "running_capital_gain": formatted_value,
+                "capital_gain": gains_by_date.get(date, Decimal("0")) if gains_by_date.get(date, Decimal("0")) > 0 else Decimal("0"),
+                "capital_loss": gains_by_date.get(date, Decimal("0")) if gains_by_date.get(date, Decimal("0")) < 0 else Decimal("0"),
+            }
+        )
+
+    # Sort the result by date in ascending order
+    result.sort(key=lambda x: x["time"], reverse=False)
 
     return Response(result)
 
@@ -498,6 +517,7 @@ def get_total_unrealizedgains(request):
         unrealized_gain += (position.contract.price - position.average_cost) * position.quantity
 
     return Response([{"total_unrealized_gain": unrealized_gain}])
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])  # Ensure only authenticated users can access this view
@@ -537,9 +557,10 @@ def export_all_positions_csv(request):
     if not wallets:
         logger.warning("No wallets found for the user.")
         return HttpResponse({"status": "No wallets found for the user."}, status=404)
-    
+
     # Collect all the positions from all wallets
-    positions = (Position.objects.filter(wallet__in=wallets)
+    positions = (
+        Position.objects.filter(wallet__in=wallets)
         .order_by("amount")
         .values_list(
             "id",
