@@ -112,6 +112,9 @@ export type CapitalGainHisto = {
   time: string;
   gain: number;
   running_capital_gain: number;
+  capital_gain: number;
+  capital_loss: number;
+  date: string;
 }
 
 export type UnrealizedGain = {
