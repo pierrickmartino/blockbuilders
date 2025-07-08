@@ -1,37 +1,11 @@
-import { Badge } from "@/components/Badge";
-import { Badge1 } from "@/components/BadgeCustom";
-import { Button } from "@/components/Button";
-import { Heading } from "@/components/Heading";
 // import { Wallet } from "@/data/wallet/schema"
 import { Wallet } from "@/lib/definition";
 import { formatNumber } from "@/lib/format";
-import { Ellipsis } from "lucide-react";
-import { cx } from "@/lib/utils";
-import { RiAlarmWarningLine, RiArrowRightSLine, RiFileCheckLine, RiFileListLine, RiFolderReduceLine } from "@remixicon/react";
+import { RiDeleteBin7Line, RiPencilLine, RiPlayListAddLine } from "@remixicon/react";
 import { ColumnDef, Row, createColumnHelper } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "../data-table/DataTableColumnHeader";
 
-const typeIconMapping: Record<string, React.ElementType> = {
-  "fnol-contact": RiFolderReduceLine,
-  "policy-contact": RiFileListLine,
-  "claims-contact": RiFileCheckLine,
-  "emergency-contact": RiAlarmWarningLine,
-};
-
-const isZero = (n: number | null | undefined) => Number(n) === 0;
 const truncate = (addr: string) => `${addr.slice(0, 6)}…${addr.slice(-4)}`;
-
-function renderChipAmount(amount: number, type: "currency" | "quantity_precise" | "quantity" | "percentage") {
-  return (
-    <>
-      {isZero(amount) ? (
-        <Heading variant="body2">—{/* em-dash improves readability */}</Heading>
-      ) : (
-        <Badge1 label={formatNumber(amount, type)} color={amount < 0 ? "error" : amount > 0 ? "success" : "neutral"} />
-      )}
-    </>
-  );
-}
 
 const columnHelper = createColumnHelper<Wallet>();
 
@@ -118,18 +92,6 @@ export const getColumns = ({
       },
       filterFn: "arrIncludesSome",
     }),
-    columnHelper.accessor("address", {
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Address" />,
-      enableSorting: false,
-      meta: {
-        className: "text-left",
-        displayName: "Address",
-      },
-      filterFn: "arrIncludesSome",
-      cell: ({ getValue }) => {
-        return <span>{truncate(getValue())}</span>;
-      },
-    }),
     columnHelper.accessor("balance", {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Balance" />,
       enableSorting: true,
@@ -166,73 +128,181 @@ export const getColumns = ({
         return <span>{formatNumber(getValue(), "percentage")}</span>;
       },
     }),
-    // columnHelper.accessor("category", {
-    //   header: ({ column }) => <DataTableColumnHeader column={column} title="Category" />,
+    columnHelper.accessor("address", {
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Address" />,
+      enableSorting: false,
+      meta: {
+        className: "text-right",
+        displayName: "Address",
+      },
+      filterFn: "arrIncludesSome",
+      cell: ({ row }) => {
+        return <div className="relative">
+            <span>{truncate(row.getValue("address"))}</span>
+            <div className="absolute right-0 top-1/2 hidden h-full -translate-y-1/2 items-center bg-tremor-background-muted group-hover:flex dark:bg-dark-tremor-background-muted">
+              <div className="inline-flex items-center rounded-md shadow-sm">
+                <button
+                  type="button"
+                  className="relative inline-flex items-center rounded-l-md bg-white px-4 py-2 text-gray-700 ring-1 ring-inset ring-gray-300 hover:text-gray-900 focus:z-10 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700 hover:dark:text-gray-50"
+                  onClick={
+                    // add stopPropagation to avoid row selection when clicking button
+                    (e) => {
+                      e.stopPropagation();
+                      onEditClick?.(row)
+                    }
+                  }
+                >
+                  <RiPencilLine
+                    className="size-4"
+                    aria-hidden={true}
+                    aria-label="Edit"
+                  />
+                </button>
+                <button
+                  type="button"
+                  className="relative -ml-px inline-flex items-center bg-white px-4 py-2 text-gray-700 ring-1 ring-inset ring-gray-300 hover:text-gray-900 focus:z-10 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700 hover:dark:text-gray-50"
+                  onClick={
+                    // add stopPropagation to avoid row selection when clicking button
+                    (e) => {
+                      e.stopPropagation();
+                      onDetailsClick?.(row)
+                    }
+                  }
+                >
+                  <RiPlayListAddLine
+                    className="size-4"
+                    aria-hidden={true}
+                    aria-label="Add"
+                  />
+                </button>
+                <button
+                  type="button"
+                  className="relative -ml-px inline-flex items-center rounded-r-md bg-white px-4 py-2 text-gray-700 ring-1 ring-inset ring-gray-300 hover:text-gray-900 focus:z-10 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700 hover:dark:text-gray-50"
+                  onClick={
+                    // add stopPropagation to avoid row selection when clicking button
+                    (e) => {
+                      e.stopPropagation();
+                    }
+                  }
+                >
+                  <RiDeleteBin7Line
+                    className="size-4"
+                    aria-hidden={true}
+                    aria-label="Delete"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>;
+      },
+    }),
+    // columnHelper.display({
+    //   id: "edit",
+    //   header: "Edit",
     //   enableSorting: false,
-    //   meta: {
-    //     className: "text-left",
-    //     displayName: "Category",
-    //   },
-    // }),
-    // columnHelper.accessor("amount", {
-    //   header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
-    //   enableSorting: true,
+    //   enableHiding: false,
     //   meta: {
     //     className: "text-right",
-    //     displayName: "Amount",
+    //     displayName: "Edit",
     //   },
-    //   cell: ({ getValue }) => {
-    //     return <span className="font-medium">{formatters.currency({ number: getValue() })}</span>;
+    //   cell: ({ row }) => (
+    //       <div className="relative">
+    //         {/* <span>{getValue()}</span> */}
+    //         <div className="absolute right-0 top-1/2 hidden h-full -translate-y-1/2 items-center bg-tremor-background-muted group-hover:flex dark:bg-dark-tremor-background-muted">
+    //           <div className="inline-flex items-center rounded-tremor-small shadow-tremor-input dark:shadow-dark-tremor-input">
+    //             <button
+    //               type="button"
+    //               className="relative inline-flex items-center rounded-l-tremor-small bg-tremor-background px-4 py-2 text-tremor-content-emphasis ring-1 ring-inset ring-tremor-ring hover:text-tremor-content-strong focus:z-10 dark:bg-dark-tremor-background-subtle dark:text-dark-tremor-content-emphasis dark:ring-tremor-content-emphasis hover:dark:text-dark-tremor-content-strong"
+    //               onClick={
+    //                 // add stopPropagation to avoid row selection when clicking button
+    //                 (e) => {
+    //                   e.stopPropagation();
+    //                   onEditClick?.(row)
+    //                 }
+    //               }
+    //             >
+    //               <RiPencilLine
+    //                 className="size-4"
+    //                 aria-hidden={true}
+    //                 aria-label="Edit"
+    //               />
+    //             </button>
+    //             <button
+    //               type="button"
+    //               className="relative -ml-px inline-flex items-center bg-tremor-background px-4 py-2 text-tremor-content-emphasis ring-1 ring-inset ring-tremor-ring hover:text-tremor-content-strong focus:z-10 dark:bg-dark-tremor-background-subtle dark:text-dark-tremor-content-emphasis dark:ring-tremor-content-emphasis hover:dark:text-dark-tremor-content-strong"
+    //               onClick={
+    //                 // add stopPropagation to avoid row selection when clicking button
+    //                 (e) => {
+    //                   e.stopPropagation();
+    //                   onDetailsClick?.(row)
+    //                 }
+    //               }
+    //             >
+    //               <RiPlayListAddLine
+    //                 className="size-4"
+    //                 aria-hidden={true}
+    //                 aria-label="Add"
+    //               />
+    //             </button>
+    //             <button
+    //               type="button"
+    //               className="relative -ml-px inline-flex items-center rounded-r-tremor-small bg-tremor-background px-4 py-2 text-tremor-content-emphasis ring-1 ring-inset ring-tremor-ring hover:text-tremor-content-strong focus:z-10 dark:bg-dark-tremor-background-subtle dark:text-dark-tremor-content-emphasis dark:ring-tremor-content-emphasis hover:dark:text-dark-tremor-content-strong"
+    //               onClick={
+    //                 // add stopPropagation to avoid row selection when clicking button
+    //                 (e) => {
+    //                   e.stopPropagation();
+    //                 }
+    //               }
+    //             >
+    //               <RiDeleteBin7Line
+    //                 className="size-4"
+    //                 aria-hidden={true}
+    //                 aria-label="Delete"
+    //               />
+    //             </button>
+    //           </div>
+    //         </div>
+    //       </div>
+    //     ),
+      // cell: ({ row }) => {
+      //   return (
+      //     <Button
+      //       variant="ghost"
+      //       onClick={() => onEditClick?.(row)}
+      //       className="group aspect-square p-1.5 hover:border hover:border-gray-300 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:dark:border-gray-700 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900"
+      //     >
+      //       <Ellipsis
+      //         className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-data-[state=open]:text-gray-700 group-hover:dark:text-gray-300 group-data-[state=open]:dark:text-gray-300"
+      //         aria-hidden="true"
+      //       />
+      //     </Button>
+      //   );
+      // },
+    // }),
+    // columnHelper.display({
+    //   id: "details",
+    //   header: "Details",
+    //   enableSorting: false,
+    //   enableHiding: false,
+    //   meta: {
+    //     className: "text-right",
+    //     displayName: "Details",
+    //   },
+    //   cell: ({ row }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => onDetailsClick?.(row)}
+    //         className="group aspect-square p-1.5 hover:border hover:border-gray-300 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:dark:border-gray-700 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900"
+    //       >
+    //         <RiArrowRightSLine
+    //           className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-data-[state=open]:text-gray-700 group-hover:dark:text-gray-300 group-data-[state=open]:dark:text-gray-300"
+    //           aria-hidden="true"
+    //         />
+    //       </Button>
+    //     );
     //   },
     // }),
-    columnHelper.display({
-      id: "edit",
-      header: "Edit",
-      enableSorting: false,
-      enableHiding: false,
-      meta: {
-        className: "text-right",
-        displayName: "Edit",
-      },
-      cell: ({ row }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => onEditClick?.(row)}
-            className="group aspect-square p-1.5 hover:border hover:border-gray-300 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:dark:border-gray-700 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900"
-          >
-            <Ellipsis
-              className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-data-[state=open]:text-gray-700 group-hover:dark:text-gray-300 group-data-[state=open]:dark:text-gray-300"
-              aria-hidden="true"
-            />
-          </Button>
-        );
-      },
-    }),
-    columnHelper.display({
-      id: "details",
-      header: "Details",
-      enableSorting: false,
-      enableHiding: false,
-      meta: {
-        className: "text-right",
-        displayName: "Details",
-      },
-      cell: ({ row }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => onDetailsClick?.(row)}
-            className="group aspect-square p-1.5 hover:border hover:border-gray-300 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:dark:border-gray-700 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900"
-          >
-            <RiArrowRightSLine
-              className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-data-[state=open]:text-gray-700 group-hover:dark:text-gray-300 group-data-[state=open]:dark:text-gray-300"
-              aria-hidden="true"
-            />
-          </Button>
-        );
-      },
-    }),
   ] as ColumnDef<Wallet>[];
 
 // export const columns = [
