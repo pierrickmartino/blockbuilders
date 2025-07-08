@@ -789,9 +789,9 @@ const summary = [
       </dl>
       <Card className="p-0 mt-8">
         <div className="p-6">
-          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-50">Requests</h3>
+          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-50">Performance</h3>
           <p className="mt-1 text-sm/6 text-gray-500 dark:text-gray-500">
-            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt.{" "}
+            Capital gain performance in the last 90 days.{" "}
             <a href="#" className="inline-flex items-center gap-1 text-sm/6 text-blue-500 dark:text-blue-500">
               Learn more
               <RiExternalLinkLine className="size-4" aria-hidden={true} />
