@@ -913,6 +913,7 @@ const Wallets = () => {
                       showGradient={false}
                       yAxisWidth={tab.axisWidth}
                       valueFormatter={tab.valueFormatter}
+                      autoMinValue={true}
                       className="mt-10 hidden h-72 md:block text-xs text-gray-500 dark:text-gray-500 fill-gray-500 dark:fill-gray-500"
                     />
                     <AreaChart
@@ -924,6 +925,7 @@ const Wallets = () => {
                       showGradient={false}
                       showYAxis={false}
                       startEndOnly={true}
+                      autoMinValue={true}
                       valueFormatter={tab.valueFormatter}
                       className="mt-6 h-72 md:hidden text-xs text-gray-500 dark:text-gray-500 fill-gray-500 dark:fill-gray-500"
                     />
