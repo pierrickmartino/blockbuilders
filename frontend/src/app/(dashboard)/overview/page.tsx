@@ -885,7 +885,6 @@ const Wallets = () => {
                           : " bg-red-600 dark:bg-red-500"
                       }`} aria-hidden={true} />
                     <span className="font-semibold text-gray-900 dark:text-gray-50">{tab.badgeText}</span>
-                    <span className="h-5 w-px bg-gray-200 dark:bg-gray-800" />
                     <span
                       className={`rounded px-1.5 py-1 text-right text-xs font-semibold ${
                         capitalGainDelta === 0
