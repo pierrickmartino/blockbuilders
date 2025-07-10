@@ -12,9 +12,11 @@ const columnHelper = createColumnHelper<Wallet>();
 export const getColumns = ({
   onEditClick,
   onDetailsClick,
+  onDeleteClick,
 }: {
   onEditClick: (row: Row<Wallet>) => void;
   onDetailsClick: (row: Row<Wallet>) => void;
+  onDeleteClick: (row: Row<Wallet>) => void;
 }) =>
   [
     // columnHelper.display({
@@ -137,7 +139,8 @@ export const getColumns = ({
       },
       filterFn: "arrIncludesSome",
       cell: ({ row }) => {
-        return <div className="relative">
+        return (
+          <div className="relative">
             <span>{truncate(row.getValue("address"))}</span>
             <div className="absolute right-0 top-1/2 hidden h-full -translate-y-1/2 items-center bg-tremor-background-muted group-hover:flex dark:bg-dark-tremor-background-muted">
               <div className="inline-flex items-center rounded-md shadow-sm">
@@ -148,15 +151,11 @@ export const getColumns = ({
                     // add stopPropagation to avoid row selection when clicking button
                     (e) => {
                       e.stopPropagation();
-                      onEditClick?.(row)
+                      onEditClick?.(row);
                     }
                   }
                 >
-                  <RiPencilLine
-                    className="size-4"
-                    aria-hidden={true}
-                    aria-label="Edit"
-                  />
+                  <RiPencilLine className="size-4" aria-hidden={true} aria-label="Edit" />
                 </button>
                 <button
                   type="button"
@@ -165,35 +164,29 @@ export const getColumns = ({
                     // add stopPropagation to avoid row selection when clicking button
                     (e) => {
                       e.stopPropagation();
-                      onDetailsClick?.(row)
+                      onDetailsClick?.(row);
                     }
                   }
                 >
-                  <RiPlayListAddLine
-                    className="size-4"
-                    aria-hidden={true}
-                    aria-label="Add"
-                  />
+                  <RiPlayListAddLine className="size-4" aria-hidden={true} aria-label="Add" />
                 </button>
                 <button
                   type="button"
-                  className="relative -ml-px inline-flex items-center rounded-r-md bg-white px-4 py-2 text-gray-700 ring-1 ring-inset ring-gray-300 hover:text-gray-900 focus:z-10 dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-700 hover:dark:text-gray-50"
+                  className="relative -ml-px inline-flex items-center rounded-r-md bg-red-600 dark:bg-red-700 px-4 py-2 text-white ring-1 ring-inset ring-gray-300 hover:bg-red-700 dark:hover:bg-red-600 focus:z-10 dark:text-gray-300 dark:ring-gray-700 hover:dark:text-gray-50 disabled:bg-red-300 disabled:text-white disabled:dark:bg-red-950 disabled:dark:text-red-400"
                   onClick={
                     // add stopPropagation to avoid row selection when clicking button
                     (e) => {
                       e.stopPropagation();
+                      onDeleteClick?.(row);
                     }
                   }
                 >
-                  <RiDeleteBin7Line
-                    className="size-4"
-                    aria-hidden={true}
-                    aria-label="Delete"
-                  />
+                  <RiDeleteBin7Line className="size-4" aria-hidden={true} aria-label="Delete" />
                 </button>
               </div>
             </div>
-          </div>;
+          </div>
+        );
       },
     }),
     // columnHelper.display({
@@ -264,20 +257,20 @@ export const getColumns = ({
     //         </div>
     //       </div>
     //     ),
-      // cell: ({ row }) => {
-      //   return (
-      //     <Button
-      //       variant="ghost"
-      //       onClick={() => onEditClick?.(row)}
-      //       className="group aspect-square p-1.5 hover:border hover:border-gray-300 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:dark:border-gray-700 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900"
-      //     >
-      //       <Ellipsis
-      //         className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-data-[state=open]:text-gray-700 group-hover:dark:text-gray-300 group-data-[state=open]:dark:text-gray-300"
-      //         aria-hidden="true"
-      //       />
-      //     </Button>
-      //   );
-      // },
+    // cell: ({ row }) => {
+    //   return (
+    //     <Button
+    //       variant="ghost"
+    //       onClick={() => onEditClick?.(row)}
+    //       className="group aspect-square p-1.5 hover:border hover:border-gray-300 data-[state=open]:border-gray-300 data-[state=open]:bg-gray-50 hover:dark:border-gray-700 data-[state=open]:dark:border-gray-700 data-[state=open]:dark:bg-gray-900"
+    //     >
+    //       <Ellipsis
+    //         className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-data-[state=open]:text-gray-700 group-hover:dark:text-gray-300 group-data-[state=open]:dark:text-gray-300"
+    //         aria-hidden="true"
+    //       />
+    //     </Button>
+    //   );
+    // },
     // }),
     // columnHelper.display({
     //   id: "details",

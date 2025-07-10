@@ -33,7 +33,7 @@ import { currencyFormatter, formatNumber } from "@/lib/format";
 import { Card } from "@/components/Card";
 import { getColumns } from "@/components/ui/data-table-wallet/columns";
 import { Row } from "@tanstack/react-table";
-import { refresh } from "@/lib/actions";
+import { deleteWallet, refresh } from "@/lib/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
 import { formatDistanceToNow } from "date-fns";
 
@@ -238,8 +238,11 @@ const Wallets = () => {
     }
   };
 
-  const handleWalletDeleted = () => {
-    fetchWalletData(); // Re-fetch wallet data after a new wallet is created
+  const handleWalletDeleted = async (selectedWalletId: string) => {
+    const response = await deleteWallet(selectedWalletId.toString());
+    if (response.message !== "Database Error: Failed to delete wallet.") {
+      fetchWalletData(); // Re-fetch wallet data after a wallet is deleted
+    }
   };
 
   const handleWalletDownloaded = (taskId: string) => {
@@ -278,6 +281,9 @@ const Wallets = () => {
     },
     onDetailsClick: (row) => {
       handleNavigateToDetails(row.original.id.toString());
+    },
+    onDeleteClick: (row) => {
+      handleWalletDeleted(row.original.id.toString());
     },
   });
 
@@ -359,7 +365,7 @@ const summary = [
           open={isOpen}
           onOpenChange={setIsOpen}
           datas={datas}
-          onWalletDeleted={handleWalletDeleted}
+          // onWalletDeleted={handleWalletDeleted}
           onWalletDownloaded={handleWalletDownloaded}
           onWalletFullRefreshed={handleWalletFullRefreshed}
         />
