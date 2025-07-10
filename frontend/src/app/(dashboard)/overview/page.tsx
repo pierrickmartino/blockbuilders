@@ -877,13 +877,16 @@ const Wallets = () => {
                   <span className="mt-6 inline-flex items-center gap-x-2.5 whitespace-nowrap rounded-md bg-white px-3 py-1 text-sm text-gray-700 shadow-sm ring-1 ring-gray-200 dark:bg-gray-950 dark:text-gray-300 dark:ring-gray-800 md:mt-0">
                     Total as of today
                     <span className="h-5 w-px bg-gray-200 dark:bg-gray-800" />
-                    <span className={`size-2 rounded-full ${
+                    <span
+                      className={`size-2 rounded-full ${
                         total_capital_gain === 0
                           ? "bg-gray-50 dark:bg-gray-400/10"
                           : total_capital_gain > 0
                           ? " bg-emerald-600 dark:bg-emerald-500"
                           : " bg-red-600 dark:bg-red-500"
-                      }`} aria-hidden={true} />
+                      }`}
+                      aria-hidden={true}
+                    />
                     <span className="font-semibold text-gray-900 dark:text-gray-50">{tab.badgeText}</span>
                     <span
                       className={`rounded px-1.5 py-1 text-right text-xs font-semibold ${
