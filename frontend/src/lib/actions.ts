@@ -133,7 +133,7 @@ export async function refreshFullWallet(id: string) {
   }
 }
 
-export async function deleteWallet(id: string) {
+export async function deleteWalletAction(id: string) {
   try {
     const response = await deleter(`/api/wallets/${id}/`);
     console.log("Task triggered:", response);

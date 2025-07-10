@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useTransition } from "react";
 import { Wallet, Position, Blockchain, Transaction, CapitalGainHisto, UnrealizedGain } from "@/lib/definition";
 import {
   fetchTopPositions,
@@ -33,9 +33,11 @@ import { currencyFormatter, formatNumber } from "@/lib/format";
 import { Card } from "@/components/Card";
 import { getColumns } from "@/components/ui/data-table-wallet/columns";
 import { Row } from "@tanstack/react-table";
-import { deleteWallet, refresh } from "@/lib/actions";
+import { deleteWalletAction, refresh } from "@/lib/actions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
 import { formatDistanceToNow } from "date-fns";
+import { useRouter } from "next/navigation";
+
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -92,6 +94,9 @@ const Wallets = () => {
   }>({}); // New state for task polling
 
   const { toast } = useToast();
+    
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   // New function to poll task status
   const pollTaskStatus = (taskId: string) => {
@@ -238,11 +243,12 @@ const Wallets = () => {
     }
   };
 
-  const handleWalletDeleted = async (selectedWalletId: string) => {
-    const response = await deleteWallet(selectedWalletId.toString());
-    if (response.message !== "Database Error: Failed to delete wallet.") {
-      fetchWalletData(); // Re-fetch wallet data after a wallet is deleted
-    }
+  const handleWalletDeleted = (selectedWalletId: string) => {
+    startTransition(async () => {
+      await deleteWalletAction(selectedWalletId);
+      await fetchWalletData();
+      router.refresh();
+    });
   };
 
   const handleWalletDownloaded = (taskId: string) => {
