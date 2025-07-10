@@ -28,7 +28,7 @@ import { Divider } from "@/components/Divider";
 import { Button } from "@/components/Button";
 import { RiAddLine, RiArrowDropRightLine, RiExternalLinkLine, RiRefreshLine } from "@remixicon/react";
 import { volume } from "@/data/wallet/volume";
-import { BarChart, List, ListItem } from "@tremor/react";
+import { BarChart, List, ListItem, AreaChart } from "@tremor/react";
 import { currencyFormatter, formatNumber } from "@/lib/format";
 import { Card } from "@/components/Card";
 import { getColumns } from "@/components/ui/data-table-wallet/columns";
@@ -324,19 +324,63 @@ const Wallets = () => {
     },
   ];
 
-  
-const summary = [
-  {
-    name: "Capital gain",
-    total: getTotalCapitalGainforPeriod(total_capital_gains),
-    color: "bg-blue-500",
-  },
-  {
-    name: "Capital loss",
-    total: getTotalCapitalLossforPeriod(total_capital_gains),
-    color: "bg-red-500",
-  },
-];
+  const summary = [
+    {
+      name: "Capital gain",
+      total: getTotalCapitalGainforPeriod(total_capital_gains),
+      color: "bg-blue-500",
+    },
+    {
+      name: "Capital loss",
+      total: getTotalCapitalLossforPeriod(total_capital_gains),
+      color: "bg-red-500",
+    },
+  ];
+
+  const tabs = [
+    {
+      name: "Cumulative",
+      data: total_capital_gains,
+      valueFormatter: currencyFormatter,
+      categories: ["running_capital_gain"],
+      colors: ["blue"],
+      badgeText: currencyFormatter(total_capital_gain),
+      axisWidth: 45,
+      summary: [
+        {
+          name: "Gain",
+          total: getTotalCapitalGainforPeriod(total_capital_gains),
+          color: "bg-blue-500",
+        },
+        {
+          name: "Loss",
+          total: getTotalCapitalLossforPeriod(total_capital_gains),
+          color: "bg-red-500",
+        },
+      ],
+    },
+    {
+      name: "Daily",
+      data: total_capital_gains,
+      valueFormatter: currencyFormatter,
+      categories: ["capital_gain", "capital_loss"],
+      colors: ["blue", "red"],
+      badgeText: currencyFormatter(total_capital_gain),
+      axisWidth: 45,
+      summary: [
+        {
+          name: "Gain",
+          total: getTotalCapitalGainforPeriod(total_capital_gains),
+          color: "bg-blue-500",
+        },
+        {
+          name: "Loss",
+          total: getTotalCapitalLossforPeriod(total_capital_gains),
+          color: "bg-red-500",
+        },
+      ],
+    },
+  ];
 
   return (
     <main>
@@ -793,6 +837,7 @@ const summary = [
           </div>
         </Card>
       </dl>
+
       <Card className="p-0 mt-8">
         <div className="p-6">
           <h3 className="text-sm font-medium text-gray-900 dark:text-gray-50">Performance</h3>
@@ -804,44 +849,115 @@ const summary = [
             </a>
           </p>
         </div>
-        <div className="relative rounded-md border border-gray-200 bg-white px-4 py-3 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-          <ul role="list" className="flex flex-wrap gap-x-20 gap-y-10">
-            {summary.map((item) => (
-              <li key={item.name}>
-                <div className="flex items-center space-x-2">
-                  <span className={classNames(item.color, "size-3 shrink-0 rounded-sm")} aria-hidden={true} />
-                  <p className="font-semibold text-sm text-gray-900 dark:text-gray-50">
-                    {currencyFormatter(item.total)}
-                  </p>
-                </div>
-                <p className="whitespace-nowrap text-sm/6 text-gray-500 dark:text-gray-500">{item.name}</p>
-              </li>
+        <Tabs defaultValue="Cumulative">
+          <TabsList className="px-6">
+            {tabs.map((tab) => (
+              <TabsTrigger value={tab.name} key={tab.name}>
+                {tab.name}
+              </TabsTrigger>
             ))}
-          </ul>
-          <BarChart
-            data={total_capital_gains}
-            index="date"
-            categories={["capital_gain", "capital_loss"]}
-            colors={["blue", "red"]}
-            stack={true}
-            showLegend={false}
-            yAxisWidth={45}
-            valueFormatter={currencyFormatter}
-            className="mt-10 hidden h-72 md:block text-xs text-gray-500 dark:text-gray-500 fill-gray-500 dark:fill-gray-500"
-          />
-          <BarChart
-            data={total_capital_gains}
-            index="date"
-            categories={["capital_gain", "capital_loss"]}
-            colors={["blue", "red"]}
-            stack={true}
-            showLegend={false}
-            showYAxis={false}
-            valueFormatter={currencyFormatter}
-            className="mt-6 h-72 md:hidden text-xs text-gray-500 dark:text-gray-500 fill-gray-500 dark:fill-gray-500"
-          />
-        </div>
+          </TabsList>
+          <div className="px-6 pb-6">
+            {tabs.map((tab) => (
+              <TabsContent value={tab.name} key={tab.name}>
+                <div className="md:flex md:items-start md:justify-between mt-6">
+                  <ul role="list" className="flex flex-wrap items-center gap-x-10 gap-y-4">
+                    {tab.summary.map((item) => (
+                      <li key={item.name}>
+                        <div className="flex space-x-3">
+                          <span className={classNames(item.color, "flex w-1 rounded-sm")} aria-hidden={true} />
+                          <div>
+                            <p className="font-semibold text-gray-900 dark:text-gray-50">{currencyFormatter(item.total)}</p>
+                            <p className="text-sm text-gray-500 dark:text-gray-500">{item.name}</p>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  <span className="mt-6 inline-flex items-center gap-x-2.5 whitespace-nowrap rounded-md bg-white px-3 py-1 text-sm text-gray-700 shadow-sm ring-1 ring-gray-200 dark:bg-gray-950 dark:text-gray-300 dark:ring-gray-800 md:mt-0">
+                    Total as of today
+                    <span className="h-5 w-px bg-gray-200 dark:bg-gray-800" />
+                    <span className={`size-2 rounded-full ${
+                        total_capital_gain === 0
+                          ? "bg-gray-50 dark:bg-gray-400/10"
+                          : total_capital_gain > 0
+                          ? " bg-emerald-600 dark:bg-emerald-500"
+                          : " bg-red-600 dark:bg-red-500"
+                      }`} aria-hidden={true} />
+                    <span className="font-semibold text-gray-900 dark:text-gray-50">{tab.badgeText}</span>
+                    <span className="h-5 w-px bg-gray-200 dark:bg-gray-800" />
+                    <span
+                      className={`rounded px-1.5 py-1 text-right text-xs font-semibold ${
+                        capitalGainDelta === 0
+                          ? "bg-gray-50 text-gray-600 dark:bg-gray-400/10 dark:text-gray-400"
+                          : capitalGainDelta > 0
+                          ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-400/10 dark:text-emerald-400"
+                          : "bg-red-50 text-red-600 dark:bg-red-400/20 dark:text-red-500"
+                      }`}
+                    >
+                      {capitalGainDelta === 0 ? "0.0%" : `${capitalGainDelta > 0 ? "+" : ""}${capitalGainDelta.toFixed(1)}%`}
+                    </span>
+                  </span>
+                </div>
+                {/* <AreaChart /> only for Cumulative otherwise use LineChart */}
+                {tab.name === "Cumulative" ? (
+                  <>
+                    <AreaChart
+                      data={total_capital_gains}
+                      index="date"
+                      categories={tab.categories}
+                      colors={tab.colors}
+                      showLegend={false}
+                      showGradient={false}
+                      yAxisWidth={tab.axisWidth}
+                      valueFormatter={tab.valueFormatter}
+                      className="mt-10 hidden h-72 md:block text-xs text-gray-500 dark:text-gray-500 fill-gray-500 dark:fill-gray-500"
+                    />
+                    <AreaChart
+                      data={total_capital_gains}
+                      index="date"
+                      categories={tab.categories}
+                      colors={tab.colors}
+                      showLegend={false}
+                      showGradient={false}
+                      showYAxis={false}
+                      startEndOnly={true}
+                      valueFormatter={tab.valueFormatter}
+                      className="mt-6 h-72 md:hidden text-xs text-gray-500 dark:text-gray-500 fill-gray-500 dark:fill-gray-500"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <BarChart
+                      data={total_capital_gains}
+                      index="date"
+                      categories={tab.categories}
+                      colors={tab.colors}
+                      stack={true}
+                      showLegend={false}
+                      yAxisWidth={tab.axisWidth}
+                      valueFormatter={tab.valueFormatter}
+                      className="mt-10 hidden h-72 md:block text-xs text-gray-500 dark:text-gray-500 fill-gray-500 dark:fill-gray-500"
+                    />
+                    <BarChart
+                      data={total_capital_gains}
+                      index="date"
+                      categories={tab.categories}
+                      colors={tab.colors}
+                      stack={true}
+                      showLegend={false}
+                      showYAxis={false}
+                      valueFormatter={tab.valueFormatter}
+                      className="mt-6 h-72 md:hidden text-xs text-gray-500 dark:text-gray-500 fill-gray-500 dark:fill-gray-500"
+                    />
+                  </>
+                )}
+              </TabsContent>
+            ))}
+          </div>
+        </Tabs>
       </Card>
+
       <Toaster />
     </main>
   );
