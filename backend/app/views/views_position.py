@@ -164,7 +164,7 @@ def refresh_position_price(request):
     symbol_list = list(symbol_set)
 
     # Add some mandatory token to the symbol_list if they don't exist
-    mandatory_tokens = ["USDC", "ETH", "BTC", "MATIC", "POL", "BNB", "ARB", "OP", "BASE", "METIS", "DAI", "USDT"]
+    mandatory_tokens = ["USDC", "ETH", "BTC", "MATIC", "POL", "BNB", "ARB", "OP", "BASE", "METIS", "DAI", "USDT", "DOGE"]
     for token in mandatory_tokens:
         if token not in symbol_list:
             symbol_list.append(token)
@@ -240,7 +240,7 @@ def refresh_full_historical_position_price(request, wallet_id: uuid):
     symbol_list = list(symbol_set)
 
     # Add some mandatory token to the symbol_list if they don't exist
-    mandatory_tokens = ["USDC", "ETH", "BTC", "MATIC", "POL", "BNB", "ARB", "OP", "BASE", "METIS", "DAI", "USDT"]
+    mandatory_tokens = ["USDC", "ETH", "BTC", "MATIC", "POL", "BNB", "ARB", "OP", "BASE", "METIS", "DAI", "USDT", "DOGE"]
     for token in mandatory_tokens:
         if token not in symbol_list:
             symbol_list.append(token)

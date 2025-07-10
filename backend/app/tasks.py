@@ -1242,7 +1242,7 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
     try:
 
         # Add some mandatory token to the symbol_list if they don't exist
-        mandatory_tokens = ["USDC", "ETH", "BTC"]
+        mandatory_tokens = ["USDC", "ETH", "BTC", "MATIC", "POL", "BNB", "ARB", "OP", "BASE", "METIS", "DAI", "USDT", "DOGE"]
         for token in mandatory_tokens:
             if token not in symbol_list:
                 symbol_list.append(token)
@@ -1274,6 +1274,8 @@ def get_price_from_market_task(previous_return: list, symbol_list: list[str]):
                 elif symbol == "ETH":
                     contracts = Contract.objects.filter(category=CategoryContractChoices.STANDARD).filter(symbol__endswith=symbol)
                 elif symbol == "BTC":
+                    contracts = Contract.objects.filter(category=CategoryContractChoices.STANDARD).filter(symbol__endswith=symbol)
+                elif symbol == "DOGE":
                     contracts = Contract.objects.filter(category=CategoryContractChoices.STANDARD).filter(symbol__endswith=symbol)
                 else:
                     contracts = Contract.objects.filter(category=CategoryContractChoices.STANDARD).filter(symbol=symbol)
