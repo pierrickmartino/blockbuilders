@@ -17,6 +17,7 @@ interface WalletDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   datas: Wallet | undefined;
+  onWalletCreated: () => void;
   onWalletDownloaded: (response: string) => void;
   onWalletFullRefreshed: (response: string) => void;
 }
@@ -149,7 +150,7 @@ const EditPage = ({ formData, onUpdateForm, datas }: FormPageProps) => (
                   <dt className="text-sm text-gray-500 dark:text-gray-500">Total amount</dt>
                   <dd className="mt-1 flex items-baseline">
                     <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
-                      { datas && datas.balance ? formatNumber(datas.balance, "currency") : "-"}
+                      {datas && datas.balance ? formatNumber(datas.balance, "currency") : "-"}
                     </span>
                     <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+0%</span>
                   </dd>
@@ -158,7 +159,7 @@ const EditPage = ({ formData, onUpdateForm, datas }: FormPageProps) => (
                   <dt className="text-sm text-gray-500 dark:text-gray-500">Capital gain</dt>
                   <dd className="mt-1 flex items-baseline">
                     <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
-                      { datas && datas.capital_gain ? formatNumber(datas.capital_gain, "currency") : "-"}
+                      {datas && datas.capital_gain ? formatNumber(datas.capital_gain, "currency") : "-"}
                     </span>
                     <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+0%</span>
                   </dd>
@@ -167,7 +168,7 @@ const EditPage = ({ formData, onUpdateForm, datas }: FormPageProps) => (
                   <dt className="text-sm text-gray-500 dark:text-gray-500">Unrealized Gain</dt>
                   <dd className="mt-1 flex items-baseline">
                     <span className="text-2xl font-semibold text-gray-900 dark:text-gray-50">
-                      { datas && datas.unrealized_gain ? formatNumber(datas.unrealized_gain, "currency") : "-"}
+                      {datas && datas.unrealized_gain ? formatNumber(datas.unrealized_gain, "currency") : "-"}
                     </span>
                     <span className="ml-2 text-sm text-emerald-600 dark:text-emerald-500">+12%</span>
                   </dd>
@@ -298,7 +299,7 @@ const SummaryPage = ({ formData }: { formData: WalletFormData }) => (
   </>
 );
 
-export function WalletDrawer({ open, onOpenChange, datas, onWalletDownloaded, onWalletFullRefreshed }: WalletDrawerProps) {
+export function WalletDrawer({ open, onOpenChange, datas, onWalletCreated, onWalletDownloaded, onWalletFullRefreshed }: WalletDrawerProps) {
   const [formData, setFormData] = React.useState<WalletFormData>({
     id: "",
     name: "",
@@ -344,14 +345,8 @@ export function WalletDrawer({ open, onOpenChange, datas, onWalletDownloaded, on
 
   const handleSubmit = () => {
     console.log("Wallet created:", formData);
-    createWallet(formData.address, formData.name, formData.description)
-      .json((json) => {
-        router.push("/overview");
-      })
-      .catch((err) => {
-        console.error("Error creating wallet:", err);
-        // setError("root", { type: "manual", message: err.json.detail });
-      });
+    createWallet(formData.address, formData.name, formData.description);
+    onWalletCreated(); // Notify the parent component that a wallet has been created
     onOpenChange(false);
   };
 

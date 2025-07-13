@@ -5,7 +5,7 @@ This document outlines the initial tasks required to kickstart the development o
 ## Phase 1: Project Setup & Initial Architecture
 
 ### 1. Environment Setup
-- [ ] Create GitHub repository with README and licensing
+- [x] Create GitHub repository with README and licensing
 - [ ] Set up project structure for frontend and backend
 - [ ] Configure development environments
 - [ ] Set up linting and formatting tools

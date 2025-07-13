@@ -229,10 +229,12 @@ const Wallets = () => {
     fetchCountTransactionData();
   }, []);
 
-  // const handleWalletCreated = () => {
-  //   fetchWalletData(); // Re-fetch wallet data after a new wallet is created
-  //   toggleDrawer(false);
-  // };
+  const handleWalletCreated = () => {
+    startTransition(async () => {
+      await fetchWalletData();
+      router.refresh();
+    });
+  };
 
   const handleRefresh = async () => {
     const response = await refresh();
@@ -416,6 +418,7 @@ const Wallets = () => {
           onOpenChange={setIsOpen}
           datas={datas}
           // onWalletDeleted={handleWalletDeleted}
+          onWalletCreated={handleWalletCreated}
           onWalletDownloaded={handleWalletDownloaded}
           onWalletFullRefreshed={handleWalletFullRefreshed}
         />
