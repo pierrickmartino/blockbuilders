@@ -58,7 +58,7 @@ This document outlines the initial tasks required to kickstart the development o
 - [ ] Create two-factor authentication (2FA)
 
 ### 7. Wallet Management
-- [ ] Create wallet addition/management UI
+- [x] Create wallet addition/management UI
 - [ ] Implement wallet address validation
 - [ ] Build blockchain API integration for wallet balance checking
 - [ ] Develop transaction history retrieval for wallets
