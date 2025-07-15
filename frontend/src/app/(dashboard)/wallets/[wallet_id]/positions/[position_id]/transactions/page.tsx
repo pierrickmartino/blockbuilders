@@ -5,7 +5,6 @@ import Grid from "@mui/material/Grid2";
 import { Fragment, useEffect, useState, useCallback } from "react";
 import { CapitalGainHisto, MarketData, Transaction } from "@/lib/definition";
 import { fetchContractMarketPriceHisto, fetchPositionCapitalGainHisto, fetchTransactions } from "@/lib/data";
-import TransactionTable from "@/app/(dashboard)/components/dashboard/TransactionTable";
 import { useParams } from "next/navigation";
 import { formatNumber } from "@/lib/format";
 import getLast30Days from "@/lib/getLast30Days";
@@ -494,15 +493,7 @@ const Transactions = () => {
           </Card>
         </Grid> */}
         <Grid size={{ xs: 12, lg: 12 }}>
-          <TransactionTable
-            transactions={transactions}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            totalCount={totalCount}
-            onPageChange={handlePageChange}
-            onRowsPerPageChange={handleRowsPerPageChange}
-            onTransactionClick={handleShowTransactionDrawer}
-          />
+          
         </Grid>
       </Grid>
       <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
