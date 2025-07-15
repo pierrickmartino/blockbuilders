@@ -204,9 +204,9 @@ This document outlines the tasks and substasks required for the development of t
 
 ### 7. Wallet Management
 - [ ] Create wallet addition/management UI
-  - [ ] Build wallet addition form with validation
+  - [x] Build wallet addition form with validation
   - [ ] Implement wallet list view with filtering
-  - [ ] Create wallet editing interface
+  - [x] Create wallet editing interface
   - [ ] Develop wallet removal with confirmation
 - [ ] Implement wallet address validation
   - [ ] Create blockchain-specific address validators

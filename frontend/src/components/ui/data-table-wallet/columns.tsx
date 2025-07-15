@@ -127,7 +127,7 @@ export const getColumns = ({
       },
       filterFn: "arrIncludesSome",
       cell: ({ getValue }) => {
-        return <span>{formatNumber(getValue(), "percentage")}</span>;
+        return <span>{formatNumber(getValue(), "currency")}</span>;
       },
     }),
     columnHelper.accessor("address", {
