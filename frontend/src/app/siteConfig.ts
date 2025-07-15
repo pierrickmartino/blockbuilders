@@ -8,7 +8,8 @@ export const siteConfig = {
     positions: "/positions",
     contracts: "/contracts",
     transactions: "/transactions",
-    login: "/login",
+    login: "/signin",
+    signup: "/signup",
   },
 }
 

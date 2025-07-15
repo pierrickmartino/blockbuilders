@@ -2,11 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { AuthActions } from "@/app/(auth)/utils";
 import { useRouter } from "next/navigation";
-import { Box, Stack, TextField, FormControl, styled, FormLabel, Divider, Link, Button } from "@mui/material";
-import { SubmitButton } from "../custom/submit-button";
-import MuiCard from "@mui/material/Card";
-import { FacebookIcon, GoogleIcon } from "../custom/login-icons";
-import { Heading } from "../Heading";
+import { Input } from "../Input";
 
 type FormData = {
   email: string;
@@ -16,44 +12,11 @@ type FormData = {
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
 
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignSelf: "center",
-  width: "100%",
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: "auto",
-  [theme.breakpoints.up("sm")]: {
-    maxWidth: "450px",
-  },
-  boxShadow: "hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px",
-  ...theme.applyStyles("dark", {
-    boxShadow: "hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px",
-  }),
-}));
-
-const SignInContainer = styled(Stack)(({ theme }) => ({
-  height: "calc((1 - var(--template-frame-height, 0)) * 100dvh)",
-  minHeight: "100%",
-  width: "400px",
-  padding: theme.spacing(2),
-  [theme.breakpoints.up("sm")]: {
-    padding: theme.spacing(4),
-  },
-  "&::before": {
-    content: '""',
-    display: "block",
-    position: "absolute",
-    zIndex: -1,
-    inset: 0,
-    backgroundImage: "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
-    backgroundRepeat: "no-repeat",
-    ...theme.applyStyles("dark", {
-      backgroundImage: "radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))",
-    }),
-  },
-}));
+const Logo = (props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
+  <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
+    <path d="M10.9999 2.04938L11 5.07088C7.6077 5.55612 5 8.47352 5 12C5 15.866 8.13401 19 12 19C13.5723 19 15.0236 18.4816 16.1922 17.6064L18.3289 19.7428C16.605 21.1536 14.4014 22 12 22C6.47715 22 2 17.5228 2 12C2 6.81468 5.94662 2.55115 10.9999 2.04938ZM21.9506 13.0001C21.7509 15.0111 20.9555 16.8468 19.7433 18.3283L17.6064 16.1922C18.2926 15.2759 18.7595 14.1859 18.9291 13L21.9506 13.0001ZM13.0011 2.04948C17.725 2.51902 21.4815 6.27589 21.9506 10.9999L18.9291 10.9998C18.4905 7.93452 16.0661 5.50992 13.001 5.07103L13.0011 2.04948Z" />
+  </svg>
+);
 
 const Register = () => {
   const {
@@ -81,93 +44,80 @@ const Register = () => {
   };
 
   return (
-    <SignInContainer direction="column" justifyContent="space-between">
-      <Card variant="outlined">
-        <Heading variant="h4">Sign up</Heading>
-        <Box
-          component="form"
-          onSubmit={handleSubmit(onSubmit)}
-          // noValidate
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            gap: 2,
-          }}
-        >
-          <FormControl>
-            <FormLabel htmlFor="username">Full name</FormLabel>
-            <TextField
-              autoComplete="username"
-              // name="username"
-              required
-              fullWidth
-              id="username"
-              placeholder="Pierrick Martino"
-              error={errors.username ? true : false}
-              helperText={errors.username?.message}
-              variant="outlined"
-              {...register("username", { required: "Username is required" })}
-              color={errors.username ? "error" : "primary"}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="email">Email</FormLabel>
-            <TextField
-              error={errors.email ? true : false}
-              helperText={errors.email?.message}
-              id="email"
-              type="email"
-              // name="email"
-              placeholder="your@email.com"
-              autoComplete="email"
-              autoFocus
-              required
-              fullWidth
-              variant="outlined"
-              {...register("email", { required: "Email is required" })}
-              color={errors.email ? "error" : "primary"}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="password">Password</FormLabel>
-            <TextField
-              // error={passwordError}
-              // helperText={passwordErrorMessage}
-              // name="password"
-              placeholder="••••••"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              autoFocus
-              required
-              fullWidth
-              variant="outlined"
-              {...register("password", { required: "Password is required" })}
-              // color={passwordError ? 'error' : 'primary'}
-            />
-          </FormControl>
-          <SubmitButton text="Sign Up" loadingText="Loading" />
-        </Box>
-        <Divider>
-          <Heading variant="body">or</Heading>
-        </Divider>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <Button fullWidth variant="outlined" onClick={() => alert("Sign up with Google")} startIcon={<GoogleIcon />}>
-            Sign up with Google
-          </Button>
-          <Button fullWidth variant="outlined" onClick={() => alert("Sign up with Facebook")} startIcon={<FacebookIcon />}>
-            Sign up with Facebook
-          </Button>
-          <Heading variant="body">
+    <>
+      <div className="flex min-h-screen flex-1 flex-col justify-center px-4 py-10 lg:px-6">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="flex items-center space-x-2.5">
+            <Logo className="remixicon size-7 text-gray-900 dark:text-gray-50" aria-hidden={true} />
+            <p className="font-medium text-gray-900 dark:text-gray-50">BlockBuilders</p>
+          </div>
+          <h3 className="mt-6 text-lg font-semibold text-gray-900 dark:text-gray-50">Create a new account</h3>
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
             Already have an account?{" "}
-            <Link href="/signin" variant="body2" sx={{ alignSelf: "center" }}>
+            <a href="/signin" className="font-medium text-blue-500 hover:text-blue-600 dark:text-blue-500 hover:dark:text-blue-600">
               Sign in
-            </Link>
-          </Heading>
-        </Box>
-      </Card>
-    </SignInContainer>
+            </a>
+          </p>
+          <form onSubmit={handleSubmit(onSubmit)} method="post" className="mt-6 space-y-4">
+            <div>
+              <label htmlFor="username" className="text-sm font-medium text-gray-900 dark:text-gray-50">
+                Full name
+              </label>
+              <Input
+                type="text"
+                id="username"
+                autoComplete="username"
+                placeholder="Full name"
+                className="mt-2"
+                {...register("username", { required: "Username is required" })}
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="text-sm font-medium text-gray-900 dark:text-gray-50">
+                Email
+              </label>
+              <Input
+                type="email"
+                id="email"
+                {...register("email", { required: "Email is required" })}
+                autoComplete="email"
+                placeholder="john@company.com"
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="text-sm font-medium text-gray-900 dark:text-gray-50">
+                Password
+              </label>
+              <Input
+                type="password"
+                id="password"
+                {...register("password", { required: "Password is required" })}
+                autoComplete="password"
+                placeholder="Password"
+                className="mt-2"
+              />
+            </div>
+            <button
+              type="submit"
+              className="relative inline-flex items-center justify-center whitespace-nowrap rounded-md border px-3 py-2 text-center text-sm font-medium shadow-sm transition-all duration-100 ease-in-out disabled:pointer-events-none disabled:shadow-none outline-offset-2 outline-0 focus-visible:outline-2 outline-blue-500 dark:outline-blue-500 border-transparent text-white dark:text-white bg-blue-500 dark:bg-blue-500 hover:bg-blue-600 dark:hover:bg-blue-600 disabled:bg-blue-300 disabled:text-white disabled:dark:bg-blue-800 disabled:dark:text-blue-400 mt-4 w-full"
+            >
+              Create account
+            </button>
+            <p className="text-center text-xs text-gray-500 dark:text-gray-500">
+              By signing in, you agree to our{" "}
+              <a href="#" className="capitalize text-blue-500 hover:text-blue-600 dark:text-blue-500 hover:dark:text-blue-600">
+                Terms of use
+              </a>{" "}
+              and{" "}
+              <a href="#" className="capitalize text-blue-500 hover:text-blue-600 dark:text-blue-500 hover:dark:text-blue-600">
+                Privacy policy
+              </a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </>
   );
 };
 
