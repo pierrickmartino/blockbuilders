@@ -10,7 +10,6 @@ import { useParams } from "next/navigation";
 import { formatNumber } from "@/lib/format";
 import getLast30Days from "@/lib/getLast30Days";
 import PriceSparkline from "@/app/(dashboard)/components/dashboard/PriceSparkline";
-import DeltaChip from "@/app/(dashboard)/components/dashboard/DeltaChip";
 import { Badge1 } from "@/components/BadgeCustom";
 import { Card } from "@/components/Card";
 import { Heading } from "@/components/Heading";
@@ -184,7 +183,7 @@ const Transactions = () => {
                     <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                   )}
                   {market_data.length > 1 ? (
-                    <DeltaChip data={market_data.map((m) => m.close).reverse()} />
+                    <>{market_data.map((m) => m.close).reverse()}</>
                   ) : (
                     <Skeleton variant="text" width={50} />
                   )}
@@ -218,7 +217,7 @@ const Transactions = () => {
                     <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                   )}
                   {position_capital_gains.length > 1 ? (
-                    <DeltaChip data={position_capital_gains.map((m) => m.running_capital_gain)} />
+                    <> {position_capital_gains.map((m) => m.running_capital_gain)} </>
                   ) : (
                     <Skeleton variant="text" width={50} />
                   )}

@@ -1,19 +1,10 @@
-'use client'
-import CircularProgress from "@mui/material/CircularProgress";
-import Box from "@mui/material/Box";
+'use client';
+import { Card } from '@tremor/react';
 
 export default function Loading() {
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        height: "100vh",
-      }}
-    >
-      <CircularProgress />
-    </Box>
+    <Card className="flex justify-center items-center w-full h-screen shadow-none">
+      <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-transparent border-gray-400" />
+    </Card>
   );
-};
+}
