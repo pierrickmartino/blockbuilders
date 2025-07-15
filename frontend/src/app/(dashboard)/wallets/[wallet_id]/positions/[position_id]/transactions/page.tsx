@@ -9,7 +9,6 @@ import TransactionTable from "@/app/(dashboard)/components/dashboard/Transaction
 import { useParams } from "next/navigation";
 import { formatNumber } from "@/lib/format";
 import getLast30Days from "@/lib/getLast30Days";
-import PriceSparkline from "@/app/(dashboard)/components/dashboard/PriceSparkline";
 import { Badge1 } from "@/components/BadgeCustom";
 import { Card } from "@/components/Card";
 import { Heading } from "@/components/Heading";
@@ -192,7 +191,7 @@ const Transactions = () => {
               </Stack>
               <Box sx={{ width: "100%", height: 100 }}>
                 {market_data.length > 0 && market_data[0]?.close ? (
-                  <PriceSparkline data={market_data.map((m) => m.close).reverse()} days={last30Days} />
+                  <>{market_data.map((m) => m.close).reverse()}</>
                 ) : (
                   <Skeleton variant="rounded" height={100} />
                 )}
@@ -226,7 +225,7 @@ const Transactions = () => {
               </Stack>
               <Box sx={{ width: "100%", height: 100 }}>
                 {position_capital_gains.length > 0 && position_capital_gains[0]?.running_capital_gain ? (
-                  <PriceSparkline data={position_capital_gains.map((m) => m.running_capital_gain)} days={last30Days} />
+                  <> {position_capital_gains.map((m) => m.running_capital_gain)} </>
                 ) : (
                   <Skeleton variant="rounded" height={100} />
                 )}
