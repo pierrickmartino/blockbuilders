@@ -3,9 +3,6 @@ import Avatar from "@mui/material/Avatar";
 import Divider from "@mui/material/Divider";
 import Drawer, { drawerClasses } from "@mui/material/Drawer";
 import Stack from "@mui/material/Stack";
-import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
-
-import MenuButton from "../../components/dashboard/MenuButton";
 import MenuContent from "./MenuContent";
 
 import { Button } from "@/components/Button";
@@ -41,9 +38,6 @@ export default function SideMenuMobile({ open, toggleDrawer }: SideMenuMobilePro
             <Avatar sizes="small" alt="Riley Carter" src="/static/images/avatar/7.jpg" sx={{ width: 24, height: 24 }} />
             <Heading variant="h6">Riley Carter</Heading>
           </Stack>
-          <MenuButton showBadge>
-            <NotificationsRoundedIcon />
-          </MenuButton>
         </Stack>
         <Divider />
         <Stack sx={{ flexGrow: 1 }}>

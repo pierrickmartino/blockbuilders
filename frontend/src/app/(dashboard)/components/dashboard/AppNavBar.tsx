@@ -5,10 +5,8 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import MuiToolbar from '@mui/material/Toolbar';
 import { tabsClasses } from '@mui/material/Tabs';
-import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
 import SideMenuMobile from '../../layout/sidebar/SideMenuMobile';
-import MenuButton from './MenuButton';
 import ColorModeIconDropdown from '../../layout/header/ColorModeIconDropdown';
 import { Heading } from '@/components/Heading';
 
@@ -69,9 +67,6 @@ export default function AppNavbar() {
             </Heading>
           </Stack>
           <ColorModeIconDropdown />
-          <MenuButton aria-label="menu" onClick={toggleDrawer(true)}>
-            <MenuRoundedIcon />
-          </MenuButton>
           <SideMenuMobile open={open} toggleDrawer={toggleDrawer} />
         </Stack>
       </Toolbar>
