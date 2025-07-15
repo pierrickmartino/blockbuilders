@@ -6,22 +6,22 @@ This document outlines the initial tasks required to kickstart the development o
 
 ### 1. Environment Setup
 - [x] Create GitHub repository with README and licensing
-- [ ] Set up project structure for frontend and backend
+- [x] Set up project structure for frontend and backend
 - [ ] Configure development environments
 - [ ] Set up linting and formatting tools
 
 ### 2. Frontend Setup (Next.js)
-- [ ] Initialize Next.js project with TypeScript
-- [ ] Set up Tailwind CSS and theme configuration
-- [ ] Configure folder structure following Next.js best practices
-- [ ] Set up component library (Shadcn UI or similar)
-- [ ] Create basic layout components (Header, Footer, Sidebar)
-- [ ] Implement responsive design framework
+- [x] Initialize Next.js project with TypeScript
+- [x] Set up Tailwind CSS and theme configuration
+- [x] Configure folder structure following Next.js best practices
+- [x] Set up component library (Shadcn UI or similar)
+- [x] Create basic layout components (Header, Footer, Sidebar)
+- [x] Implement responsive design framework
 - [ ] Set up internationalization framework
 - [ ] Remove all the references to the Mui framework
 
 ### 3. Backend Setup (Django + DRF)
-- [ ] Initialize Django project with appropriate settings
+- [x] Initialize Django project with appropriate settings
 - [ ] Configure Django REST Framework
 - [ ] Set up PostgreSQL database and connection
 - [ ] Create initial models for User, Wallet, and Transaction
