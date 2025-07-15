@@ -180,11 +180,7 @@ const Transactions = () => {
                   ) : (
                     <Skeleton variant="text" width={100} sx={{ fontSize: "1.5rem" }} />
                   )}
-                  {market_data.length > 1 ? (
-                    <>{market_data.map((m) => m.close).reverse()}</>
-                  ) : (
-                    <Skeleton variant="text" width={50} />
-                  )}
+                  {market_data.length > 1 ? <>{market_data.map((m) => m.close).reverse()}</> : <Skeleton variant="text" width={50} />}
                 </Stack>
                 <Heading variant="caption">Market price</Heading>
               </Stack>
@@ -231,7 +227,6 @@ const Transactions = () => {
               </Box>
             </Stack>
           </Card>
-          
         </Grid>
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <Card>
@@ -292,39 +287,8 @@ const Transactions = () => {
               )}
             </Stack>
           </Card>
-
-          {/* {transactions.length > 0 && transactions[0]?.position.contract ? (
-           */}
-
-          {/* <Stack>
-               
-                
-              </Stack> // Fallback if transactions are not available
-            )} */}
-          {/* </Stack> */}
-          {/* </Stack> */}
         </Grid>
-        {/* <Grid size={{ xs: 12, lg: 12 }}>
-          <Card variant="outlined" sx={{ p: 3 }}>
-            <Box px={0} py={0} mb="-15px">
-              <Heading variant="h5">Filter</Heading>
-            </Box>
-            <Box px={0} py={0} mt={3}>
-              <Stack
-                direction="row"
-                alignItems="center"
-                spacing={2}
-                justifyContent="space-between"
-                mb={0}
-              >
-                <SearchForm onSearch={handleSearch} />
-              </Stack>
-            </Box>
-          </Card>
-        </Grid> */}
-        <Grid size={{ xs: 12, lg: 12 }}>
-          
-        </Grid>
+        <Grid size={{ xs: 12, lg: 12 }}></Grid>
       </Grid>
       <Drawer anchor="right" open={drawerOpen} onClose={() => toggleDrawer(false)}>
         {DrawerList}
