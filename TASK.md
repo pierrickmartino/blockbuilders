@@ -18,6 +18,7 @@ This document outlines the initial tasks required to kickstart the development o
 - [ ] Create basic layout components (Header, Footer, Sidebar)
 - [ ] Implement responsive design framework
 - [ ] Set up internationalization framework
+- [ ] Remove all the references to the Mui framework
 
 ### 3. Backend Setup (Django + DRF)
 - [ ] Initialize Django project with appropriate settings
@@ -29,6 +30,7 @@ This document outlines the initial tasks required to kickstart the development o
 - [ ] Configure CORS and security headers
 - [ ] Create initial API endpoints and serializers
 - [ ] Set up Swagger/OpenAPI documentation
+- [ ] Migrate to django-ninja instead of DRF
 
 ### 4. API Integration Setup
 - [ ] Research and select crypto price data API (CoinGecko, etc.)
