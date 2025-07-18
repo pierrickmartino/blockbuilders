@@ -7,23 +7,12 @@
 - Fix lint issues (`npm run lint`)
 
 ## Frontend
-- Ajouter un mode sombre (dark mode)
-- Améliorer les couleurs
-- Ajouter un contour aux alertes
-- Utiliser un bleu foncé (ou autre) pour couleur principale
 - Le nom d'utilisateur n'est pas sauvegardé lors de l'enregistrement
-- Revoir le CSS du bouton d'action dans les tableaux
 
 ## Dashboard
 - Ajouter un widget graphique avec l'évolution du nombre de trades par jour/mois
 - Ajouter un calendrier du mois avec le nombre de trades par journée
 - Ajouter un widget présentant les inflow/outflow
-- Ajouter la fonctionnalité d'édition d'un wallet
-- Ajouter un graph avec l'historique des capital gain sur les 6 derniers mois
-- Repenser l'affichage du widget *Activity* pour les écrans mobiles
-- [ **In progress** ] Ouvrir un drawer au clic sur un wallet avec les infos de positions
-- Fix ajout d'un wallet avec refresh de la page
-- Fix suppression d'un wallet avec refresh de la page
 
 ## Position
 - Ajouter les indicateurs tels que EMA, RSI, etc.
@@ -35,6 +24,8 @@
 - [ **In progress** ] Ouvrir un drawer au clic sur une transaction avec des infos à déterminer
 
 ## Backend
+- Migrer vers FastAPI
+- Fix transaction_cost quand un swap passe par une addresse tierce (jumper)
 - Mettre une position en "suspicious" doit supprimer les transactions associées au contract
 - Revoir les logs des tasks pour identifier les lenteurs
 - Optimiser les traitements :
