@@ -1,4 +1,12 @@
-fastapi
+fastapi[standard]
 uvicorn
 sqlalchemy
 asyncpg
+sqlmodel
+passlib[bcrypt]
+sentry-sdk[fastapi]
+pyjwt
+pydantic
+pydantic-settings
+pydantic[email]
+psycopg[binary]

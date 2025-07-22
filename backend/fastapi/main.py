@@ -1,19 +1,33 @@
-from fastapi import Depends, FastAPI
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import text
-from db import AsyncSessionLocal
+import sentry_sdk
+from fastapi import FastAPI
+from fastapi.routing import APIRoute
+from starlette.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+from api.main import api_router
+from core.config import settings
 
-async def get_db():
-    async with AsyncSessionLocal() as session:
-        yield session
 
-@app.get("/hello")
-async def hello():
-    return {"message": "Hello from FastAPI!"}
+def custom_generate_unique_id(route: APIRoute) -> str:
+    return f"{route.tags[0]}-{route.name}"
 
-@app.get("/test-db")
-async def test_db(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(text("SELECT 1;"))
-    return {"db_test": result.scalar()}
+
+if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
+    sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
+
+app = FastAPI(
+    title=settings.PROJECT_NAME,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    generate_unique_id_function=custom_generate_unique_id,
+)
+
+# Set all CORS enabled origins
+if settings.all_cors_origins:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.all_cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+app.include_router(api_router, prefix=settings.API_V1_STR)
