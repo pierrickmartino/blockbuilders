@@ -25,6 +25,7 @@
 
 ## Backend
 - Migrer vers FastAPI
+- Migrer vers CoinDesk API
 - Fix transaction_cost quand un swap passe par une addresse tierce (jumper)
 - Mettre une position en "suspicious" doit supprimer les transactions associées au contract
 - Revoir les logs des tasks pour identifier les lenteurs
@@ -32,5 +33,4 @@
   - `create_transactions_from_polygon_erc20_task` : 3.72s
   - `calculate_cost_transaction_task` : 7.06s
   - `calculate_running_quantity_transaction_task` : 5.28s
-- Migrer vers Etherscan API V2
 - Un utilisateur ne doit pas voir les données d’un autre (à finaliser sur toutes les vues)

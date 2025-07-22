@@ -24,14 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY")
-POLYGONSCAN_API_KEY = config("POLYGONSCAN_API_KEY")
-POLYGONSCAN_SECRET_KEY = config("POLYGONSCAN_SECRET_KEY")
-ARBISCAN_API_KEY = config("ARBISCAN_API_KEY")
-BASESCAN_API_KEY = config("BASESCAN_API_KEY")
-OPTIMISM_API_KEY = config("OPTIMISM_API_KEY")
-BSCSCAN_API_KEY = config("BSCSCAN_API_KEY")
 CCOMPARE_API_KEY = config("CCOMPARE_API_KEY")
 METISSCAN_API_KEY = config("METISSCAN_API_KEY")
+ETHERSCAN_API_KEY = config("ETHERSCAN_API_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=False, cast=bool)

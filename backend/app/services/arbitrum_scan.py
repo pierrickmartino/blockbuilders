@@ -1,12 +1,13 @@
 import requests
-from blockbuilders.settings.base import ARBISCAN_API_KEY
+from blockbuilders.settings.base import ETHERSCAN_API_KEY
 
 
 class ArbitrumScanAPI:
-    base_url = "https://api.arbiscan.io/api"
+    # base_url = "https://api.arbiscan.io/api"
+    base_url = "https://api.etherscan.io/v2/api?chainid=42161"  # Using Etherscan API for Arbitrum
 
     def __init__(self, api_key=None):
-        self.api_key = api_key or ARBISCAN_API_KEY
+        self.api_key = api_key or ETHERSCAN_API_KEY
 
     def get_ethereum_price(self):
         params = {

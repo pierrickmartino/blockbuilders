@@ -1,12 +1,13 @@
 import requests
-from blockbuilders.settings.base import BASESCAN_API_KEY
+from blockbuilders.settings.base import ETHERSCAN_API_KEY
 
 
 class BaseScanAPI:
-    base_url = "https://api.basescan.org/api"
+    # base_url = "https://api.basescan.org/api"
+    base_url = "https://api.etherscan.io/v2/api?chainid=8453"  # Using Etherscan API for Base
 
     def __init__(self, api_key=None):
-        self.api_key = api_key or BASESCAN_API_KEY
+        self.api_key = api_key or ETHERSCAN_API_KEY
 
     def get_ethereum_price(self):
         params = {

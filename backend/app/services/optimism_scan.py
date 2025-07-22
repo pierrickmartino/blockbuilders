@@ -1,12 +1,13 @@
 import requests
-from blockbuilders.settings.base import OPTIMISM_API_KEY
+from blockbuilders.settings.base import ETHERSCAN_API_KEY
 
 
 class OptimismScanAPI:
-    base_url = "https://api-optimistic.etherscan.io/api"
+    # base_url = "https://api-optimistic.etherscan.io/api"
+    base_url = "https://api.etherscan.io/v2/api?chainid=10"  # Using Etherscan API for Optimism
 
     def __init__(self, api_key=None):
-        self.api_key = api_key or OPTIMISM_API_KEY
+        self.api_key = api_key or ETHERSCAN_API_KEY
 
     def get_ethereum_price(self):
         params = {

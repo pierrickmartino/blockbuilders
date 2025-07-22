@@ -1,12 +1,13 @@
 import requests
-from blockbuilders.settings.base import POLYGONSCAN_API_KEY
+from blockbuilders.settings.base import ETHERSCAN_API_KEY
 
 
 class PolygonScanAPI:
-    base_url = "https://api.polygonscan.com/api"
+    # base_url = "https://api.polygonscan.com/api"
+    base_url = "https://api.etherscan.io/v2/api?chainid=137"  # Using Etherscan API for Polygon
 
     def __init__(self, api_key=None):
-        self.api_key = api_key or POLYGONSCAN_API_KEY
+        self.api_key = api_key or ETHERSCAN_API_KEY
 
     def get_matic_price(self):
         params = {
