@@ -1,4 +1,4 @@
-version: '3.9'
+# version: '3.9'
 
 services:
   frontend:
@@ -32,6 +32,24 @@ services:
       - media_volume:/code/mediafiles
     ports:
       - 4000:4000
+    networks:
+      - app_network
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - ./.env
+
+  fastapi:
+    container_name: fastapi
+    image: fastapi:1.0.0
+    build:
+      context: ./backend/fastapi
+      dockerfile: fastapi.dockerfile
+    restart: always
+    command: uvicorn main:app --host 0.0.0.0 --port 4001
+    ports:
+      - 4001:4001
     networks:
       - app_network
     depends_on:

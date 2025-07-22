@@ -25,5 +25,3 @@ djangorestframework-simplejwt
 djoser
 djangorestframework
 django-cors-headers
-
-# djangorestframework-api-key==2.*
