@@ -1,8 +1,9 @@
+import datetime
 import uuid
 
 from pydantic import EmailStr
-from sqlmodel import Field, Relationship, SQLModel
-from datetime import datetime
+from sqlmodel import Field, SQLModel
+import sqlmodel
 
 
 class FiatBase(SQLModel):
@@ -12,23 +13,29 @@ class FiatBase(SQLModel):
     exchange_rate: float = Field(default=1.0)  # Exchange rate of the fiat currency
 
 
-class Fiat(SQLModel, table=True):
+class app_Fiat(FiatBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
 
 
 class FiatPublic(FiatBase):
     id: uuid.UUID
 
+
 class FiatsPublic(SQLModel):
     data: list[FiatPublic]
     count: int
+
 
 # Shared properties
 class UserBase(SQLModel):
     email: EmailStr = Field(unique=True, index=True, max_length=255)
     is_active: bool = True
     is_superuser: bool = False
-    full_name: str | None = Field(default=None, max_length=255)
+    is_staff: bool = False
+    last_name: str | None = Field(default=None, max_length=255)
+    first_name: str | None = Field(default=None, max_length=255)
+    name: str | None = Field(default=None, max_length=255)
+    date_joined: datetime.datetime = sqlmodel.Field(sa_column=sqlmodel.Column(sqlmodel.DateTime(timezone=True), nullable=False))
 
 
 # Properties to receive via API on creation
@@ -39,7 +46,8 @@ class UserCreate(UserBase):
 class UserRegister(SQLModel):
     email: EmailStr = Field(max_length=255)
     password: str = Field(min_length=8, max_length=40)
-    full_name: str | None = Field(default=None, max_length=255)
+    last_name: str | None = Field(default=None, max_length=255)
+    first_name: str | None = Field(default=None, max_length=255)
 
 
 # Properties to receive via API on update, all are optional
@@ -49,7 +57,8 @@ class UserUpdate(UserBase):
 
 
 class UserUpdateMe(SQLModel):
-    full_name: str | None = Field(default=None, max_length=255)
+    last_name: str | None = Field(default=None, max_length=255)
+    first_name: str | None = Field(default=None, max_length=255)
     email: EmailStr | None = Field(default=None, max_length=255)
 
 
@@ -59,7 +68,7 @@ class UpdatePassword(SQLModel):
 
 
 # Database model, database table inferred from class name
-class User(UserBase, table=True):
+class app_User(UserBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     hashed_password: str
     # items: list["Item"] = Relationship(back_populates="owner", cascade_delete=True)
@@ -73,6 +82,7 @@ class UserPublic(UserBase):
 class UsersPublic(SQLModel):
     data: list[UserPublic]
     count: int
+
 
 # Generic message
 class Message(SQLModel):

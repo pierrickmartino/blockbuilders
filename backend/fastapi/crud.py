@@ -4,11 +4,11 @@ from typing import Any
 from sqlmodel import Session, select
 
 from core.security import get_password_hash, verify_password
-from models import Fiat, User, UserCreate, UserUpdate
+from models import app_User, UserCreate, UserUpdate
 
 
-def create_user(*, session: Session, user_create: UserCreate) -> User:
-    db_obj = User.model_validate(
+def create_user(*, session: Session, user_create: UserCreate) -> app_User:
+    db_obj = app_User.model_validate(
         user_create, update={"hashed_password": get_password_hash(user_create.password)}
     )
     session.add(db_obj)
@@ -17,7 +17,7 @@ def create_user(*, session: Session, user_create: UserCreate) -> User:
     return db_obj
 
 
-def update_user(*, session: Session, db_user: User, user_in: UserUpdate) -> Any:
+def update_user(*, session: Session, db_user: app_User, user_in: UserUpdate) -> Any:
     user_data = user_in.model_dump(exclude_unset=True)
     extra_data = {}
     if "password" in user_data:
@@ -31,13 +31,13 @@ def update_user(*, session: Session, db_user: User, user_in: UserUpdate) -> Any:
     return db_user
 
 
-def get_user_by_email(*, session: Session, email: str) -> User | None:
-    statement = select(User).where(User.email == email)
+def get_user_by_email(*, session: Session, email: str) -> app_User | None:
+    statement = select(app_User).where(app_User.email == email)
     session_user = session.exec(statement).first()
     return session_user
 
 
-def authenticate(*, session: Session, email: str, password: str) -> User | None:
+def authenticate(*, session: Session, email: str, password: str) -> app_User | None:
     db_user = get_user_by_email(session=session, email=email)
     if not db_user:
         return None

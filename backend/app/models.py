@@ -40,6 +40,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=250)
     email = models.CharField(max_length=250, unique=True)
     password = models.CharField(max_length=250)
+    hashed_password = models.CharField(max_length=255, blank=True, null=True)
     username = None
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

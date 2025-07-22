@@ -5,26 +5,26 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import func, select
 
 from api.deps import CurrentUser, SessionDep
-from models import Fiat, FiatPublic, FiatsPublic, Message
+from models import app_Fiat, FiatPublic, FiatsPublic, Message
 
 router = APIRouter(prefix="/fiats", tags=["fiats"])
 
 
-@router.get("/", response_model=FiatPublic)
+@router.get("/", response_model=FiatsPublic)
 def read_fiats(session: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100) -> Any:
     """
     Retrieve fiat currencies.
     """
 
     if current_user.is_superuser:
-        count_statement = select(func.count()).select_from(Fiat)
+        count_statement = select(func.count()).select_from(app_Fiat)
         count = session.exec(count_statement).one()
-        statement = select(Fiat).offset(skip).limit(limit)
+        statement = select(app_Fiat).offset(skip).limit(limit)
         fiats = session.exec(statement).all()
     else:
-        count_statement = select(func.count()).select_from(Fiat).where(Fiat.owner_id == current_user.id)
+        count_statement = select(func.count()).select_from(app_Fiat)
         count = session.exec(count_statement).one()
-        statement = select(Fiat).where(Fiat.owner_id == current_user.id).offset(skip).limit(limit)
+        statement = select(app_Fiat).offset(skip).limit(limit)
         fiats = session.exec(statement).all()
 
     return FiatsPublic(data=fiats, count=count)
@@ -35,7 +35,7 @@ def read_fiat(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> 
     """
     Get fiat currency by ID.
     """
-    fiat = session.get(Fiat, id)
+    fiat = session.get(app_Fiat, id)
     if not fiat:
         raise HTTPException(status_code=404, detail="Fiat currency not found")
     if not current_user.is_superuser and (fiat.owner_id != current_user.id):
@@ -86,7 +86,7 @@ def delete_fiat(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -
     """
     Delete a fiat currency.
     """
-    fiat = session.get(Fiat, id)
+    fiat = session.get(app_Fiat, id)
     if not fiat:
         raise HTTPException(status_code=404, detail="Fiat currency not found")
     if not current_user.is_superuser and (fiat.owner_id != current_user.id):

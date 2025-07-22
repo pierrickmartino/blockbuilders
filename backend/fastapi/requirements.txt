@@ -10,3 +10,4 @@ pydantic
 pydantic-settings
 pydantic[email]
 psycopg[binary]
+emails
