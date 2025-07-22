@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import func, select
 
 from api.deps import CurrentUser, SessionDep
-from models import app_Fiat, FiatPublic, FiatsPublic, Message
+from models import FiatCreate, FiatUpdate, app_Fiat, FiatPublic, FiatsPublic, Message
 
 router = APIRouter(prefix="/fiats", tags=["fiats"])
 
@@ -43,42 +43,40 @@ def read_fiat(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> 
     return fiat
 
 
-# @router.post("/", response_model=FiatPublic)
-# def create_fiat(
-#     *, session: SessionDep, current_user: CurrentUser, item_in: FiatCreate
-# ) -> Any:
-#     """
-#     Create new fiat currency.
-#     """
-#     fiat = Fiat.model_validate(item_in, update={"owner_id": current_user.id})
-#     session.add(fiat)
-#     session.commit()
-#     session.refresh(fiat)
-#     return fiat
+@router.post("/", response_model=FiatPublic)
+def create_fiat(*, session: SessionDep, current_user: CurrentUser, item_in: FiatCreate) -> Any:
+    """
+    Create new fiat currency.
+    """
+    fiat = app_Fiat.model_validate(item_in)
+    session.add(fiat)
+    session.commit()
+    session.refresh(fiat)
+    return fiat
 
 
-# @router.put("/{id}", response_model=FiatPublic)
-# def update_fiat(
-#     *,
-#     session: SessionDep,
-#     current_user: CurrentUser,
-#     id: uuid.UUID,
-#     item_in: FiatUpdate,
-# ) -> Any:
-#     """
-#     Update a fiat currency.
-#     """
-#     fiat = session.get(Fiat, id)
-#     if not fiat:
-#         raise HTTPException(status_code=404, detail="Fiat currency not found")
-#     if not current_user.is_superuser and (fiat.owner_id != current_user.id):
-#         raise HTTPException(status_code=400, detail="Not enough permissions")
-#     update_dict = item_in.model_dump(exclude_unset=True)
-#     fiat.sqlmodel_update(update_dict)
-#     session.add(fiat)
-#     session.commit()
-#     session.refresh(fiat)
-#     return fiat
+@router.put("/{id}", response_model=FiatPublic)
+def update_fiat(
+    *,
+    session: SessionDep,
+    current_user: CurrentUser,
+    id: uuid.UUID,
+    item_in: FiatUpdate,
+) -> Any:
+    """
+    Update a fiat currency.
+    """
+    fiat = session.get(app_Fiat, id)
+    if not fiat:
+        raise HTTPException(status_code=404, detail="Fiat currency not found")
+    if not current_user.is_superuser:
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+    update_dict = item_in.model_dump(exclude_unset=True)
+    fiat.sqlmodel_update(update_dict)
+    session.add(fiat)
+    session.commit()
+    session.refresh(fiat)
+    return fiat
 
 
 @router.delete("/{id}")
@@ -89,7 +87,7 @@ def delete_fiat(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -
     fiat = session.get(app_Fiat, id)
     if not fiat:
         raise HTTPException(status_code=404, detail="Fiat currency not found")
-    if not current_user.is_superuser and (fiat.owner_id != current_user.id):
+    if not current_user.is_superuser:
         raise HTTPException(status_code=400, detail="Not enough permissions")
     session.delete(fiat)
     session.commit()

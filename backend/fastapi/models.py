@@ -13,12 +13,23 @@ class FiatBase(SQLModel):
     exchange_rate: float = Field(default=1.0)  # Exchange rate of the fiat currency
 
 
+class FiatCreate(FiatBase):
+    pass
+
+
 class app_Fiat(FiatBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
 
 
 class FiatPublic(FiatBase):
     id: uuid.UUID
+
+
+class FiatUpdate(FiatBase):
+    name: str | None = Field(default=None, max_length=255)
+    symbol: str | None = Field(default=None, max_length=50)
+    short_symbol: str | None = Field(default=None, max_length=3)
+    exchange_rate: float | None = Field(default=None)
 
 
 class FiatsPublic(SQLModel):
