@@ -1,17 +1,18 @@
-from sqlmodel import Relationship, SQLModel, Field, DateTime, Column
+from sqlmodel import Numeric, Relationship, SQLModel, Field, DateTime, Column
 from typing import TYPE_CHECKING, Optional
 import uuid
 import datetime
 
+# This file defines the models for wallets used in the application.
+
 
 class WalletBase(SQLModel):
-    address: str = Field(max_length=255, unique=True)
-    name: str = Field(max_length=255, unique=True)
-    balance: float = Field(default=0.0)
-    description: str | None = Field(default=None, max_length=500)
-    created_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))
-    updated_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))
-    user_id: uuid.UUID | None = Field(default=None, foreign_key="app_user.id")
+    address: str = Field(max_length=255, unique=True)  # Address of the wallet
+    name: str = Field(max_length=255, unique=True)  # Name of the wallet
+    description: str | None = Field(default=None, max_length=500)  # Description of the wallet
+    created_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))  # Creation timestamp
+    updated_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))  # Update timestamp
+    user_id: uuid.UUID | None = Field(default=None, foreign_key="app_user.id")  # ID of the user who owns the wallet
 
 
 class WalletCreate(WalletBase):
@@ -19,11 +20,12 @@ class WalletCreate(WalletBase):
 
 
 class app_Wallet(WalletBase, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    capital_gain: float = Field(default=0.0)
-    unrealized_gain: float = Field(default=0.0)
-    progress_percentage: float = Field(default=0.0)
-    user: Optional["app_User"] = Relationship(back_populates="wallets")
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)  # Unique identifier for the wallet
+    balance: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Balance of the wallet
+    capital_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the wallet
+    unrealized_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Unrealized gain of the wallet
+    progress_percentage: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Progress percentage of the wallet
+    user: Optional["app_User"] = Relationship(back_populates="wallets")  # Relationship to the user who owns the wallet
 
 
 class WalletPublic(WalletBase):
@@ -31,24 +33,25 @@ class WalletPublic(WalletBase):
 
 
 class WalletUpdate(SQLModel):
-    address: str | None = Field(default=None, max_length=255)
-    name: str | None = Field(default=None, max_length=255)
-    description: str | None = Field(default=None, max_length=500)
-    user_id: uuid.UUID | None = Field(default=None, foreign_key="app_user.id")
+    address: str | None = Field(default=None, max_length=255)  # Address of the wallet
+    name: str | None = Field(default=None, max_length=255)  # Name of the wallet
+    description: str | None = Field(default=None, max_length=500)  # Description of the wallet
+    user_id: uuid.UUID | None = Field(default=None, foreign_key="app_user.id")  # ID of the user who owns the wallet
 
 
 class WalletPublicWithUser(WalletPublic):
-    user: Optional["UserPublic"] = None
+    user: Optional["UserPublic"] = None  # User information associated with the wallet
 
 
 class WalletsPublic(SQLModel):
-    data: list[WalletPublic]
-    count: int
+    data: list[WalletPublic]  # List of wallets
+    count: int  # Total count of wallets
 
 
+# This is a workaround to avoid circular imports
 if TYPE_CHECKING:
     from models.user import UserPublic, app_User
-    
-from models.user import UserPublic
-WalletPublicWithUser.model_rebuild()
 
+from models.user import UserPublic
+
+WalletPublicWithUser.model_rebuild()

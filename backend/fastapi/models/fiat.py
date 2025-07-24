@@ -1,27 +1,29 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import Column, Numeric, SQLModel, Field
 import uuid
 
+# This file defines the models for fiat currencies used in the application.
+
 class FiatBase(SQLModel):
-    name: str = Field(max_length=255, unique=True)
-    symbol: str = Field(max_length=50, unique=True)
-    short_symbol: str = Field(max_length=3, default="")
-    exchange_rate: float = Field(default=1.0)
+    name: str = Field(max_length=255, unique=True) # Name of the fiat currency
+    symbol: str = Field(max_length=50, unique=True) # Symbol for the fiat currency
+    short_symbol: str = Field(max_length=3, default="") # Short symbol for the fiat currency
+    exchange_rate: float = Field(default=1.0, sa_column=Column(Numeric(15, 8), nullable=False))  # Exchange rate against USD
 
 class FiatCreate(FiatBase):
     pass
 
 class app_Fiat(FiatBase, table=True):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True) # Unique identifier for the fiat currency
 
 class FiatPublic(FiatBase):
-    id: uuid.UUID
+    id: uuid.UUID # Unique identifier for the fiat currency
 
 class FiatUpdate(SQLModel):
-    name: str | None = Field(default=None, max_length=255)
-    symbol: str | None = Field(default=None, max_length=50)
-    short_symbol: str | None = Field(default=None, max_length=3)
-    exchange_rate: float | None = Field(default=None)
+    name: str | None = Field(default=None, max_length=255) # Name of the fiat currency
+    symbol: str | None = Field(default=None, max_length=50) # Symbol for the fiat currency
+    short_symbol: str | None = Field(default=None, max_length=3) # Short symbol for the fiat currency
+    exchange_rate: float | None = Field(default=None) # Exchange rate against USD
 
 class FiatsPublic(SQLModel):
-    data: list[FiatPublic]
-    count: int
+    data: list[FiatPublic] # List of fiat currencies
+    count: int # Total count of fiat currencies

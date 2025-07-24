@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from api.routes import private, fiats, login, users, utils, wallets
+from api.routes import private, fiats, login, users, utils, wallets, blockchains
 
 # items, login, private, users, utils
 from core.config import settings
@@ -12,6 +12,7 @@ api_router.include_router(utils.router)
 # api_router.include_router(items.router)
 api_router.include_router(fiats.router)
 api_router.include_router(wallets.router)
+api_router.include_router(blockchains.router)
 
 if settings.ENVIRONMENT == "local":
     api_router.include_router(private.router)
