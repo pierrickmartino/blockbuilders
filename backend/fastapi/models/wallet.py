@@ -10,9 +10,10 @@ class WalletBase(SQLModel):
     address: str = Field(max_length=255, unique=True)  # Address of the wallet
     name: str = Field(max_length=255, unique=True)  # Name of the wallet
     description: str | None = Field(default=None, max_length=500)  # Description of the wallet
-    created_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))  # Creation timestamp
-    updated_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))  # Update timestamp
-    user_id: uuid.UUID | None = Field(default=None, foreign_key="app_user.id")  # ID of the user who owns the wallet
+    balance: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Balance of the wallet
+    capital_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the wallet
+    unrealized_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Unrealized gain of the wallet
+    progress_percentage: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Progress percentage of the wallet
 
 
 class WalletCreate(WalletBase):
@@ -21,22 +22,27 @@ class WalletCreate(WalletBase):
 
 class app_Wallet(WalletBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)  # Unique identifier for the wallet
-    balance: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Balance of the wallet
-    capital_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the wallet
-    unrealized_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Unrealized gain of the wallet
-    progress_percentage: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Progress percentage of the wallet
     user: Optional["app_User"] = Relationship(back_populates="wallets")  # Relationship to the user who owns the wallet
-
+    created_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))  # Creation timestamp
+    updated_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))  # Update timestamp
+    user_id: uuid.UUID = Field(foreign_key="app_user.id")  # ID of the user who owns the wallet
 
 class WalletPublic(WalletBase):
-    id: uuid.UUID
+    id: uuid.UUID # Unique identifier for the wallet
+    created_at: datetime.datetime  # Creation timestamp
+    updated_at: datetime.datetime  # Update timestamp
 
 
 class WalletUpdate(SQLModel):
-    address: str | None = Field(default=None, max_length=255)  # Address of the wallet
-    name: str | None = Field(default=None, max_length=255)  # Name of the wallet
-    description: str | None = Field(default=None, max_length=500)  # Description of the wallet
-    user_id: uuid.UUID | None = Field(default=None, foreign_key="app_user.id")  # ID of the user who owns the wallet
+    address: str | None = None  # Address of the wallet
+    name: str | None = None  # Name of the wallet
+    description: str | None = None  # Description of the wallet
+    balance: float | None = None  # Balance of the wallet
+    capital_gain: float | None = None  # Capital gain of the wallet
+    unrealized_gain: float | None = None  # Unrealized gain of the wallet
+    progress_percentage: float | None = None  # Progress percentage of the wallet
+    created_at: datetime.datetime | None = None  # Creation timestamp
+    updated_at: datetime.datetime | None = None  # Update timestamp
 
 
 class WalletPublicWithUser(WalletPublic):

@@ -4,3 +4,4 @@ from .wallet import *
 from .auth import *
 from .message import *
 from .blockchain import *
+from .contract import *

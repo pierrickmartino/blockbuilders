@@ -52,9 +52,12 @@ def create_wallet(*, session: SessionDep, current_user: CurrentUser, item_in: Wa
     wallet = app_Wallet(
         user_id=current_user.id,
         name=item_in.name,
-        currency=item_in.currency,
         balance=item_in.balance,
+        address=item_in.address,
         description=item_in.description,
+        capital_gain=item_in.capital_gain,
+        unrealized_gain=item_in.unrealized_gain,
+        progress_percentage=item_in.progress_percentage,
         created_at=datetime.now(timezone.utc).isoformat(),  # Store date in ISO format UTC
         updated_at=datetime.now(timezone.utc).isoformat(),  # Store date in ISO format UTC
     )

@@ -16,6 +16,12 @@ class BlockchainBase(SQLModel):
     gecko_shortname: str = Field(max_length=255, default="")  # Gecko short name
     gecko_native_coin_id: str = Field(max_length=255, default="")  # Gecko native coin id
     transaction_link: str = Field(max_length=255, default="")  # Url link of the transaction on the blockchain explorer
+    balance: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Balance of the blockchain
+    capital_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the blockchain
+    unrealized_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Unrealized gain of the blockchain
+    progress_percentage: float = Field(
+        default=0.0, sa_column=Column(Numeric(15, 2), nullable=False)
+    )  # Progress percentage of the blockchain
 
 
 class BlockchainCreate(BlockchainBase):
@@ -24,12 +30,7 @@ class BlockchainCreate(BlockchainBase):
 
 class app_Blockchain(BlockchainBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)  # Unique identifier for the blockchain
-    balance: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Balance of the blockchain
-    capital_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the blockchain
-    unrealized_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Unrealized gain of the blockchain
-    progress_percentage: float = Field(
-        default=0.0, sa_column=Column(Numeric(15, 2), nullable=False)
-    )  # Progress percentage of the blockchain
+    contracts: list["app_Contract"] = Relationship(back_populates="blockchain")
 
 
 class BlockchainPublic(BlockchainBase):
@@ -46,8 +47,21 @@ class BlockchainUpdate(SQLModel):
     gecko_shortname: str | None = Field(default=None, max_length=255)  # Gecko short name
     gecko_native_coin_id: str | None = Field(default=None, max_length=255)  # Gecko native coin id
     transaction_link: str | None = Field(default=None, max_length=255)  # Url link of the transaction on the blockchain explorer
+    balance: float | None = Field(default=None, sa_column=Column(Numeric(15, 2), nullable=False))  # Balance of the blockchain
+    capital_gain: float | None = Field(default=None, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the blockchain
+    unrealized_gain: float | None = Field(
+        default=None, sa_column=Column(Numeric(15, 2), nullable=False)
+    )  # Unrealized gain of the blockchain
+    progress_percentage: float | None = Field(
+        default=None, sa_column=Column(Numeric(15, 2), nullable=False)
+    )  # Progress percentage of the blockchain
 
 
 class BlockchainsPublic(SQLModel):
     data: list[BlockchainPublic]  # List of blockchains
     count: int  # Total count of blockchains
+
+
+# This is a workaround to avoid circular imports
+if TYPE_CHECKING:
+    from models.contract import app_Contract
