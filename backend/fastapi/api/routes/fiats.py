@@ -55,7 +55,7 @@ def create_fiat(*, session: SessionDep, current_user: CurrentUser, item_in: Fiat
     return fiat
 
 
-@router.put("/{id}", response_model=FiatPublic)
+@router.patch("/{id}", response_model=FiatPublic)
 def update_fiat(
     *,
     session: SessionDep,
