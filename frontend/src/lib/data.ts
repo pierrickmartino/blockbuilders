@@ -1,5 +1,7 @@
 import { Position, Wallet, Transaction, Blockchain, Contract, MarketData, CapitalGainHisto, UnrealizedGain } from "./definition";
-import { fetcher } from "./fetcher";
+import { fetcher, fetcherFastAPI } from "./fetcher";
+
+const useFastAPI = process.env.NEXT_PUBLIC_USE_FASTAPI === "true";
 
 export const fetchWallets = async (
   setWallets: React.Dispatch<React.SetStateAction<Wallet[]>>,
@@ -59,7 +61,7 @@ export const fetchPositionsWithSearch = async (
 
 export const fetchPositionsAllWithSearch = async (
   searchTerm: string,
-  setPositions: React.Dispatch<React.SetStateAction<Position[]>>,
+  setPositions: React.Dispatch<React.SetStateAction<Position[]>>
 ): Promise<void> => {
   try {
     const response = await fetcher(`/api/positions/?search=${searchTerm}&limit=100`);
@@ -73,8 +75,6 @@ export const fetchPositionsAllWithSearch = async (
     throw new Error("Failed to fetch all positions.");
   }
 };
-
-
 
 export const fetchPositions = async (
   wallet_id: string,
@@ -99,7 +99,7 @@ export const fetchPositions = async (
 
 export const fetchWalletPositions = async (
   wallet_id: string,
-  setPositions: React.Dispatch<React.SetStateAction<Position[]>>,
+  setPositions: React.Dispatch<React.SetStateAction<Position[]>>
 ): Promise<void> => {
   try {
     const response = await fetcher(`/api/wallets/${wallet_id}/positions/?limit=100`);
@@ -114,9 +114,7 @@ export const fetchWalletPositions = async (
   }
 };
 
-export const fetchPositionsAll = async (
-  setPositions: React.Dispatch<React.SetStateAction<Position[]>>,
-): Promise<void> => {
+export const fetchPositionsAll = async (setPositions: React.Dispatch<React.SetStateAction<Position[]>>): Promise<void> => {
   try {
     const response = await fetcher(`/api/positions/?limit=100`);
 
@@ -356,9 +354,7 @@ export const fetchUnrealizedGain = async (
   }
 };
 
-export const fetchTransactionsAll = async (
-  setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>
-): Promise<void> => {
+export const fetchTransactionsAll = async (setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>): Promise<void> => {
   try {
     const response = await fetcher(`/api/transactions/?limit=1000`);
 
@@ -399,7 +395,7 @@ export const fetchTransactionsWithSearch = async (
 
 export const fetchTransactionsAllWithSearch = async (
   searchTerm: string,
-  setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>,
+  setTransactions: React.Dispatch<React.SetStateAction<Transaction[]>>
 ): Promise<void> => {
   try {
     const response = await fetcher(`/api/transactions/?search=${searchTerm}&limit=200`);
@@ -416,10 +412,16 @@ export const fetchTransactionsAllWithSearch = async (
 
 export const fetchContractsAll = async (setContracts: React.Dispatch<React.SetStateAction<Contract[]>>): Promise<void> => {
   try {
-    const response = await fetcher(`/api/contracts/?limit=200`);
-
-    if (response.results) {
-      setContracts(response.results); // Ensure the transactions are correctly set
+    if (useFastAPI) {
+      const response = await fetcherFastAPI(`/api/v1/contracts/?skip=0&limit=100`);
+      if (response.data) {
+        setContracts(response.data); // Ensure the transactions are correctly set
+      }
+    } else {
+      const response = await fetcher(`/api/contracts/?limit=200`);
+      if (response.results) {
+        setContracts(response.results); // Ensure the transactions are correctly set
+      }
     }
   } catch (err) {
     console.error("Error fetching data from transaction API:", err);

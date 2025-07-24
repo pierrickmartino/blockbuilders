@@ -45,7 +45,7 @@ const Login = () => {
   const onSubmit = (data: FormData) => {
     login(data.email, data.password)
       .json((json) => {
-        storeToken(json.access, "access");
+        storeToken(json.access_token, "access");
         storeToken(json.refresh, "refresh");
         router.push("/overview");
       })

@@ -5,6 +5,7 @@ import { AuthActions } from "@/app/(auth)/utils";
 const { handleJWTRefresh, storeToken, getToken } = AuthActions();
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:4000";
+const fastAPIUrl = process.env.NEXT_PUBLIC_FASTAPI_URL || "http://127.0.0.1:4001";
 
 const api = () => {
   return (
@@ -37,8 +38,43 @@ const api = () => {
   );
 };
 
+const fastAPI = () => {
+  return (
+    wretch(fastAPIUrl)
+      // Initialize authentication with the access token.
+      .auth(`Bearer ${getToken("access")}`)
+      // Catch 401 errors to refresh the token and retry the request.
+      // .catcher(401, async (error: WretchError, request: Wretch) => {
+      //   try {
+      //     // Attempt to refresh the JWT token.
+      //     const { access } = (await handleJWTRefresh().json()) as {
+      //       access: string;
+      //     };
+
+      //     // Store the new access token.
+      //     storeToken(access, "access");
+
+      //     // Replay the original request with the new access token.
+      //     return request
+      //       .auth(`Bearer ${access}`)
+      //       .fetch()
+      //       .unauthorized(() => {
+      //         window.location.replace("/signin");
+      //       })
+      //       .json();
+      //   } catch (err) {
+      //     window.location.replace("/signin");
+      //   }
+      // })
+  );
+};
+
 export const fetcher = (url: string): Promise<any> => {
   return api().get(url).json();
+};
+
+export const fetcherFastAPI = (url: string): Promise<any> => {
+  return fastAPI().get(url).json();
 };
 
 export const fetcher_blob = (url: string): Promise<any> => {

@@ -6,10 +6,13 @@ import datetime
 # This file defines the models for blockchains used in the application.
 
 
-class BlockchainBase(SQLModel):
+class Blockchain(SQLModel):
     name: str = Field(max_length=255, unique=True)  # Name of the blockchain
     icon: str = Field(max_length=255, unique=True)  # Icon URL for the blockchain
     is_active: bool = Field(default=True)  # Indicates if the blockchain is active
+
+
+class BlockchainExtended(Blockchain):
     gecko_id: str = Field(max_length=255, default="")  # Gecko ID for the blockchain
     gecko_chain_identifier: str = Field(max_length=255, default="")  # Gecko chain identifier
     gecko_name: str = Field(max_length=255, default="")  # Gecko name
@@ -24,16 +27,19 @@ class BlockchainBase(SQLModel):
     )  # Progress percentage of the blockchain
 
 
-class BlockchainCreate(BlockchainBase):
+class BlockchainCreate(BlockchainExtended):
     pass
 
 
-class app_Blockchain(BlockchainBase, table=True):
+class app_Blockchain(BlockchainExtended, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)  # Unique identifier for the blockchain
-    contracts: list["app_Contract"] = Relationship(back_populates="blockchain")
+    contracts: list["app_Contract"] = Relationship(back_populates="blockchain")  # Relationship to the contracts
 
 
-class BlockchainPublic(BlockchainBase):
+class BlockchainExtendedPublic(BlockchainExtended):
+    id: uuid.UUID  # Unique identifier for the blockchain
+
+class BlockchainPublic(Blockchain):
     id: uuid.UUID  # Unique identifier for the blockchain
 
 
@@ -53,10 +59,13 @@ class BlockchainUpdate(SQLModel):
     progress_percentage: float | None = None  # Progress percentage of the blockchain
 
 
+class BlockchainsExtendedPublic(SQLModel):
+    data: list[BlockchainExtendedPublic]  # List of blockchains
+    count: int  # Total count of blockchains
+
 class BlockchainsPublic(SQLModel):
     data: list[BlockchainPublic]  # List of blockchains
     count: int  # Total count of blockchains
-
 
 # This is a workaround to avoid circular imports
 if TYPE_CHECKING:

@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import func, select
 
 from api.deps import CurrentUser, SessionDep
-from models import ContractsPublic, app_Contract, ContractPublic, ContractCreate, ContractUpdate, Message, ContractPublicWithBlockchain
+from models import ContractsPublic, app_Contract, ContractPublic, ContractCreate, ContractUpdate, Message, ContractExtendedPublicWithBlockchain
 
 router = APIRouter(prefix="/contracts", tags=["contracts"])
 
@@ -31,7 +31,7 @@ def read_contracts(session: SessionDep, current_user: CurrentUser, skip: int = 0
     return ContractsPublic(data=contracts, count=count)
 
 
-@router.get("/{id}", response_model=ContractPublicWithBlockchain)
+@router.get("/{id}", response_model=ContractExtendedPublicWithBlockchain)
 def read_contract(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> Any:
     """
     Get contract by ID.

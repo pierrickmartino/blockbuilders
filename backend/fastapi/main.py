@@ -20,11 +20,30 @@ app = FastAPI(
     generate_unique_id_function=custom_generate_unique_id,
 )
 
+if settings.ENVIRONMENT == "production":
+    CORS_ALLOWED_ORIGINS = [
+        'https://api.blockbuilders.tech',
+        'http://api.blockbuilders.tech',
+        'https://app.blockbuilders.tech',
+        'http://app.blockbuilders.tech'
+    ]
+else :
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost",
+        "http://localhost:3030",
+        "http://127.0.0.1",
+        "http://127.0.0.1:3030",
+        "http://0.0.0.0",
+        "http://app.blockbuilders.tech",
+    ]
+
+
 # Set all CORS enabled origins
 if settings.all_cors_origins:
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.all_cors_origins,
+        # allow_origins=settings.all_cors_origins,
+        allow_origins=CORS_ALLOWED_ORIGINS,  # For development, allow all origins
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
