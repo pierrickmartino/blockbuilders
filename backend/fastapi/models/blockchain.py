@@ -38,23 +38,19 @@ class BlockchainPublic(BlockchainBase):
 
 
 class BlockchainUpdate(SQLModel):
-    name: str | None = Field(default=None, max_length=255)  # Name of the blockchain
-    icon: str | None = Field(default=None, max_length=255)  # Icon URL for the blockchain
-    is_active: bool | None = Field(default=None)  # Indicates if the blockchain is active
-    gecko_id: str | None = Field(default=None, max_length=255)  # Gecko ID for the blockchain
-    gecko_chain_identifier: str | None = Field(default=None, max_length=255)  # Gecko chain identifier
-    gecko_name: str | None = Field(default=None, max_length=255)  # Gecko name
-    gecko_shortname: str | None = Field(default=None, max_length=255)  # Gecko short name
-    gecko_native_coin_id: str | None = Field(default=None, max_length=255)  # Gecko native coin id
-    transaction_link: str | None = Field(default=None, max_length=255)  # Url link of the transaction on the blockchain explorer
-    balance: float | None = Field(default=None, sa_column=Column(Numeric(15, 2), nullable=False))  # Balance of the blockchain
-    capital_gain: float | None = Field(default=None, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the blockchain
-    unrealized_gain: float | None = Field(
-        default=None, sa_column=Column(Numeric(15, 2), nullable=False)
-    )  # Unrealized gain of the blockchain
-    progress_percentage: float | None = Field(
-        default=None, sa_column=Column(Numeric(15, 2), nullable=False)
-    )  # Progress percentage of the blockchain
+    name: str | None = None  # Name of the blockchain
+    icon: str | None = None  # Icon URL for the blockchain
+    is_active: bool | None = None  # Indicates if the blockchain is active
+    gecko_id: str | None = None  # Gecko ID for the blockchain
+    gecko_chain_identifier: str | None = None  # Gecko chain identifier
+    gecko_name: str | None = None  # Gecko name
+    gecko_shortname: str | None = None  # Gecko short name
+    gecko_native_coin_id: str | None = None  # Gecko native coin id
+    transaction_link: str | None = None  # Url link of the transaction on the blockchain explorer
+    balance: float | None = None  # Balance of the blockchain
+    capital_gain: float | None = None  # Capital gain of the blockchain
+    unrealized_gain: float | None = None  # Unrealized gain of the blockchain
+    progress_percentage: float | None = None  # Progress percentage of the blockchain
 
 
 class BlockchainsPublic(SQLModel):
