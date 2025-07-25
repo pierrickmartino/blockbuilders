@@ -13,7 +13,7 @@ class Contract(SQLModel):
     address: str = Field(max_length=255)  # Unique address of the contract
     logo_uri: str = Field(max_length=255, default="")  # Logo URI of the contract
     decimals: int = Field(default=0)  # Decimals used to calculate quantity of the contract
-    price: float = Field(default=0.0, sa_column=Column(Numeric(15, 8), nullable=False))  # Current price of the contract
+    price: float = Field(default=0.0, sa_column=Column(Numeric(24, 8), nullable=False))  # Current price of the contract
     category: str = Field(max_length=20, default="standard")  # Category of the contract
     blockchain_id: uuid.UUID = Field(foreign_key="app_blockchain.id")  # Foreign key to the blockchain
 
@@ -43,6 +43,9 @@ class app_Contract(ContractExtended, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)  # Unique identifier for the contract
     blockchain: Optional["app_Blockchain"] = Relationship(back_populates="contracts")  # Relationship to the blockchain
 
+    counterpart_transactions: list["app_Transaction"] = Relationship(back_populates="against_contract")  # Relationship to the transactions
+    positions: list["app_Position"] = Relationship(back_populates="contract")  # Relationship to the positions
+
 
 class ContractExtendedPublic(ContractExtended):
     id: uuid.UUID  # Unique identifier for the contract
@@ -60,18 +63,7 @@ class ContractUpdate(SQLModel):
     logo_uri: str | None = None  # Logo URI of the contract
     decimals: int | None = None  # Decimals used to calculate quantity of the contract
     price: float | None = None  # Current price of the contract
-    previous_day_price: float | None = None  # Price of the contract 24 hours ago
-    previous_week_price: float | None = None  # Price of the contract 7 days ago
-    previous_month_price: float | None = None  # Price of the contract 30 days ago
     category: str | None = None  # Category of the contract
-    market_cap: float | None = None  # Market cap of the contract
-    description: str | None = None  # Description of the contract
-    supply_issued: float | None = None  # Supply issued of the contract
-    supply_total: float | None = None  # Total supply of the contract
-    supply_locked: float | None = None  # Supply locked
-    supply_circulating: float | None = None  # Supply circulating of the contract
-    supply_staked: float | None = None  # Supply staked of the contract
-    supply_burnt: float | None = None  # Supply burnt of the contract
     blockchain_id: uuid.UUID | None = None  # Foreign key to the blockchain
 
 
@@ -94,6 +86,8 @@ class ContractsPublic(SQLModel):
 # This is a workaround to avoid circular imports
 if TYPE_CHECKING:
     from models.blockchain import BlockchainPublic, app_Blockchain, BlockchainPublic
+    from models.transaction import app_Transaction
+    from models.position import app_Position
 
 from models.blockchain import BlockchainPublic, BlockchainPublic
 

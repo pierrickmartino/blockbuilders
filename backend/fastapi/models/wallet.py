@@ -15,17 +15,22 @@ class WalletBase(SQLModel):
     unrealized_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Unrealized gain of the wallet
     progress_percentage: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Progress percentage of the wallet
 
-
 class WalletCreate(WalletBase):
     pass
 
 
 class app_Wallet(WalletBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)  # Unique identifier for the wallet
-    user: Optional["app_User"] = Relationship(back_populates="wallets")  # Relationship to the user who owns the wallet
     created_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))  # Creation timestamp
     updated_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))  # Update timestamp
+    
     user_id: uuid.UUID = Field(foreign_key="app_user.id")  # ID of the user who owns the wallet
+    user: Optional["app_User"] = Relationship(back_populates="wallets")  # Relationship to the user who owns the wallet
+
+    positions: list["app_Position"] = Relationship(back_populates="wallet")  # Relationship to the positions
+    
+    
+    
 
 class WalletPublic(WalletBase):
     id: uuid.UUID # Unique identifier for the wallet
@@ -57,6 +62,7 @@ class WalletsPublic(SQLModel):
 # This is a workaround to avoid circular imports
 if TYPE_CHECKING:
     from models.user import UserPublic, app_User
+    from models.position import app_Position
 
 from models.user import UserPublic
 

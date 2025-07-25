@@ -1,5 +1,7 @@
-from sqlmodel import Column, Numeric, SQLModel, Field
+from sqlmodel import Numeric, Relationship, SQLModel, Field, DateTime, Column
+from typing import TYPE_CHECKING, Optional
 import uuid
+import datetime
 
 # This file defines the models for fiat currencies used in the application.
 
@@ -17,6 +19,7 @@ class FiatCreate(FiatBase):
 
 class app_Fiat(FiatBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)  # Unique identifier for the fiat currency
+    counterpart_fiats: list["app_Transaction"] = Relationship(back_populates="against_fiat")  # Relationship to the transactions
 
 
 class FiatPublic(FiatBase):
@@ -33,3 +36,7 @@ class FiatUpdate(SQLModel):
 class FiatsPublic(SQLModel):
     data: list[FiatPublic]  # List of fiat currencies
     count: int  # Total count of fiat currencies
+
+# This is a workaround to avoid circular imports
+if TYPE_CHECKING:
+    from models.transaction import app_Transaction
