@@ -1,7 +1,7 @@
-from sqlmodel import Numeric, Relationship, SQLModel, Field, DateTime, Column
-from typing import TYPE_CHECKING, Optional
+from decimal import Decimal
+from sqlmodel import Relationship, SQLModel, Field
+from typing import TYPE_CHECKING
 import uuid
-import datetime
 
 # This file defines the models for fiat currencies used in the application.
 
@@ -10,7 +10,7 @@ class FiatBase(SQLModel):
     name: str = Field(max_length=255, unique=True)  # Name of the fiat currency
     symbol: str = Field(max_length=50, unique=True)  # Symbol for the fiat currency
     short_symbol: str = Field(max_length=3, default="")  # Short symbol for the fiat currency
-    exchange_rate: float = Field(default=1.0, sa_column=Column(Numeric(15, 8), nullable=False))  # Exchange rate against USD
+    exchange_rate: Decimal = Field(max_digits=15, decimal_places=8, default=1)  # Exchange rate against USD
 
 
 class FiatCreate(FiatBase):

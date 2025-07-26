@@ -1,4 +1,5 @@
-from sqlmodel import Numeric, Relationship, SQLModel, Field, DateTime, Column
+from decimal import Decimal
+from sqlmodel import Relationship, SQLModel, Field
 from typing import TYPE_CHECKING, Optional
 import uuid
 import datetime
@@ -13,25 +14,25 @@ class Contract(SQLModel):
     address: str = Field(max_length=255)  # Unique address of the contract
     logo_uri: str = Field(max_length=255, default="")  # Logo URI of the contract
     decimals: int = Field(default=0)  # Decimals used to calculate quantity of the contract
-    price: float = Field(default=0.0, sa_column=Column(Numeric(24, 8), nullable=False))  # Current price of the contract
+    price: Decimal = Field(max_digits=24, decimal_places=8, default=0)  # Current price of the contract
     category: str = Field(max_length=20, default="standard")  # Category of the contract
     blockchain_id: uuid.UUID = Field(foreign_key="app_blockchain.id")  # Foreign key to the blockchain
 
 
 class ContractExtended(Contract):
-    previous_day_price: float = Field(default=0.0, sa_column=Column(Numeric(15, 8), nullable=False))  # Price of the contract 24 hours ago
-    previous_week_price: float = Field(default=0.0, sa_column=Column(Numeric(15, 8), nullable=False))  # Price of the contract 7 days ago
-    previous_month_price: float = Field(default=0.0, sa_column=Column(Numeric(15, 8), nullable=False))  # Price of the contract 30 days ago
+    previous_day_price: Decimal = Field(max_digits=15, decimal_places=8, default=0)  # Price of the contract 24 hours ago
+    previous_week_price: Decimal = Field(max_digits=15, decimal_places=8, default=0)  # Price of the contract 7 days ago
+    previous_month_price: Decimal = Field(max_digits=15, decimal_places=8, default=0)  # Price of the contract 30 days ago
     previous_day: datetime.datetime = Field(default=datetime.datetime.now)  # Timestamp of the previous day's price
     previous_week: datetime.datetime = Field(default=datetime.datetime.now)  # Timestamp of the previous week's price
     previous_month: datetime.datetime = Field(default=datetime.datetime.now)  # Timestamp of the previous month's price
-    supply_issued: float = Field(default=0.0, sa_column=Column(Numeric(24, 6), nullable=False))  # Supply issued of the contract
-    supply_total: float = Field(default=0.0, sa_column=Column(Numeric(24, 6), nullable=False))  # Total supply of the contract
-    supply_locked: float = Field(default=0.0, sa_column=Column(Numeric(24, 6), nullable=False))  # Supply locked of the contract
-    supply_circulating: float = Field(default=0.0, sa_column=Column(Numeric(24, 6), nullable=False))  # Supply circulating of the contract
-    supply_staked: float = Field(default=0.0, sa_column=Column(Numeric(24, 6), nullable=False))  # Supply staked of the contract
-    supply_burnt: float = Field(default=0.0, sa_column=Column(Numeric(24, 6), nullable=False))  # Supply burnt of the contract
-    market_cap: float = Field(default=0.0, sa_column=Column(Numeric(24, 6), nullable=False))  # Market cap of the contract
+    supply_issued: Decimal = Field(max_digits=24, decimal_places=6, default=0)  # Supply issued of the contract
+    supply_total: Decimal = Field(max_digits=24, decimal_places=6, default=0)  # Total supply of the contract
+    supply_locked: Decimal = Field(max_digits=24, decimal_places=6, default=0)  # Supply locked of the contract
+    supply_circulating: Decimal = Field(max_digits=24, decimal_places=6, default=0)  # Supply circulating of the contract
+    supply_staked: Decimal = Field(max_digits=24, decimal_places=6, default=0)  # Supply staked of the contract
+    supply_burnt: Decimal = Field(max_digits=24, decimal_places=6, default=0)  # Supply burnt of the contract
+    market_cap: Decimal = Field(max_digits=24, decimal_places=6, default=0)  # Market cap of the contract
     description: str | None = Field(default=None)  # Description of the contract
 
 
@@ -42,7 +43,6 @@ class ContractCreate(ContractExtended):
 class app_Contract(ContractExtended, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)  # Unique identifier for the contract
     blockchain: Optional["app_Blockchain"] = Relationship(back_populates="contracts")  # Relationship to the blockchain
-
     counterpart_transactions: list["app_Transaction"] = Relationship(back_populates="against_contract")  # Relationship to the transactions
     positions: list["app_Position"] = Relationship(back_populates="contract")  # Relationship to the positions
 

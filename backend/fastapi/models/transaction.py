@@ -1,4 +1,5 @@
-from sqlmodel import Numeric, Relationship, SQLModel, Field, DateTime, Column
+from decimal import Decimal
+from sqlmodel import Relationship, SQLModel, Field, DateTime, Column
 from typing import TYPE_CHECKING, Optional
 import uuid
 import datetime
@@ -8,46 +9,36 @@ import datetime
 
 class Transaction(SQLModel):
     type: str = Field(max_length=3, nullable=False)  # Type of the transaction (IN or OUT)
-    quantity: float = Field(default=0.0, sa_column=Column(Numeric(32, 18), nullable=False))  # Quantity of the transaction
+    quantity: Decimal = Field(max_digits=32, decimal_places=18, default=0)  # Quantity of the transaction
     date: datetime.datetime = Field(default=datetime.datetime.now, sa_column=Column(DateTime, nullable=False))  # Date of the transaction
     comment: str = Field(default="", nullable=True)  # Comment about the transaction
     hash: str = Field(max_length=255, default="", nullable=False)  # Hash of the transaction
-    price: float = Field(default=0.0, sa_column=Column(Numeric(24, 8), nullable=False))  # Price of the transaction
-    running_quantity: float = Field(default=0.0, sa_column=Column(Numeric(32, 18), nullable=False))  # Running quantity of the transaction
-    buy_quantity: float = Field(default=0.0, sa_column=Column(Numeric(32, 18), nullable=False))  # Buy quantity of the transaction
-    sell_quantity: float = Field(default=0.0, sa_column=Column(Numeric(32, 18), nullable=False))  # Sell quantity of the transaction
-    cost: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Cost of the transaction
-    total_cost: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Total cost of the transaction
-    average_cost: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Average cost of the transaction
-    capital_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the transaction
-    running_capital_gain: float = Field(
-        default=0.0, sa_column=Column(Numeric(15, 2), nullable=False)
-    )  # Running capital gain of the transaction
+    price: Decimal = Field(max_digits=24, decimal_places=8, default=0)  # Price of the transaction
+    running_quantity: Decimal = Field(max_digits=32, decimal_places=18, default=0)  # Running quantity of the transaction
+    buy_quantity: Decimal = Field(max_digits=32, decimal_places=18, default=0)  # Buy quantity of the transaction
+    sell_quantity: Decimal = Field(max_digits=32, decimal_places=18, default=0)  # Sell quantity of the transaction
+    cost: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Cost of the transaction
+    total_cost: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Total cost of the transaction
+    average_cost: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Average cost of the transaction
+    capital_gain: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Capital gain of the transaction
+    running_capital_gain: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Running capital gain of the transaction
     status: str = Field(max_length=20, nullable=True)
-    status_value: float = Field(default=0.0, sa_column=Column(Numeric(24, 8), nullable=True))
+    status_value: Decimal = Field(max_digits=24, decimal_places=8, default=0)
 
 
 class TransactionExtended(Transaction):
-    price_contract_based: float = Field(
-        default=0.0, sa_column=Column(Numeric(24, 8), nullable=False)
-    )  # Price of the transaction in contract units
-    price_fiat_based: float = Field(default=0.0, sa_column=Column(Numeric(24, 8), nullable=False))  # Price of the transaction in fiat units
-    cost_contract_based: float = Field(
-        default=0.0, sa_column=Column(Numeric(15, 2), nullable=False)
-    )  # Cost of the transaction in contract units
-    cost_fiat_based: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Cost of the transaction in fiat units
-    total_cost_contract_based: float = Field(
-        default=0.0, sa_column=Column(Numeric(15, 2), nullable=False)
+    price_contract_based: Decimal = Field(max_digits=24, decimal_places=8, default=0)  # Price of the transaction in contract units
+    price_fiat_based: Decimal = Field(max_digits=24, decimal_places=8, default=0)  # Price of the transaction in fiat units
+    cost_contract_based: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Cost of the transaction in contract units
+    cost_fiat_based: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Cost of the transaction in fiat units
+    total_cost_contract_based: Decimal = Field(
+        max_digits=15, decimal_places=2, default=0
     )  # Total cost of the transaction in contract units
-    total_cost_fiat_based: float = Field(
-        default=0.0, sa_column=Column(Numeric(15, 2), nullable=False)
-    )  # Total cost of the transaction in fiat units
-    average_cost_contract_based: float = Field(
-        default=0.0, sa_column=Column(Numeric(15, 2), nullable=False)
+    total_cost_fiat_based: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Total cost of the transaction in fiat units
+    average_cost_contract_based: Decimal = Field(
+        max_digits=15, decimal_places=2, default=0
     )  # Average cost of the transaction in contract units
-    average_cost_fiat_based: float = Field(
-        default=0.0, sa_column=Column(Numeric(15, 2), nullable=False)
-    )  # Average cost of the transaction in fiat units
+    average_cost_fiat_based: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Average cost of the transaction in fiat units
 
 
 class TransactionCreate(TransactionExtended):

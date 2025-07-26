@@ -1,7 +1,7 @@
-from sqlmodel import Numeric, Relationship, SQLModel, Field, DateTime, Column
-from typing import TYPE_CHECKING, Optional
+from decimal import Decimal
+from sqlmodel import Relationship, SQLModel, Field
+from typing import TYPE_CHECKING
 import uuid
-import datetime
 
 # This file defines the models for blockchains used in the application.
 
@@ -19,12 +19,10 @@ class BlockchainExtended(Blockchain):
     gecko_shortname: str = Field(max_length=255, default="")  # Gecko short name
     gecko_native_coin_id: str = Field(max_length=255, default="")  # Gecko native coin id
     transaction_link: str = Field(max_length=255, default="")  # Url link of the transaction on the blockchain explorer
-    balance: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Balance of the blockchain
-    capital_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the blockchain
-    unrealized_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Unrealized gain of the blockchain
-    progress_percentage: float = Field(
-        default=0.0, sa_column=Column(Numeric(15, 2), nullable=False)
-    )  # Progress percentage of the blockchain
+    balance: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Balance of the blockchain
+    capital_gain: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Capital gain of the blockchain
+    unrealized_gain: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Unrealized gain of the blockchain
+    progress_percentage: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Progress percentage of the blockchain
 
 
 class BlockchainCreate(BlockchainExtended):

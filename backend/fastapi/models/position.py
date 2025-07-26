@@ -1,4 +1,5 @@
-from sqlmodel import Numeric, Relationship, SQLModel, Field, DateTime, Column
+from decimal import Decimal
+from sqlmodel import Relationship, SQLModel, Field, DateTime, Column
 from typing import TYPE_CHECKING, Optional
 import uuid
 import datetime
@@ -7,22 +8,20 @@ import datetime
 
 
 class Position(SQLModel):
-    quantity: float = Field(default=0.0, sa_column=Column(Numeric(32, 18), nullable=False))  # Quantity of the position
-    average_cost: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Average cost of the position
-    amount: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Amount of the position
+    quantity: Decimal = Field(max_digits=32, decimal_places=18, default=0)  # Quantity of the position
+    average_cost: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Average cost of the position
+    amount: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Amount of the position
 
 
 class PositionExtended(Position):
-    daily_price_delta: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Daily price delta of the position
-    weekly_price_delta: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Weekly price delta of the position
-    monthly_price_delta: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Monthly price delta of the position
-    progress_percentage: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Progress percentage of the position
-    total_cost: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Total cost of the position
-    unrealized_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Unrealized gain of the position
-    unrealized_gain_percentage: float = Field(
-        default=0.0, sa_column=Column(Numeric(15, 2), nullable=False)
-    )  # Unrealized gain percentage of the position
-    capital_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the position
+    daily_price_delta: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Daily price delta of the position
+    weekly_price_delta: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Weekly price delta of the position
+    monthly_price_delta: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Monthly price delta of the position
+    progress_percentage: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Progress percentage of the position
+    total_cost: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Total cost of the position
+    unrealized_gain: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Unrealized gain of the position
+    unrealized_gain_percentage: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Unrealized gain percentage of the position
+    capital_gain: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Capital gain of the position
 
 
 class PositionCreate(PositionExtended):

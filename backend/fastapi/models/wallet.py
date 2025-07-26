@@ -1,4 +1,5 @@
-from sqlmodel import Numeric, Relationship, SQLModel, Field, DateTime, Column
+from decimal import Decimal
+from sqlmodel import Relationship, SQLModel, Field, DateTime, Column
 from typing import TYPE_CHECKING, Optional
 import uuid
 import datetime
@@ -10,10 +11,10 @@ class WalletBase(SQLModel):
     address: str = Field(max_length=255, unique=True)  # Address of the wallet
     name: str = Field(max_length=255, unique=True)  # Name of the wallet
     description: str | None = Field(default=None, max_length=500)  # Description of the wallet
-    balance: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Balance of the wallet
-    capital_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Capital gain of the wallet
-    unrealized_gain: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Unrealized gain of the wallet
-    progress_percentage: float = Field(default=0.0, sa_column=Column(Numeric(15, 2), nullable=False))  # Progress percentage of the wallet
+    balance: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Balance of the wallet
+    capital_gain: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Capital gain of the wallet
+    unrealized_gain: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Unrealized gain of the wallet
+    progress_percentage: Decimal = Field(max_digits=15, decimal_places=2, default=0)  # Progress percentage of the wallet
 
 class WalletCreate(WalletBase):
     pass
@@ -23,7 +24,7 @@ class app_Wallet(WalletBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)  # Unique identifier for the wallet
     created_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))  # Creation timestamp
     updated_at: datetime.datetime = Field(sa_column=Column(DateTime(timezone=True), nullable=False))  # Update timestamp
-    
+
     user_id: uuid.UUID = Field(foreign_key="app_user.id")  # ID of the user who owns the wallet
     user: Optional["app_User"] = Relationship(back_populates="wallets")  # Relationship to the user who owns the wallet
 
